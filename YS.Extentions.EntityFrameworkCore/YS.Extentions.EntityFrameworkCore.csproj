@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="2.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Extentions.Base\YS.Extentions.Base.csproj" />
+    <ProjectReference Include="..\YS.System.Base\YS.System.Base.csproj" />
+    <ProjectReference Include="..\YS.System.Data\YS.System.Data.csproj" />
+  </ItemGroup>
+
+</Project>
