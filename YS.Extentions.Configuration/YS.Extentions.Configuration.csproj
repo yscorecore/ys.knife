@@ -5,4 +5,12 @@
     <RootNamespace>Microsoft.Extentions.Configuration</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Extentions.Base\YS.Extentions.Base.csproj" />
+  </ItemGroup>
+
 </Project>
