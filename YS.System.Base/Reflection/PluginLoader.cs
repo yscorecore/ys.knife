@@ -9,7 +9,7 @@ namespace System.Reflection
 {
     public class PluginLoader
     {
-        public Assembly[] LoadPlugins(string rootPath, IEnumerable<string> wildcardPatterns, bool throwIfException = true)
+        public static Assembly[] LoadPlugins(string rootPath, IEnumerable<string> wildcardPatterns, bool throwIfException = true)
         {
             List<Assembly> loadedAssemblies = new List<Assembly>();
 
@@ -30,7 +30,6 @@ namespace System.Reflection
                         Trace.TraceError($"Load plugin \"{dll}\" error. {ex.ToString()}");
                     }
                 }
-                loadedAssemblies.Add(Assembly.LoadFrom(dll));
             }
 
             return loadedAssemblies.ToArray();
