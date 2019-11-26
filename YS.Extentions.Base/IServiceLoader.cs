@@ -7,6 +7,6 @@ namespace System
 {
     public interface IServiceLoader
     {
-        IServiceCollection LoadServices(IServiceCollection services,IConfiguration configuration);
+        void LoadServices(IServiceCollection services,IConfiguration configuration);
     }
 }

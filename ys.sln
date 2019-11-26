@@ -15,8 +15,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.Base", "YS.Ex
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.Configuration", "YS.Extentions.Configuration\YS.Extentions.Configuration.csproj", "{D7672C69-3536-4098-B387-4C6316DF319A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.Options", "YS.Extentions.Options\YS.Extentions.Options.csproj", "{6221E660-A31B-44A6-A086-EBD069ED6DEE}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.EntityFrameworkCore", "YS.Extentions.EntityFrameworkCore\YS.Extentions.EntityFrameworkCore.csproj", "{F2BE0DA6-D759-4291-8C6A-3F77520AED72}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Ententions.NetCore.All", "YS.Ententions.NetCore.All\YS.Ententions.NetCore.All.csproj", "{F5F3CCC6-1B07-4234-A146-44109BD8E676}"
@@ -51,10 +49,6 @@ Global
 		{D7672C69-3536-4098-B387-4C6316DF319A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7672C69-3536-4098-B387-4C6316DF319A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7672C69-3536-4098-B387-4C6316DF319A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6221E660-A31B-44A6-A086-EBD069ED6DEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6221E660-A31B-44A6-A086-EBD069ED6DEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6221E660-A31B-44A6-A086-EBD069ED6DEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6221E660-A31B-44A6-A086-EBD069ED6DEE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Release|Any CPU.ActiveCfg = Release|Any CPU

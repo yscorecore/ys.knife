@@ -7,7 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\YS.Extentions.Base\YS.Extentions.Base.csproj" />
     <ProjectReference Include="..\YS.Extentions.EntityFrameworkCore\YS.Extentions.EntityFrameworkCore.csproj" />
-    <ProjectReference Include="..\YS.Extentions.Options\YS.Extentions.Options.csproj" />
   </ItemGroup>
 
 </Project>

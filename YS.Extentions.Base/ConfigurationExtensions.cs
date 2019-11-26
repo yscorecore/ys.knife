@@ -16,7 +16,7 @@ namespace System
             var configAttr = Attribute.GetCustomAttribute(typeof(T), typeof(ConfigClassAttribute)) as ConfigClassAttribute;
             if (configAttr == null)
             {
-                throw new InvalidOperationException($"类型“{typeof(T).FullName}”没有应用 “{nameof(ConfigClassAttribute)}”特性。");
+                throw new InvalidOperationException($"Can not find {nameof(ConfigClassAttribute)} in type {typeof(T).FullName}.");
             }
             var section = configuration.GetSection(configAttr.ConfigKey);
 

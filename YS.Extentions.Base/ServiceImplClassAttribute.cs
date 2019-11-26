@@ -6,9 +6,9 @@ using System.Text;
 namespace System {
 
     [System.AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public class ServiceImplClass : Attribute
+    public class ServiceImplClassAttribute : Attribute
     {
-        public ServiceImplClass(Type injectType, ServiceLifetime serviceLifetime= ServiceLifetime.Transient)
+        public ServiceImplClassAttribute(Type injectType, ServiceLifetime serviceLifetime= ServiceLifetime.Transient)
         {
             this.InjectType = injectType;
             this.Lifetime = serviceLifetime;
