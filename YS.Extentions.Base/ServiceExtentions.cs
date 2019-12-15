@@ -1,10 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace System
 {
@@ -29,28 +27,36 @@ namespace System
         private static void RegisteAttributeServices(IServiceCollection services, Assembly assembly, IConfiguration configuration)
         {
             var serviceTypes = from p in assembly.GetTypes()
-                               where Attribute.IsDefined(p, typeof(ServiceImplClassAttribute))
+                               where Attribute.IsDefined(p, typeof(ServiceClassAttribute))
                                      && !p.IsAbstract
                                select p;
             foreach (var serviceType in serviceTypes)
             {
-                var serviceAttr = Attribute.GetCustomAttribute(serviceType, typeof(ServiceImplClassAttribute)) as ServiceImplClassAttribute;
-
+                var serviceAttr = Attribute.GetCustomAttribute(serviceType, typeof(ServiceClassAttribute)) as ServiceClassAttribute;
+                var injectType = serviceAttr.InjectType ?? DeduceInjectType(serviceType);
                 switch (serviceAttr.Lifetime)
                 {
                     case ServiceLifetime.Singleton:
-                        services.AddSingleton(serviceAttr.InjectType, serviceType);
+                        services.AddSingleton(injectType, serviceType);
                         break;
                     case ServiceLifetime.Scoped:
-                        services.AddScoped(serviceAttr.InjectType, serviceType);
+                        services.AddScoped(injectType, serviceType);
                         break;
                     case ServiceLifetime.Transient:
-                        services.AddTransient(serviceAttr.InjectType, serviceType);
+                        services.AddTransient(injectType, serviceType);
                         break;
                 }
             }
         }
-
+        private static Type DeduceInjectType(Type serviceType)
+        {
+            var allInterfaces = serviceType.GetInterfaces();
+            if (allInterfaces.Length != 1)
+            {
+                throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}'.");
+            }
+            return allInterfaces.First();
+        }
         private static void RegisteCustomeServices(IServiceCollection services, Assembly assembly, IConfiguration configuration)
         {
             var loadTypes = from p in assembly.GetTypes()
@@ -70,12 +76,12 @@ namespace System
         public static IServiceCollection RegisteOptions(this IServiceCollection services, Assembly assembly, IConfiguration configuration)
         {
             var configTypes = from p in assembly.GetTypes()
-                              where Attribute.IsDefined(p, typeof(ConfigClassAttribute))
+                              where Attribute.IsDefined(p, typeof(OptionsClassAttribute))
                                     && !p.IsAbstract
                               select p;
             foreach (var configType in configTypes)
             {
-                var configAttr = Attribute.GetCustomAttribute(configType, typeof(ConfigClassAttribute)) as ConfigClassAttribute;
+                var configAttr = Attribute.GetCustomAttribute(configType, typeof(OptionsClassAttribute)) as OptionsClassAttribute;
                 var section = configuration.GetSection(configAttr.ConfigKey);
                 AddOptionInternal(services, configType, section);
             }

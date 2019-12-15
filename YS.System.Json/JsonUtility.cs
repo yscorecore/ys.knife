@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace System.Json
 {
-   public static  class JsonUtility
+    public static  class JsonUtility
     {
         /// <summary>
         /// 将对象二进制序列化到指定的流中
