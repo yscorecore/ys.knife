@@ -112,7 +112,8 @@ namespace System
         {
             public void Configure(IServiceCollection services, IConfiguration configuration)
             {
-                services.Configure<T>(configuration);
+                services.AddOptions<T>().Bind(configuration).ValidateDataAnnotations();
+                //services.Configure<T>(configuration);
             }
         }
         #endregion
