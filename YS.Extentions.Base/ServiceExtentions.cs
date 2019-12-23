@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -113,7 +114,48 @@ namespace System
             public void Configure(IServiceCollection services, IConfiguration configuration)
             {
                 services.AddOptions<T>().Bind(configuration).ValidateDataAnnotations();
-                //services.Configure<T>(configuration);
+            }
+        }
+        #endregion
+
+        #region HostService
+        public static IServiceCollection RegisteHostServices(this IServiceCollection services, Assembly assembly, IConfiguration configuration)
+        {
+            RegisteHostAttributeServices(services, assembly, configuration);
+
+            return services;
+        }
+        public static IServiceCollection RegisteHostServices(this IServiceCollection services, IEnumerable<Assembly> assemblies, IConfiguration configuration)
+        {
+            foreach (var assembly in assemblies ?? Enumerable.Empty<Assembly>())
+            {
+                RegisteHostServices(services, assembly, configuration);
+            }
+            return services;
+        }
+        private static void RegisteHostAttributeServices(IServiceCollection services, Assembly assembly, IConfiguration configuration)
+        {
+            var hostServiceTypes = from p in assembly.GetTypes()
+                               where Attribute.IsDefined(p, typeof(HostServiceClassAttribute)) && typeof(IHostedService).IsAssignableFrom(p) 
+                                     && !p.IsAbstract
+                               select p;
+            foreach (var serviceType in hostServiceTypes)
+            {
+                var instance = Activator.CreateInstance(typeof(HostServiceProxy<>).MakeGenericType(serviceType)) as IHostServiceProxy;
+                instance.AddHostedService(services, configuration);
+            }
+        }
+
+        private interface IHostServiceProxy
+        {
+            void AddHostedService(IServiceCollection services, IConfiguration configuration);
+        }
+        private class HostServiceProxy<T> : IHostServiceProxy
+            where T : class,IHostedService
+        {
+            public void AddHostedService(IServiceCollection services, IConfiguration configuration)
+            {
+                services.AddHostedService<T>();
             }
         }
         #endregion
