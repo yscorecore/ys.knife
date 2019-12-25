@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Extentions.Base\YS.Extentions.Base.csproj" />
+    <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
     <ProjectReference Include="..\YS.System.Base\YS.System.Base.csproj" />
     <ProjectReference Include="..\YS.System.Data\YS.System.Data.csproj" />
   </ItemGroup>

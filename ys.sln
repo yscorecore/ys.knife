@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.Json", "YS.System
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.Data", "YS.System.Data\YS.System.Data.csproj", "{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.Base", "YS.Extentions.Base\YS.Extentions.Base.csproj", "{33C4EF10-7246-45A5-854D-2908E31A49A2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.DependencyInjection.Base", "YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj", "{33C4EF10-7246-45A5-854D-2908E31A49A2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.Configuration", "YS.Extentions.Configuration\YS.Extentions.Configuration.csproj", "{D7672C69-3536-4098-B387-4C6316DF319A}"
 EndProject
