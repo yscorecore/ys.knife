@@ -15,19 +15,19 @@ namespace System
         {
             using (var serviceScope = serviceProvider.CreateScope())
             {
-                Assembly.GetEntryAssembly().LoadRefrenceAssembly(wildcardPatterns, (assembly) =>
-                {
-                    var dbContextTypes = from p in assembly.GetTypes()
-                                         where Attribute.IsDefined(p, typeof(DbContextClassAttribute))
-                                               && !p.IsAbstract
-                                         select p;
-                    foreach (var contextType in dbContextTypes)
-                    {
-                        var contextInstance = serviceScope.ServiceProvider.GetService(contextType) as DbContext;
-                        contextInstance.Database.Migrate();
-                    }
+                //Assembly.GetEntryAssembly().LoadRefrenceAssembly(wildcardPatterns, (assembly) =>
+                //{
+                //    var dbContextTypes = from p in assembly.GetTypes()
+                //                         where Attribute.IsDefined(p, typeof(DbContextClassAttribute))
+                //                               && !p.IsAbstract
+                //                         select p;
+                //    foreach (var contextType in dbContextTypes)
+                //    {
+                //        var contextInstance = serviceScope.ServiceProvider.GetService(contextType) as DbContext;
+                //        contextInstance.Database.Migrate();
+                //    }
 
-                });
+                //});
 
 
             }
