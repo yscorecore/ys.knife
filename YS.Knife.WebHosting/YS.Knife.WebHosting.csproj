@@ -2,9 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <ApplicationIcon />
     <OutputType>Library</OutputType>
-    <StartupObject />
+    <IsPackable>true</IsPackable>
     <RootNamespace>Knife.WebHosting</RootNamespace>
   </PropertyGroup>
 
