@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <RootNamespace>Knife</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
+  </ItemGroup>
+</Project>
