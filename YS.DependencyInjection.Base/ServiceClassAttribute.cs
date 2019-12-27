@@ -17,5 +17,7 @@ namespace System
         }
         public Type InjectType { get; private set; }
         public ServiceLifetime Lifetime { get; set; }
+
+        public string Key { get; set; }
     }
 }
