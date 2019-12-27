@@ -7,5 +7,5 @@ do
 done
 for file in `ls $PUBLISH_FOLDER/*.snupkg`
 do
-    dotnet nuget push $file -k $NUGET_APIKEY -s  https://api.nuget.org/v3/index.json --skip-duplicate
+    dotnet nuget push $file -k $NUGET_APIKEY -ss  https://api.nuget.org/v3/index.json --skip-duplicate
 done        
