@@ -83,8 +83,7 @@ namespace System
             foreach (var configType in configTypes)
             {
                 var configAttr = Attribute.GetCustomAttribute(configType, typeof(OptionsClassAttribute)) as OptionsClassAttribute;
-                var section = configuration.GetSection(configAttr.ConfigKey);
-                AddOptionInternal(services, configType, section);
+                AddOptionInternal(services, configType, configuration, configAttr.ConfigKey);
             }
             return services;
         }
@@ -97,23 +96,24 @@ namespace System
             return services;
         }
 
-        private static void AddOptionInternal(IServiceCollection services, Type optionType, IConfiguration configuration)
+        private static void AddOptionInternal(IServiceCollection services, Type optionType, IConfiguration configuration,string path)
         {
             var instance = Activator.CreateInstance(typeof(ConfigOptionProxy<>).MakeGenericType(optionType)) as IConfigOptionProxy;
-            instance.Configure(services, configuration);
+            instance.Configure(services, configuration,path);
 
         }
 
         private interface IConfigOptionProxy
         {
-            void Configure(IServiceCollection services, IConfiguration configuration);
+            void Configure(IServiceCollection services, IConfiguration configuration,string path);
         }
         private class ConfigOptionProxy<T> : IConfigOptionProxy
             where T : class
         {
-            public void Configure(IServiceCollection services, IConfiguration configuration)
+            public void Configure(IServiceCollection services, IConfiguration configuration,string path)
             {
-                services.AddOptions<T>().Bind(configuration).ValidateDataAnnotations();
+                var optionsConfiguration = configuration.GetOptionsConfiguration<T>(path);
+                services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
             }
         }
         #endregion

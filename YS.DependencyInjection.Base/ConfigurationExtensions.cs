@@ -13,27 +13,31 @@ namespace System
             {
                 throw new InvalidOperationException($"Can not find {nameof(OptionsClassAttribute)} in type {typeof(T).FullName}.");
             }
+            var optionsSection = configuration.GetOptionsConfiguration<T>(configAttr.ConfigKey);
+            return optionsSection == null ? null : optionsSection.Get<T>();
+        }
 
-            if (configAttr.ConfigKey == string.Empty)
+        public static IConfiguration GetOptionsConfiguration<T>(this IConfiguration configuration, string path)
+        {
+            if (path == string.Empty)
             {
-                return configuration.Get<T>();
+                return configuration;
             }
-            else if (configAttr.ConfigKey == null)
+            else if (path == null)
             {
                 var configKey = typeof(T).Name;
                 if (configKey != "Options" && configKey.EndsWith("Options"))
                 {
                     configKey = configKey.Substring(0, configKey.Length - 7);
                 }
-                var section = configuration.GetSection(configKey);
-                return section.Get<T>();
+                return configuration.GetSection(configKey);
             }
             else
             {
-                var section = configuration.GetSection(configAttr.ConfigKey);
-                return section.Get<T>();
+                return configuration.GetSection(path);
             }
         }
+
         public static T GetConfigOrNew<T>(this IConfiguration configuration)
             where T : class, new()
         {
