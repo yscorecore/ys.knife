@@ -2,7 +2,7 @@
 
 namespace System.Collections.Generic
 {
-    public static class ObjectExtentions
+    public static class CollectionExtentions
     {
         public static IDictionary<string, T> ToServiceDictionary<T>(this IEnumerable<T> services)
         {
