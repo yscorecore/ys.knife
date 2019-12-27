@@ -18,6 +18,6 @@ jobs:
       with:
         dotnet-version: 3.1.100
     - name: 03 Create Package
-      run: dotnet pack -o .publish --configuration Release -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
+      run: dotnet pack -o .publish --configuration Debug -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg
     - name: 04 Push Package
       run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}

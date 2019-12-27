@@ -25,7 +25,7 @@ namespace System
                 {
                     configKey = configKey.Substring(0, configKey.Length - 7);
                 }
-                var section = configuration.GetSection(configAttr.ConfigKey);
+                var section = configuration.GetSection(configKey);
                 return section.Get<T>();
             }
             else
