@@ -40,14 +40,14 @@ namespace Knife.Hosting.MSTest
     {
         public TestBase()
         {
-            this.instanceFactory = new Lazy<T>(this.Get<T>, true);
+            this.testObjectFactory = new Lazy<T>(this.Get<T>, true);
         }
-        private Lazy<T> instanceFactory;
-        protected T Instance 
+        private Lazy<T> testObjectFactory;
+        protected T TestObject 
         {
             get
             {
-                return instanceFactory.Value;
+                return testObjectFactory.Value;
             }
         }
 
