@@ -27,7 +27,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{868067E6-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Hosting", "YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{2E0284EA-8479-4BA0-AD21-10D5B42FCB8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.WebHosting", "YS.Knife.WebHosting\YS.Knife.WebHosting.csproj", "{CD02E952-5949-4201-96B7-B44C4ED57C2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.WebHosting", "YS.Knife.WebHosting\YS.Knife.WebHosting.csproj", "{CD02E952-5949-4201-96B7-B44C4ED57C2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Hosting.MSTest", "YS.Knife.Hosting.MSTest\YS.Knife.Hosting.MSTest.csproj", "{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -79,6 +81,10 @@ Global
 		{CD02E952-5949-4201-96B7-B44C4ED57C2C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CD02E952-5949-4201-96B7-B44C4ED57C2C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CD02E952-5949-4201-96B7-B44C4ED57C2C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -91,6 +97,7 @@ Global
 		{AAE8ECD1-C933-4577-BC6F-C89EAD4FAD1F} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 		{2E0284EA-8479-4BA0-AD21-10D5B42FCB8D} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 		{CD02E952-5949-4201-96B7-B44C4ED57C2C} = {B52FF422-75FA-494F-8348-6C511196BC7E}
+		{740C8D94-28A4-42F0-A011-3C2CEDA8CE5E} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
