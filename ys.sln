@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EfCore", "EfCore", "{9B689F
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityFrameworkCore.SqlServer", "YS.EntityFrameworkCore.SqlServer\YS.EntityFrameworkCore.SqlServer.csproj", "{78F69D8D-C71B-433A-BF8C-C3B9B3FAF52A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Extentions.HostedService", "YS.Extentions.HostedService\YS.Extentions.HostedService.csproj", "{1B91F7E2-647D-495E-86BD-35D2AE4DE21B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -93,6 +95,10 @@ Global
 		{78F69D8D-C71B-433A-BF8C-C3B9B3FAF52A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78F69D8D-C71B-433A-BF8C-C3B9B3FAF52A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78F69D8D-C71B-433A-BF8C-C3B9B3FAF52A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B91F7E2-647D-495E-86BD-35D2AE4DE21B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B91F7E2-647D-495E-86BD-35D2AE4DE21B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B91F7E2-647D-495E-86BD-35D2AE4DE21B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B91F7E2-647D-495E-86BD-35D2AE4DE21B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

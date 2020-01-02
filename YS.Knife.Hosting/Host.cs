@@ -35,8 +35,6 @@ namespace Knife.Hosting
 
                 serviceCollection.RegisteOptions(plugins, builder.Configuration);
 
-                serviceCollection.RegisteHostServices(plugins, builder.Configuration);
-
             });
 
         }
