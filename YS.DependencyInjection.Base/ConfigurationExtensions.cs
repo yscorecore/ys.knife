@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Configuration;
-
 namespace System
 {
     public static class ConfigurationExtensions

@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,6 +38,7 @@ namespace Knife.Hosting
                 serviceCollection.RegisteHostServices(plugins, builder.Configuration);
 
             });
+
         }
     }
 }
