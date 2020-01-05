@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>System</RootNamespace>
-    <Version>1.0.1</Version>
+    <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
+    <Version>1.0.2</Version>
   </PropertyGroup>
 
   <ItemGroup>
