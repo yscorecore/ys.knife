@@ -10,7 +10,7 @@ namespace System
         {
 
         }
-        public ServiceClassAttribute(Type injectType, ServiceLifetime serviceLifetime= ServiceLifetime.Singleton)
+        public ServiceClassAttribute(Type injectType, ServiceLifetime serviceLifetime= ServiceLifetime.Scoped)
         {
             this.InjectType = injectType;
             this.Lifetime = serviceLifetime;
