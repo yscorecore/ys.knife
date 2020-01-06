@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Knife.Hosting.MSTest
 {

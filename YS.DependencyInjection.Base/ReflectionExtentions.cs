@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Reflection;
 
 namespace System
 {
@@ -11,6 +12,7 @@ namespace System
 
             foreach (var assembly in appDomain.GetAssemblies())
             {
+                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -29,6 +31,7 @@ namespace System
             var customFilter = filter ?? (type => true);
             foreach (var assembly in appDomain.GetAssemblies())
             {
+                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -47,6 +50,7 @@ namespace System
             var customFilter = filter ?? (type => true);
             foreach (var assembly in appDomain.GetAssemblies())
             {
+                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -59,6 +63,11 @@ namespace System
                     }
                 }
             }
+        }
+        public static bool IsFromMicrosoft(this Assembly assembly)
+        {
+            var companyAttr = assembly.GetCustomAttribute<AssemblyCompanyAttribute>();
+            return companyAttr != null ? companyAttr.Company == "Microsoft Corporation" : false;
         }
     }
 }
