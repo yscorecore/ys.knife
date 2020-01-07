@@ -23,12 +23,12 @@ namespace YS.EntityframeworkCore.MSTest
 
             var migrationList = this.TestObject.Database.GetMigrations();
             Trace.TraceInformation($"===Ensure deleted database.");
-            await this.TestObject.Database.EnsureDeletedAsync(TestContext.CancellationTokenSource.Token);
+            await this.TestObject.Database.EnsureDeletedAsync();
 
             foreach (var migration in migrationList)
             {
                 Trace.TraceInformation($"==Apply up migration \"{migration}\"");
-                await migrator.MigrateAsync(migration, TestContext.CancellationTokenSource.Token);
+                await migrator.MigrateAsync(migration);
             }
         }
         [TestMethod]
@@ -39,12 +39,12 @@ namespace YS.EntityframeworkCore.MSTest
             var migrationList = this.TestObject.Database.GetMigrations().Reverse();
 
             Trace.TraceInformation($"===Ensure created database.");
-            await this.TestObject.Database.EnsureCreatedAsync(TestContext.CancellationTokenSource.Token);
+            await this.TestObject.Database.EnsureCreatedAsync();
 
             foreach (var migration in migrationList)
             {
                 Trace.TraceInformation($"===Apply down migration \"{migration}\"");
-                await migrator.MigrateAsync(migration, TestContext.CancellationTokenSource.Token);
+                await migrator.MigrateAsync(migration);
             }
         }
 
