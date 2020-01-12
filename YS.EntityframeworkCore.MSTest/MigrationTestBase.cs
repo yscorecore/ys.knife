@@ -22,7 +22,7 @@ namespace YS.EntityframeworkCore.MSTest
             var migrator = this.TestObject.GetInfrastructure().GetService<IMigrator>();
 
             var migrationList = this.TestObject.Database.GetMigrations();
-            Trace.TraceInformation($"===Ensure deleted database.");
+            Trace.TraceInformation($"===Ensure delete old database.");
             await this.TestObject.Database.EnsureDeletedAsync();
 
             foreach (var migration in migrationList)
@@ -38,14 +38,19 @@ namespace YS.EntityframeworkCore.MSTest
 
             var migrationList = this.TestObject.Database.GetMigrations().Reverse();
 
-            Trace.TraceInformation($"===Ensure created database.");
-            await this.TestObject.Database.EnsureCreatedAsync();
+            Trace.TraceInformation($"===Ensure delete old database.");
+            await this.TestObject.Database.EnsureDeletedAsync();
+
+            Trace.TraceInformation($"===Ensure creat new database.");
+            await migrator.MigrateAsync((string)null);
 
             foreach (var migration in migrationList)
             {
                 Trace.TraceInformation($"===Apply down migration \"{migration}\"");
                 await migrator.MigrateAsync(migration);
             }
+
+            await migrator.MigrateAsync("0");//delete all the things that migration created
         }
 
     }
