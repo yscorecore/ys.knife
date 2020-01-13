@@ -2,13 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
-    <Version>1.0.5</Version>
+    <RootNamespace>YS.EntityframeworkCore</RootNamespace>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="2.19.60" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.0" />
@@ -18,5 +16,4 @@
   <ItemGroup>
     <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
   </ItemGroup>
-
 </Project>
