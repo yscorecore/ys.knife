@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>YS.EntityFrameworkCore</RootNamespace>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -16,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
+    <ProjectReference Include="..\YS.EntityframeworkCore.Base\YS.EntityframeworkCore.Base.csproj" />
   </ItemGroup>
 
 </Project>

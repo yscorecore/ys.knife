@@ -47,13 +47,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{90756FF0
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Api.Client.Generator.UnitTest", "YS.Knife.Api.Client.Generator.UnitTest\YS.Knife.Api.Client.Generator.UnitTest.csproj", "{F084BC50-80D8-4F58-8B84-B6405C608232}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.EntityframeworkCore.Sqlite", "YS.EntityframeworkCore.Sqlite\YS.EntityframeworkCore.Sqlite.csproj", "{0D747A10-74A8-4A2C-9929-4D1C9D55325A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityframeworkCore.Sqlite", "YS.EntityframeworkCore.Sqlite\YS.EntityframeworkCore.Sqlite.csproj", "{0D747A10-74A8-4A2C-9929-4D1C9D55325A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.EntityframeworkCore.PostgreSql", "YS.EntityframeworkCore.PostgreSql\YS.EntityframeworkCore.PostgreSql.csproj", "{7E4FC762-DBD6-428D-8540-9ED08A5CE1BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityframeworkCore.PostgreSql", "YS.EntityframeworkCore.PostgreSql\YS.EntityframeworkCore.PostgreSql.csproj", "{7E4FC762-DBD6-428D-8540-9ED08A5CE1BA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityFrameworkCore.MySql", "YS.EntityFrameworkCore.MySql\YS.EntityFrameworkCore.MySql.csproj", "{4501D6B0-62BF-4B8B-A541-A071E73B7574}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.EntityframeworkCore.Oracle", "YS.EntityframeworkCore.Oracle\YS.EntityframeworkCore.Oracle.csproj", "{8252C8BA-7D22-491E-86BC-7216B03724C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityframeworkCore.Oracle", "YS.EntityframeworkCore.Oracle\YS.EntityframeworkCore.Oracle.csproj", "{8252C8BA-7D22-491E-86BC-7216B03724C4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.EntityframeworkCore.Base", "YS.EntityframeworkCore.Base\YS.EntityframeworkCore.Base.csproj", "{58A9E721-4F6A-4A0C-ADDE-2941FA888625}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -145,6 +147,10 @@ Global
 		{8252C8BA-7D22-491E-86BC-7216B03724C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8252C8BA-7D22-491E-86BC-7216B03724C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8252C8BA-7D22-491E-86BC-7216B03724C4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{58A9E721-4F6A-4A0C-ADDE-2941FA888625}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58A9E721-4F6A-4A0C-ADDE-2941FA888625}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58A9E721-4F6A-4A0C-ADDE-2941FA888625}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58A9E721-4F6A-4A0C-ADDE-2941FA888625}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -166,6 +172,7 @@ Global
 		{7E4FC762-DBD6-428D-8540-9ED08A5CE1BA} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
 		{4501D6B0-62BF-4B8B-A541-A071E73B7574} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
 		{8252C8BA-7D22-491E-86BC-7216B03724C4} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
+		{58A9E721-4F6A-4A0C-ADDE-2941FA888625} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
