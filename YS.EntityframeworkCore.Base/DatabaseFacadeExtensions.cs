@@ -7,7 +7,7 @@ namespace Microsoft.EntityFrameworkCore
 {
     public static class DatabaseFacadeExtensions
     {
-        public static int ExecuteStoredProcedureAsNonQuery(DatabaseFacade databaseFacade, string procedureName, params DbParameter[] parameters)
+        public static int ExecuteStoredProcedureAsNonQuery(this DatabaseFacade databaseFacade, string procedureName, params DbParameter[] parameters)
         {
             var cmd = databaseFacade.GetDbConnection().CreateCommand();
             cmd.CommandText = procedureName;
@@ -23,7 +23,7 @@ namespace Microsoft.EntityFrameworkCore
                 databaseFacade.CloseConnection();
             }
         }
-        public static object ExecuteStoredProcedureAsScalar(DatabaseFacade databaseFacade, string procedureName, params DbParameter[] parameters)
+        public static object ExecuteStoredProcedureAsScalar(this DatabaseFacade databaseFacade, string procedureName, params DbParameter[] parameters)
         {
             var cmd = databaseFacade.GetDbConnection().CreateCommand();
             cmd.CommandText = procedureName;
@@ -40,7 +40,7 @@ namespace Microsoft.EntityFrameworkCore
             }
         }
 
-        public static void ExecuteStoredProcedureAsReader(DatabaseFacade databaseFacade, string procedureName, Action<DbDataReader> readAction, params DbParameter[] parameters)
+        public static void ExecuteStoredProcedureAsReader(this DatabaseFacade databaseFacade, string procedureName, Action<DbDataReader> readAction, params DbParameter[] parameters)
         {
             var cmd = databaseFacade.GetDbConnection().CreateCommand();
             cmd.CommandText = procedureName;
