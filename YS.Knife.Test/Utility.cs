@@ -22,7 +22,7 @@ namespace YS.Knife.Test
             }
             throw new ApplicationException("Not able to find a free TCP port.");
         }
-        const string fullCode = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890~!@#$^&*()-+={}[]\\|?<>,./";
+        const string fullCode = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
         public static string NewPassword(int length = 32)
         {

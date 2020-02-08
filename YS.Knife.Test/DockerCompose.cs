@@ -8,9 +8,7 @@ namespace YS.Knife.Test
     {
         public static void Up(IDictionary<string, object> envs = null)
         {
-
             Exec("docker-compose", "up -d", envs);
-
         }
         public static void Down()
         {
