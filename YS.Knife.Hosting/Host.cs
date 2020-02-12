@@ -1,21 +1,54 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Text;
+using System.Text.RegularExpressions;
+using System.Linq;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace Knife.Hosting
 {
     public static class Host
     {
+        const string VerbRun = "run";
         public static void Run(string[] args)
         {
-            using (var host = CreateHost(args))
+            Run(args, CreateHost);
+        }
+        public static void Run(string[] args, Func<string[], IHost> hostBuilder)
+        {
+            var argInfo = ParseArguments(args);
+            using (var host = hostBuilder(args))
             {
-                host.Run();
+                if (string.Equals(argInfo.Verb, VerbRun, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    host.Run();
+                }
+                else
+                {
+                    RunStageVerb(host, argInfo.Verb);
+                }
             }
+        }
+
+        private static (string Verb, string[] Arguments) ParseArguments(string[] args)
+        {
+            if (args.Length == 0)
+            {
+                return (VerbRun, Array.Empty<string>());
+            }
+            if (Regex.IsMatch(args[0], "\\w+"))
+            {
+                return (args[0].ToLower(), args.SubArray(1));
+            }
+            else
+            {
+                throw new ArgumentException($"The first argument should be a verb.(eg. run)");
+            }
+
         }
         public static IHost CreateHost(string[] args = default)
         {
@@ -37,6 +70,19 @@ namespace Knife.Hosting
 
             });
 
+        }
+        private static async void RunStageVerb(IHost host, string name)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var handlers = scope.ServiceProvider.GetRequiredService<IList<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase));
+                ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger>();
+                foreach (var handler in handlers)
+                {
+                    logger.LogInformation($"Start exec handler {handler.GetType().Name}");
+                    await handler.Run(CancellationToken.None);
+                }
+            }
         }
     }
 }

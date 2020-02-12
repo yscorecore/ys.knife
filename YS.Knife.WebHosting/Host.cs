@@ -3,17 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Linq;
-
+using CommonHost = Knife.Hosting.Host;
 namespace Knife.WebHosting
 {
     public static class Host
     {
         public static void Run(string[] args)
         {
-            using (var host = CreateWebHost(args))
-            {
-                host.Run();
-            }
+            CommonHost.Run(args, CreateWebHost);
         }
         public static IHost CreateWebHost(string[] args = default)
         {
@@ -22,7 +19,7 @@ namespace Knife.WebHosting
 
         public static IHostBuilder CreateWebHostBuilder(string[] args = default)
         {
-            return Knife.Hosting.Host.CreateHostBuilder(args)
+            return CommonHost.CreateHostBuilder(args)
                   .ConfigureServices((builder, serviceCollections) =>
                   {
                       var options = builder.Configuration.GetConfigOrNew<WebAppOptions>();
