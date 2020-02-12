@@ -75,7 +75,7 @@ namespace Knife.Hosting
         {
             using (var scope = host.Services.CreateScope())
             {
-                var handlers = scope.ServiceProvider.GetRequiredService<IList<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase));
+                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase));
                 ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger>();
                 foreach (var handler in handlers)
                 {
