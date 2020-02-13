@@ -1,11 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace YS.EntityframeworkCore.Base
+namespace Microsoft.EntityFrameworkCore
 {
     public class DbContextMigrationInstaller<T> : Installer
         where T : DbContext
