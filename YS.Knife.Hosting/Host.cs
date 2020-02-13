@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace Knife.Hosting
 {
@@ -29,7 +30,7 @@ namespace Knife.Hosting
                 }
                 else
                 {
-                    RunStageVerb(host, argInfo.Verb);
+                   RunStageVerb(host, argInfo.Verb);
                 }
             }
         }
@@ -71,16 +72,19 @@ namespace Knife.Hosting
             });
 
         }
-        private static async void RunStageVerb(IHost host, string name)
+        private static void RunStageVerb(IHost host, string name)
         {
             using (var scope = host.Services.CreateScope())
             {
-                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase));
+                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase)).ToList();
                 ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger<IHost>>();
-                foreach (var handler in handlers)
+                logger.LogInformation($"There {handlers.Count} handlers in {name} stage.");
+                for (int i = 0; i < handlers.Count; i++)
                 {
-                    logger.LogInformation($"Start exec handler {handler.GetType().Name}");
-                    await handler.Run(CancellationToken.None);
+                    var index = i + 1;
+                    var handler = handlers[i];
+                    logger.LogInformation($"[{index:d2}]] Start exec handler {handler.GetType().Name}.");
+                    handler.Run(CancellationToken.None).Wait();
                 }
             }
         }
