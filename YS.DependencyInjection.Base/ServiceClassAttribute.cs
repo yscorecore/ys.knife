@@ -16,7 +16,7 @@ namespace System
             this.Lifetime = serviceLifetime;
         }
         public Type InjectType { get; private set; }
-        public ServiceLifetime Lifetime { get; set; }
+        public ServiceLifetime Lifetime { get; set; } = ServiceLifetime.Scoped;
 
         public string Key { get; set; }
     }

@@ -78,12 +78,12 @@ namespace Knife.Hosting
             {
                 var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase)).ToList();
                 ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger<IHost>>();
-                logger.LogInformation($"There {handlers.Count} handlers in {name} stage.");
+                logger.LogInformation($"There are {handlers.Count} handlers in {name} stage.");
                 for (int i = 0; i < handlers.Count; i++)
                 {
                     var index = i + 1;
                     var handler = handlers[i];
-                    logger.LogInformation($"[{index:d2}]] Start exec handler {handler.GetType().Name}.");
+                    logger.LogInformation($"[{index:d2}] Start exec handler {handler.GetType().Name}.");
                     handler.Run(CancellationToken.None).Wait();
                 }
             }
