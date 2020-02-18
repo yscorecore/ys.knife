@@ -1,18 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.EntityFrameworkCore
+﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqlServerDbContextClassAttribute:Attribute
+    public class SqlServerDbContextClassAttribute: DbContextClassAttribute
     {
-        public SqlServerDbContextClassAttribute(string connectionStringKey)
+        public SqlServerDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
         {
             this.ConnectionStringKey = connectionStringKey;
         }
-       
-        public Type InjectType { get; set; }
 
-        public string ConnectionStringKey { get; set; }
+        public override string DbType => "mssql";
+
+        public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)
+        {
+            builder.UseSqlServer(connectionString, (op) =>
+            {
+                op.EnableRetryOnFailure();
+            });
+        }
     }
 }

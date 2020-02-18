@@ -1,18 +1,19 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class OracleDbContextClassAttribute:Attribute
+    public class OracleDbContextClassAttribute: DbContextClassAttribute
     {
-        public OracleDbContextClassAttribute(string connectionStringKey)
+        public OracleDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
         {
-            this.ConnectionStringKey = connectionStringKey;
+          
         }
-       
-        public Type InjectType { get; set; }
 
-        public string ConnectionStringKey { get; set; }
+        public override string DbType => "oracle";
+
+        public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

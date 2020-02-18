@@ -1,18 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Microsoft.EntityFrameworkCore
+﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqliteDbContextClassAttribute:Attribute
+    public class SqliteDbContextClassAttribute: DbContextClassAttribute
     {
-        public SqliteDbContextClassAttribute(string connectionStringKey)
+        public SqliteDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
         {
-            this.ConnectionStringKey = connectionStringKey;
         }
-       
-        public Type InjectType { get; set; }
 
-        public string ConnectionStringKey { get; set; }
+        public override string DbType => "sqlite";
+
+        public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)
+        {
+            builder.UseSqlite(connectionString, (op) =>
+            {
+
+            });
+        }
     }
 }
