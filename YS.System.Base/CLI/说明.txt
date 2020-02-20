@@ -1,2 +1,0 @@
-﻿此模型来源于微软的示例库cmdLine   ，作者稍加修改
-详细参照 http://code.msdn.microsoft.com

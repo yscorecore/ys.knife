@@ -12,12 +12,11 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.0" />
+    <PackageReference Include="YS.System.Data" Version="1.0.6" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
-    <ProjectReference Include="..\YS.System.Base\YS.System.Base.csproj" />
-    <ProjectReference Include="..\YS.System.Data\YS.System.Data.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,25 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.Base", "YS.System.Base\YS.System.Base.csproj", "{86E7A08D-6345-4197-BFEF-774A8FF0E30F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.Json", "YS.System.Json\YS.System.Json.csproj", "{D2466910-A70B-46AB-8921-888D17720DC0}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.Data", "YS.System.Data\YS.System.Data.csproj", "{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.DependencyInjection.Base", "YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj", "{33C4EF10-7246-45A5-854D-2908E31A49A2}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Extentions.EntityFrameworkCore", "YS.Extentions.EntityFrameworkCore\YS.Extentions.EntityFrameworkCore.csproj", "{F2BE0DA6-D759-4291-8C6A-3F77520AED72}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.System.AspnetCore.Mvc", "YS.System.AspnetCore.Mvc\YS.System.AspnetCore.Mvc.csproj", "{1F83F487-7C92-4D86-82C0-0B76269A6B83}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Knife", "Knife", "{B52FF422-75FA-494F-8348-6C511196BC7E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Base", "YS.Knife.Base\YS.Knife.Base.csproj", "{44583D76-9475-4034-8BBE-862AF2F1E57D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Api", "YS.Knife.Api\YS.Knife.Api.csproj", "{AAE8ECD1-C933-4577-BC6F-C89EAD4FAD1F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{868067E6-126E-4760-A307-ADA8661BE1D4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting", "YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{2E0284EA-8479-4BA0-AD21-10D5B42FCB8D}"
 EndProject
@@ -59,7 +49,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Test", "YS.Knife.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Rest.Client", "YS.Knife.Rest.Client\YS.Knife.Rest.Client.csproj", "{0A29685F-A759-428C-9405-30FDB2191C0E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knift.Base.UnitTest", "YS.Knift.Base.UnitTest\YS.Knift.Base.UnitTest.csproj", "{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knift.Base.UnitTest", "YS.Knift.Base.UnitTest\YS.Knift.Base.UnitTest.csproj", "{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -67,18 +57,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{86E7A08D-6345-4197-BFEF-774A8FF0E30F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{86E7A08D-6345-4197-BFEF-774A8FF0E30F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{86E7A08D-6345-4197-BFEF-774A8FF0E30F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{86E7A08D-6345-4197-BFEF-774A8FF0E30F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D2466910-A70B-46AB-8921-888D17720DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D2466910-A70B-46AB-8921-888D17720DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D2466910-A70B-46AB-8921-888D17720DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D2466910-A70B-46AB-8921-888D17720DC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{33C4EF10-7246-45A5-854D-2908E31A49A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{33C4EF10-7246-45A5-854D-2908E31A49A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{33C4EF10-7246-45A5-854D-2908E31A49A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,10 +65,6 @@ Global
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2BE0DA6-D759-4291-8C6A-3F77520AED72}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F83F487-7C92-4D86-82C0-0B76269A6B83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F83F487-7C92-4D86-82C0-0B76269A6B83}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F83F487-7C92-4D86-82C0-0B76269A6B83}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F83F487-7C92-4D86-82C0-0B76269A6B83}.Release|Any CPU.Build.0 = Release|Any CPU
 		{44583D76-9475-4034-8BBE-862AF2F1E57D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{44583D76-9475-4034-8BBE-862AF2F1E57D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{44583D76-9475-4034-8BBE-862AF2F1E57D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -168,10 +142,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{86E7A08D-6345-4197-BFEF-774A8FF0E30F} = {868067E6-126E-4760-A307-ADA8661BE1D4}
-		{D2466910-A70B-46AB-8921-888D17720DC0} = {868067E6-126E-4760-A307-ADA8661BE1D4}
-		{1F1098F2-CA2B-4AC5-AE24-27CCB74E95C5} = {868067E6-126E-4760-A307-ADA8661BE1D4}
-		{1F83F487-7C92-4D86-82C0-0B76269A6B83} = {868067E6-126E-4760-A307-ADA8661BE1D4}
 		{44583D76-9475-4034-8BBE-862AF2F1E57D} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 		{AAE8ECD1-C933-4577-BC6F-C89EAD4FAD1F} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 		{2E0284EA-8479-4BA0-AD21-10D5B42FCB8D} = {B52FF422-75FA-494F-8348-6C511196BC7E}
