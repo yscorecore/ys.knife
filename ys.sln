@@ -57,7 +57,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.EntityframeworkCore.Base
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Test", "YS.Knife.Test\YS.Knife.Test.csproj", "{43790BA5-FE56-45AF-BE3D-612B7BE14363}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Rest.Client", "YS.Knife.Rest.Client\YS.Knife.Rest.Client.csproj", "{0A29685F-A759-428C-9405-30FDB2191C0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Rest.Client", "YS.Knife.Rest.Client\YS.Knife.Rest.Client.csproj", "{0A29685F-A759-428C-9405-30FDB2191C0E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knift.Base.UnitTest", "YS.Knift.Base.UnitTest\YS.Knift.Base.UnitTest.csproj", "{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -157,6 +159,10 @@ Global
 		{0A29685F-A759-428C-9405-30FDB2191C0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0A29685F-A759-428C-9405-30FDB2191C0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0A29685F-A759-428C-9405-30FDB2191C0E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BC2B3BC-021C-4732-B2F8-E2488A9175C5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,6 +188,7 @@ Global
 		{58A9E721-4F6A-4A0C-ADDE-2941FA888625} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
 		{43790BA5-FE56-45AF-BE3D-612B7BE14363} = {B52FF422-75FA-494F-8348-6C511196BC7E}
 		{0A29685F-A759-428C-9405-30FDB2191C0E} = {B52FF422-75FA-494F-8348-6C511196BC7E}
+		{3BC2B3BC-021C-4732-B2F8-E2488A9175C5} = {90756FF0-EDD4-441A-906A-32BDFA3F32DA}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
