@@ -32,8 +32,8 @@ namespace Microsoft.EntityFrameworkCore
         private IDbContextGenericProxy CreateRegisterProxy(Type contextType, T attribute)
         {
             var proxyType = attribute.InjectType != null
-                    ? typeof(DbContextGenericProxy<,>).MakeGenericType(contextType, attribute.InjectType)
-                    : typeof(DbContextGenericProxy<>).MakeGenericType(contextType);
+                    ? typeof(DbContextGenericProxy<,>).MakeGenericType(typeof(T), contextType, attribute.InjectType)
+                    : typeof(DbContextGenericProxy<>).MakeGenericType(typeof(T), contextType);
             return Activator.CreateInstance(proxyType) as IDbContextGenericProxy;
         }
 
@@ -56,14 +56,14 @@ namespace Microsoft.EntityFrameworkCore
         }
         private class DbContextGenericProxy<ImplType, InjectType> : IDbContextGenericProxy
                where InjectType : class
-              where ImplType : DbContext, InjectType
+               where ImplType : DbContext, InjectType
         {
             public void AddDbContext(IServiceCollection services, T attribute, string connectionString)
             {
-                services.AddDbContextPool<InjectType, ImplType>((build) =>
-                {
-                    attribute.BuildOptions(build, connectionString);
-                });
+                //services.AddDbContextPool<InjectType, ImplType>((build) =>
+                //{
+                //    attribute.BuildOptions(build, connectionString);
+                //});
             }
         }
         #endregion

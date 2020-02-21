@@ -35,6 +35,14 @@ namespace Knife.Hosting.MSTest
         {
             return this.host.Services.GetService<T>();
         }
+        public void UseAspNetCoreEnv(string envName) 
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", envName);
+        }
+        public void ReleaseAspNetCoreEnv(string envName)
+        {
+            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", string.Empty);
+        }
     }
 
     public class TestBase<T> : TestBase
