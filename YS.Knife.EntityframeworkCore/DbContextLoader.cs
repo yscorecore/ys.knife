@@ -60,10 +60,10 @@ namespace Microsoft.EntityFrameworkCore
         {
             public void AddDbContext(IServiceCollection services, T attribute, string connectionString)
             {
-                //services.AddDbContextPool<InjectType, ImplType>((build) =>
-                //{
-                //    attribute.BuildOptions(build, connectionString);
-                //});
+                services.AddDbContextPool<InjectType, ImplType>((build) =>
+                {
+                    attribute.BuildOptions(build, connectionString);
+                });
             }
         }
         #endregion
