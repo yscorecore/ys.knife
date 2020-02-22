@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.EntityFrameworkCore\YS.Knife.EntityframeworkCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityFrameworkCore\YS.Knife.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
   </ItemGroup>
 
