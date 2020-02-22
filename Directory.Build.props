@@ -6,8 +6,8 @@
         <Product>YS.Knife</Product>
         <PackageIcon>icon.png</PackageIcon>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl></RepositoryUrl>
-        <PackageProjectUrl></PackageProjectUrl>
+        <RepositoryUrl>https://github.com/yscorecore/Knife</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/yscorecore/Knife</PackageProjectUrl>
     </PropertyGroup>
     <ItemGroup>
         <None Include="..\resources\icon.png">
