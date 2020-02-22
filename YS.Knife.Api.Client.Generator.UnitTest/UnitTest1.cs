@@ -1,6 +1,6 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace YS.Knife.Api.Client.Generator.UnitTest
+namespace YS.Knife.Rest.Api.Client.Generator.UnitTest
 {
     [TestClass]
     public class UnitTest1

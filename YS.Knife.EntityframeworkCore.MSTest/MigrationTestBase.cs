@@ -8,7 +8,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace YS.EntityframeworkCore.MSTest
+namespace YS.Knife.EntityFrameworkCore.MSTest
 {
 
     public class MigrationTestBase<ContextType> : TestBase<ContextType>

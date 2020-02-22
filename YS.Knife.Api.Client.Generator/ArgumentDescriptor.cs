@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace YS.Knife.Api.Client.Generator
+namespace YS.Knife.Rest.Api.Client.Generator
 {
     public class ArgumentDescriptor
     {

@@ -2,7 +2,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 
-namespace YS.EntityFrameworkCore.MySql.UnitTest.TestData
+namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest.TestData
 {
     [MySqlDbContextClass("TestContext")]
     public class TestDbContext : DbContext

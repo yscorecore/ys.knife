@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>YS.EntityFrameworkCore</RootNamespace>
+    <RootNamespace>YS.Knife.EntityFrameworkCore</RootNamespace>
     <Version>1.0.7</Version>
   </PropertyGroup>
 
@@ -16,8 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.DependencyInjection.Base\YS.DependencyInjection.Base.csproj" />
-    <ProjectReference Include="..\YS.EntityframeworkCore.Base\YS.EntityframeworkCore.Base.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityFrameworkCore\YS.Knife.EntityframeworkCore.csproj" />
+    <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
   </ItemGroup>
 
 </Project>

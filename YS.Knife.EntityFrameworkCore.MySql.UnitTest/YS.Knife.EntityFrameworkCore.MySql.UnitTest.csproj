@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.EntityFrameworkCore.MySql\YS.EntityFrameworkCore.MySql.csproj" />
+    <ProjectReference Include="..\YS.Knife.EntityFrameworkCore.MySql\YS.Knife.EntityFrameworkCore.MySql.csproj" />
     <ProjectReference Include="..\YS.Knife.Hosting.MSTest\YS.Knife.Hosting.MSTest.csproj" />
   </ItemGroup>
 
