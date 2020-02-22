@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <RootNamespace>System</RootNamespace>
-    <Version>1.0.13</Version>
   </PropertyGroup>
 
   <ItemGroup>

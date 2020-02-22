@@ -1,0 +1,27 @@
+name: package
+on:
+  push:
+    tags:        
+      - "*"
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 01 Checkout Code
+      uses: actions/checkout@v1
+    - name: 02 Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 3.1.100
+    - name: 03 Build with dotnet
+      run: dotnet build
+    - name: 04 Run Unit test
+      run: dotnet test
+    - name: 05 Set Git Tag Name
+      run: echo "::set-env name=GIT_TAG::${GITHUB_REF:10}"
+    - name: 06 Set Pack Version
+      run: echo "::set-env name=PACK_VERSION::${GIT_TAG#v}"
+    - name: 07 Create Package
+      run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
+    - name: 08 Push Package
+      run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}

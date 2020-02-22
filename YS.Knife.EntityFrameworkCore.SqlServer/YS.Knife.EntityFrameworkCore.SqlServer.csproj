@@ -3,7 +3,6 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <RootNamespace>Microsoft.EntityFrameworkCore</RootNamespace>
-    <Version>1.0.12</Version>
   </PropertyGroup>
 
   <ItemGroup>
