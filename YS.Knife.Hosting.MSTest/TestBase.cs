@@ -2,64 +2,25 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 
 namespace Knife.Hosting.MSTest
 {
-    public abstract class TestBase
+    public class TestBase<T> : KnifeHost
     {
-        [TestInitialize]
-        public void Setup()
-        {
-            this.OnSetup();
-        }
-        protected IHost host;
-        protected virtual void OnSetup()
-        {
-            this.host = Host.CreateHost();
-        }
-
-        protected virtual void OnTearDown()
-        {
-            if (host != null)
-            {
-                this.host.Dispose();
-            }
-        }
-
-        [TestCleanup]
-        public void TearDown()
-        {
-            this.OnTearDown();
-        }
-        public T Get<T>()
-        {
-            return this.host.Services.GetService<T>();
-        }
-        public void UseAspNetCoreEnv(string envName) 
-        {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", envName);
-        }
-        public void ReleaseAspNetCoreEnv(string envName)
-        {
-            Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", string.Empty);
-        }
-    }
-
-    public class TestBase<T> : TestBase
-    {
-        public TestBase()
+        public TestBase(Action<IServiceCollection, IConfiguration> configureDelegate = null) : base(new string[0], configureDelegate)
         {
             this.testObjectFactory = new Lazy<T>(this.Get<T>, true);
         }
+
         private Lazy<T> testObjectFactory;
-        protected T TestObject 
+        protected T TestObject
         {
             get
             {
                 return testObjectFactory.Value;
             }
         }
-
     }
 
 }

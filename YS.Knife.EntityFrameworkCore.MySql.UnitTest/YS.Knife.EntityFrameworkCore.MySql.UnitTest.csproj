@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.EntityFrameworkCore.MySql\YS.Knife.EntityFrameworkCore.MySql.csproj" />
     <ProjectReference Include="..\YS.Knife.Hosting.MSTest\YS.Knife.Hosting.MSTest.csproj" />
+    <ProjectReference Include="..\YS.Knife.Test\YS.Knife.Test.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,0 +1,91 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using Xunit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using System.Threading.Tasks;
+using System.Threading;
+using Moq;
+
+namespace Knife.Hosting
+{
+    public class KnifeHostTest
+    {
+        [Fact]
+        public void ShouldCreateANewInstanceWhenCallCtor()
+        {
+            using (var host = new KnifeHost(null))
+            {
+                
+            }
+
+        }
+        [Fact]
+        public void ShouldReturnServiceWhenGetService()
+        {
+            using (var knifeHost = new KnifeHost(new string[0]))
+            {
+                var innerHost = knifeHost.GetRequiredService<IHost>();
+                Assert.NotNull(innerHost);
+            }
+        }
+        [Fact]
+        public void ShouldCanBeStopedWhenRun()
+        {
+            using (var knifeHost = new KnifeHost(new string[0]))
+            {
+                var appLiftTime = knifeHost.GetRequiredService<IHostApplicationLifetime>();
+                Task.Delay(500).ContinueWith((_) => { appLiftTime.StopApplication(); });
+                knifeHost.Run();
+            }
+        }
+
+      
+        [Fact]
+        public void ShouldGetInjectServiceByCodeWhenUseConfigureDelegate()
+        {
+            using (var knifeHost = new KnifeHost(new string[0], (serviceCollection, c) =>
+            {
+                serviceCollection.AddSingleton<ITest, ATest>();
+            }))
+            {
+                var test = knifeHost.GetService<ITest>();
+                Assert.IsType<ATest>(test);
+            }
+        }
+
+        [Fact]
+        public void ShouldRunTempStageServiceWhenRunStageTemp()
+        {
+            var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp");
+            using (var knifeHost = new KnifeHost(new string[] { "Stage=temp" }, (serviceCollection, c) =>
+            {
+                serviceCollection.AddSingleton<IStageService>(tempStageService);
+            }))
+            {
+                knifeHost.Run();
+            }
+            Mock.Get(tempStageService).Verify(p => p.Run(default), Times.Once);
+        }
+        [Fact]
+        public void ShouldRunDefaultWhenUseDefaultStageName()
+        {
+            var defaultStageService = Mock.Of<IStageService>(p => p.StageName == "default");
+            using (var knifeHost = new KnifeHost(new string[] { "Stage=default" }, (serviceCollection, c) =>
+            {
+                serviceCollection.AddSingleton<IStageService>(defaultStageService);
+            }))
+            {
+                var appLiftTime = knifeHost.GetRequiredService<IHostApplicationLifetime>();
+                Task.Delay(500).ContinueWith((_) => { appLiftTime.StopApplication(); });
+                knifeHost.Run();
+            }
+            Mock.Get(defaultStageService).Verify(p => p.Run(default), Times.Never);
+        }
+
+        interface ITest { }
+        class ATest : ITest { }
+
+    }
+}

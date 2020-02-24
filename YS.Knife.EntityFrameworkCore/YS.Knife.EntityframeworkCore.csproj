@@ -7,10 +7,12 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.2" />
+
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Hosting.MSTest\YS.Knife.Hosting.MSTest.csproj" />
+    <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Base\YS.Knife.Base.csproj" />
   </ItemGroup>
 
 </Project>
