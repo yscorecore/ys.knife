@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Base", "YS.Knife.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting", "YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{2E0284EA-8479-4BA0-AD21-10D5B42FCB8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.WebHosting", "YS.Knife.WebHosting\YS.Knife.WebHosting.csproj", "{CD02E952-5949-4201-96B7-B44C4ED57C2C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting.Web", "YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj", "{CD02E952-5949-4201-96B7-B44C4ED57C2C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EfCore", "EfCore", "{9B689F5B-DC6A-4911-A8EF-3751505108B3}"
 EndProject

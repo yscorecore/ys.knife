@@ -1,4 +1,4 @@
 # YS.Knife
 
 
-![package](https://github.com/yscorecore/Knife/workflows/package/badge.svg?branch=master)
+![build](https://github.com/yscorecore/Knife/workflows/build/badge.svg?branch=master)
