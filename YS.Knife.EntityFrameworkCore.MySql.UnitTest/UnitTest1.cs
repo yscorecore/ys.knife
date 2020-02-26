@@ -2,11 +2,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Knife.Hosting;
-using Knife.Hosting.MSTest;
 using Knife.Test;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.EntityFrameworkCore.MySql.UnitTest.TestData;
+using System.Collections.Generic;
 
 namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest
 {
@@ -16,25 +16,28 @@ namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest
         [TestMethod]
         public void ShouldNotBeNullWhenHasDefineMySqlDbContextClassAndNoInjectType()
         {
-            using (Utility.WithNetcoreEnv(""))
+            var args = new Dictionary<string, object>
             {
-                using (var host = new KnifeHost())
-                {
-                    Assert.IsNotNull(host.Get<TestDbContext>());
-                }
+                ["ConnectionStrings:TestContext"] = "Server=localhost;Database=SequenceContext; User=root;Password=;"
+            };
+            using (var host = new KnifeHost(args))
+            {
+                Assert.IsNotNull(host.Get<TestDbContext>());
             }
         }
 
         [TestMethod]
         public void ShouldNotBeNullWhenHasDefineMySqlDbContextClassAndWithInjectType()
         {
-            using (Utility.WithNetcoreEnv(""))
+            var args = new Dictionary<string, object>
             {
-                using (var host = new KnifeHost())
-                {
-                    Assert.IsNotNull(host.Get<TestDbContext2>());
-                }
+                ["ConnectionStrings:TestContext2"] = "Server=localhost;Database=SequenceContext; User=root;Password=;"
+            };
+            using (var host = new KnifeHost(args))
+            {
+                Assert.IsNotNull(host.Get<TestDbContext2>());
             }
+
         }
     }
 

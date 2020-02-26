@@ -14,13 +14,21 @@ namespace Knife.Hosting
 {
     public class KnifeHost : IDisposable, IServiceProvider
     {
-        public KnifeHost(string[] args = null, Action<IServiceCollection, IConfiguration> configureDelegate = null)
+        public KnifeHost() : this(new string[0])
+        {
+        }
+        public KnifeHost(IDictionary<string, object> args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
+            : this(args?.Select(p => $"/{p.Key}={p.Value}").ToArray(), configureDelegate)
+        {
+        }
+
+        public KnifeHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
         {
             this.args = args;
             this.configureDelegate = configureDelegate;
             this.host = CreateHostBuilder().Build();
         }
-        private readonly Action<IServiceCollection, IConfiguration> configureDelegate;
+        private readonly Action<HostBuilderContext, IServiceCollection> configureDelegate;
         private readonly string[] args;
         private readonly IHost host;
 
@@ -45,7 +53,7 @@ namespace Knife.Hosting
         }
         protected virtual void LoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            configureDelegate?.Invoke(serviceCollection, builder.Configuration);
+            configureDelegate?.Invoke(builder, serviceCollection);
         }
 
         private void LoadAssemblyService(HostBuilderContext builder, IServiceCollection serviceCollection)
@@ -61,7 +69,7 @@ namespace Knife.Hosting
             serviceCollection.RegisteOptions(plugins, builder.Configuration);
         }
 
-        protected virtual void RunStage(string name)
+        protected void RunStage(string name)
         {
             using (var scope = host.Services.CreateScope())
             {
@@ -77,11 +85,11 @@ namespace Knife.Hosting
                 }
             }
         }
-        protected virtual void RunDefault()
+        protected void RunDefault()
         {
             host.Run();
         }
-        
+
         public void Run()
         {
             var options = this.host.Services.GetService<IOptions<HostOptions>>();
@@ -95,7 +103,7 @@ namespace Knife.Hosting
             }
         }
 
-        protected virtual bool IsDefaultVerb(string stage)
+        private bool IsDefaultVerb(string stage)
         {
             return string.IsNullOrEmpty(stage) ||
                 string.Equals("default", stage, StringComparison.InvariantCultureIgnoreCase);
@@ -105,5 +113,12 @@ namespace Knife.Hosting
         {
             this.host.Dispose();
         }
+        #region Static
+
+        public static void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
+        {
+            new KnifeHost(args, configureDelegate).Run();
+        }
+        #endregion
     }
 }

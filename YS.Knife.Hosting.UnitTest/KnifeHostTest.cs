@@ -15,9 +15,9 @@ namespace Knife.Hosting
         [Fact]
         public void ShouldCreateANewInstanceWhenCallCtor()
         {
-            using (var host = new KnifeHost(null))
+            using (var host  = new KnifeHost())
             {
-                
+
             }
 
         }
@@ -41,11 +41,11 @@ namespace Knife.Hosting
             }
         }
 
-      
+
         [Fact]
         public void ShouldGetInjectServiceByCodeWhenUseConfigureDelegate()
         {
-            using (var knifeHost = new KnifeHost(new string[0], (serviceCollection, c) =>
+            using (var knifeHost = new KnifeHost(new string[0], (builder, serviceCollection) =>
             {
                 serviceCollection.AddSingleton<ITest, ATest>();
             }))
@@ -59,7 +59,7 @@ namespace Knife.Hosting
         public void ShouldRunTempStageServiceWhenRunStageTemp()
         {
             var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp");
-            using (var knifeHost = new KnifeHost(new string[] { "Stage=temp" }, (serviceCollection, c) =>
+            using (var knifeHost = new KnifeHost(new string[] { "Stage=temp" }, (builder, serviceCollection) =>
             {
                 serviceCollection.AddSingleton<IStageService>(tempStageService);
             }))
@@ -72,7 +72,7 @@ namespace Knife.Hosting
         public void ShouldRunDefaultWhenUseDefaultStageName()
         {
             var defaultStageService = Mock.Of<IStageService>(p => p.StageName == "default");
-            using (var knifeHost = new KnifeHost(new string[] { "Stage=default" }, (serviceCollection, c) =>
+            using (var knifeHost = new KnifeHost(new string[] { "Stage=default" }, (builder, serviceCollection) =>
             {
                 serviceCollection.AddSingleton<IStageService>(defaultStageService);
             }))

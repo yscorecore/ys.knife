@@ -1,22 +1,35 @@
-﻿using Knife.Hosting.MSTest;
+﻿using Knife.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 
 namespace Knift
 {
     [TestClass]
-    public class ConfigurationExtensionsTest: TestBase<IConfiguration>
+    public class ConfigurationExtensionsTest: KnifeHost
     {
+        static Dictionary<string, object> CommandArguments = new Dictionary<string, object>
+        {
+            ["ConnectionStrings:@DbType"] = "mssql",
+            ["ConnectionStrings:Abc"] = "abcValue",
+            ["ConnectionStrings:Bcd"] = "",
+            ["ConnectionStrings:Cde"] = "sqlserver#Data Source=.;User ID=sa;Database=SequenceContext;Password=;",
+        };
+        public ConfigurationExtensionsTest():base(CommandArguments)
+        {
+            this.configuration = Get<IConfiguration>();
+        }
+        private IConfiguration configuration;
         [TestMethod]
         public void ShouldGetNullWhenGetConnectionInfoGivenANotExistsKey()
         {
-            Assert.IsNull(this.TestObject.GetConnectionInfo("ANotExistsKey"));
+            Assert.IsNull(this.configuration.GetConnectionInfo("ANotExistsKey"));
         }
 
         [TestMethod]
         public void ShouldGetValueWhenGetConnectionInfoGivenAbc()
         {
-            var connectionInfo = this.TestObject.GetConnectionInfo("Abc");
+            var connectionInfo = this.configuration.GetConnectionInfo("Abc");
             Assert.IsNotNull(connectionInfo);
             Assert.AreEqual("mssql", connectionInfo.DBType);
             Assert.AreEqual("abcValue", connectionInfo.Value);
@@ -26,14 +39,14 @@ namespace Knift
         [TestMethod]
         public void ShouldGetValueWhenGetConnectionInfoGivenBcd()
         {
-            var connectionInfo = this.TestObject.GetConnectionInfo("Bcd");
+            var connectionInfo = this.configuration.GetConnectionInfo("Bcd");
             Assert.IsNull(connectionInfo);
         }
 
         [TestMethod]
         public void ShouldGetValueWhenGetConnectionInfoGivenCde()
         {
-            var connectionInfo = this.TestObject.GetConnectionInfo("Cde");
+            var connectionInfo = this.configuration.GetConnectionInfo("Cde");
             Assert.IsNotNull(connectionInfo);
             Assert.AreEqual("sqlserver", connectionInfo.DBType);
             Assert.AreEqual("Data Source=.;User ID=sa;Database=SequenceContext;Password=;", connectionInfo.Value);
