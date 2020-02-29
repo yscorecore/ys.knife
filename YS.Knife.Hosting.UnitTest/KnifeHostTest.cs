@@ -59,7 +59,7 @@ namespace Knife.Hosting
         public void ShouldRunTempStageServiceWhenRunStageTemp()
         {
             var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp");
-            using (var knifeHost = new KnifeHost(new string[] { "Stage=temp" }, (builder, serviceCollection) =>
+            using (var knifeHost = new KnifeHost(new string[] { "Knife:Stage=temp" }, (builder, serviceCollection) =>
             {
                 serviceCollection.AddSingleton<IStageService>(tempStageService);
             }))

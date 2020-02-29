@@ -58,7 +58,7 @@ namespace Knife.Hosting
 
         private void LoadAssemblyService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            var options = builder.Configuration.GetConfigOrNew<AppOptions>();
+            var options = builder.Configuration.GetConfigOrNew<HostOptions>();
 
             string rootPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
 

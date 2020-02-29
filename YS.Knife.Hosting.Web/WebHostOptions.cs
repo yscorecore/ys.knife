@@ -1,9 +1,9 @@
 ﻿using System;
 
-namespace Knife
+namespace Knife.Hosting.Web
 {
-    [OptionsClass("App")]
-    public class WebAppOptions : AppOptions
+    [OptionsClass("Knife")]
+    public class WebHostOptions:HostOptions
     {
         public string[] MvcParts { get; set; } = new[] { "*.Api" };
     }

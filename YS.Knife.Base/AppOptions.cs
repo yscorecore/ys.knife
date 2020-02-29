@@ -11,7 +11,5 @@ namespace Knife
 
         public string TempFolder { get; set; } = "app_temp";
 
-        public string[] Plugins { get; set; } = new[] { "*.dll" };
-
     }
 }
