@@ -9,7 +9,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Knife.Rest.Client
+namespace YS.Knife.Rest.Client
 {
     public class ClientBase
     {

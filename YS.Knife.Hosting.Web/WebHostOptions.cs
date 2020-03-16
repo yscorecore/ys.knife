@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Knife.Hosting.Web
+namespace YS.Knife.Hosting.Web
 {
     [OptionsClass("Knife")]
     public class WebHostOptions:HostOptions

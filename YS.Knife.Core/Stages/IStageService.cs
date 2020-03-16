@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace System
+namespace YS.Knife
 {
     public interface IStageService
     {

@@ -1,4 +1,4 @@
-﻿using Knife;
+﻿using YS.Knife;
 using System.Text.RegularExpressions;
 
 namespace Microsoft.Extensions.Configuration

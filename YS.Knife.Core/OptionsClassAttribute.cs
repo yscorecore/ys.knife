@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace System
+namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple =false)]
     public sealed class OptionsClassAttribute : Attribute

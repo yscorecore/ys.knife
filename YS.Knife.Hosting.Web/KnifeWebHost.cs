@@ -1,4 +1,4 @@
-﻿using Knife.Hosting.Web;
+﻿using YS.Knife.Hosting.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Knife.Hosting
+namespace YS.Knife.Hosting
 {
     public class KnifeWebHost<TStartup> : KnifeHost
         where TStartup : class

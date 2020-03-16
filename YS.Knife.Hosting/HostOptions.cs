@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Knife.Hosting
+namespace YS.Knife.Hosting
 {
     [OptionsClass("Knife")]
     public class HostOptions

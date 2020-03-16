@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-namespace Knife.Hosting
+namespace YS.Knife.Hosting
 {
     public class KnifeHost : IDisposable, IServiceProvider
     {

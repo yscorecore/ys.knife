@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Knife.Api
+namespace YS.Knife.Api
 {
     [ApiController]
     [Route("[controller]")]

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace Knife.Rest.Client
+namespace YS.Knife.Rest.Client
 {
     public class RestApiInfo
     {

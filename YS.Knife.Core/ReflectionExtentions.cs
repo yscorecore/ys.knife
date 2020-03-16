@@ -1,7 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 
-namespace System
+namespace YS.Knife
 {
     public static class ReflectionExtentions
     {

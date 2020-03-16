@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Knife.Rest.Client
+namespace YS.Knife.Rest.Client
 {
     [OptionsClass()]
     public class ApiServicesOptions

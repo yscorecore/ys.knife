@@ -1,4 +1,4 @@
-﻿namespace Knife
+﻿namespace YS.Knife
 {
     public class ConnectionInfo
     {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using Moq;
 
-namespace Knife.Hosting
+namespace YS.Knife.Hosting
 {
     public class KnifeHostTest
     {

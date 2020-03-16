@@ -1,4 +1,4 @@
-﻿using Knife.Hosting;
+﻿using YS.Knife.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;

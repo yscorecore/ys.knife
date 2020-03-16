@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace System
+namespace YS.Knife
 {
 
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]

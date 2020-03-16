@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
-namespace System
+﻿using System;
+using Microsoft.Extensions.Configuration;
+namespace YS.Knife
 {
     public static class ConfigurationExtensions
     {

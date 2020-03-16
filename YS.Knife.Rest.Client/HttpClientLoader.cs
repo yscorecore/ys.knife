@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
-namespace Knife.Rest.Client
+namespace YS.Knife.Rest.Client
 {
     public class HttpClientLoader : IServiceLoader
     {

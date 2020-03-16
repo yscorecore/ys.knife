@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Text;
 
-namespace Knife.Test
+namespace YS.Knife.Test
 {
     public static class Utility
     {
