@@ -5,7 +5,7 @@
 
     <IsPackable>false</IsPackable>
 
-    <RootNamespace>Knife.Hosting</RootNamespace>
+    <RootNamespace>YS.Knife.Hosting</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <RootNamespace>Knife</RootNamespace>
+    <RootNamespace>YS.Knife</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
