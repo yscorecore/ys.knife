@@ -1,5 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-namespace YS.Knife.MutilDeclare
+namespace YS.Knife.TestData
 {
     public class Mutil2Attribute : KnifeAttribute
     {

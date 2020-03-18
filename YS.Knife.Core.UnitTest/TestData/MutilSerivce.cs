@@ -1,6 +1,6 @@
-using YS.Knife.MutilDeclare;
 
-namespace YS.Knife.MutilDeclare
+
+namespace YS.Knife.TestData
 {
     [Mutil]
     [Mutil]

@@ -2,7 +2,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-namespace YS.Knife.Core
+namespace YS.Knife
 {
     public class KnifeAttributeServiceLoader : IServiceLoader
     {
@@ -10,7 +10,7 @@ namespace YS.Knife.Core
         {
             foreach (var type in AppDomain.CurrentDomain.FindInstanceTypesByAttribute<KnifeAttribute>())
             {
-                if (ShouldFilter(type)) continue;
+                if (services.IsFilter(type, configuration)) continue;
                 foreach (var injectAttribute in type.GetCustomAttributes(typeof(KnifeAttribute), true).Cast<KnifeAttribute>())
                 {
                     injectAttribute.RegisteService(
@@ -23,9 +23,6 @@ namespace YS.Knife.Core
                 }
             }
         }
-        protected virtual bool ShouldFilter(Type type)
-        {
-            return false;
-        }
+      
     }
 }

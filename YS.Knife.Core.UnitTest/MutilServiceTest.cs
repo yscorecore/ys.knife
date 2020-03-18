@@ -2,8 +2,9 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using YS.Knife.TestData;
 
-namespace YS.Knife.MutilDeclare
+namespace YS.Knife
 {
     [TestClass]
     public class MutilServiceTest
