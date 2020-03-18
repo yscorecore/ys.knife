@@ -14,7 +14,7 @@ namespace YS.Knife
                 foreach (var injectAttribute in type.GetCustomAttributes(typeof(KnifeAttribute), true).Cast<KnifeAttribute>())
                 {
                     injectAttribute.RegisteService(
-                        new KnifeServiceContext
+                        new KnifeRegisteContext
                         {
                             Services = services,
                             Configuration = configuration,

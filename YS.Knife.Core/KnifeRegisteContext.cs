@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife
 {
-    public class KnifeServiceContext
+    public class KnifeRegisteContext
     {
         public IServiceCollection Services { get; set; }
         public IConfiguration Configuration { get; set; }
