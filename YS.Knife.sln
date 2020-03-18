@@ -49,6 +49,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Api.Client.Generat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting.UnitTest", "YS.Knife.Hosting.UnitTest\YS.Knife.Hosting.UnitTest.csproj", "{2AE3769D-2144-4630-8883-CA0A354D0E6D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Core.UnitTest", "YS.Knife.Core.UnitTest\YS.Knife.Core.UnitTest.csproj", "{7E54510C-BF54-4108-B860-6FAC398D33D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,11 +129,16 @@ Global
 		{2AE3769D-2144-4630-8883-CA0A354D0E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2AE3769D-2144-4630-8883-CA0A354D0E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2AE3769D-2144-4630-8883-CA0A354D0E6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E54510C-BF54-4108-B860-6FAC398D33D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E54510C-BF54-4108-B860-6FAC398D33D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E54510C-BF54-4108-B860-6FAC398D33D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E54510C-BF54-4108-B860-6FAC398D33D6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{7E54510C-BF54-4108-B860-6FAC398D33D6} = {90756FF0-EDD4-441A-906A-32BDFA3F32DA}
 		{33C4EF10-7246-45A5-854D-2908E31A49A2} = {C4512870-B81C-4D81-AEAE-0E461DC02FB1}
 		{44583D76-9475-4034-8BBE-862AF2F1E57D} = {C4512870-B81C-4D81-AEAE-0E461DC02FB1}
 		{78F69D8D-C71B-433A-BF8C-C3B9B3FAF52A} = {9B689F5B-DC6A-4911-A8EF-3751505108B3}
