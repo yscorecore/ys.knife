@@ -18,7 +18,7 @@ namespace YS.Knife
                         {
                             Services = services,
                             Configuration = configuration,
-                            InstanceType = type
+                            DeclaredType = type
                         });
                 }
             }

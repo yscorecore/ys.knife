@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace System
 {
-    public static class StringExtensions
+    static class StringExtensions
     {
         /// <summary>
         /// 比较输入字符串与通配符模式的是否匹配，将根据每个字符进行比较

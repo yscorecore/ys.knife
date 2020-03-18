@@ -8,6 +8,6 @@ namespace YS.Knife
     {
         public IServiceCollection Services { get; set; }
         public IConfiguration Configuration { get; set; }
-        public Type InstanceType { get; set; }
+        public Type DeclaredType { get; set; }
     }
 }
