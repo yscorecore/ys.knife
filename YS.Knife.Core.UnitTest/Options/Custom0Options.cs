@@ -4,7 +4,7 @@ using System.Text;
 
 namespace YS.Knife.Options
 {
-    public class NoOptions
+    public class Custom0Options
     {
         public string Value { get; set; }
     }

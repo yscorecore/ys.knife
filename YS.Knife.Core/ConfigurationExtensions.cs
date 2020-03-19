@@ -34,6 +34,7 @@ namespace YS.Knife
             }
             else
             {
+                path = path.Replace('.', ':').Replace("__", ":");
                 return configuration.GetSection(path);
             }
         }

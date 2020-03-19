@@ -3,7 +3,7 @@
 namespace YS.Knife.Options
 {
     [OptionsClass()]
-    public class ValidateOptions
+    public class Custom7Options
     {
         [Url]
         public string Value { get; set; }

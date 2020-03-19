@@ -12,7 +12,7 @@ namespace YS.Knife.Options
         public void ShouldNotGetNullWhenNotDefineOptionsAttribute()
         {
             var provider = Utility.BuildProvider();
-            var options = provider.GetService<IOptions<NoOptions>>();
+            var options = provider.GetService<IOptions<Custom0Options>>();
             Assert.IsNotNull(options);
             Assert.IsNotNull(options.Value);
             Assert.AreEqual(default, options.Value.Value);
@@ -50,9 +50,9 @@ namespace YS.Knife.Options
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
-                ["Validate:Value"] = "not a url value"
+                ["Custom7:Value"] = "not a url value"
             });
-            var options = provider.GetService<IOptions<ValidateOptions>>();
+            var options = provider.GetService<IOptions<Custom7Options>>();
             Assert.IsNotNull(options);
             Assert.IsNotNull(options.Value);
         }
@@ -62,12 +62,62 @@ namespace YS.Knife.Options
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
-                ["Validate:Value"] = "http://localhost"
+                ["Custom7:Value"] = "http://localhost"
             });
-            var options = provider.GetService<IOptions<ValidateOptions>>();
+            var options = provider.GetService<IOptions<Custom7Options>>();
             Assert.IsNotNull(options);
             Assert.IsNotNull(options.Value);
             Assert.AreEqual("http://localhost",options.Value.Value);
+        }
+
+        [TestMethod]
+        public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNested()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["C:B:D:Value"] = "some_value"
+            });
+            var options = provider.GetService<IOptions<Custom3Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+            Assert.AreEqual("some_value", options.Value.Value);
+        }
+        [TestMethod]
+        public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNestedWithDot()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["C:B:D:Value"] = "some_value"
+            });
+            var options = provider.GetService<IOptions<Custom4Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+            Assert.AreEqual("some_value", options.Value.Value);
+        }
+        [TestMethod]
+        public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNestedWithDoubleUnderScore()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["C:B:D:Value"] = "some_value"
+            });
+            var options = provider.GetService<IOptions<Custom5Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+            Assert.AreEqual("some_value", options.Value.Value);
+        }
+
+        [TestMethod]
+        public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsEmptyString()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["Value"] = "some_value"
+            });
+            var options = provider.GetService<IOptions<Custom6Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+            Assert.AreEqual("some_value", options.Value.Value);
         }
     }
 }
