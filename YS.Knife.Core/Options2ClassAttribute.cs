@@ -1,19 +1,25 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Reflection;
 namespace YS.Knife
 {
-    public class Options2ClassAttribute : GenericKnifeAttribute
+    public class Options2ClassAttribute : KnifeAttribute
     {
         public string ConfigKey { get; set; }
 
-        protected override IGenericRegisteProxy OnGetGenericProxy(KnifeRegisteContext context)
+        public override void RegisteService(KnifeRegisteContext registerContext)
         {
-            var type = typeof(OptionsRegisteProxy<>).MakeGenericType(context.DeclaredType);
-            return Activator.CreateInstance(type, ConfigKey) as IGenericRegisteProxy;
+            var method = this.GetType().GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(registerContext.DeclaredType);
+            method.Invoke(this, new object[] { registerContext.Services, registerContext.Configuration });
         }
-
-        private class OptionsRegisteProxy<T> : IGenericRegisteProxy
+        private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)
+            where T : class
+        {
+            var optionsConfiguration = configuration.GetOptionsConfiguration<T>(ConfigKey);
+            services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
+        }
+        private class OptionsRegisteProxy<T>
            where T : class
         {
             public OptionsRegisteProxy(string configKey)
