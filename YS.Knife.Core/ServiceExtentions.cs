@@ -73,50 +73,6 @@ namespace YS.Knife
 
         #endregion
 
-        #region Options
-        public static IServiceCollection RegisteOptions(this IServiceCollection services, Assembly assembly, IConfiguration configuration)
-        {
-            var configTypes = from p in assembly.GetTypes()
-                              where Attribute.IsDefined(p, typeof(OptionsClassAttribute))
-                                    && !p.IsAbstract
-                              select p;
-            foreach (var configType in configTypes)
-            {
-                var configAttr = Attribute.GetCustomAttribute(configType, typeof(OptionsClassAttribute)) as OptionsClassAttribute;
-                AddOptionInternal(services, configType, configuration, configAttr.ConfigKey);
-            }
-            return services;
-        }
-        public static IServiceCollection RegisteOptions(this IServiceCollection services, IEnumerable<Assembly> assemblies, IConfiguration configuration)
-        {
-            foreach (var assembly in assemblies ?? Enumerable.Empty<Assembly>())
-            {
-                RegisteOptions(services, assembly, configuration);
-            }
-            return services;
-        }
-
-        private static void AddOptionInternal(IServiceCollection services, Type optionType, IConfiguration configuration,string path)
-        {
-            var instance = Activator.CreateInstance(typeof(ConfigOptionProxy<>).MakeGenericType(optionType)) as IConfigOptionProxy;
-            instance.Configure(services, configuration,path);
-
-        }
-
-        private interface IConfigOptionProxy
-        {
-            void Configure(IServiceCollection services, IConfiguration configuration,string path);
-        }
-        private class ConfigOptionProxy<T> : IConfigOptionProxy
-            where T : class
-        {
-            public void Configure(IServiceCollection services, IConfiguration configuration,string path)
-            {
-                var optionsConfiguration = configuration.GetOptionsConfiguration<T>(path);
-                services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
-            }
-        }
-        #endregion
 
 
     }

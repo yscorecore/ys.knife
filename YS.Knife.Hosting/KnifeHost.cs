@@ -65,7 +65,6 @@ namespace YS.Knife.Hosting
 
             serviceCollection.RegisteServices(plugins, builder.Configuration);
 
-            serviceCollection.RegisteOptions(plugins, builder.Configuration);
         }
 
         protected void RunStage(string name)

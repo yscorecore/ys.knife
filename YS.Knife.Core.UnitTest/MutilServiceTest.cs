@@ -20,6 +20,16 @@ namespace YS.Knife
         }
 
         [TestMethod]
+        public void ShouldNotGetInstanceWhenJustDefineKnifeAttributeInParents()
+        {
+            var services = new ServiceCollection();
+            var configuration = new ConfigurationBuilder().Build();
+            var sp = services.RegisteKnifeServices(configuration).BuildServiceProvider();
+            var instances = sp.GetServices<SubClass>();
+            Assert.AreEqual(0, instances.Count());
+        }
+
+        [TestMethod]
         public void ShouldGetMutilInstanceWhenMutilDefineKnifeAttributeInNestedType()
         {
             var services = new ServiceCollection();

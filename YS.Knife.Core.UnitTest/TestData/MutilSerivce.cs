@@ -11,6 +11,9 @@ namespace YS.Knife.TestData
 
     }
 
+    public class SubClass : MutilSerivce
+    {
+    }
     internal class OutterClass
     {
         [Mutil]
