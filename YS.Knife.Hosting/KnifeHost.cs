@@ -63,7 +63,7 @@ namespace YS.Knife.Hosting
 
             var plugins = PluginLoader.LoadPlugins(rootPath, options.Plugins);
 
-            serviceCollection.RegisteServices(plugins, builder.Configuration);
+            serviceCollection.RegisteKnifeServices(builder.Configuration);
 
         }
 
