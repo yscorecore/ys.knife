@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
+using System.Collections.Generic;
 
 namespace YS.Knife
 {
@@ -13,7 +12,7 @@ namespace YS.Knife
             services.AddTransient(typeof(IDictionary<,>), typeof(KnifeInjectionDictionary<,>));
         }
 
-        protected class KnifeInjectionDictionary<Key, Value> : Dictionary<string, Value>
+        protected class KnifeInjectionDictionary<Key, Value> : Dictionary<Key, Value>
         {
             public KnifeInjectionDictionary(IEnumerable<Value> items)
             {
@@ -24,10 +23,13 @@ namespace YS.Knife
 
                 foreach (var item in items)
                 {
-                    if (item != null)
+                    if (item == null) continue;
+                    Key key = (Key)(object)GetServiceKey(item.GetType());
+                    if (this.ContainsKey(key))
                     {
-                        this[item.GetType().FullName] = item;
+                        throw new InvalidOperationException($"The key '{key}' has exists.");
                     }
+                    this[key] = item;
                 }
             }
             private static string GetServiceKey(Type type)

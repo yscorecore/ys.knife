@@ -8,14 +8,15 @@ namespace YS.Knife
 {
     public class Utility
     {
-        public static IServiceProvider BuildProvider()
+        public static IServiceProvider BuildProvider(Action<IServiceCollection, IConfiguration> config = null)
         {
-            return BuildProvider(new Dictionary<string, string>());
+            return BuildProvider(new Dictionary<string, string>(), config);
         }
-        public static IServiceProvider BuildProvider(IDictionary<string, string> configurationValues)
+        public static IServiceProvider BuildProvider(IDictionary<string, string> configurationValues,Action<IServiceCollection,IConfiguration> config=null)
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().AddInMemoryCollection(configurationValues).Build();
+            config?.Invoke(services, configuration);
             return services.RegisteKnifeServices(configuration).BuildServiceProvider();
         }
     }
