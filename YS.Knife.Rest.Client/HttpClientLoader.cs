@@ -1,14 +1,13 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 
 namespace YS.Knife.Rest.Client
 {
     public class HttpClientLoader : IServiceLoader
     {
-        public void LoadServices(IServiceCollection services, IConfiguration configuration)
+        public void LoadServices(IServiceCollection services, IRegisteContext context)
         {
-            var apiServiceOptions = configuration.GetConfigOrNew<ApiServicesOptions>();
+            var apiServiceOptions = context.Configuration.GetConfigOrNew<ApiServicesOptions>();
             // add default
             services.AddHttpClient();
             foreach (var kv in apiServiceOptions.Services)

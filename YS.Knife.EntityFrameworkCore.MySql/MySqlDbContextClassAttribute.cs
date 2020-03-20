@@ -1,4 +1,6 @@
-﻿namespace Microsoft.EntityFrameworkCore
+﻿using YS.Knife;
+
+namespace Microsoft.EntityFrameworkCore
 {
     public class MySqlDbContextClassAttribute: DbContextClassAttribute
     {
