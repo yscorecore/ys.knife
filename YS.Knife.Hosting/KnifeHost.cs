@@ -1,12 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 namespace YS.Knife.Hosting
@@ -20,13 +19,13 @@ namespace YS.Knife.Hosting
             : this(args?.Select(p => $"/{p.Key}={p.Value}").ToArray(), configureDelegate)
         {
         }
-
         public KnifeHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
         {
             this.args = args;
             this.configureDelegate = configureDelegate;
             this.host = CreateHostBuilder().Build();
         }
+
         private readonly Action<HostBuilderContext, IServiceCollection> configureDelegate;
         private readonly string[] args;
         private readonly IHost host;
@@ -35,9 +34,9 @@ namespace YS.Knife.Hosting
         {
             return host.Services.GetService(serviceType);
         }
-        public T Get<T>()
+        public T GetService<T>()
         {
-            return this.GetService<T>();
+            return ServiceProviderServiceExtensions.GetService<T>(this);
         }
 
         protected virtual IHostBuilder CreateHostBuilder()
@@ -45,7 +44,7 @@ namespace YS.Knife.Hosting
             return Host.CreateDefaultBuilder(args ?? new string[0])
                 .ConfigureServices((builder, serviceCollection) =>
                 {
-                    this.LoadAssemblyService(builder, serviceCollection);
+                    KnifeHost.LoadKnifeServices(serviceCollection, builder.Configuration, null);
                     this.LoadCustomService(builder, serviceCollection);
                 });
 
@@ -55,17 +54,7 @@ namespace YS.Knife.Hosting
             configureDelegate?.Invoke(builder, serviceCollection);
         }
 
-        private void LoadAssemblyService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            var options = builder.Configuration.GetConfigOrNew<HostOptions>();
 
-            string rootPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-
-            var plugins = PluginLoader.LoadPlugins(rootPath, options.Plugins);
-
-            serviceCollection.RegisteKnifeServices(builder.Configuration);
-
-        }
 
         protected void RunStage(string name)
         {
@@ -90,7 +79,7 @@ namespace YS.Knife.Hosting
 
         public void Run()
         {
-            var options = this.host.Services.GetService<IOptions<HostOptions>>();
+            var options = this.host.Services.GetService<IOptions<KnifeOptions>>();
             if (IsDefaultVerb(options.Value.Stage))
             {
                 RunDefault();
@@ -116,6 +105,13 @@ namespace YS.Knife.Hosting
         public static void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
         {
             new KnifeHost(args, configureDelegate).Run();
+        }
+        public static void LoadKnifeServices(IServiceCollection services, IConfiguration configuration, ILogger logger)
+        {
+            var options = configuration.GetConfigOrNew<KnifeOptions>();
+            PluginLoader.LoadPlugins(options.Plugins);
+            var knifeTypeFilter = new KnifeTypeFilter(options);
+            services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
         #endregion
     }

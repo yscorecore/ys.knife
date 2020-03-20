@@ -17,7 +17,7 @@ namespace Knift
         };
         public ConfigurationExtensionsTest():base(CommandArguments)
         {
-            this.configuration = Get<IConfiguration>();
+            this.configuration = GetService<IConfiguration>();
         }
         private IConfiguration configuration;
         [TestMethod]

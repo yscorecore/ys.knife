@@ -50,7 +50,7 @@ namespace YS.Knife.Hosting
                 serviceCollection.AddSingleton<ITest, ATest>();
             }))
             {
-                var test = knifeHost.GetService<ITest>();
+                var test = ServiceProviderServiceExtensions.GetService<ITest>(knifeHost);
                 Assert.IsType<ATest>(test);
             }
         }
