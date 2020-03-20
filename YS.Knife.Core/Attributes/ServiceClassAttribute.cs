@@ -19,10 +19,10 @@ namespace YS.Knife
 
         public string Key { get; set; }
 
-        public override void RegisteService(IServiceCollection services, IRegisteContext context,Type declareType)
+        public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             var injectType = this.InjectType ?? DeduceInjectType(declareType);
-          
+
             switch (this.Lifetime)
             {
                 case ServiceLifetime.Singleton:

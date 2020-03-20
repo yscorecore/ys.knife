@@ -6,7 +6,7 @@ using System.Collections.Generic;
 namespace Knift
 {
     [TestClass]
-    public class ConfigurationExtensionsTest: KnifeHost
+    public class ConfigurationExtensionsTest : KnifeHost
     {
         static Dictionary<string, object> CommandArguments = new Dictionary<string, object>
         {
@@ -15,7 +15,7 @@ namespace Knift
             ["ConnectionStrings:Bcd"] = "",
             ["ConnectionStrings:Cde"] = "sqlserver#Data Source=.;User ID=sa;Database=SequenceContext;Password=;",
         };
-        public ConfigurationExtensionsTest():base(CommandArguments)
+        public ConfigurationExtensionsTest() : base(CommandArguments)
         {
             this.configuration = GetService<IConfiguration>();
         }
@@ -33,7 +33,7 @@ namespace Knift
             Assert.IsNotNull(connectionInfo);
             Assert.AreEqual("mssql", connectionInfo.DBType);
             Assert.AreEqual("abcValue", connectionInfo.Value);
-           
+
         }
 
         [TestMethod]

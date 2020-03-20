@@ -117,7 +117,7 @@ namespace YS.Knife.Hosting
             var knifeTypeFilter = new KnifeTypeFilter(options);
             services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
-       
+
         #endregion
     }
 }

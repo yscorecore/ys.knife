@@ -1,8 +1,8 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqlServerDbContextClassAttribute: DbContextClassAttribute
+    public class SqlServerDbContextClassAttribute : DbContextClassAttribute
     {
-        public SqlServerDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
+        public SqlServerDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
         {
             this.ConnectionStringKey = connectionStringKey;
         }

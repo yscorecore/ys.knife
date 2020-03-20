@@ -15,7 +15,7 @@ namespace YS.Knife.Hosting
             {
                 if (file.IsMatchWildcardAnyOne(plugins, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    LoadAssembly(file,throwIfException);
+                    LoadAssembly(file, throwIfException);
                 }
             }
         }

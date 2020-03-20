@@ -15,7 +15,7 @@ namespace YS.Knife.Hosting
         [Fact]
         public void ShouldCreateANewInstanceWhenCallCtor()
         {
-            using (var host  = new KnifeHost())
+            using (var host = new KnifeHost())
             {
 
             }

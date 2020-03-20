@@ -2,9 +2,9 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class MySqlDbContextClassAttribute: DbContextClassAttribute
+    public class MySqlDbContextClassAttribute : DbContextClassAttribute
     {
-        public MySqlDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
+        public MySqlDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }
 
@@ -19,5 +19,5 @@ namespace Microsoft.EntityFrameworkCore
         }
     }
 
-   
+
 }

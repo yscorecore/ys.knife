@@ -2,11 +2,11 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class OracleDbContextClassAttribute: DbContextClassAttribute
+    public class OracleDbContextClassAttribute : DbContextClassAttribute
     {
-        public OracleDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
+        public OracleDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
         {
-          
+
         }
 
         public override string DbType => "oracle";

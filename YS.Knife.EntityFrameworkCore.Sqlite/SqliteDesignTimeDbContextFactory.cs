@@ -20,7 +20,7 @@ namespace Microsoft.EntityFrameworkCore
             var configurationBuilder = new ConfigurationBuilder()
                 .SetBasePath(basePath)
                 .AddJsonFile("appsettings.json", true, false);
-              
+
             if (!string.IsNullOrEmpty(envName))
             {
                 configurationBuilder.AddJsonFile($"appsettings.{envName}.json", true, false);
@@ -32,7 +32,7 @@ namespace Microsoft.EntityFrameworkCore
             {
                 configurationBuilder.AddCommandLine(args);
             }
-            
+
             var configuration = configurationBuilder.Build();
 
             var configurationKey = GetConnectionStringKey();
@@ -60,8 +60,8 @@ namespace Microsoft.EntityFrameworkCore
         }
         protected virtual T OnCreateDbContextInstance(DbContextOptions<T> options)
         {
-           var ctor1= typeof(T).GetConstructor(new Type[] { typeof(DbContextOptions<T>) })
-                ?? typeof(T).GetConstructor(new Type[] { typeof(DbContextOptions) });
+            var ctor1 = typeof(T).GetConstructor(new Type[] { typeof(DbContextOptions<T>) })
+                 ?? typeof(T).GetConstructor(new Type[] { typeof(DbContextOptions) });
             if (ctor1 != null)
             {
                 return ctor1.Invoke(new object[] { options }) as T;

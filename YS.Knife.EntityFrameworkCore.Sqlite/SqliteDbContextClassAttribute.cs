@@ -1,8 +1,8 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqliteDbContextClassAttribute: DbContextClassAttribute
+    public class SqliteDbContextClassAttribute : DbContextClassAttribute
     {
-        public SqliteDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
+        public SqliteDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }
 

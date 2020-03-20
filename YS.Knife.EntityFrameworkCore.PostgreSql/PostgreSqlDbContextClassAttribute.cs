@@ -1,10 +1,10 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class PostgreSqlDbContextClassAttribute: DbContextClassAttribute
+    public class PostgreSqlDbContextClassAttribute : DbContextClassAttribute
     {
-        public PostgreSqlDbContextClassAttribute(string connectionStringKey):base(connectionStringKey)
+        public PostgreSqlDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
         {
-           
+
         }
 
         public override string DbType => "postgresql";

@@ -109,7 +109,7 @@ namespace YS.Knife.Rest.Client
             if (bodyItem != null)
             {
                 var text = JsonSerializer.Serialize(bodyItem.Value);
-                
+
                 httpRequestMessage.Content = new StringContent(text, Encoding.UTF8, "application/json");
             }
         }

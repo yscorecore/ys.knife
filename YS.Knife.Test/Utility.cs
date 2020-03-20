@@ -38,7 +38,7 @@ namespace YS.Knife.Test
         {
             return new EnvnameStore(envName);
         }
-        class EnvnameStore : IDisposable 
+        class EnvnameStore : IDisposable
         {
             const string ASPNETCORE_ENVKEY = "ASPNETCORE_ENVIRONMENT";
             public EnvnameStore(string envName)

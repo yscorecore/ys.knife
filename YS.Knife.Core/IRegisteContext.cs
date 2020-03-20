@@ -14,9 +14,9 @@ namespace YS.Knife
 
     public static class RegisteContextExtensions
     {
-        public static bool HasFiltered(this IRegisteContext context,Type type)
+        public static bool HasFiltered(this IRegisteContext context, Type type)
         {
-            if (context.TypeFilter == null) return false;   
+            if (context.TypeFilter == null) return false;
             return context.TypeFilter(type);
         }
     }

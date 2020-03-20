@@ -30,7 +30,7 @@ namespace Microsoft.EntityFrameworkCore
             {
                 this.ValidateType(InjectType, typeof(DbContext));
             }
-     
+
             string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey) ? declareType.Name : this.ConnectionStringKey;
 
             if (CanRegister(context.Configuration, this.DbType, connectionStringKey, out string connectionString))

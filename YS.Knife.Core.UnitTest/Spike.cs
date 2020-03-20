@@ -23,7 +23,7 @@ namespace YS.Knife
             Console.WriteLine("First Item hash:{0:X}", scope.GetService<Spike>().GetHashCode());
             Console.WriteLine("Second Item hash:{0:X}", scope.GetService<Spike>().GetHashCode());
             Console.WriteLine("Third Item hash:{0:X}", scope.GetService<Spike>().GetHashCode());
-            
+
             Console.WriteLine("First List hash:{0:X}", scope.GetService<IEnumerable<Spike>>().GetHashCode());
             Console.WriteLine("Second List hash:{0:X}", scope.GetService<IEnumerable<Spike>>().GetHashCode());
             Console.WriteLine("Third List hash:{0:X}", scope.GetService<IEnumerable<Spike>>().GetHashCode());

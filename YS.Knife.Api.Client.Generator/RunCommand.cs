@@ -11,7 +11,7 @@ namespace YS.Knife.Rest.Api.Client.Generator
 
         }
 
-        public string BuildProject(ApiOptions apiOptions,string targetFolder)
+        public string BuildProject(ApiOptions apiOptions, string targetFolder)
         {
             System.IO.Directory.CreateDirectory(targetFolder);
             Shell.Exec("dotnet", $"build {apiOptions.ProjectPath} -o {targetFolder}", true);
@@ -19,12 +19,12 @@ namespace YS.Knife.Rest.Api.Client.Generator
 
         }
         public void GeneratorCsproj(ApiOptions apiOptions)
-        { 
-            
+        {
+
         }
         public void GeneratorClientFiles()
-        { 
-        
+        {
+
         }
 
     }

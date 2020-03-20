@@ -29,7 +29,7 @@ namespace YS.Knife.Dictionary
         public void ShouldGetDictionaryWhenGetInjectedClassDictionary()
         {
             var provider = Utility.BuildProvider();
-            var strDic = provider.GetService<IDictionary<string,IInterface1>>();
+            var strDic = provider.GetService<IDictionary<string, IInterface1>>();
 
             Assert.IsNotNull(strDic);
             Assert.IsTrue(strDic.ContainsKey(typeof(Class1).FullName));
@@ -40,7 +40,7 @@ namespace YS.Knife.Dictionary
         [ExpectedException(typeof(InvalidOperationException))]
         public void ShouldGetExceptionWhenHasDuplicateKey()
         {
-            var provider = Utility.BuildProvider((sc,c)=> 
+            var provider = Utility.BuildProvider((sc, c) =>
             {
                 sc.AddSingleton<IInterface1, Class1>();
             });

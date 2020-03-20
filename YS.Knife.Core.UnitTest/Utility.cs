@@ -12,7 +12,7 @@ namespace YS.Knife
         {
             return BuildProvider(new Dictionary<string, string>(), config);
         }
-        public static IServiceProvider BuildProvider(IDictionary<string, string> configurationValues,Action<IServiceCollection,IConfiguration> config=null)
+        public static IServiceProvider BuildProvider(IDictionary<string, string> configurationValues, Action<IServiceCollection, IConfiguration> config = null)
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().AddInMemoryCollection(configurationValues).Build();

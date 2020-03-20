@@ -38,24 +38,24 @@ namespace YS.Extentions.EntityFrameworkCore
     //    {
     //        this.Set.Add(entity);
     //    }
-        
+
 
     //    public virtual void Delete(TEntity entity)
     //    {
-            
+
     //        this.Set.Attach(entity);
     //        this.Context.Entry(entity).State = EntityState.Deleted;
     //    }
 
     //    public virtual TEntity FindByKey(params object[] keyValues)
     //    {
-            
+
     //        return this.Set.Find(keyValues);
     //    }
 
-        
 
-        
+
+
 
     //    public virtual IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> conditions)
     //    {
@@ -104,6 +104,6 @@ namespace YS.Extentions.EntityFrameworkCore
     //    }
 
 
-       
+
     //}
 }

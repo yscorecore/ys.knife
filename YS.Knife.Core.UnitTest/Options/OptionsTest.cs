@@ -23,7 +23,7 @@ namespace YS.Knife.Options
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
-                ["Custom1:Value"]="some_value"
+                ["Custom1:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom1Options>>();
             Assert.IsNotNull(options);
@@ -67,7 +67,7 @@ namespace YS.Knife.Options
             var options = provider.GetService<IOptions<Custom7Options>>();
             Assert.IsNotNull(options);
             Assert.IsNotNull(options.Value);
-            Assert.AreEqual("http://localhost",options.Value.Value);
+            Assert.AreEqual("http://localhost", options.Value.Value);
         }
 
         [TestMethod]
