@@ -26,18 +26,22 @@ namespace Microsoft.EntityFrameworkCore
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             this.ValidateType(declareType, typeof(DbContext));
-            this.ValidateType(InjectType, typeof(DbContext));
+            if (this.InjectType != null)
+            {
+                this.ValidateType(InjectType, typeof(DbContext));
+            }
+     
             string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey) ? declareType.Name : this.ConnectionStringKey;
 
             if (CanRegister(context.Configuration, this.DbType, connectionStringKey, out string connectionString))
             {
                 //register itself
-                var method = this.GetType().GetMethod(nameof(AddDbContext1), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+                var method = typeof(DbContextClassAttribute).GetMethod(nameof(AddDbContext1), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
                 method.Invoke(this, new object[] { services, connectionString });
 
                 if (this.InjectType != null)
                 {
-                    var method2 = this.GetType().GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(this.InjectType, declareType);
+                    var method2 = typeof(DbContextClassAttribute).GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(this.InjectType, declareType);
                     method2.Invoke(this, new object[] { services, connectionString });
                 }
 

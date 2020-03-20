@@ -22,7 +22,7 @@ namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest
             };
             using (var host = new KnifeHost(args))
             {
-                Assert.IsNotNull(host.Get<TestDbContext>());
+                Assert.IsNotNull(host.GetService<TestDbContext>());
             }
         }
 
@@ -35,7 +35,7 @@ namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest
             };
             using (var host = new KnifeHost(args))
             {
-                Assert.IsNotNull(host.Get<TestDbContext2>());
+                Assert.IsNotNull(host.GetService<TestDbContext2>());
             }
 
         }
