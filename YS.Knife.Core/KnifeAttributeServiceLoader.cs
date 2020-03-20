@@ -18,11 +18,11 @@ namespace YS.Knife
                         {
                             Services = services,
                             Configuration = configuration,
-                            DeclaredType = type
-                        });
+
+                        }, type);
                 }
             }
         }
-      
+
     }
 }
