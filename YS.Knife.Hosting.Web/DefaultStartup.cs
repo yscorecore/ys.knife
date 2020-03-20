@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace YS.Knife.Hosting.Web
 {
-    public class Startup
+    public class DefaultStartup
     {
 
         public void ConfigureServices(IServiceCollection services)

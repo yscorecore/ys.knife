@@ -5,8 +5,9 @@ using System.Reflection;
 
 namespace YS.Knife
 {
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 
-    public class HostedClassAttribute : KnifeAttribute
+    public sealed class HostedClassAttribute : KnifeAttribute
     {
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {

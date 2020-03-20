@@ -44,7 +44,7 @@ namespace YS.Knife.Hosting
             return Host.CreateDefaultBuilder(args ?? new string[0])
                 .ConfigureServices((builder, serviceCollection) =>
                 {
-                    KnifeHost.LoadKnifeServices(serviceCollection, builder.Configuration, null);
+                    LoadKnifeServices(serviceCollection, builder.Configuration);
                     this.LoadCustomService(builder, serviceCollection);
                 });
 
@@ -106,13 +106,18 @@ namespace YS.Knife.Hosting
         {
             new KnifeHost(args, configureDelegate).Run();
         }
-        public static void LoadKnifeServices(IServiceCollection services, IConfiguration configuration, ILogger logger)
+        public static void LoadKnifeServices(IServiceCollection services, IConfiguration configuration)
         {
+            var serviceProvider = services.BuildServiceProvider();
+            var loggerFactory = serviceProvider.GetService<ILoggerFactory>() ?? new LoggerFactory();
+            var logger = loggerFactory.CreateLogger("Knife");
             var options = configuration.GetConfigOrNew<KnifeOptions>();
+
             PluginLoader.LoadPlugins(options.Plugins);
             var knifeTypeFilter = new KnifeTypeFilter(options);
             services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
+       
         #endregion
     }
 }

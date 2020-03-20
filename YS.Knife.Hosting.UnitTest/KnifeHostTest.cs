@@ -36,7 +36,7 @@ namespace YS.Knife.Hosting
             using (var knifeHost = new KnifeHost(new string[0]))
             {
                 var appLiftTime = knifeHost.GetRequiredService<IHostApplicationLifetime>();
-                Task.Delay(500).ContinueWith((_) => { appLiftTime.StopApplication(); });
+                Task.Delay(500).ContinueWith(_ => { appLiftTime.StopApplication(); });
                 knifeHost.Run();
             }
         }
@@ -78,7 +78,7 @@ namespace YS.Knife.Hosting
             }))
             {
                 var appLiftTime = knifeHost.GetRequiredService<IHostApplicationLifetime>();
-                Task.Delay(500).ContinueWith((_) => { appLiftTime.StopApplication(); });
+                Task.Delay(500).ContinueWith(_ => { appLiftTime.StopApplication(); });
                 knifeHost.Run();
             }
             Mock.Get(defaultStageService).Verify(p => p.Run(default), Times.Never);

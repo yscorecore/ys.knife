@@ -39,7 +39,7 @@ namespace YS.Knife.Hosting
 
         private void LoadWebApiService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            var options = builder.Configuration.GetConfigOrNew<WebHostOptions>();
+            var options = builder.Configuration.GetConfigOrNew<KnifeWebOptions>();
             IMvcBuilder mvcBuilder = serviceCollection.AddControllers((mvc) =>
             {
             });
@@ -53,7 +53,7 @@ namespace YS.Knife.Hosting
         }
     }
 
-    public class KnifeWebHost : KnifeWebHost<Startup>
+    public class KnifeWebHost : KnifeWebHost<DefaultStartup>
     {
         public KnifeWebHost()
         {
