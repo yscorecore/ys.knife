@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -8,34 +9,32 @@ namespace YS.Knife
 {
     public static class ServiceCollectionsExtensions
     {
-        public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IRegisteContext context)
         {
             foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceLoader>())
             {
                 var loader = Activator.CreateInstance(loaderType) as IServiceLoader;
-                loader.LoadServices(services, configuration);
+                loader.LoadServices(services, context);
             }
             return services;
         }
-        public static bool IsFilter(this IServiceCollection services, Type type, IConfiguration configuration)
+        public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IConfiguration configuration, ILogger logger = null, Func<Type, bool> typeFilter = null)
         {
-            if (!KnifeOptionsCache.ContainsKey(configuration))
+            return services.RegisteKnifeServices(new RegisteContext
             {
-                KnifeOptionsCache.Add(configuration, configuration.GetConfigOrNew<KnifeOptions>());
-            }
-            var knifeOptions = KnifeOptionsCache[configuration];
-            return IsFilterAssembly(knifeOptions, type.Assembly) || IsFilterType(knifeOptions, type);
+                Configuration = configuration,
+                Logger = logger,
+                TypeFilter = typeFilter
+            });
         }
-        private static bool IsFilterAssembly(KnifeOptions knifeOptions, Assembly assembly)
+
+        class RegisteContext : IRegisteContext
         {
-            var ignoreAssemblies = knifeOptions.Ignores?.Assemblies ?? new List<string>();
-            return assembly.GetName().Name.IsMatchWildcardAnyOne(ignoreAssemblies, StringComparison.InvariantCultureIgnoreCase);
+            public IServiceCollection Services { get; set; }
+            public IConfiguration Configuration { get; set; }
+            public Func<Type, bool> TypeFilter { get; set; }
+            public ILogger Logger { get; set; }
         }
-        private static bool IsFilterType(KnifeOptions knifeOptions, Type type)
-        {
-            var ignoreTypes = knifeOptions.Ignores?.Types ?? new List<string>();
-            return type.FullName.IsMatchWildcardAnyOne(ignoreTypes, StringComparison.InvariantCultureIgnoreCase);
-        }
-        private static IDictionary<IConfiguration, KnifeOptions> KnifeOptionsCache = new Dictionary<IConfiguration, KnifeOptions>();
+
     }
 }

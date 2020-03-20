@@ -13,10 +13,10 @@ namespace YS.Knife
         }
         public string ConfigKey { get; set; }
 
-        public override void RegisteService(KnifeRegisteContext context, Type declareType)
+        public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             var method = this.GetType().GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
-            method.Invoke(this, new object[] { context.Services, context.Configuration });
+            method.Invoke(this, new object[] { services, context.Configuration });
         }
         private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)
             where T : class

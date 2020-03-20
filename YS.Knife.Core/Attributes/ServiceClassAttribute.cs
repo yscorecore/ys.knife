@@ -19,20 +19,20 @@ namespace YS.Knife
 
         public string Key { get; set; }
 
-        public override void RegisteService(KnifeRegisteContext context,Type declareType)
+        public override void RegisteService(IServiceCollection services, IRegisteContext context,Type declareType)
         {
             var injectType = this.InjectType ?? DeduceInjectType(declareType);
           
             switch (this.Lifetime)
             {
                 case ServiceLifetime.Singleton:
-                    context.Services.AddSingleton(injectType, declareType);
+                    services.AddSingleton(injectType, declareType);
                     break;
                 case ServiceLifetime.Scoped:
-                    context.Services.AddScoped(injectType, declareType);
+                    services.AddScoped(injectType, declareType);
                     break;
                 case ServiceLifetime.Transient:
-                    context.Services.AddTransient(injectType, declareType);
+                    services.AddTransient(injectType, declareType);
                     break;
             }
         }

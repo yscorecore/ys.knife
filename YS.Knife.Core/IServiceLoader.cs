@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+
 namespace YS.Knife
 {
     public interface IServiceLoader
     {
-        void LoadServices(IServiceCollection services, IConfiguration configuration);
+        void LoadServices(IServiceCollection services, IRegisteContext context);
     }
 }

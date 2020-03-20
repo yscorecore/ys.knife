@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 
-namespace YS.Knife
+namespace YS.Knife.Loaders
 {
     public class DictionaryLoader : IServiceLoader
     {
-        public void LoadServices(IServiceCollection services, IConfiguration configuration)
+        public void LoadServices(IServiceCollection services, IRegisteContext context)
         {
+            if (context.HasFiltered(typeof(IDictionary<,>))) return;
             services.AddTransient(typeof(IDictionary<,>), typeof(KnifeInjectionDictionary<,>));
         }
 
