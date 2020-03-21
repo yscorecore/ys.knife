@@ -25,6 +25,8 @@ namespace Microsoft.EntityFrameworkCore
 
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
+            _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
+            _ = context ?? throw new ArgumentNullException(nameof(context));
             this.ValidateType(declareType, typeof(DbContext));
             if (this.InjectType != null)
             {

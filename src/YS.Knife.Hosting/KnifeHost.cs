@@ -5,14 +5,16 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
 namespace YS.Knife.Hosting
 {
+
     public class KnifeHost : IDisposable, IServiceProvider
     {
-        public KnifeHost() : this(new string[0])
+        public KnifeHost() : this(Array.Empty<string>())
         {
         }
         public KnifeHost(IDictionary<string, object> args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
@@ -23,7 +25,9 @@ namespace YS.Knife.Hosting
         {
             this.args = args;
             this.configureDelegate = configureDelegate;
+#pragma warning disable CA2214 // 不要在构造函数中调用可重写的方法
             this.host = CreateHostBuilder().Build();
+#pragma warning restore CA2214 // 不要在构造函数中调用可重写的方法
         }
 
         private readonly Action<HostBuilderContext, IServiceCollection> configureDelegate;
@@ -41,7 +45,7 @@ namespace YS.Knife.Hosting
 
         protected virtual IHostBuilder CreateHostBuilder()
         {
-            return Host.CreateDefaultBuilder(args ?? new string[0])
+            return Host.CreateDefaultBuilder(args ?? Array.Empty<string>())
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     LoadKnifeServices(serviceCollection, builder.Configuration);
@@ -90,22 +94,45 @@ namespace YS.Knife.Hosting
             }
         }
 
-        private bool IsDefaultVerb(string stage)
+        private static bool IsDefaultVerb(string stage)
         {
             return string.IsNullOrEmpty(stage) ||
-                string.Equals("default", stage, StringComparison.InvariantCultureIgnoreCase);
+                   string.Equals("default", stage, StringComparison.InvariantCultureIgnoreCase);
         }
+        #region IDisposable Support
+        private bool disposedValue = false; // 要检测冗余调用
 
-        void IDisposable.Dispose()
+        protected virtual void Dispose(bool disposing)
         {
-            this.host.Dispose();
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    host.Dispose();
+                }
+                disposedValue = true;
+            }
         }
+        // 添加此代码以正确实现可处置模式。
+        public void Dispose()
+        {
+            // 请勿更改此代码。将清理代码放入以上 Dispose(bool disposing) 中。
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        #endregion
+
         #region Static
 
         public static void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
         {
-            new KnifeHost(args, configureDelegate).Run();
+            using (var knifeHost = new KnifeHost(args, configureDelegate))
+            {
+                knifeHost.Run();
+            }
         }
+        [SuppressMessage("Reliability", "IDE0067:丢失范围之前释放对象", Justification = "<挂起>")]
+        [SuppressMessage("Reliability", "CA2000:丢失范围之前释放对象", Justification = "<挂起>")]
         public static void LoadKnifeServices(IServiceCollection services, IConfiguration configuration)
         {
             var serviceProvider = services.BuildServiceProvider();
@@ -117,6 +144,8 @@ namespace YS.Knife.Hosting
             var knifeTypeFilter = new KnifeTypeFilter(options);
             services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
+
+
 
         #endregion
     }

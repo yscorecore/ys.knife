@@ -16,7 +16,7 @@ namespace YS.Knife
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             var method = typeof(OptionsClassAttribute).GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
-            method.Invoke(this, new object[] { services, context.Configuration });
+            method.Invoke(this, new object[] { services, context?.Configuration });
         }
         private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)
             where T : class

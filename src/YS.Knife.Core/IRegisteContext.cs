@@ -16,6 +16,10 @@ namespace YS.Knife
     {
         public static bool HasFiltered(this IRegisteContext context, Type type)
         {
+            if (context == null) 
+            {
+                throw new ArgumentNullException(nameof(context));
+            }
             if (context.TypeFilter == null) return false;
             return context.TypeFilter(type);
         }

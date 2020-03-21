@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 
 namespace YS.Knife.Test
 {
-    public class DockerCompose
+    public static class DockerCompose
     {
         public static void Up(IDictionary<string, object> envs = null)
         {
@@ -25,7 +26,7 @@ namespace YS.Knife.Test
             {
                 foreach (var kv in envs)
                 {
-                    startInfo.Environment.Add(kv.Key, Convert.ToString(kv.Value));
+                    startInfo.Environment.Add(kv.Key, Convert.ToString(kv.Value, CultureInfo.InvariantCulture));
                 }
             }
             var process = Process.Start(startInfo);

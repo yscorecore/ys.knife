@@ -5,6 +5,7 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YS.Knife.Hosting
 {
@@ -31,26 +32,7 @@ namespace YS.Knife.Hosting
                     webBuilder.UseStartup<TStartup>();
                 });
         }
-        protected override void LoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            this.LoadWebApiService(builder, serviceCollection);
-            base.LoadCustomService(builder, serviceCollection);
-        }
-
-        private void LoadWebApiService(HostBuilderContext builder, IServiceCollection serviceCollection)
-        {
-            var options = builder.Configuration.GetConfigOrNew<KnifeWebOptions>();
-            IMvcBuilder mvcBuilder = serviceCollection.AddControllers((mvc) =>
-            {
-            });
-            var parts = from p in AppDomain.CurrentDomain.GetAssemblies()
-                        where p.GetName().Name.IsMatchWildcardAnyOne(options.MvcParts, StringComparison.OrdinalIgnoreCase)
-                        select p;
-            foreach (var mvcPart in parts)
-            {
-                mvcBuilder.AddApplicationPart(mvcPart);
-            }
-        }
+      
     }
 
     public class KnifeWebHost : KnifeWebHost<DefaultStartup>
@@ -70,9 +52,12 @@ namespace YS.Knife.Hosting
 
         #region Static
 
-        public new static void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
+        public static new void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
         {
-            new KnifeWebHost(args, configureDelegate).Run();
+            using (var knifeHost = new KnifeWebHost(args, configureDelegate))
+            {
+                knifeHost.Run();
+            }
         }
         #endregion
     }

@@ -7,6 +7,7 @@ namespace YS.Knife.Rest.Client
     {
         public void LoadServices(IServiceCollection services, IRegisteContext context)
         {
+            _ = context ?? throw new ArgumentNullException(nameof(context));
             var apiServiceOptions = context.Configuration.GetConfigOrNew<ApiServicesOptions>();
             // add default
             services.AddHttpClient();

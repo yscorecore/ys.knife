@@ -13,7 +13,7 @@ namespace YS.Knife.Rest.Client
 {
     public class ClientBase
     {
-        static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
@@ -30,18 +30,22 @@ namespace YS.Knife.Rest.Client
 
         public virtual async Task<HttpResponseMessage> SendHttp(RestApiInfo apiInfo)
         {
+            _ = apiInfo ?? throw new ArgumentNullException(nameof(apiInfo));
             var client = this.ClientFactory.CreateClient(ServiceName);
 
             var requestPath = TranslatePath(apiInfo, apiInfo.Path);
             var queryString = BuildQueryString(apiInfo);
             var requestUri = new Uri(requestPath + queryString, UriKind.Relative);
 
-            var request = new HttpRequestMessage(apiInfo.Method, requestUri);
-            this.AppendRequestHeader(apiInfo, request);
-            this.AppendRequestBody(apiInfo, request);
-            var response = await client.SendAsync(request);
-            response.EnsureSuccessStatusCode();
-            return response;
+            using (var request = new HttpRequestMessage(apiInfo.Method, requestUri))
+            {
+                this.AppendRequestHeader(apiInfo, request);
+                this.AppendRequestBody(apiInfo, request);
+                var response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                return response;
+            }
+
         }
 
         public virtual async Task<T> SendHttp<T>(RestApiInfo apiInfo)
@@ -56,7 +60,7 @@ namespace YS.Knife.Rest.Client
             var responseData = content.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(responseData))
             {
-                return default(T);
+                return default;
             }
             return JsonSerializer.Deserialize<T>(responseData, JsonOptions);
         }
@@ -73,7 +77,7 @@ namespace YS.Knife.Rest.Client
             });
             return path2;
         }
-        private string ValueToString(object value)
+        private static string ValueToString(object value)
         {
             if (value == null) return string.Empty;
             if (value is string) return value as string;

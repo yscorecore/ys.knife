@@ -10,10 +10,10 @@ namespace YS.Knife.Hosting
         {
             this.knifeOptions = knifeOptions;
         }
-        private KnifeOptions knifeOptions;
+        private readonly KnifeOptions knifeOptions;
         public bool IsFilter(Type type)
         {
-            return IsFilterAssembly(type.Assembly) || IsFilterType(type);
+            return type != null && (IsFilterAssembly(type.Assembly) || IsFilterType(type));
         }
         private bool IsFilterAssembly(Assembly assembly)
         {

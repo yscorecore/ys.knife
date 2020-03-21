@@ -127,6 +127,9 @@ dotnet_diagnostic.CA1819.severity = silent
 # CA1303: 请不要将文本作为本地化参数传递
 dotnet_diagnostic.CA1303.severity = silent
 
+# CA2227: 集合属性应为只读
+dotnet_diagnostic.CA2227.severity = silent
+
 [*.vb]
 # Modifier preferences
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion

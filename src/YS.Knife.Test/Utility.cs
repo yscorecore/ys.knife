@@ -22,7 +22,7 @@ namespace YS.Knife.Test
             }
             throw new ApplicationException("Not able to find a free TCP port.");
         }
-        const string fullCode = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+        const string FullCode = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
         public static string NewPassword(int length = 16)
         {
@@ -30,7 +30,7 @@ namespace YS.Knife.Test
             StringBuilder passwordBuilder = new StringBuilder();
             for (int i = 0; i < length; i++)
             {
-                passwordBuilder.Append(fullCode[random.Next(fullCode.Length)]);
+                passwordBuilder.Append(FullCode[random.Next(FullCode.Length)]);
             }
             return passwordBuilder.ToString();
         }
@@ -44,7 +44,7 @@ namespace YS.Knife.Test
             public EnvnameStore(string envName)
             {
                 this.backupEnvName = Environment.GetEnvironmentVariable(ASPNETCORE_ENVKEY);
-                Environment.SetEnvironmentVariable(ASPNETCORE_ENVKEY, string.Empty);
+                Environment.SetEnvironmentVariable(ASPNETCORE_ENVKEY, envName);
             }
             private string backupEnvName;
             public void Dispose()

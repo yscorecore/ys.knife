@@ -29,7 +29,7 @@ namespace YS.Knife.Hosting
             {
                 if (throwIfException)
                 {
-                    throw ex;
+                    throw;
                 }
                 else
                 {

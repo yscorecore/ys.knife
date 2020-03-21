@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace YS.Knife.Loaders
 {
@@ -12,11 +13,15 @@ namespace YS.Knife.Loaders
             services.AddTransient(typeof(IDictionary<,>), typeof(KnifeInjectionDictionary<,>));
         }
 
-        protected class KnifeInjectionDictionary<Key, Value> : Dictionary<Key, Value>
+        protected class KnifeInjectionDictionary<TKey, TValue> : Dictionary<TKey, TValue>
         {
-            public KnifeInjectionDictionary(IEnumerable<Value> items)
+            public KnifeInjectionDictionary(IEnumerable<TValue> items)
             {
-                if (typeof(Key) != typeof(string))
+                if (items == null)
+                {
+                    throw new ArgumentNullException(nameof(items));
+                }
+                if (typeof(TKey) != typeof(string))
                 {
                     throw new InvalidOperationException("The key type of IDictionary<,> must be string.");
                 }
@@ -24,7 +29,7 @@ namespace YS.Knife.Loaders
                 foreach (var item in items)
                 {
                     if (item == null) continue;
-                    Key key = (Key)(object)GetServiceKey(item.GetType());
+                    TKey key = (TKey)(object)GetServiceKey(item.GetType());
                     if (this.ContainsKey(key))
                     {
                         throw new InvalidOperationException($"The key '{key}' has exists.");
@@ -32,16 +37,18 @@ namespace YS.Knife.Loaders
                     this[key] = item;
                 }
             }
+
+            [SuppressMessage("样式", "IDE0019:使用模式匹配", Justification = "<挂起>")]
             private static string GetServiceKey(Type type)
             {
-                ServiceClassAttribute serviceImplClass = Attribute.GetCustomAttribute(type, typeof(ServiceClassAttribute)) as ServiceClassAttribute;
-                if (serviceImplClass == null || string.IsNullOrEmpty(serviceImplClass.Key))
+                var serviceImplClass = Attribute.GetCustomAttribute(type, typeof(ServiceClassAttribute)) as ServiceClassAttribute;
+                if (serviceImplClass != null && !string.IsNullOrEmpty(serviceImplClass.Key))
                 {
-                    return type.FullName;
+                    return serviceImplClass.Key;
                 }
                 else
                 {
-                    return serviceImplClass.Key;
+                    return type.FullName;
                 }
             }
         }

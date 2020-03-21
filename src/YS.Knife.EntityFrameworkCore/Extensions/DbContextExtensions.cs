@@ -10,6 +10,10 @@ namespace Microsoft.EntityFrameworkCore
     {
         public static async Task MigrateUpByStepAsync(this DbContext dbContext)
         {
+            if (dbContext == null)
+            {
+                throw new ArgumentNullException(nameof(dbContext));
+            }
             var migrator = dbContext.GetInfrastructure().GetService<IMigrator>();
             await dbContext.Database.EnsureDeletedAsync();
 
@@ -24,6 +28,7 @@ namespace Microsoft.EntityFrameworkCore
         }
         public static async Task MigrateDownByStepAsync(this DbContext dbContext)
         {
+            _ = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
             var migrator = dbContext.GetInfrastructure().GetService<IMigrator>();
 
             await dbContext.Database.EnsureDeletedAsync();

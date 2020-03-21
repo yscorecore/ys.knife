@@ -71,7 +71,7 @@ namespace Microsoft.EntityFrameworkCore
             var ctor_empty = typeof(T).GetConstructor(Type.EmptyTypes);
             if (ctor_empty != null)
             {
-                return ctor1.Invoke(new object[0]) as T;
+                return ctor1.Invoke(Array.Empty<object>()) as T;
             }
             throw new Exception("Can not create DbContext instance.");
         }

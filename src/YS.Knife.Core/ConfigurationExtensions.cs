@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Microsoft.Extensions.Configuration;
 namespace YS.Knife
 {
@@ -8,29 +9,33 @@ namespace YS.Knife
             where T : class
 
         {
-            var configAttr = Attribute.GetCustomAttribute(typeof(T), typeof(OptionsClassAttribute)) as OptionsClassAttribute;
-            if (configAttr == null)
+            if (!(Attribute.GetCustomAttribute(typeof(T), typeof(OptionsClassAttribute)) is OptionsClassAttribute configAttr))
             {
                 throw new InvalidOperationException($"Can not find {nameof(OptionsClassAttribute)} in type {typeof(T).FullName}.");
             }
             var optionsSection = configuration.GetOptionsConfiguration<T>(configAttr.ConfigKey);
-            return optionsSection == null ? null : optionsSection.Get<T>();
+            return optionsSection?.Get<T>();
         }
 
         public static IConfiguration GetOptionsConfiguration<T>(this IConfiguration configuration, string path)
         {
-            if (path == string.Empty)
+            if (configuration == null)
             {
-                return configuration;
+                throw new ArgumentNullException(nameof(configuration));
             }
-            else if (path == null)
+            if (path==null)
             {
                 var configKey = typeof(T).Name;
-                if (configKey != "Options" && configKey.EndsWith("Options"))
+                if (configKey != "Options" && configKey.EndsWith("Options", true, CultureInfo.InvariantCulture))
                 {
                     configKey = configKey.Substring(0, configKey.Length - 7);
                 }
                 return configuration.GetSection(configKey);
+            }
+            else if (path.Length==0)
+            {
+                return configuration;
+               
             }
             else
             {

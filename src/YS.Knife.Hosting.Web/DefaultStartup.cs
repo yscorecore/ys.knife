@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,9 +7,10 @@ using Microsoft.Extensions.Hosting;
 
 namespace YS.Knife.Hosting.Web
 {
+    [SuppressMessage("Performance", "CA1822:将成员标记为 static", Justification = "<挂起>")]
     public class DefaultStartup
     {
-
+        
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ApiBehaviorOptions>(options =>
