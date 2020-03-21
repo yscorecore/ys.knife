@@ -52,7 +52,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             if (Attribute.IsDefined(typeof(T), typeof(OracleDbContextClassAttribute)))
             {
-                var attr = Attribute.GetCustomAttribute(typeof(T), typeof(OracleDbContextClassAttribute)) as OracleDbContextClassAttribute;
+                var attr = typeof(T).GetCustomAttribute<OracleDbContextClassAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;

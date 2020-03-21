@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 
 namespace YS.Knife.Loaders
 {
@@ -41,7 +42,7 @@ namespace YS.Knife.Loaders
             [SuppressMessage("样式", "IDE0019:使用模式匹配", Justification = "<挂起>")]
             private static string GetServiceKey(Type type)
             {
-                var serviceImplClass = Attribute.GetCustomAttribute(type, typeof(ServiceClassAttribute)) as ServiceClassAttribute;
+                var serviceImplClass = type.GetCustomAttribute<ServiceClassAttribute>();
                 if (serviceImplClass != null && !string.IsNullOrEmpty(serviceImplClass.Key))
                 {
                     return serviceImplClass.Key;

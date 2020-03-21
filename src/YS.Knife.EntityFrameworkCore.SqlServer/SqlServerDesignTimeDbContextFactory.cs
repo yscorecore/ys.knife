@@ -52,7 +52,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             if (Attribute.IsDefined(typeof(T), typeof(SqlServerDbContextClassAttribute)))
             {
-                var attr = Attribute.GetCustomAttribute(typeof(T), typeof(SqlServerDbContextClassAttribute)) as SqlServerDbContextClassAttribute;
+                var attr = typeof(T).GetCustomAttribute<SqlServerDbContextClassAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;

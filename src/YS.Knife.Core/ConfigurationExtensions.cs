@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 namespace YS.Knife
 {
@@ -9,7 +10,8 @@ namespace YS.Knife
             where T : class
 
         {
-            if (!(Attribute.GetCustomAttribute(typeof(T), typeof(OptionsClassAttribute)) is OptionsClassAttribute configAttr))
+            var configAttr = typeof(T).GetCustomAttribute<OptionsClassAttribute>();
+            if (configAttr == null)
             {
                 throw new InvalidOperationException($"Can not find {nameof(OptionsClassAttribute)} in type {typeof(T).FullName}.");
             }

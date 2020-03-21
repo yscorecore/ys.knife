@@ -52,7 +52,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             if (Attribute.IsDefined(typeof(T), typeof(PostgreSqlDbContextClassAttribute)))
             {
-                var attr = Attribute.GetCustomAttribute(typeof(T), typeof(PostgreSqlDbContextClassAttribute)) as PostgreSqlDbContextClassAttribute;
+                var attr = typeof(T).GetCustomAttribute<PostgreSqlDbContextClassAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;
