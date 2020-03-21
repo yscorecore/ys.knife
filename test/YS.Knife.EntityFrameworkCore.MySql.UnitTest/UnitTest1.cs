@@ -1,12 +1,7 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
-using YS.Knife.Hosting;
-using YS.Knife.Test;
-using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.EntityFrameworkCore.MySql.UnitTest.TestData;
 using System.Collections.Generic;
+using YS.Knife.EntityFrameworkCore.MySql.UnitTest.TestData;
+using YS.Knife.Hosting;
 
 namespace YS.Knife.EntityFrameworkCore.MySql.UnitTest
 {
