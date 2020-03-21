@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
 namespace YS.Knife.Rest.Api.Client.Generator
 {
+    [SuppressMessage("Performance", "CA1822:将成员标记为 static", Justification = "<挂起>")]
     public class RunCommand
     {
         public void Run(ApiOptions apiOptions)
@@ -22,6 +24,8 @@ namespace YS.Knife.Rest.Api.Client.Generator
         {
 
         }
+
+       
         public void GeneratorClientFiles()
         {
 
