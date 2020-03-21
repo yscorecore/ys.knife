@@ -10,7 +10,7 @@ namespace YS.Knife.Hosting.Web
     [SuppressMessage("Performance", "CA1822:将成员标记为 static", Justification = "<挂起>")]
     public class DefaultStartup
     {
-        
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.Configure<ApiBehaviorOptions>(options =>

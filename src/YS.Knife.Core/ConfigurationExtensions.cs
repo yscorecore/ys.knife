@@ -23,7 +23,7 @@ namespace YS.Knife
             {
                 throw new ArgumentNullException(nameof(configuration));
             }
-            if (path==null)
+            if (path == null)
             {
                 var configKey = typeof(T).Name;
                 if (configKey != "Options" && configKey.EndsWith("Options", true, CultureInfo.InvariantCulture))
@@ -32,10 +32,10 @@ namespace YS.Knife
                 }
                 return configuration.GetSection(configKey);
             }
-            else if (path.Length==0)
+            else if (path.Length == 0)
             {
                 return configuration;
-               
+
             }
             else
             {

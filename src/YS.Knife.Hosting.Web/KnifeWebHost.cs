@@ -32,7 +32,7 @@ namespace YS.Knife.Hosting
                     webBuilder.UseStartup<TStartup>();
                 });
         }
-      
+
     }
 
     public class KnifeWebHost : KnifeWebHost<DefaultStartup>
