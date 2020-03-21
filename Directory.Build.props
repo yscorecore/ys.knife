@@ -10,11 +10,11 @@
         <PackageProjectUrl>https://github.com/yscorecore/Knife</PackageProjectUrl>
     </PropertyGroup>
     <ItemGroup>
-        <None Include="..\resources\icon.png">
+        <None Include="..\..\resources\icon.png">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
-        <None Include="..\LICENSE">
+        <None Include="..\..\LICENSE">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>

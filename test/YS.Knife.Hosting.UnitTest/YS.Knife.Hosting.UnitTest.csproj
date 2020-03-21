@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
   </ItemGroup>
 
 </Project>

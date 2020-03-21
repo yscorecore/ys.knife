@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-
+    <RootNamespace>YS.Knife</RootNamespace>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
@@ -14,8 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.HostedService\YS.Knife.HostedService.csproj" />
-    <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Core\YS.Knife.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -19,8 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Base\YS.Knife.Base.csproj" />
-    <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Base\YS.Knife.Base.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
   </ItemGroup>
 
 </Project>
