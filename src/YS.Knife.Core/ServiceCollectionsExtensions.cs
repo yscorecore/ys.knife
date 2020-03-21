@@ -9,10 +9,10 @@ namespace YS.Knife
     {
         public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IRegisteContext context)
         {
-            foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceLoader>())
+            foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceRegister>())
             {
-                var loader = Activator.CreateInstance(loaderType) as IServiceLoader;
-                loader.LoadServices(services, context);
+                var loader = Activator.CreateInstance(loaderType) as IServiceRegister;
+                loader.RegisteServices(services, context);
             }
             return services;
         }

@@ -5,9 +5,9 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace YS.Knife.Loaders
 {
-    public class DictionaryLoader : IServiceLoader
+    public class DictionaryRegister : IServiceRegister
     {
-        public void LoadServices(IServiceCollection services, IRegisteContext context)
+        public void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
             if (context.HasFiltered(typeof(IDictionary<,>))) return;
             services.AddTransient(typeof(IDictionary<,>), typeof(KnifeInjectionDictionary<,>));

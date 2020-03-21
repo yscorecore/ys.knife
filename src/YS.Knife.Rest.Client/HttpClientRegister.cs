@@ -3,9 +3,9 @@ using System;
 
 namespace YS.Knife.Rest.Client
 {
-    public class HttpClientLoader : IServiceLoader
+    public class HttpClientRegister : IServiceRegister
     {
-        public void LoadServices(IServiceCollection services, IRegisteContext context)
+        public void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             var apiServiceOptions = context.Configuration.GetConfigOrNew<ApiServicesOptions>();

@@ -3,9 +3,9 @@ using System;
 using System.Linq;
 namespace YS.Knife.Loaders
 {
-    public class AttributeServiceLoader : IServiceLoader
+    public class AttributeServiceRegister : IServiceRegister
     {
-        public virtual void LoadServices(IServiceCollection services, IRegisteContext context)
+        public virtual void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
             foreach (var type in AppDomain.CurrentDomain.FindInstanceTypesByAttribute<KnifeAttribute>())
             {

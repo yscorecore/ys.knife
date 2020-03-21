@@ -6,9 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Hosting.Web
 {
-    public class WebApiLoader : IServiceLoader
+    public class WebApiRegister : IServiceRegister
     {
-        public void LoadServices(IServiceCollection services, IRegisteContext context)
+        public void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();

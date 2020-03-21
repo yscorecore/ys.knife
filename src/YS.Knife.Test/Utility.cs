@@ -46,7 +46,7 @@ namespace YS.Knife.Test
                 this.backupEnvName = Environment.GetEnvironmentVariable(ASPNETCORE_ENVKEY);
                 Environment.SetEnvironmentVariable(ASPNETCORE_ENVKEY, envName);
             }
-            private string backupEnvName;
+            private readonly string backupEnvName;
             public void Dispose()
             {
                 Environment.SetEnvironmentVariable(ASPNETCORE_ENVKEY, backupEnvName);

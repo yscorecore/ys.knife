@@ -140,7 +140,7 @@ namespace YS.Knife.Hosting
             var logger = loggerFactory.CreateLogger("Knife");
             var options = configuration.GetConfigOrNew<KnifeOptions>();
 
-            PluginLoader.LoadPlugins(options.Plugins);
+            PluginRegister.LoadPlugins(options.Plugins);
             var knifeTypeFilter = new KnifeTypeFilter(options);
             services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }

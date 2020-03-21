@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace YS.Knife.Hosting
 {
-    class PluginLoader
+    class PluginRegister
     {
         public static void LoadPlugins(IEnumerable<string> plugins, bool throwIfException = true)
         {
