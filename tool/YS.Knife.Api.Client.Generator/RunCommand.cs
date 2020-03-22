@@ -25,7 +25,7 @@ namespace YS.Knife.Rest.Api.Client.Generator
 
         }
 
-       
+
         public void GeneratorClientFiles()
         {
 
