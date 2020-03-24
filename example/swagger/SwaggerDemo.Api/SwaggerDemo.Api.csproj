@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>.\SwaggerDemo.Api\SwaggerDemo.Api.xml</DocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="SwaggerDemo.Api\SwaggerDemo.Api.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="SwaggerDemo.Api\SwaggerDemo.Api.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\YS.Knife.Rest.Api\YS.Knife.Rest.Api.csproj" />
+    <ProjectReference Include="..\SwaggerDemo.Core\SwaggerDemo.Core.csproj" />
+  </ItemGroup>
+
+</Project>

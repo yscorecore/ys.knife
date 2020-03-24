@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.2.1" />
+    <PackageReference Include="YS.Knife.Hosting.Web" Version="1.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SwaggerDemo.Api\SwaggerDemo.Api.csproj" />
+    <ProjectReference Include="..\SwaggerDemo.Impl\SwaggerDemo.Impl.csproj" />
+  </ItemGroup>
+
+
+</Project>

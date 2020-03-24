@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SwaggerDemo.Api</name>
+    </assembly>
+    <members>
+        <member name="M:SwaggerDemo.Api.CalcController.Add(System.Int32,System.Int32)">
+            <summary>
+            加法运算
+            </summary>
+            <param name="a">加数</param>
+            <param name="b">被加数</param>
+            <returns></returns>
+        </member>
+        <member name="M:SwaggerDemo.Api.CalcController.Sub(System.Int32,System.Int32)">
+            <summary>
+            减法运算
+            </summary>
+            <param name="a"></param>
+            <param name="b"></param>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
