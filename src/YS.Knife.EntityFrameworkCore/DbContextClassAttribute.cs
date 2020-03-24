@@ -10,7 +10,7 @@ namespace Microsoft.EntityFrameworkCore
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public abstract class DbContextClassAttribute : KnifeAttribute
     {
-        public DbContextClassAttribute(string connectionStringKey)
+        public DbContextClassAttribute(string connectionStringKey) : base(typeof(DbContext))
         {
             this.ConnectionStringKey = connectionStringKey;
         }
@@ -27,10 +27,9 @@ namespace Microsoft.EntityFrameworkCore
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             _ = context ?? throw new ArgumentNullException(nameof(context));
-            this.ValidateType(declareType, typeof(DbContext));
             if (this.InjectType != null)
             {
-                this.ValidateType(InjectType, typeof(DbContext));
+                // this.ValidateType(InjectType, typeof(DbContext));
             }
 
             string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey) ? declareType.Name : this.ConnectionStringKey;

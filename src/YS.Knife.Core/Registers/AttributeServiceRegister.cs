@@ -12,6 +12,10 @@ namespace YS.Knife.Loaders
                 if (context.HasFiltered(type)) continue;
                 foreach (var injectAttribute in type.GetCustomAttributes(typeof(KnifeAttribute), true).Cast<KnifeAttribute>())
                 {
+                    if (injectAttribute.ValidateFromType != null && !injectAttribute.ValidateFromType.IsAssignableFrom(type))
+                    {
+                        throw new InvalidOperationException($"The type '{type.FullName}' must be a child class from '{injectAttribute.ValidateFromType.FullName}'.");
+                    }
                     injectAttribute.RegisteService(services, context, type);
                 }
             }

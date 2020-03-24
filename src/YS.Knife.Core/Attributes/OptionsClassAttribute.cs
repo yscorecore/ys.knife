@@ -7,7 +7,7 @@ namespace YS.Knife
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class OptionsClassAttribute : KnifeAttribute
     {
-        public OptionsClassAttribute(string configKey = default)
+        public OptionsClassAttribute(string configKey = default) : base(null)
         {
             this.ConfigKey = configKey;
         }

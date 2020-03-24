@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace YS.Knife.Hosting
 {
-    public class KnifeTypeFilter
+    internal class KnifeTypeFilter
     {
         public KnifeTypeFilter(KnifeOptions knifeOptions)
         {

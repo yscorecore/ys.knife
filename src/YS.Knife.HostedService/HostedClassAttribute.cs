@@ -9,9 +9,12 @@ namespace YS.Knife
 
     public sealed class HostedClassAttribute : KnifeAttribute
     {
+        public HostedClassAttribute() : base(typeof(IHostedService))
+        {
+
+        }
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
-            this.ValidateType(declareType, typeof(IHostedService));
             var method = typeof(HostedClassAttribute).GetMethod(nameof(AddHostedService), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services });
         }

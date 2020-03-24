@@ -6,10 +6,10 @@ namespace YS.Knife
 
     public class ServiceClassAttribute : KnifeAttribute
     {
-        public ServiceClassAttribute()
+        public ServiceClassAttribute() : base(null)
         {
         }
-        public ServiceClassAttribute(Type injectType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped)
+        public ServiceClassAttribute(Type injectType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) : base(null)
         {
             this.InjectType = injectType;
             this.Lifetime = serviceLifetime;
