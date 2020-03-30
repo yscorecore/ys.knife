@@ -51,6 +51,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.EntityframeworkCor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.EntityframeworkCore.Sqlite", "src\YS.Knife.EntityFrameworkCore.Sqlite\YS.Knife.EntityframeworkCore.Sqlite.csproj", "{32781843-6E00-44C0-AB77-D541B4B45BAA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Stage", "src\YS.Knife.Stage\YS.Knife.Stage.csproj", "{CFE3B82C-0512-45CE-8E03-0560D0930619}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,6 +135,10 @@ Global
 		{32781843-6E00-44C0-AB77-D541B4B45BAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32781843-6E00-44C0-AB77-D541B4B45BAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32781843-6E00-44C0-AB77-D541B4B45BAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFE3B82C-0512-45CE-8E03-0560D0930619}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFE3B82C-0512-45CE-8E03-0560D0930619}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFE3B82C-0512-45CE-8E03-0560D0930619}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFE3B82C-0512-45CE-8E03-0560D0930619}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -159,6 +165,7 @@ Global
 		{53AC520B-2BFB-4121-A083-1FA36A8B8515} = {4E5BFD29-B9D4-447D-AAF5-26DFBA97EEB7}
 		{0CB90191-2B56-4E85-A64B-45303C6671FF} = {4E5BFD29-B9D4-447D-AAF5-26DFBA97EEB7}
 		{32781843-6E00-44C0-AB77-D541B4B45BAA} = {4E5BFD29-B9D4-447D-AAF5-26DFBA97EEB7}
+		{CFE3B82C-0512-45CE-8E03-0560D0930619} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}

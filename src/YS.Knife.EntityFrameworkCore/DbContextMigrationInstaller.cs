@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using YS.Knife;
+using YS.Knife.Stage;
 
 namespace Microsoft.EntityFrameworkCore
 {

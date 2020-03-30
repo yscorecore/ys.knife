@@ -7,6 +7,7 @@ using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 using System.Threading;
 using Moq;
+using YS.Knife.Stage;
 
 namespace YS.Knife.Hosting
 {

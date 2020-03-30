@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace YS.Knife
+namespace YS.Knife.Stage
 {
     public abstract class UnInstaller : IStageService
     {
