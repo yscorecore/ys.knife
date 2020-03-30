@@ -59,45 +59,17 @@ namespace YS.Knife.Hosting
         }
 
 
-
-        protected void RunStage(string name)
-        {
-            using (var scope = host.Services.CreateScope())
-            {
-                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase)).ToList();
-                ILogger logger = scope.ServiceProvider.GetRequiredService<ILogger<KnifeHost>>();
-                logger.LogInformation($"There are {handlers.Count} handlers in {name} stage.");
-                for (int i = 0; i < handlers.Count; i++)
-                {
-                    var index = i + 1;
-                    var handler = handlers[i];
-                    logger.LogInformation($"[{index:d2}] Start exec handler {handler.GetType().Name}.");
-                    handler.Run(CancellationToken.None).Wait();
-                }
-            }
-        }
-        protected void RunDefault()
-        {
-            host.Run();
-        }
-
         public void Run()
         {
             var options = this.host.Services.GetService<IOptions<KnifeOptions>>();
-            if (IsDefaultVerb(options.Value.Stage))
+            if (string.IsNullOrEmpty(options.Value.Stage))
             {
-                RunDefault();
+                this.host.Run();
             }
             else
             {
-                RunStage(options.Value.Stage);
+                this.host.RunStage(options.Value.Stage);
             }
-        }
-
-        private static bool IsDefaultVerb(string stage)
-        {
-            return string.IsNullOrEmpty(stage) ||
-                   string.Equals("default", stage, StringComparison.InvariantCultureIgnoreCase);
         }
         #region IDisposable Support
         private bool disposedValue = false; // 要检测冗余调用
