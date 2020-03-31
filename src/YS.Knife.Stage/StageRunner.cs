@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,7 +11,7 @@ namespace Microsoft.Extensions.Hosting
 {
     public static class StageRunner
     {
-        public static void RunStage(this IHost host, string name, CancellationToken cancellation=default)
+        public static void RunStage(this IHost host, string name, CancellationToken cancellation = default)
         {
             using (var scope = host.Services.CreateScope())
             {
