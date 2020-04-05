@@ -49,13 +49,16 @@ namespace YS.Knife.Hosting
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     LoadKnifeServices(serviceCollection, builder.Configuration);
-                    this.LoadCustomService(builder, serviceCollection);
-                });
-
+                    this.OnLoadCustomService(builder, serviceCollection);
+                }).ConfigureAppConfiguration(OnConfigureAppConfiguration);
         }
-        protected virtual void LoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected virtual void OnLoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
             configureDelegate?.Invoke(builder, serviceCollection);
+        }
+        protected virtual void OnConfigureAppConfiguration(HostBuilderContext hostBuilderContext, IConfigurationBuilder configurationBuilder)
+        {
+
         }
 
 
