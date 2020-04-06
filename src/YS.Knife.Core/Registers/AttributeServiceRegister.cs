@@ -12,15 +12,50 @@ namespace YS.Knife.Loaders
                 if (context.HasFiltered(type)) continue;
                 foreach (var injectAttribute in type.GetCustomAttributes(typeof(KnifeAttribute), true).Cast<KnifeAttribute>())
                 {
-                    if (injectAttribute.ValidateFromType != null && !injectAttribute.ValidateFromType.IsAssignableFrom(type))
+                    if (injectAttribute.ValidateFromType != null)
                     {
-                        throw new InvalidOperationException($"The type '{type.FullName}' must be a child class from '{injectAttribute.ValidateFromType.FullName}'.");
+                        if (injectAttribute.ValidateFromType.IsGenericTypeDefinition)
+                        {
+                            if (!IsAssignableFromGenericType(type, injectAttribute.ValidateFromType))
+                            {
+                                throw new InvalidOperationException($"The type '{type.FullName}' must be a child class from '{injectAttribute.ValidateFromType.FullName}'.");
+                            }
+                        }
+                        else
+                        {
+                            if (!injectAttribute.ValidateFromType.IsAssignableFrom(type))
+                            {
+                                throw new InvalidOperationException($"The type '{type.FullName}' must be a child class from '{injectAttribute.ValidateFromType.FullName}'.");
+                            }
+                        }
                     }
                     injectAttribute.RegisteService(services, context, type);
                 }
             }
         }
 
-
+        private bool IsAssignableFromGenericType(Type type, Type genericTypeDefinition)
+        {
+            if (!genericTypeDefinition.IsGenericTypeDefinition) return false;
+            //base classes
+            var tempType = type;
+            while (tempType != null)
+            {
+                if (tempType.IsGenericType && tempType.GetGenericTypeDefinition() == genericTypeDefinition)
+                {
+                    return true;
+                }
+                tempType = tempType.BaseType;
+            }
+            //interfaces
+            foreach (var interfaceType in type.GetInterfaces())
+            {
+                if (interfaceType.IsGenericType && interfaceType.GetGenericTypeDefinition() == genericTypeDefinition)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }

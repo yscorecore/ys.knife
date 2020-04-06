@@ -1,13 +1,13 @@
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 
-namespace YS.Knife.Core.UnitTest.Options
+namespace YS.Knife.Options
 {
     [OptionsClass]
     public class Custom8Options
     {
         public int Number { get; set; }
     }
-    
+
     [OptionsValidate]
     public class Custom8Validator : IValidateOptions<Custom8Options>
     {

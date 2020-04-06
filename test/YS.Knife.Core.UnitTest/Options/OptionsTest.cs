@@ -119,5 +119,29 @@ namespace YS.Knife.Options
             Assert.IsNotNull(options.Value);
             Assert.AreEqual("some_value", options.Value.Value);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OptionsValidationException))]
+        public void ShouldThrowExceptionWhenDefineCustomValidateAndConfigInvalidValue()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["Custom8:Number"] = "1"
+            });
+            var options = provider.GetService<IOptions<Custom8Options>>();
+            Assert.IsNotNull(options);
+            _ = options.Value;
+        }
+        [TestMethod]
+        public void ShouldGetConfigedValueWhenDefineCustomValidateAndConfigValidValue()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["Custom8:Number"] = "2"
+            });
+            var options = provider.GetService<IOptions<Custom8Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+        }
     }
 }
