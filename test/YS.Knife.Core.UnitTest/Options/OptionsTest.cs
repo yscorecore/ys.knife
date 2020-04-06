@@ -143,5 +143,18 @@ namespace YS.Knife.Options
             Assert.IsNotNull(options);
             Assert.IsNotNull(options.Value);
         }
+
+        [TestMethod]
+        public void ShouldGetPostedValueWhenDefineOptionsAttributeAndPostHandler()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["Custom9:Text"] = "some_text"
+            });
+            var options = provider.GetService<IOptions<Custom9Options>>();
+            Assert.IsNotNull(options);
+            Assert.IsNotNull(options.Value);
+            Assert.AreEqual("__some_text", options.Value.Text);
+        }
     }
 }

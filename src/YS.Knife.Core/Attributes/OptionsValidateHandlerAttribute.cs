@@ -6,9 +6,9 @@ using System.Linq;
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class OptionsValidateAttribute : KnifeAttribute
+    public class OptionsValidateHandlerAttribute : KnifeAttribute
     {
-        public OptionsValidateAttribute() : base(typeof(IValidateOptions<>))
+        public OptionsValidateHandlerAttribute() : base(typeof(IValidateOptions<>))
         {
         }
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)

@@ -8,7 +8,7 @@ namespace YS.Knife.Options
         public int Number { get; set; }
     }
 
-    [OptionsValidate]
+    [OptionsValidateHandler]
     public class Custom8Validator : IValidateOptions<Custom8Options>
     {
         public ValidateOptionsResult Validate(string name, Custom8Options options)
