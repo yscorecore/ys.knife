@@ -23,22 +23,27 @@ jobs:
       run: echo "::set-env name=TEST_PROJ_COUNT::$(ls -l test |grep "^d"|wc -l)"
     - name: 07 Run Unit test
       if: env.TEST_PROJ_COUNT>0
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
     - name: 08 Combin All Test Report
       if: env.TEST_PROJ_COUNT>0
       run: dotnet tool install -g dotnet-reportgenerator-globaltool && reportgenerator  -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
-    - name: 09 Upload coverage to Codecov  
+    - name: 09 Save Artifact
+      uses: actions/upload-artifact@v1
+      with:
+        name: cobertura_report
+        path: ./Cobertura.xml
+    - name: 10 Upload coverage to Codecov  
       if: env.TEST_PROJ_COUNT>0
       uses: codecov/codecov-action@v1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         flags: unittests
         fail_ci_if_error: true
-    - name: 10 Set Git Tag Name
+    - name: 11 Set Git Tag Name
       run: echo "::set-env name=GIT_TAG::${GITHUB_REF:10}"
-    - name: 11 Set Pack Version
+    - name: 12 Set Pack Version
       run: echo "::set-env name=PACK_VERSION::${GIT_TAG#v}"
-    - name: 12 Create Package
+    - name: 13 Create Package
       run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
-    - name: 13 Push Package
+    - name: 14 Push Package
       run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}
