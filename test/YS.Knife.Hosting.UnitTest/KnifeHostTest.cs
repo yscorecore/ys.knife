@@ -1,19 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System.Threading.Tasks;
-using System.Threading;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using YS.Knife.Stage;
-
 namespace YS.Knife.Hosting
 {
+    [TestClass]
     public class KnifeHostTest
     {
-        [Fact]
+        [TestMethod]
         public void ShouldCreateANewInstanceWhenCallCtor()
         {
             using (var host = new KnifeHost())
@@ -22,16 +18,16 @@ namespace YS.Knife.Hosting
             }
 
         }
-        [Fact]
+        [TestMethod]
         public void ShouldReturnServiceWhenGetService()
         {
             using (var knifeHost = new KnifeHost(new string[0]))
             {
                 var innerHost = knifeHost.GetRequiredService<IHost>();
-                Assert.NotNull(innerHost);
+                Assert.IsNotNull(innerHost);
             }
         }
-        [Fact]
+        [TestMethod]
         public void ShouldCanBeStopedWhenRun()
         {
             using (var knifeHost = new KnifeHost(new string[0]))
@@ -43,7 +39,7 @@ namespace YS.Knife.Hosting
         }
 
 
-        [Fact]
+        [TestMethod]
         public void ShouldGetInjectServiceByCodeWhenUseConfigureDelegate()
         {
             using (var knifeHost = new KnifeHost(new string[0], (builder, serviceCollection) =>
@@ -52,11 +48,11 @@ namespace YS.Knife.Hosting
             }))
             {
                 var test = ServiceProviderServiceExtensions.GetService<ITest>(knifeHost);
-                Assert.IsType<ATest>(test);
+                Assert.IsTrue(test is ATest);
             }
         }
 
-        [Fact]
+        [TestMethod]
         public void ShouldRunTempStageServiceWhenRunStageTemp()
         {
             var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp");
@@ -69,7 +65,7 @@ namespace YS.Knife.Hosting
             }
             Mock.Get(tempStageService).Verify(p => p.Run(default), Times.Once);
         }
-        [Fact]
+        [TestMethod]
         public void ShouldRunDefaultWhenUseDefaultStageName()
         {
             var defaultStageService = Mock.Of<IStageService>(p => p.StageName == "default");
