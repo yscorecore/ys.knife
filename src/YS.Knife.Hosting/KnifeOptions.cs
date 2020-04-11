@@ -6,7 +6,7 @@ namespace YS.Knife
     public class KnifeOptions
     {
         public string Stage { get; set; } = "";
-        public List<string> Plugins { get; set; } = new List<string> { "*.dll" };
+        public List<string> Plugins { get; set; } = new List<string> { "*.dll", "!runtimes/*.dll", "!*/*.resources.dll" };
         public Ingores Ignores { get; set; }
     }
     public class Ingores
