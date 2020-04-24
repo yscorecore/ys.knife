@@ -28,7 +28,11 @@ namespace YS.Knife.Rest.Client
         protected string ServiceName { get; private set; }
 
 
-        public virtual async Task<HttpResponseMessage> SendHttp(RestApiInfo apiInfo)
+        public Task SendHttp(RestApiInfo apiInfo)
+        {
+            return SendHttpAsResponse(apiInfo);
+        }
+        protected virtual async Task<HttpResponseMessage> SendHttpAsResponse(RestApiInfo apiInfo)
         {
             _ = apiInfo ?? throw new ArgumentNullException(nameof(apiInfo));
             var client = this.ClientFactory.CreateClient(ServiceName);
@@ -48,9 +52,9 @@ namespace YS.Knife.Rest.Client
 
         }
 
-        public virtual async Task<T> SendHttp<T>(RestApiInfo apiInfo)
+        public async Task<T> SendHttp<T>(RestApiInfo apiInfo)
         {
-            var response = await this.SendHttp(apiInfo);
+            var response = await this.SendHttpAsResponse(apiInfo);
             return FromResponse<T>(response);
         }
         private T FromResponse<T>(HttpResponseMessage response)
