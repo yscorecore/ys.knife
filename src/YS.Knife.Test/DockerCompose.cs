@@ -2,14 +2,33 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace YS.Knife.Test
 {
     public static class DockerCompose
     {
-        public static void Up(IDictionary<string, object> envs = null)
+        public static void Up(IDictionary<string, object> envs = null, bool waitStatusReady = true, int maxWaitStatusSeconds = 120)
         {
+            envs = envs ?? new Dictionary<string, object>();
+
+            string statusFolder = "tmp";
+            string statusFileName = DateTimeOffset.Now.Ticks.ToString();
+            string statusFile = System.IO.Path.Combine(statusFolder, statusFileName);
+
+            envs.Add("STATUS_FILE", statusFileName);
             Exec("docker-compose", "up --build -d", envs);
+            if (waitStatusReady)
+            {
+                for (int i = 0; i < maxWaitStatusSeconds; i++)
+                {
+                    if (System.IO.File.Exists(statusFile))
+                    {
+                        break;
+                    }
+                    Task.Delay(1000).Wait();
+                }
+            }
         }
         public static void Down()
         {
