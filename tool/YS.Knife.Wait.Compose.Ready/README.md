@@ -9,8 +9,7 @@ services:
   service2:
     ......
   wait-compose-ready:
-    image: 
-      context: .
+    image: ysknife/wait-compose-ready
     volumes:
       - ./tmp:/var/status
     environment:
