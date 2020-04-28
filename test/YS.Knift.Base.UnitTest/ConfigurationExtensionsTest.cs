@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
-namespace Knift
+namespace YS.Knife
 {
     [TestClass]
     public class ConfigurationExtensionsTest : KnifeHost
