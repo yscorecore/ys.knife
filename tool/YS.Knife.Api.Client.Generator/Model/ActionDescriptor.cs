@@ -33,7 +33,7 @@ namespace YS.Knife.Api.Client.Generator.Model
             {
                 MethodInfo = methodInfo,
                 MethodName = methodInfo.Name,
-                HttpMethod = httpMethodName,
+                HttpMethod = new HttpMethod(httpMethodName),
                 RouterTemplate = string.IsNullOrEmpty(methodAttribute.Template) ? router?.Template : methodAttribute.Template,
                 Arguments = arguments.ToList()
             };
