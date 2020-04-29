@@ -6,9 +6,6 @@
         <Product>QuickCoreCore</Product>
         <PackageIcon>icon.png</PackageIcon>
         <RepositoryType>git</RepositoryType>
-        <RepositoryUrl></RepositoryUrl>
-        <PackageProjectUrl></PackageProjectUrl>
-        <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
         <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
         <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
         <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
