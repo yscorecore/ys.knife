@@ -11,12 +11,12 @@ namespace YS.Knife.Test
         public static void Up(IDictionary<string, object> envs = null, int reportStatusPort = 8901, int maxWaitStatusSeconds = 120)
         {
             envs = envs ?? new Dictionary<string, object>();
-            if(reportStatusPort>0)
+            if (reportStatusPort > 0)
             {
-                envs.Add("REPORT_TO_HOST_PORT",reportStatusPort);
+                envs.Add("REPORT_TO_HOST_PORT", reportStatusPort);
             }
             Exec("docker-compose", "up --build -d", envs);
-            if (reportStatusPort>0)
+            if (reportStatusPort > 0)
             {
                 WaitContainerReportStatus(reportStatusPort, maxWaitStatusSeconds);
             }
