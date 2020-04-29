@@ -2,32 +2,23 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Threading.Tasks;
+using System.Net;
 
 namespace YS.Knife.Test
 {
     public static class DockerCompose
     {
-        public static void Up(IDictionary<string, object> envs = null, bool waitStatusReady = true, int maxWaitStatusSeconds = 120)
+        public static void Up(IDictionary<string, object> envs = null, int reportStatusPort = 8901, int maxWaitStatusSeconds = 120)
         {
             envs = envs ?? new Dictionary<string, object>();
-
-            string statusFolder = "tmp";
-            string statusFileName = DateTimeOffset.Now.Ticks.ToString();
-            string statusFile = System.IO.Path.Combine(statusFolder, statusFileName);
-
-            envs.Add("STATUS_FILE", statusFileName);
-            Exec("docker-compose", "up --build -d", envs);
-            if (waitStatusReady)
+            if(reportStatusPort>0)
             {
-                for (int i = 0; i < maxWaitStatusSeconds; i++)
-                {
-                    if (System.IO.File.Exists(statusFile))
-                    {
-                        break;
-                    }
-                    Task.Delay(1000).Wait();
-                }
+                envs.Add("REPORT_TO_HOST_PORT",reportStatusPort);
+            }
+            Exec("docker-compose", "up --build -d", envs);
+            if (reportStatusPort>0)
+            {
+                WaitContainerReportStatus(reportStatusPort, maxWaitStatusSeconds);
             }
         }
         public static void Down()
@@ -55,6 +46,28 @@ namespace YS.Knife.Test
                 throw new Exception($"Exec process return {process.ExitCode}.");
             }
             return process.ExitCode;
+        }
+
+        private static void WaitContainerReportStatus(int port = 8901, int maxSeconds = 120)
+        {
+            using (var httpListener = new HttpListener())
+            {
+                httpListener.Prefixes.Add($"http://+:{port}/");
+                httpListener.Start();
+                IAsyncResult result = httpListener.BeginGetContext(new AsyncCallback(ListenerCallback), httpListener);
+                Console.WriteLine("Waiting for request to be processed asyncronously.");
+                result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(maxSeconds));
+                Console.WriteLine("Request processed asyncronously.");
+            }
+        }
+        private static void ListenerCallback(IAsyncResult result)
+        {
+            HttpListener listener = (HttpListener)result.AsyncState;
+            // Call EndGetContext to complete the asynchronous operation.
+            HttpListenerContext context = listener.EndGetContext(result);
+            // Obtain a response object.
+            HttpListenerResponse response = context.Response;
+            response.StatusCode = (int)HttpStatusCode.OK;
         }
     }
 }

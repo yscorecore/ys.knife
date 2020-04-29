@@ -1,0 +1,5 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Test\YS.Knife.Test.csproj" />
+  </ItemGroup>
+</Project>

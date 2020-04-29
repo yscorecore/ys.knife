@@ -3,4 +3,4 @@ version: '3.3'
 services:
   wait-compose-ready:
     build: tool/YS.Knife.Wait.Compose.Ready
-    image: ysknife/wait-compose-ready:{IMAGE_TAG:latest}
+    image: ysknife/wait-compose-ready:${IMAGE_TAG:-latest}
