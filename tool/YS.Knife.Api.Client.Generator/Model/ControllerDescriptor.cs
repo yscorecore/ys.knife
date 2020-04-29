@@ -42,9 +42,9 @@ namespace YS.Knife.Api.Client.Generator.Model
         }
         private static IEnumerable<MethodInfo> FindActionMethods(Type type)
         {
-            foreach (var method in type.GetMethods(BindingFlags.Public| BindingFlags.Instance))
+            foreach (var method in type.GetMethods(BindingFlags.Public | BindingFlags.Instance))
             {
-                if (Attribute.IsDefined(method, typeof(HttpMethodAttribute), true) 
+                if (Attribute.IsDefined(method, typeof(HttpMethodAttribute), true)
                     && !method.IsAbstract && !method.IsGenericMethod)
                 {
                     yield return method;

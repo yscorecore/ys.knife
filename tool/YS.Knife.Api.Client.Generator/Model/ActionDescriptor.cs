@@ -20,12 +20,12 @@ namespace YS.Knife.Api.Client.Generator.Model
 
         public static ActionDescriptor FromActionMethod(MethodInfo methodInfo)
         {
-            var methodAttribute = methodInfo.GetCustomAttribute<HttpMethodAttribute>(true)?? throw new ArgumentException($"The method must define a {nameof(HttpMethodAttribute)}.");
+            var methodAttribute = methodInfo.GetCustomAttribute<HttpMethodAttribute>(true) ?? throw new ArgumentException($"The method must define a {nameof(HttpMethodAttribute)}.");
 
             string httpMethodName = methodAttribute.Name.Replace("Http", string.Empty).Replace("Attribute", string.Empty);
 
             var router = methodInfo.GetCustomAttribute<RouteAttribute>(true);
-            
+
             var arguments = from p in methodInfo.GetParameters()
                             select ArgumentDescriptor.FromParameter(p);
 
