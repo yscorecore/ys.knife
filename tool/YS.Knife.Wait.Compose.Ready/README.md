@@ -10,10 +10,8 @@ services:
     ......
   wait-compose-ready:
     image: ysknife/wait-compose-ready
-    volumes:
-      - ./tmp:/var/status
     environment:
-      STATUS_FILE: ${STATUS_FILE}
+      REPORT_TO_HOST_PORT: ${REPORT_TO_HOST_PORT:-8901}
       WAIT_HOSTS: service1:80, service2:81
 ```
 

@@ -14,8 +14,15 @@ if [ "${IMAGES_COUNT}" = "0" ]; then
     exit
 fi
 
+build_and_push()
+{
+  IMAGE_TAG="$1" docker-compose -f $DOCKER_IMAGES_FILE build && docker-compose -f $DOCKER_IMAGES_FILE push
+}
+
 DOCKER_USERNAME=$1
 DOCKER_PASSWORD=$2
 echo "${DOCKER_PASSWORD}" | docker login -u ${DOCKER_USERNAME} --password-stdin
-docker-compose -f $DOCKER_IMAGES_FILE build && docker-compose -f $DOCKER_IMAGES_FILE push
+build_and_push "$IMAGE_TAG"
+build_and_push "latest"
 docker logout
+
