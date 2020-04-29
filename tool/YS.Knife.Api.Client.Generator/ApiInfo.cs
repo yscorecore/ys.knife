@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YS.Knife.Rest.Api.Client.Generator
+namespace YS.Knife.Api.Client.Generator
 {
     public class ApiInfo
     {

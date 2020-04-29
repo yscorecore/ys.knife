@@ -5,13 +5,12 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace YS.Knife.Rest.Api.Client.Generator
+namespace YS.Knife.Api.Client.Generator.Model
 {
     public class ArgumentDescriptor
     {
         public string Name { get; private set; }
         public Type Type { get; private set; }
-        public ParameterInfo Parameter { get; private set; }
         public ArgumentSource Source { get; private set; }
         public static ArgumentDescriptor FromParameter(ParameterInfo parameterInfo)
         {
@@ -26,7 +25,6 @@ namespace YS.Knife.Rest.Api.Client.Generator
             return new ArgumentDescriptor
             {
                 Name = parameterInfo.Name,
-                Parameter = parameterInfo,
                 Type = parameterInfo.ParameterType,
                 Source = source == null ? ArgumentSource.Unknown : (ArgumentSource)Enum.Parse(typeof(ArgumentSource), source)
             };

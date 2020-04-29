@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace YS.Knife.Rest.Api.Client.Generator
+namespace YS.Knife.Api.Client.Generator
 {
     [SuppressMessage("Performance", "CA1822:将成员标记为 static", Justification = "<挂起>")]
     public class RunCommand

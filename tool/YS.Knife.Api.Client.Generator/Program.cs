@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YS.Knife.Rest.Api.Client.Generator
+namespace YS.Knife.Api.Client.Generator
 {
     class Program
     {
