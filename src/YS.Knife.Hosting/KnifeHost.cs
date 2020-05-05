@@ -46,6 +46,7 @@ namespace YS.Knife.Hosting
         protected virtual IHostBuilder CreateHostBuilder()
         {
             return Host.CreateDefaultBuilder(args ?? Array.Empty<string>())
+                .UseAopServiceProviderFactory()
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     LoadKnifeServices(serviceCollection, builder.Configuration);

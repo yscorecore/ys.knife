@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+ <ItemGroup>
+   <ProjectReference Include="..\..\src\YS.Knife.Aop\YS.Knife.Aop.csproj" />
+   <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+ </ItemGroup>
+
+ <PropertyGroup>
+    <RootNamespace>YS.Knife.Aop</RootNamespace>
+  </PropertyGroup>
+
+</Project>
