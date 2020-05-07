@@ -1,4 +1,4 @@
-using AspectCore.Extensions.DependencyInjection;
+﻿using AspectCore.Extensions.DependencyInjection;
 
 namespace Microsoft.Extensions.Hosting
 {
