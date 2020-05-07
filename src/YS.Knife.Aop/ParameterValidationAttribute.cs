@@ -5,11 +5,13 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using System.Linq;
+using System.Collections.Concurrent;
 namespace YS.Knife.Aop
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface, Inherited = false)]
     public class ParameterValidation : BaseAopAttribute
     {
+        static readonly ValidationAttributeCache validationAttributeCache = new ValidationAttributeCache();
         public ParameterValidation()
         {
             this.Order = 2000;
@@ -30,7 +32,7 @@ namespace YS.Knife.Aop
                 {
                     MemberName = implParameterInfo.Name
                 };
-                var validationAttributes = GetParameterValidationAttributes(implParameterInfo, serviceParameterInfo);
+                var validationAttributes = validationAttributeCache.GetValidationAttributes(implParameterInfo, serviceParameterInfo);
                 Validator.ValidateValue(value, valueContext, validationAttributes);
                 var objectContext = new ValidationContext(value, context.ServiceProvider, null)
                 {
@@ -40,15 +42,37 @@ namespace YS.Knife.Aop
             }
             return next.Invoke(context);
         }
-
-
-        private IEnumerable<ValidationAttribute> GetParameterValidationAttributes(ParameterInfo implParameterInfo, ParameterInfo serviceParameterInfo)
+        private class ValidationAttributeCache
         {
-            return implParameterInfo.GetCustomAttributes<ValidationAttribute>(true)
-                .Concat(serviceParameterInfo.GetCustomAttributes<ValidationAttribute>(true));
-
+            readonly ConcurrentDictionary<int, IEnumerable<ValidationAttribute>> cacheData = new ConcurrentDictionary<int, IEnumerable<ValidationAttribute>>();
+            public IEnumerable<ValidationAttribute> GetValidationAttributes(ParameterInfo implParameterInfo, ParameterInfo serviceParameterInfo)
+            {
+                var key = implParameterInfo.GetHashCode() ^ serviceParameterInfo.GetHashCode();
+                IEnumerable<ValidationAttribute> attributes;
+                if (cacheData.TryGetValue(key, out attributes))
+                {
+                    return attributes;
+                }
+                else
+                {
+                    attributes = GetValidationAttributesInternal(implParameterInfo, serviceParameterInfo);
+                    cacheData[key] = attributes;
+                    return attributes;
+                }
+            }
+            private List<ValidationAttribute> GetValidationAttributesInternal(ParameterInfo implParameterInfo, ParameterInfo serviceParameterInfo)
+            {
+                var results = new List<ValidationAttribute>(implParameterInfo.GetCustomAttributes<ValidationAttribute>(true));
+                foreach (var interfaceValidationAttribute in serviceParameterInfo.GetCustomAttributes<ValidationAttribute>(true))
+                {
+                    if (results.Any(p => p.GetType() == interfaceValidationAttribute.GetType()))
+                    {
+                        continue;
+                    }
+                    results.Add(interfaceValidationAttribute);
+                }
+                return results;
+            }
         }
-
-
     }
 }
