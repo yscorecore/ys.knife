@@ -99,7 +99,7 @@ namespace YS.Knife.Aop
     {
         void MustBeUrlWillNotEffective([Url] string url);
 
-        [ParameterValidation]
+        [ParameterValidationAttribute]
         void MustBeUrlWillEffectiveBecauseDefineParameterValidationInInterface([Url] string url);
 
         void MustBeUrlWillEffectiveBecauseDefineParameterValidationInImplementation([Url] string url);
@@ -107,7 +107,7 @@ namespace YS.Knife.Aop
 
     }
 
-    [ParameterValidation]
+    [ParameterValidationAttribute]
     public interface IDefineParameterValidation
     {
         void MustbeEmailAddress([EmailAddress] string email);
@@ -115,7 +115,6 @@ namespace YS.Knife.Aop
         void ValidateComplexClass(ComplexClass cpmplexObject);
 
     }
-
 
 
 
@@ -128,7 +127,7 @@ namespace YS.Knife.Aop
             AllValidationWillNotEffective(url);
         }
 
-        [ParameterValidation]
+        [ParameterValidationAttribute]
         public void MustBeUrlWillEffectiveBecauseDefineParameterValidationInImplementation([Url] string url)
         {
 

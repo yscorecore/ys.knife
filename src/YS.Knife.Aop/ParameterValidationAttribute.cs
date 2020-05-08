@@ -9,10 +9,10 @@ using System.Collections.Concurrent;
 namespace YS.Knife.Aop
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface, Inherited = false)]
-    public class ParameterValidation : BaseAopAttribute
+    public class ParameterValidationAttribute : BaseAopAttribute
     {
         static readonly ValidationAttributeCache validationAttributeCache = new ValidationAttributeCache();
-        public ParameterValidation()
+        public ParameterValidationAttribute()
         {
             this.Order = 2000;
         }
@@ -27,18 +27,24 @@ namespace YS.Knife.Aop
                 var implParameterInfo = implParameters[i];
                 var serviceParameterInfo = serviceParameters[i];
                 object value = context.Parameters[i];
-
-                var valueContext = new ValidationContext(new object(), context.ServiceProvider, null)
-                {
-                    MemberName = implParameterInfo.Name
-                };
                 var validationAttributes = validationAttributeCache.GetValidationAttributes(implParameterInfo, serviceParameterInfo);
-                Validator.ValidateValue(value, valueContext, validationAttributes);
-                var objectContext = new ValidationContext(value, context.ServiceProvider, null)
+                if (value is null)
                 {
-                    MemberName = implParameterInfo.Name
-                };
-                Validator.ValidateObject(value, objectContext, true);
+                    var nullValueContext = new ValidationContext(new object(), context.ServiceProvider, null)
+                    {
+                        MemberName = implParameterInfo.Name
+                    };
+                    Validator.ValidateValue(value, nullValueContext, validationAttributes);
+                }
+                else
+                {
+                    var objectContext = new ValidationContext(value, context.ServiceProvider, null)
+                    {
+                        MemberName = implParameterInfo.Name
+                    };
+                    Validator.ValidateValue(value, objectContext, validationAttributes);
+                    Validator.ValidateObject(value, objectContext, true);
+                }
             }
             return next.Invoke(context);
         }
