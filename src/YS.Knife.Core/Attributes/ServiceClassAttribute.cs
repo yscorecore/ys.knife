@@ -16,9 +16,6 @@ namespace YS.Knife
         }
         public Type InjectType { get; private set; }
         public ServiceLifetime Lifetime { get; set; } = ServiceLifetime.Scoped;
-
-        public string Key { get; set; }
-
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             _ = context ?? throw new ArgumentNullException(nameof(declareType));
