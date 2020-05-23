@@ -21,7 +21,7 @@ namespace YS.Knife
             config?.Invoke(services, configuration);
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
-            services.AddSingleton(typeof(ILogger<>),typeof(NullLogger<>));
+            services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             return services.RegisteKnifeServices(configuration).BuildServiceProvider();
         }
     }
