@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
-namespace YS.Knife.Loaders
+namespace YS.Knife.Registers
 {
     public class DictionaryRegister : IServiceRegister
     {

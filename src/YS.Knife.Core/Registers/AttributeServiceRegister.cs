@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
-namespace YS.Knife.Loaders
+namespace YS.Knife.Registers
 {
     public class AttributeServiceRegister : IServiceRegister
     {
