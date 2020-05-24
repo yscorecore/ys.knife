@@ -13,7 +13,7 @@ namespace YS.Knife.Options
     public class PostFunctionConfigure<TOptions> : IPostConfigureOptions<TOptions>
         where TOptions : class
     {
-        static Regex functionPattern = new Regex(@"\$\{\{(?<func>\w+)\((?<args>.+?)\)\}\}");
+        static Regex functionPattern = new Regex(@"\$\{\{(?<func>\w+)\((?<args>.*?)\)\}\}");
 
         public PostFunctionConfigure(ILogger<PostFunctionConfigure<TOptions>> logger, IDictionary<string, IOptionsPostFunction> functions)
         {
@@ -24,7 +24,6 @@ namespace YS.Knife.Options
         readonly ILogger logger;
         public void PostConfigure(string name, TOptions options)
         {
-            if (options == null) return;
             ConvertOptions(options);
         }
 
@@ -44,7 +43,11 @@ namespace YS.Knife.Options
                         if (string.IsNullOrEmpty(strValue)) continue;
                         var match = functionPattern.Match(strValue);
                         if (!match.Success) continue;
-                        prop.SetValue(options, ConvertFunctionResult(strValue));
+                        var replaced = ConvertFunctionResult(strValue);
+                        if (strValue != replaced)
+                        {
+                            prop.SetValue(options, replaced);
+                        }
                     }
                 }
                 else if (typecode == TypeCode.Object)
