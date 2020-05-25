@@ -32,6 +32,7 @@ namespace YS.Knife
             {
                 services.AddSingleton<IPostConfigureOptions<T>, PostFunctionConfigure<T>>();
             }
+            services.AddSingleton<T>(sp => sp.GetRequiredService<IOptions<T>>().Value);
         }
     }
 }
