@@ -51,24 +51,35 @@ namespace YS.Knife.Options
                 }
                 else if (typecode == TypeCode.Object)
                 {
-                    // if (typeof(IDictionary).IsAssignableFrom(prop.PropertyType))
-                    // {
-                    //     foreach (var value in (propValue as IDictionary).Values)
-                    //     {
-                    //         ConvertOptions(value);
-                    //     }
-                    // }
-                    // else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
-                    // {
-                    //     foreach (var value in propValue as IEnumerable)
-                    //     {
-                    //         ConvertOptions(value);
-                    //     }
-                    // }
-                    // else
-                    // {
-                    //     ConvertOptions(propValue);
-                    // }
+                    if (typeof(IDictionary).IsAssignableFrom(prop.PropertyType))
+                    {
+                        // foreach (var value in (propValue as IDictionary).Values)
+                        // {
+                        //     ConvertOptions(value);
+                        // }
+                    }
+                    else if (typeof(Array).IsAssignableFrom(prop.PropertyType))
+                    {
+
+                    }
+                    else if (typeof(IList).IsAssignableFrom(prop.PropertyType))
+                    {
+
+                    }
+                    else if (typeof(IEnumerable).IsAssignableFrom(prop.PropertyType))
+                    {
+                        foreach (var value in propValue as IEnumerable)
+                        {
+                            if (value != null && Type.GetTypeCode(value.GetType()) == TypeCode.Object)
+                            {
+                                ConvertOptions(value);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ConvertOptions(propValue);
+                    }
                 }
             }
         }

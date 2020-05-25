@@ -15,6 +15,7 @@ namespace YS.Knife
             this.ConfigKey = configKey;
         }
         public string ConfigKey { get; set; }
+
         public bool EnableFunctionHandler { get; set; } = true;
 
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
