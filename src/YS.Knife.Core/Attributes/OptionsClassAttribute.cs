@@ -3,7 +3,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using System;
 using System.Reflection;
-using YS.Knife.Options;
 
 namespace YS.Knife
 {
@@ -16,8 +15,6 @@ namespace YS.Knife
         }
         public string ConfigKey { get; set; }
 
-        public bool EnableFunctionHandler { get; set; } = true;
-
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             var method = typeof(OptionsClassAttribute).GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
@@ -28,10 +25,6 @@ namespace YS.Knife
         {
             var optionsConfiguration = configuration.GetOptionsConfiguration<T>(ConfigKey);
             services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
-            if (EnableFunctionHandler)
-            {
-                services.AddSingleton<IPostConfigureOptions<T>, PostFunctionConfigure<T>>();
-            }
             services.AddSingleton<T>(sp => sp.GetRequiredService<IOptions<T>>().Value);
         }
     }
