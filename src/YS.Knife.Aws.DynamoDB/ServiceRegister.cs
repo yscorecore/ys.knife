@@ -1,4 +1,4 @@
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 //using Amazon.KeyManagementService;
 using Amazon.DynamoDBv2;
 namespace YS.Knife.Aws.DynamoDB
