@@ -1,8 +1,8 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Hosting;
-using System.Linq;
 namespace YS.Knife.Aop
 {
     [TestClass]
@@ -93,6 +93,19 @@ namespace YS.Knife.Aop
             Assert.AreEqual(-1, exception.Value);
             Assert.AreEqual(typeof(RangeAttribute), exception.ValidationAttribute.GetType());
         }
+
+        // [TestMethod]
+        // public void ShouldThrowIfComplexNestedTypeValidateFail()
+        // {
+        //     var service = this.GetService<IDefineParameterValidation>();
+        //     var exception = Assert.ThrowsException<ValidationException>(() =>
+        //     {
+        //         service.ValidateComplexClass(new ComplexClass { Value = 5, NestedProp = new NestedClass { NestedValue = "too long......" } });
+        //     });
+        //     Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("NestedValue"));
+        //     Assert.AreEqual(-1, exception.Value);
+        //     Assert.AreEqual(typeof(StringLengthAttribute), exception.ValidationAttribute.GetType());
+        // }
     }
 
     public interface INoDefineParameterValidation
@@ -103,7 +116,7 @@ namespace YS.Knife.Aop
         void MustBeUrlWillEffectiveBecauseDefineParameterValidationInInterface([Url] string url);
 
         void MustBeUrlWillEffectiveBecauseDefineParameterValidationInImplementation([Url] string url);
-        void AnyString([Url]string url);
+        void AnyString([Url] string url);
 
     }
 
@@ -122,7 +135,7 @@ namespace YS.Knife.Aop
     [ServiceClass(typeof(INoDefineParameterValidation))]
     public class Servic1 : IDefineParameterValidation, INoDefineParameterValidation
     {
-        public void AnyString([Url]string url)
+        public void AnyString([Url] string url)
         {
             AllValidationWillNotEffective(url);
         }
@@ -145,7 +158,7 @@ namespace YS.Knife.Aop
         {
         }
 
-        public void ValidateComplexClass([Required]ComplexClass cpmplexObject)
+        public void ValidateComplexClass([Required] ComplexClass cpmplexObject)
         {
         }
 
@@ -160,5 +173,11 @@ namespace YS.Knife.Aop
     {
         [Range(1, 10)]
         public int Value { get; set; }
+        public NestedClass NestedProp { get; set; }
+    }
+    public class NestedClass
+    {
+        [StringLength(5)]
+        public string NestedValue { get; set; }
     }
 }

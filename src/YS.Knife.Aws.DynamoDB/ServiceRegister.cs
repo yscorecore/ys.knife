@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-//using Amazon.KeyManagementService;
+﻿//using Amazon.KeyManagementService;
 using Amazon.DynamoDBv2;
+using Microsoft.Extensions.DependencyInjection;
 namespace YS.Knife.Aws.DynamoDB
 {
     public class ServiceRegister : IServiceRegister

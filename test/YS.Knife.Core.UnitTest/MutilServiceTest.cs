@@ -1,7 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Microsoft.Extensions.DependencyInjection;
+﻿using System.Linq;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.TestData;
 
 namespace YS.Knife

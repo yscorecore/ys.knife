@@ -1,5 +1,5 @@
-﻿using AspectCore.Extensions.DependencyInjection;
-using System;
+﻿using System;
+using AspectCore.Extensions.DependencyInjection;
 namespace Microsoft.Extensions.Hosting
 {
     public static class HostBuilderExtensions

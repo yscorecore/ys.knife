@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Amazon.Extensions.NETCore.Setup;
 using Amazon.KeyManagementService;
-using Amazon.Extensions.NETCore.Setup;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Aws.Kms
 {
