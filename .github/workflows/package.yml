@@ -28,6 +28,7 @@ jobs:
       if: env.TEST_PROJ_COUNT>0
       run: dotnet tool install -g dotnet-reportgenerator-globaltool && reportgenerator  -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
     - name: 09 Save Artifact
+      if: env.TEST_PROJ_COUNT>0
       uses: actions/upload-artifact@v1
       with:
         name: cobertura_report
@@ -48,6 +49,6 @@ jobs:
     - name: 14 Push Package
       run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}
     - name: 15 Set Image Tag
-      run: echo "::set-env name=IMAGE_TAG::${GIT_TAG#v}"
+      run: echo "::set-env name=IMAGE_VERSION::${GIT_TAG#v}"
     - name: 16 Build and Push Image Tag
       run: bash ./.github/scripts/pushdocker.sh ${{secrets.DOCKER_USERNAME}} ${{secrets.DOCKER_PASSWORD}}
