@@ -1,7 +1,7 @@
-﻿using YS.Knife.Hosting;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+using YS.Knife.Hosting;
 
 namespace YS.Knife
 {

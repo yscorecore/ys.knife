@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Infrastructure;
-using System;
+﻿using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Microsoft.EntityFrameworkCore
 {

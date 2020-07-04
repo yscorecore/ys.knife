@@ -1,10 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace YS.Knife.Loaders
+namespace YS.Knife.Registers
 {
     public class DictionaryRegister : IServiceRegister
     {
@@ -39,13 +39,12 @@ namespace YS.Knife.Loaders
                 }
             }
 
-            [SuppressMessage("样式", "IDE0019:使用模式匹配", Justification = "<挂起>")]
             private static string GetServiceKey(Type type)
             {
-                var serviceImplClass = type.GetCustomAttribute<ServiceClassAttribute>();
-                if (serviceImplClass != null && !string.IsNullOrEmpty(serviceImplClass.Key))
+                var dictionaryKeyAttr = type.GetCustomAttribute<DictionaryKeyAttribute>();
+                if (dictionaryKeyAttr != null && !string.IsNullOrEmpty(dictionaryKeyAttr.Key))
                 {
-                    return serviceImplClass.Key;
+                    return dictionaryKeyAttr.Key;
                 }
                 else
                 {

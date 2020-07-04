@@ -1,7 +1,9 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
@@ -19,10 +21,11 @@ namespace YS.Knife
             method.Invoke(this, new object[] { services, context?.Configuration });
         }
         private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)
-            where T : class
+            where T : class, new()
         {
             var optionsConfiguration = configuration.GetOptionsConfiguration<T>(ConfigKey);
             services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
+            services.AddSingleton<T>(sp => sp.GetRequiredService<IOptions<T>>().Value);
         }
     }
 }

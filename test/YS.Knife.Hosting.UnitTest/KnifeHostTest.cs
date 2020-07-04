@@ -65,6 +65,7 @@ namespace YS.Knife.Hosting
             }
             Mock.Get(tempStageService).Verify(p => p.Run(default), Times.Once);
         }
+
         [TestMethod]
         public void ShouldRunDefaultWhenUseDefaultStageName()
         {

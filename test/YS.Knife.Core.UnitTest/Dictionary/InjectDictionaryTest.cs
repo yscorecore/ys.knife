@@ -1,9 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YS.Knife.Dictionary
 {
@@ -46,5 +46,19 @@ namespace YS.Knife.Dictionary
             });
             provider.GetService<IDictionary<string, IInterface1>>();
         }
+    }
+
+    public interface IInterface1
+    {
+    }
+
+    [ServiceClass()]
+    public class Class1 : IInterface1
+    {
+    }
+    [ServiceClass()]
+    [DictionaryKey("c2")]
+    public class Class2 : IInterface1
+    {
     }
 }

@@ -1,9 +1,12 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Hosting.Web
 {
@@ -28,6 +31,8 @@ namespace YS.Knife.Hosting.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            UseStaticFiles(app);
+
             app.UseHttpsRedirection();
 
             app.UseRouting();
@@ -38,6 +43,21 @@ namespace YS.Knife.Hosting.Web
             {
                 endpoints.MapControllers();
             });
+        }
+        private void UseStaticFiles(IApplicationBuilder app)
+        {
+            var knifeOptions = app.ApplicationServices.GetService<IOptions<KnifeWebOptions>>();
+
+            foreach (var kv in knifeOptions.Value.StaticFiles ?? new Dictionary<string, StaticFileInfo>())
+            {
+                app.UseStaticFiles(new StaticFileOptions
+                {
+                    FileProvider = new PhysicalFileProvider(kv.Value.FolderPath),
+                    ServeUnknownFileTypes = kv.Value.ServeUnknownFileTypes,
+                    DefaultContentType = kv.Value.DefaultContentType,
+                    RequestPath = new Microsoft.AspNetCore.Http.PathString(kv.Key)
+                });
+            }
         }
     }
 }
