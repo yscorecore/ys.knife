@@ -47,11 +47,12 @@ namespace YS.Knife.Hosting
         {
             return Host.CreateDefaultBuilder(args ?? Array.Empty<string>())
                 .UseAopServiceProviderFactory()
+                .ConfigureAppConfiguration(OnConfigureAppConfiguration)
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     LoadKnifeServices(serviceCollection, builder.Configuration);
                     this.OnLoadCustomService(builder, serviceCollection);
-                }).ConfigureAppConfiguration(OnConfigureAppConfiguration);
+                });
         }
         protected virtual void OnLoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
