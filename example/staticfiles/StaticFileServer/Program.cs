@@ -1,13 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.FileProviders;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using YS.Knife.Hosting;
+﻿using YS.Knife.Hosting;
 
 namespace StaticFileServer
 {
@@ -17,7 +8,5 @@ namespace StaticFileServer
         {
             KnifeWebHost.Start(args);
         }
-
-   
     }
 }

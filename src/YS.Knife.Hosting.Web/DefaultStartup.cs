@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
@@ -51,22 +52,24 @@ namespace YS.Knife.Hosting.Web
             foreach (var kv in knifeOptions.Value.StaticFiles ?? new Dictionary<string, StaticFileInfo>())
             {
                 string fullPath = System.IO.Path.GetFullPath(kv.Value.FolderPath);
+                var requestPath = new PathString(kv.Key.StartsWith('/') ? kv.Key : '/' + kv.Key);
                 app.UseStaticFiles(new StaticFileOptions
                 {
                     FileProvider = new PhysicalFileProvider(fullPath),
                     ServeUnknownFileTypes = kv.Value.ServeUnknownFileTypes,
                     DefaultContentType = kv.Value.DefaultContentType,
-                    RequestPath = new Microsoft.AspNetCore.Http.PathString(kv.Key)
+                    RequestPath = requestPath
                 });
                 if (kv.Value.EnableDirectoryBrowsing)
                 {
                     app.UseDirectoryBrowser(new DirectoryBrowserOptions
                     {
                         FileProvider = new PhysicalFileProvider(fullPath),
-                        RequestPath = new Microsoft.AspNetCore.Http.PathString(kv.Key)
+                        RequestPath = requestPath
                     });
                 }
             }
         }
+
     }
 }
