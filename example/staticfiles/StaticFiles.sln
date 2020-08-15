@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StaticFileServer", "StaticFileServer\StaticFileServer.csproj", "{A3933558-C83C-4E53-B44A-FCC1F896F5B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting.Web", "..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj", "{D6E0C056-7430-4D9B-B09D-8E48D9B13551}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3933558-C83C-4E53-B44A-FCC1F896F5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3933558-C83C-4E53-B44A-FCC1F896F5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3933558-C83C-4E53-B44A-FCC1F896F5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3933558-C83C-4E53-B44A-FCC1F896F5B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6E0C056-7430-4D9B-B09D-8E48D9B13551}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6E0C056-7430-4D9B-B09D-8E48D9B13551}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6E0C056-7430-4D9B-B09D-8E48D9B13551}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6E0C056-7430-4D9B-B09D-8E48D9B13551}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {AC461629-3EA8-44F5-849D-710E9FA69732}
+	EndGlobalSection
+EndGlobal

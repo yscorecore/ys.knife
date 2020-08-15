@@ -50,13 +50,22 @@ namespace YS.Knife.Hosting.Web
 
             foreach (var kv in knifeOptions.Value.StaticFiles ?? new Dictionary<string, StaticFileInfo>())
             {
+                string fullPath = System.IO.Path.GetFullPath(kv.Value.FolderPath);
                 app.UseStaticFiles(new StaticFileOptions
                 {
-                    FileProvider = new PhysicalFileProvider(kv.Value.FolderPath),
+                    FileProvider = new PhysicalFileProvider(fullPath),
                     ServeUnknownFileTypes = kv.Value.ServeUnknownFileTypes,
                     DefaultContentType = kv.Value.DefaultContentType,
                     RequestPath = new Microsoft.AspNetCore.Http.PathString(kv.Key)
                 });
+                if (kv.Value.EnableDirectoryBrowsing)
+                {
+                    app.UseDirectoryBrowser(new DirectoryBrowserOptions
+                    {
+                        FileProvider = new PhysicalFileProvider(fullPath),
+                        RequestPath = new Microsoft.AspNetCore.Http.PathString(kv.Key)
+                    });
+                }
             }
         }
     }
