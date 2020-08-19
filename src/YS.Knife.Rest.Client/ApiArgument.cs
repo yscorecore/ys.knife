@@ -4,9 +4,9 @@ using System.Text;
 
 namespace YS.Knife.Rest.Client
 {
-    public class RestArgument
+    public class ApiArgument
     {
-        public RestArgument(string name, ArgumentSource source, object value)
+        public ApiArgument(string name, ArgumentSource source, object value)
         {
             this.Name = name;
             this.Source = source;

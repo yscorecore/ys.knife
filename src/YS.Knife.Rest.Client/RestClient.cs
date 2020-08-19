@@ -7,7 +7,6 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Rest.Client
 {
@@ -17,25 +16,56 @@ namespace YS.Knife.Rest.Client
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase
         };
-        public ClientBase(IHttpClientFactory httpClientFactory, IOptions<ApiServicesOptions> apiServicesOptions, string serviceName)
+
+        private readonly RestInfo restInfo;
+        private readonly HttpClient httpClient;
+        public ClientBase(string baseAddress, HttpClient httpClient)
+            : this(new RestInfo
+            {
+                BaseAddress = baseAddress
+            }, httpClient)
         {
-            this.ClientFactory = httpClientFactory;
-            this.ApiOptions = apiServicesOptions;
-            this.ServiceName = serviceName;
         }
-        protected IOptions<ApiServicesOptions> ApiOptions { get; private set; }
-        protected IHttpClientFactory ClientFactory { get; private set; }
-        protected string ServiceName { get; private set; }
+        public ClientBase(RestInfo restInfo, HttpClient httpClient)
+        {
+            this.restInfo = restInfo;
+            this.httpClient = httpClient;
+            this.InitHttpClient();
+        }
+
+        public ClientBase(IRestInfoFactory restInfoFactory, HttpClient httpClient)
+        {
+            this.restInfo = restInfoFactory.GetRestInfo(this.GetType());
+            this.httpClient = httpClient;
+            this.InitHttpClient();
+        }
+
+        private void InitHttpClient()
+        {
+            if (restInfo == null) return;
+            if (restInfo.MaxResponseContentBufferSize > 0)
+            {
+                httpClient.MaxResponseContentBufferSize = restInfo.MaxResponseContentBufferSize;
+            }
+            if (restInfo.Timeout.TotalSeconds > 0)
+            {
+                httpClient.Timeout = restInfo.Timeout;
+            }
+            if (!string.IsNullOrEmpty(restInfo.BaseAddress))
+            {
+                httpClient.BaseAddress = new Uri(restInfo.BaseAddress);
+            }
+        }
 
 
-        public Task SendHttp(RestApiInfo apiInfo)
+        public Task SendHttp(ApiInfo apiInfo)
         {
             return SendHttpAsResponse(apiInfo);
         }
-        protected virtual async Task<HttpResponseMessage> SendHttpAsResponse(RestApiInfo apiInfo)
+        protected virtual async Task<HttpResponseMessage> SendHttpAsResponse(ApiInfo apiInfo)
         {
             _ = apiInfo ?? throw new ArgumentNullException(nameof(apiInfo));
-            var client = this.ClientFactory.CreateClient(ServiceName);
+
 
             var requestPath = TranslatePath(apiInfo, apiInfo.Path);
             var queryString = BuildQueryString(apiInfo);
@@ -45,14 +75,14 @@ namespace YS.Knife.Rest.Client
             {
                 this.AppendRequestHeader(apiInfo, request);
                 this.AppendRequestBody(apiInfo, request);
-                var response = await client.SendAsync(request);
+                var response = await httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 return response;
             }
 
         }
 
-        public async Task<T> SendHttp<T>(RestApiInfo apiInfo)
+        public async Task<T> SendHttp<T>(ApiInfo apiInfo)
         {
             var response = await this.SendHttpAsResponse(apiInfo);
             return FromResponse<T>(response);
@@ -69,7 +99,7 @@ namespace YS.Knife.Rest.Client
             return JsonSerializer.Deserialize<T>(responseData, JsonOptions);
         }
 
-        private string TranslatePath(RestApiInfo apiInfo, string path)
+        private string TranslatePath(ApiInfo apiInfo, string path)
         {
 
             // replace {key},{key:int},{age:range(18,120)},{ssn:regex(^\d{{3}}-\d{{2}}-\d{{4}}$)}
@@ -90,7 +120,7 @@ namespace YS.Knife.Rest.Client
         }
 
 
-        private string BuildQueryString(RestApiInfo apiInfo)
+        private string BuildQueryString(ApiInfo apiInfo)
         {
             var queryItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.FromQuery).ToList();
             if (queryItems.Count == 0) return string.Empty;
@@ -103,7 +133,7 @@ namespace YS.Knife.Rest.Client
             return queryString.ToUriComponent();
         }
 
-        private void AppendRequestHeader(RestApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
+        private void AppendRequestHeader(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
         {
             var headerItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.FromHeader);
             foreach (var headerItem in headerItems)
@@ -111,7 +141,7 @@ namespace YS.Knife.Rest.Client
                 httpRequestMessage.Headers.Add(headerItem.Name, ValueToString(headerItem.Value));
             }
         }
-        private void AppendRequestBody(RestApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
+        private void AppendRequestBody(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
         {
             var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FromBody);
             if (bodyItem != null)
@@ -122,4 +152,6 @@ namespace YS.Knife.Rest.Client
             }
         }
     }
+
 }
+

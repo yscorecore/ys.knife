@@ -9,20 +9,20 @@ namespace YS.Knife.Rest.Client
 {
     public static class ClientBaseExtensions
     {
-        public static Task SendHttp(this ClientBase clientBase, HttpMethod method, string path, params RestArgument[] args)
+        public static Task SendHttp(this ClientBase clientBase, HttpMethod method, string path, params ApiArgument[] args)
         {
             _ = clientBase ?? throw new ArgumentNullException(nameof(clientBase));
-            return clientBase.SendHttp(new RestApiInfo
+            return clientBase.SendHttp(new ApiInfo
             {
                 Method = method,
                 Path = path,
                 Arguments = args.ToList()
             });
         }
-        public static Task<T> SendHttp<T>(this ClientBase clientBase, HttpMethod method, string path, params RestArgument[] args)
+        public static Task<T> SendHttp<T>(this ClientBase clientBase, HttpMethod method, string path, params ApiArgument[] args)
         {
             _ = clientBase ?? throw new ArgumentNullException(nameof(clientBase));
-            return clientBase.SendHttp<T>(new RestApiInfo
+            return clientBase.SendHttp<T>(new ApiInfo
             {
                 Method = method,
                 Path = path,
