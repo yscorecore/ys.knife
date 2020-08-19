@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace YS.Knife.Rest.Client
 {
-    public class ClientBase
+    public class RestClient
     {
         static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
@@ -19,21 +19,21 @@ namespace YS.Knife.Rest.Client
 
         private readonly RestInfo restInfo;
         private readonly HttpClient httpClient;
-        public ClientBase(string baseAddress, HttpClient httpClient)
+        public RestClient(string baseAddress, HttpClient httpClient)
             : this(new RestInfo
             {
                 BaseAddress = baseAddress
             }, httpClient)
         {
         }
-        public ClientBase(RestInfo restInfo, HttpClient httpClient)
+        public RestClient(RestInfo restInfo, HttpClient httpClient)
         {
             this.restInfo = restInfo;
             this.httpClient = httpClient;
             this.InitHttpClient();
         }
 
-        public ClientBase(IRestInfoFactory restInfoFactory, HttpClient httpClient)
+        public RestClient(IRestInfoFactory restInfoFactory, HttpClient httpClient)
         {
             this.restInfo = restInfoFactory.GetRestInfo(this.GetType());
             this.httpClient = httpClient;
