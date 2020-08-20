@@ -73,6 +73,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Aws.S3", "src\YS.K
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Aws.DynamoDB", "src\YS.Knife.Aws.DynamoDB\YS.Knife.Aws.DynamoDB.csproj", "{120F108B-47DE-4359-87F1-D8FD39D25B8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Rest.Client.UnitTest", "test\YS.Knife.Rest.Client.UnitTest\YS.Knife.Rest.Client.UnitTest.csproj", "{3FAC5519-2084-459D-992D-1F1DC5C8C785}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -191,6 +193,10 @@ Global
 		{120F108B-47DE-4359-87F1-D8FD39D25B8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{120F108B-47DE-4359-87F1-D8FD39D25B8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{120F108B-47DE-4359-87F1-D8FD39D25B8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FAC5519-2084-459D-992D-1F1DC5C8C785}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FAC5519-2084-459D-992D-1F1DC5C8C785}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FAC5519-2084-459D-992D-1F1DC5C8C785}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FAC5519-2084-459D-992D-1F1DC5C8C785}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -228,6 +234,7 @@ Global
 		{B9FF47EA-E635-40F8-B038-A274DBD31147} = {E21D0910-9DD5-11EA-9FDD-1752BE8F107A}
 		{12252B9A-62DF-4F57-B03C-8ED1CB9C3CF8} = {F33A4B10-9D5B-11EA-84BA-8DCDEAFF18D3}
 		{120F108B-47DE-4359-87F1-D8FD39D25B8A} = {F33A4B10-9D5B-11EA-84BA-8DCDEAFF18D3}
+		{3FAC5519-2084-459D-992D-1F1DC5C8C785} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
