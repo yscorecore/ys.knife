@@ -6,7 +6,7 @@ namespace YS.Knife.Rest.Client
 {
     public class ApiArgument
     {
-        public ApiArgument(string name, ArgumentSource source, object value)
+        public ApiArgument(ArgumentSource source, string name, object value)
         {
             this.Name = name;
             this.Source = source;

@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+using System.Web;
 
 namespace YS.Knife.Rest.Client
 {
@@ -55,6 +55,14 @@ namespace YS.Knife.Rest.Client
             {
                 httpClient.BaseAddress = new Uri(restInfo.BaseAddress);
             }
+            if (restInfo.DefaultHeaders != null)
+            {
+                foreach (var kv in restInfo.DefaultHeaders)
+                {
+                    httpClient.DefaultRequestHeaders.Add(kv.Key, kv.Value);
+                }
+            }
+
         }
 
 
@@ -69,18 +77,41 @@ namespace YS.Knife.Rest.Client
 
             var requestPath = TranslatePath(apiInfo, apiInfo.Path);
             var queryString = BuildQueryString(apiInfo);
-            var requestUri = new Uri(requestPath + queryString, UriKind.Relative);
+            if (!string.IsNullOrEmpty(queryString))
+            {
+                if (requestPath.Contains("?"))
+                {
+                    requestPath = requestPath + queryString;
+                }
+                else
+                {
+                    requestPath = requestPath + "?" + queryString;
+                }
+            }
+
+            var requestUri = new Uri(requestPath, UriKind.Relative);
 
             using (var request = new HttpRequestMessage(apiInfo.Method, requestUri))
             {
                 this.AppendRequestHeader(apiInfo, request);
-                this.AppendRequestBody(apiInfo, request);
+                this.AppendRequestJsonBody(apiInfo, request);
+                //this.AppendRequestForm(apiInfo, request);
                 var response = await httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 return response;
             }
-
         }
+
+        //private void AppendRequestForm(ApiInfo apiInfo, HttpRequestMessage request)
+        //{
+        //    var formItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FormUrlEncoded);
+        //    if (formItem != null)
+        //    {
+        //        var text = JsonSerializer.Serialize(formItem.Value);
+
+        //        request.Content = new StringContent(text, Encoding.UTF8, "application/json");
+        //    }
+        //}
 
         public async Task<T> SendHttp<T>(ApiInfo apiInfo)
         {
@@ -106,7 +137,7 @@ namespace YS.Knife.Rest.Client
             var path2 = Regex.Replace(path, "\\{(?<nm>\\w+)(\\?)?(:.+)?\\}", (m) =>
             {
                 var nm = m.Groups["nm"].Value;
-                var argument = apiInfo.Arguments.Single(p => p.Source == ArgumentSource.FromRouter && nm.Equals(p.Name, StringComparison.InvariantCultureIgnoreCase));
+                var argument = apiInfo.Arguments.Single(p => p.Source == ArgumentSource.Router && nm.Equals(p.Name, StringComparison.InvariantCultureIgnoreCase));
                 return ValueToString(argument.Value);
             });
             return path2;
@@ -122,32 +153,31 @@ namespace YS.Knife.Rest.Client
 
         private string BuildQueryString(ApiInfo apiInfo)
         {
-            var queryItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.FromQuery).ToList();
+            var queryItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.Query).ToList();
             if (queryItems.Count == 0) return string.Empty;
-            var queryString = QueryString.Empty;
+            var dic = new Dictionary<string, string>();
             foreach (var queryItem in queryItems)
             {
                 // TODO array ,list 
-                queryString = queryString.Add(queryItem.Name, ValueToString(queryItem.Value));
+                dic.Add(queryItem.Name, HttpUtility.UrlEncode(ValueToString(queryItem.Value)));
             }
-            return queryString.ToUriComponent();
+            return string.Join("&", dic.Select(kv => $"{kv.Key}={kv.Value}"));
         }
 
         private void AppendRequestHeader(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
         {
-            var headerItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.FromHeader);
+            var headerItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.Header);
             foreach (var headerItem in headerItems)
             {
                 httpRequestMessage.Headers.Add(headerItem.Name, ValueToString(headerItem.Value));
             }
         }
-        private void AppendRequestBody(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
+        private void AppendRequestJsonBody(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
         {
-            var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FromBody);
+            var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.BodyJson);
             if (bodyItem != null)
             {
                 var text = JsonSerializer.Serialize(bodyItem.Value);
-
                 httpRequestMessage.Content = new StringContent(text, Encoding.UTF8, "application/json");
             }
         }

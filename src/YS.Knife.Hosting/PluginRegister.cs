@@ -12,7 +12,7 @@ namespace YS.Knife.Hosting
         {
             if (plugins == null) return;
             var (includes, ignores) = ParsePlugins(plugins);
-            var rootPath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
+            var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             foreach (var file in Directory.GetFiles(rootPath, "*.dll", SearchOption.AllDirectories))
             {
                 string relativePath = file.Substring(rootPath.Length).TrimStart(Path.DirectorySeparatorChar);

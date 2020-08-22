@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YS.Knife.Rest.Client.UnitTest
@@ -13,18 +12,42 @@ namespace YS.Knife.Rest.Client.UnitTest
     public class RestClientTest : YS.Knife.Hosting.KnifeHost
     {
         [TestMethod]
-        public async Task TestMethod1()
+        public async Task ShouldSuccessWhenGetGithubAndSetHeaderFromArgument()
         {
             var factory = this.GetService<IHttpClientFactory>();
             var client = new RestClient("https://api.github.com/", factory.CreateClient());
-            var issues = await client.Get<IEnumerable<GitHubIssue>>("/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc",
-                new ApiArgument("Accept", ArgumentSource.FromHeader, "application/vnd.github.v3+json"),
-                new ApiArgument("User-Agent", ArgumentSource.FromHeader, "HttpClientFactory-Sample")
+            var issues = await client.Get<IEnumerable<GitHubIssue>>(
+                "/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc",
+                null,
+                new Dictionary<string, string>
+                {
+                    ["Accept"] = "application/vnd.github.v3+json",
+                    ["User-Agent"] = "RestClient-Test",
+                }
             );
             Assert.IsNotNull(issues);
             Assert.IsTrue(issues.Count() > 0);
         }
 
+        [TestMethod]
+        public async Task ShouldSuccessWhenGetGithubAndSetHeaderFromRestInfo()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var restInfo = new RestInfo
+            {
+                BaseAddress = "https://api.github.com/",
+                DefaultHeaders = new Dictionary<string, string>
+                {
+                    ["Accept"] = "application/vnd.github.v3+json",
+                    ["User-Agent"] = "RestClient-Test",
+                },
+            };
+            var client = new RestClient(restInfo, factory.CreateClient());
+            var issues = await client.Get<IEnumerable<GitHubIssue>>(
+                "/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc");
+            Assert.IsNotNull(issues);
+            Assert.IsTrue(issues.Count() > 0);
+        }
 
         /// <summary>
         /// A partial representation of an issue object from the GitHub API

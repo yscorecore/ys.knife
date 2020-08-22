@@ -6,10 +6,12 @@ namespace YS.Knife.Rest.Client
 {
     public enum ArgumentSource
     {
-        FromQuery,
-        FromBody,
-        FromHeader,
-        FromForm,
-        FromRouter
+        Query,
+        BodyJson,
+        BodyRaw,
+        Header,
+        FormUrlEncoded,
+        FormData,
+        Router
     }
 }

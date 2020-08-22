@@ -17,5 +17,6 @@ namespace YS.Knife.Rest.Client
         public string BaseAddress { get; set; }
         public TimeSpan Timeout { get; set; }
         public long MaxResponseContentBufferSize { get; set; }
+        public Dictionary<string, string> DefaultHeaders { get; set; }
     }
 }
