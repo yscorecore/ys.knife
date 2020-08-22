@@ -22,15 +22,11 @@ namespace YS.Knife.Rest.Client
                 return new RestInfo
                 {
                     BaseAddress = so.BaseAddress,
-                    Timeout = TimeSpan.FromSeconds(so.Timeout > 0 ? so.Timeout : apiServicesOptions.Timeout),
-                    MaxResponseContentBufferSize = so.MaxResponseContentBufferSize > 0 ? so.MaxResponseContentBufferSize : apiServicesOptions.MaxResponseContentBufferSize
                 };
             }
             return new RestInfo
             {
                 BaseAddress = null,
-                Timeout = TimeSpan.FromSeconds(apiServicesOptions.Timeout),
-                MaxResponseContentBufferSize = apiServicesOptions.MaxResponseContentBufferSize
             };
         }
     }

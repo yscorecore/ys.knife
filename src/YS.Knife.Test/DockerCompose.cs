@@ -31,6 +31,7 @@ namespace YS.Knife.Test
             {
                 FileName = fileName,
                 Arguments = arguments,
+
             };
             if (envs != null)
             {

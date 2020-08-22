@@ -1,67 +1,175 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Hosting;
 
 namespace YS.Knife.Rest.Client.UnitTest
 {
     [TestClass]
-    public class RestClientTest : YS.Knife.Hosting.KnifeHost
+    public class RestClientTest : KnifeHost
     {
+        #region RelativePath
+
+        [TestCategory("RelativePath")]
         [TestMethod]
-        public async Task ShouldSuccessWhenGetGithubAndSetHeaderFromArgument()
+        public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathStartWithBackslash()
         {
             var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient("https://api.github.com/", factory.CreateClient());
-            var issues = await client.Get<IEnumerable<GitHubIssue>>(
-                "/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc",
+            var client = new RestClient(TestEnvironment.TestServerUrl + "/api", factory.CreateClient());
+            var all = await client.Get<string[]>("/testget");
+            all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
+        }
+        [TestCategory("RelativePath")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathStartWithBackslash()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl + "/api/", factory.CreateClient());
+            var all = await client.Get<string[]>("/testget");
+            all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
+        }
+        [TestCategory("RelativePath")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathNotStartWithBackslash()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl + "/api", factory.CreateClient());
+            var all = await client.Get<string[]>("testget");
+            all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
+        }
+        [TestCategory("RelativePath")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathNotStartWithBackslash()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl + "/api/", factory.CreateClient());
+            var all = await client.Get<string[]>("testget");
+            all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
+        }
+        #endregion
+
+        #region GET
+        [TestCategory("GET")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenNoArgs()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.Get<string[]>("api/testget");
+            all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
+        }
+
+        [TestCategory("GET")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenAddHeaderDictionary()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.Get<string[]>("/api/testget/abc",
                 null,
                 new Dictionary<string, string>
                 {
-                    ["Accept"] = "application/vnd.github.v3+json",
-                    ["User-Agent"] = "RestClient-Test",
-                }
-            );
-            Assert.IsNotNull(issues);
-            Assert.IsTrue(issues.Count() > 0);
+                    ["arg2"] = "22"
+                });
+            all.Should().BeEquivalentTo(new string[] { "abc", "22" });
         }
 
+        [TestCategory("GET")]
         [TestMethod]
-        public async Task ShouldSuccessWhenGetGithubAndSetHeaderFromRestInfo()
+        public async Task ShouldGetAllValueWhenAddQueryDictionary()
         {
             var factory = this.GetService<IHttpClientFactory>();
-            var restInfo = new RestInfo
-            {
-                BaseAddress = "https://api.github.com/",
-                DefaultHeaders = new Dictionary<string, string>
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.Get<string[]>("/api/testget/abc",
+                new Dictionary<string, string>
                 {
-                    ["Accept"] = "application/vnd.github.v3+json",
-                    ["User-Agent"] = "RestClient-Test",
-                },
-            };
-            var client = new RestClient(restInfo, factory.CreateClient());
-            var issues = await client.Get<IEnumerable<GitHubIssue>>(
-                "/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc");
-            Assert.IsNotNull(issues);
-            Assert.IsTrue(issues.Count() > 0);
+                    ["Arg1"] = "11"
+                });
+            all.Should().BeEquivalentTo(new string[] { "abc", "11" });
         }
-
-        /// <summary>
-        /// A partial representation of an issue object from the GitHub API
-        /// </summary>
-        public class GitHubIssue
+        [TestCategory("GET")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenAddQueryObject()
         {
-            [JsonPropertyName("html_url")]
-            public string Url { get; set; }
-
-            [JsonPropertyName("title")]
-            public string Title { get; set; }
-
-            [JsonPropertyName("created_at")]
-            public DateTime Created { get; set; }
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.Get<string[]>("api/testget/abc",
+                new
+                {
+                    Arg1 = "11"
+                });
+            all.Should().BeEquivalentTo(new string[] { "abc", "11" });
         }
+        [TestCategory("GET")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenAddHeaderAndQueryObject()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.Get<string[]>("/api/testget/abc",
+                new
+                {
+                    Arg1 = "11"
+                },
+                new Dictionary<string, string>
+                {
+                    ["Arg2"] = "22"
+                });
+            all.Should().BeEquivalentTo(new string[] { "abc", "11", "22" });
+        }
+
+        [TestCategory("GET")]
+        [TestMethod]
+        public async Task ShouldGetAllValueWhenUseSendHttpAndAddHeaderAndQueryObject()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var all = await client.SendGet<string[]>(
+                "/api/testget/{id}",
+                new ApiArgument(ArgumentSource.Query, "arg1", 11),
+                new ApiArgument(ArgumentSource.Header, "arg2", 22),
+                new ApiArgument(ArgumentSource.Router, "id", "abc"));
+            all.Should().BeEquivalentTo(new string[] { "abc", "11", "22" });
+        }
+
+        #endregion
+
+        #region POST
+        [TestCategory("POST")]
+        [TestMethod]
+        public async Task ShouldPostJsonSuccess()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var result = await client.PostJson<Result>("api/testpost/body", new
+            {
+                Id = 1,
+                Name = "zhangsan"
+            });
+            result.Should().BeEquivalentTo(new Result { Success = true, Message = "1-zhangsan" });
+        }
+        [TestCategory("POST")]
+        [TestMethod]
+        public async Task ShouldPostUrlEncodeFormSuccess()
+        {
+            var factory = this.GetService<IHttpClientFactory>();
+            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var result = await client.PostUrlEncodeForm<Result>("api/testpost/form", new
+            {
+                Id = 1,
+                Name = "zhangsan",
+                tags = new[] { "a", null, "c" }
+            });
+            result.Should().BeEquivalentTo(new Result { Success = true, Message = "1-zhangsan-a--c" });
+        }
+        #endregion
+    }
+    public class Result
+    {
+        public bool Success { get; set; }
+
+        public string Message { get; set; }
     }
 }

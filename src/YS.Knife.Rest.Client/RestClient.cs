@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -19,6 +22,7 @@ namespace YS.Knife.Rest.Client
 
         private readonly RestInfo restInfo;
         private readonly HttpClient httpClient;
+        #region 构造函数
         public RestClient(string baseAddress, HttpClient httpClient)
             : this(new RestInfo
             {
@@ -28,42 +32,16 @@ namespace YS.Knife.Rest.Client
         }
         public RestClient(RestInfo restInfo, HttpClient httpClient)
         {
+            _ = restInfo ?? throw new ArgumentNullException(nameof(restInfo));
             this.restInfo = restInfo;
             this.httpClient = httpClient;
-            this.InitHttpClient();
         }
-
         public RestClient(IRestInfoFactory restInfoFactory, HttpClient httpClient)
         {
             this.restInfo = restInfoFactory.GetRestInfo(this.GetType());
             this.httpClient = httpClient;
-            this.InitHttpClient();
         }
-
-        private void InitHttpClient()
-        {
-            if (restInfo == null) return;
-            if (restInfo.MaxResponseContentBufferSize > 0)
-            {
-                httpClient.MaxResponseContentBufferSize = restInfo.MaxResponseContentBufferSize;
-            }
-            if (restInfo.Timeout.TotalSeconds > 0)
-            {
-                httpClient.Timeout = restInfo.Timeout;
-            }
-            if (!string.IsNullOrEmpty(restInfo.BaseAddress))
-            {
-                httpClient.BaseAddress = new Uri(restInfo.BaseAddress);
-            }
-            if (restInfo.DefaultHeaders != null)
-            {
-                foreach (var kv in restInfo.DefaultHeaders)
-                {
-                    httpClient.DefaultRequestHeaders.Add(kv.Key, kv.Value);
-                }
-            }
-
-        }
+        #endregion
 
 
         public Task SendHttp(ApiInfo apiInfo)
@@ -89,29 +67,57 @@ namespace YS.Knife.Rest.Client
                 }
             }
 
-            var requestUri = new Uri(requestPath, UriKind.Relative);
 
-            using (var request = new HttpRequestMessage(apiInfo.Method, requestUri))
+            using (var request = CreateRequestMessage(apiInfo.Method, requestPath))
             {
                 this.AppendRequestHeader(apiInfo, request);
                 this.AppendRequestJsonBody(apiInfo, request);
-                //this.AppendRequestForm(apiInfo, request);
+                this.AppendRequestUrlEncodeForm(apiInfo, request);
                 var response = await httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 return response;
             }
         }
 
-        //private void AppendRequestForm(ApiInfo apiInfo, HttpRequestMessage request)
-        //{
-        //    var formItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FormUrlEncoded);
-        //    if (formItem != null)
-        //    {
-        //        var text = JsonSerializer.Serialize(formItem.Value);
+        private void AppendRequestUrlEncodeForm(ApiInfo apiInfo, HttpRequestMessage request)
+        {
+            var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FormUrlEncoded);
+            if (bodyItem != null)
+            {
+                var kvs = ObjectToStringKeyValuePairs(bodyItem.Value);
+                request.Content = new FormUrlEncodedContent(kvs);
+            }
+        }
 
-        //        request.Content = new StringContent(text, Encoding.UTF8, "application/json");
-        //    }
-        //}
+
+
+        private Uri CombinUri(string baseAddress, string requestPath)
+        {
+            if (string.IsNullOrEmpty(baseAddress))
+            {
+                return new Uri(requestPath, UriKind.Relative);
+            }
+            if (requestPath.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) || requestPath.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new Uri(requestPath);
+            }
+            return new Uri(baseAddress.TrimEnd('/') + "/" + requestPath.TrimStart('/'));
+
+        }
+        private HttpRequestMessage CreateRequestMessage(HttpMethod method, string requestPath)
+        {
+            var uri = CombinUri(restInfo.BaseAddress, requestPath);
+            var message = new HttpRequestMessage(method, uri);
+            if (restInfo.DefaultHeaders != null)
+            {
+                foreach (var kv in restInfo.DefaultHeaders)
+                {
+                    message.Headers.Add(kv.Key, kv.Value);
+                }
+            }
+            return message;
+        }
+
 
         public async Task<T> SendHttp<T>(ApiInfo apiInfo)
         {
@@ -144,7 +150,7 @@ namespace YS.Knife.Rest.Client
         }
         private static string ValueToString(object value)
         {
-            if (value == null) return string.Empty;
+            if (value == null) return null;
             if (value is string) return value as string;
             var converter = System.ComponentModel.TypeDescriptor.GetConverter(value);
             return converter.ConvertToInvariantString(value);
@@ -181,6 +187,47 @@ namespace YS.Knife.Rest.Client
                 httpRequestMessage.Content = new StringContent(text, Encoding.UTF8, "application/json");
             }
         }
+
+        internal IDictionary<string, object> ObjectToMap(object obj)
+        {
+            if (obj == null) return null;
+            if (obj is IDictionary<string, object>)
+            {
+                return obj as IDictionary<string, object>;
+            }
+            if (obj is IDictionary<string, string> strdic)
+            {
+                return strdic.ToDictionary(p => p.Key, p => p.Value as object);
+            }
+            return obj.GetType().GetProperties().Where(p => p.CanRead).ToDictionary(p => p.Name, p => p.GetValue(obj));
+        }
+        internal IEnumerable<KeyValuePair<string, string>> ObjectToStringKeyValuePairs(object obj)
+        {
+            if (obj == null) return Enumerable.Empty<KeyValuePair<string, string>>();
+
+            return obj.GetType().GetProperties()
+                 .Where(p => p.CanRead)
+                 .SelectMany(p => GetPropertyValues(p, obj));
+        }
+        internal IEnumerable<KeyValuePair<string, string>> GetPropertyValues(PropertyInfo p, object obj)
+        {
+            var value = p.GetValue(obj);
+            if ((Type.GetTypeCode(value.GetType()) == TypeCode.Object) && (value is IEnumerable valueList))
+            {
+                foreach (var item in valueList)
+                {
+                    //if (item != null)
+                    {
+                        yield return new KeyValuePair<string, string>(p.Name, ValueToString(item));
+                    }
+                }
+            }
+            else if (value != null)
+            {
+                yield return new KeyValuePair<string, string>(p.Name, ValueToString(value));
+            }
+        }
+
     }
 
 }
