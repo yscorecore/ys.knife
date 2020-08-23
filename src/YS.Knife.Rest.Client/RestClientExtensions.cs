@@ -9,95 +9,96 @@ namespace YS.Knife.Rest.Client
 {
     public static class RestClientExtensions
     {
-        public static Task SendHttp(this RestClient restClient, HttpMethod method, string path, params ApiArgument[] args)
+        public static Task SendHttp(this RestClient restClient, HttpMethod method, string path, object route, object header, object query, HttpContent body)
         {
             _ = restClient ?? throw new ArgumentNullException(nameof(restClient));
             return restClient.SendHttp(new ApiInfo
             {
                 Method = method,
                 Path = path,
-                Arguments = args.ToList()
+                Body = body,
+                Route = ObjectUtils.ObjectToStringDictionary(route, true),
+                Query = ObjectUtils.ObjectToStringKeyValuePairs(query),
+                Headers = ObjectUtils.ObjectToStringKeyValuePairs(header),
             });
         }
-        public static Task<T> SendHttp<T>(this RestClient restClient, HttpMethod method, string path, params ApiArgument[] args)
+        public static Task<T> SendHttp<T>(this RestClient restClient, HttpMethod method, string path, object route, object header, object query, HttpContent body)
         {
             _ = restClient ?? throw new ArgumentNullException(nameof(restClient));
             return restClient.SendHttp<T>(new ApiInfo
             {
                 Method = method,
                 Path = path,
-                Arguments = args.ToList()
+                Body = body,
+                Route = ObjectUtils.ObjectToStringDictionary(route, true),
+                Query = ObjectUtils.ObjectToStringKeyValuePairs(query),
+                Headers = ObjectUtils.ObjectToStringKeyValuePairs(header),
             });
         }
         #region GET
-        public static Task<T> SendGet<T>(this RestClient restClient, string path, params ApiArgument[] args)
+        public static Task<T> SendGet<T>(this RestClient restClient, string path, object route, object query, object header)
         {
-            return restClient.SendHttp<T>(HttpMethod.Get, path, args);
+            return restClient.SendHttp<T>(HttpMethod.Get, path, route: route, header: header, query: query, body: null);
         }
-        public static Task<T> Get<T>(this RestClient restClient, string path, object queryData = null, IDictionary<string, string> headers = null)
+        public static Task<T> Get<T>(this RestClient restClient, string path, object query = null, object header = null)
         {
-            List<ApiArgument> allArguments = new List<ApiArgument>();
-            var queryDic = ObjectToMap(queryData);
-            if (queryDic != null)
-            {
-                allArguments.AddRange(queryDic.Select(kv => new ApiArgument(ArgumentSource.Query, kv.Key, kv.Value)));
-            }
-            if (headers != null)
-            {
-                allArguments.AddRange(headers.Select(kv => new ApiArgument(ArgumentSource.Header, kv.Key, kv.Value)));
-            }
-
-            return restClient.SendHttp<T>(HttpMethod.Get, path, allArguments.ToArray());
+            return restClient.SendGet<T>(path, null, query, header);
         }
         #endregion
-        public static Task SendPost(this RestClient restClient, string path, params ApiArgument[] args)
+
+        #region POST
+        public static Task SendPost(this RestClient restClient, string path, object route, object query, object header, HttpContent body)
         {
-            return restClient.SendHttp(HttpMethod.Post, path, args);
+            return restClient.SendHttp(HttpMethod.Post, path, route: route, header: header, query: query, body: body);
         }
-        public static Task<T> SendPost<T>(this RestClient restClient, string path, params ApiArgument[] args)
+        public static Task<T> SendPost<T>(this RestClient restClient, string path, object route, object query, object header, HttpContent body)
         {
-            return restClient.SendHttp<T>(HttpMethod.Post, path, args);
+            return restClient.SendHttp<T>(HttpMethod.Post, path, route: route, header: header, query: query, body: body);
         }
 
-        public static Task PostJson(this RestClient restClient, string path, object data, IDictionary<string, string> headers = null)
+
+        public static Task PostJson(this RestClient restClient, string path, object body, object header = null)
         {
-            List<ApiArgument> allArguments = new List<ApiArgument>();
-            allArguments.Add(new ApiArgument(ArgumentSource.BodyJson, nameof(data), data));
-            if (headers != null)
+            var bodyContent = NewJsonContentBody(body);
+            return restClient.SendPost(path, route: null, query: null, header: header, body: bodyContent);
+        }
+        public static Task<T> PostJson<T>(this RestClient restClient, string path, object body, object header = null)
+        {
+            var bodyContent = NewJsonContentBody(body);
+            return restClient.SendPost<T>(path, route: null, query: null, header: header, body: bodyContent);
+        }
+        public static Task PostUrlEncodeForm(this RestClient restClient, string path, object body, object header = null)
+        {
+            var bodyContent = NewUrlEncodedBody(body);
+            return restClient.SendPost(path, route: null, query: null, header: header, body: bodyContent);
+        }
+        public static Task<T> PostUrlEncodeForm<T>(this RestClient restClient, string path, object body, object header = null)
+        {
+            var bodyContent = NewUrlEncodedBody(body);
+            return restClient.SendPost<T>(path, route: null, query: null, header: header, body: bodyContent);
+        }
+        #endregion
+
+
+
+
+
+
+        public static JsonContent NewJsonContentBody(object body)
+        {
+            if (body is JsonContent)
             {
-                allArguments.AddRange(headers.Select(kv => new ApiArgument(ArgumentSource.Header, kv.Key, kv.Value)));
+                return body as JsonContent;
             }
-            return restClient.SendPost(path, allArguments.ToArray());
+            return new JsonContent(body);
         }
-        public static Task<T> PostJson<T>(this RestClient restClient, string path, object data, IDictionary<string, string> headers = null)
+        public static FormUrlEncodedContent NewUrlEncodedBody(object body)
         {
-            List<ApiArgument> allArguments = new List<ApiArgument>();
-            allArguments.Add(new ApiArgument(ArgumentSource.BodyJson, nameof(data), data));
-            if (headers != null)
+            if (body is FormUrlEncodedContent)
             {
-                allArguments.AddRange(headers.Select(kv => new ApiArgument(ArgumentSource.Header, kv.Key, kv.Value)));
+                return body as FormUrlEncodedContent;
             }
-            return restClient.SendPost<T>(path, allArguments.ToArray());
-        }
-        public static Task PostUrlEncodeForm(this RestClient restClient, string path, object data, IDictionary<string, string> headers = null)
-        {
-            List<ApiArgument> allArguments = new List<ApiArgument>();
-            allArguments.Add(new ApiArgument(ArgumentSource.FormUrlEncoded, nameof(data), data));
-            if (headers != null)
-            {
-                allArguments.AddRange(headers.Select(kv => new ApiArgument(ArgumentSource.Header, kv.Key, kv.Value)));
-            }
-            return restClient.SendPost(path, allArguments.ToArray());
-        }
-        public static Task<T> PostUrlEncodeForm<T>(this RestClient restClient, string path, object data, IDictionary<string, string> headers = null)
-        {
-            List<ApiArgument> allArguments = new List<ApiArgument>();
-            allArguments.Add(new ApiArgument(ArgumentSource.FormUrlEncoded, nameof(data), data));
-            if (headers != null)
-            {
-                allArguments.AddRange(headers.Select(kv => new ApiArgument(ArgumentSource.Header, kv.Key, kv.Value)));
-            }
-            return restClient.SendPost<T>(path, allArguments.ToArray());
+            return new FormUrlEncodedContent(ObjectUtils.ObjectToStringKeyValuePairs(body));
         }
 
 
@@ -107,37 +108,7 @@ namespace YS.Knife.Rest.Client
 
 
 
-        public static Task Put(this RestClient restClient, string path, params ApiArgument[] args)
-        {
-            return restClient.SendHttp(HttpMethod.Put, path, args);
-        }
-        public static Task<T> Put<T>(this RestClient restClient, string path, params ApiArgument[] args)
-        {
-            return restClient.SendHttp<T>(HttpMethod.Put, path, args);
-        }
 
 
-        public static Task Delete(this RestClient restClient, string path, params ApiArgument[] args)
-        {
-            return restClient.SendHttp(HttpMethod.Delete, path, args);
-        }
-        public static Task<T> Delete<T>(this RestClient restClient, string path, params ApiArgument[] args)
-        {
-            return restClient.SendHttp<T>(HttpMethod.Delete, path, args);
-        }
-
-        private static IDictionary<string, object> ObjectToMap(object obj)
-        {
-            if (obj == null) return null;
-            if (obj is IDictionary<string, object>)
-            {
-                return obj as IDictionary<string, object>;
-            }
-            if (obj is IDictionary<string, string> strdic)
-            {
-                return strdic.ToDictionary(p => p.Key, p => p.Value as object);
-            }
-            return obj.GetType().GetProperties().Where(p => p.CanRead).ToDictionary(p => p.Name, p => p.GetValue(obj));
-        }
     }
 }

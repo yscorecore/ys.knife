@@ -15,6 +15,12 @@ namespace YS.Knife.Rest.Client
             this.BaseAddress = baseAddress;
         }
         public string BaseAddress { get; set; }
-        public Dictionary<string, string> DefaultHeaders { get; set; }
+        public Dictionary<string, string> Headers { get; set; }
+    }
+
+    public class RestInfo<T> : RestInfo
+        where T : class
+    {
+
     }
 }

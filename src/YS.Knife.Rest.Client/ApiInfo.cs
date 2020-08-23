@@ -9,8 +9,9 @@ namespace YS.Knife.Rest.Client
     {
         public HttpMethod Method { get; set; }
         public string Path { get; set; }
-
-        public List<ApiArgument> Arguments { get; set; }
-
+        public IEnumerable<KeyValuePair<string, string>> Headers { get; set; }
+        public HttpContent Body { get; set; }
+        public IEnumerable<KeyValuePair<string, string>> Query { get; set; }
+        public IDictionary<string, string> Route { get; set; }
     }
 }

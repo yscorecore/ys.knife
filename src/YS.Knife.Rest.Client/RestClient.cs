@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
@@ -23,110 +24,53 @@ namespace YS.Knife.Rest.Client
         private readonly RestInfo restInfo;
         private readonly HttpClient httpClient;
         #region 构造函数
-        public RestClient(string baseAddress, HttpClient httpClient)
-            : this(new RestInfo
-            {
-                BaseAddress = baseAddress
-            }, httpClient)
-        {
-        }
         public RestClient(RestInfo restInfo, HttpClient httpClient)
         {
-            _ = restInfo ?? throw new ArgumentNullException(nameof(restInfo));
-            this.restInfo = restInfo;
+            _ = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.restInfo = restInfo ?? new RestInfo();
             this.httpClient = httpClient;
         }
-        public RestClient(IRestInfoFactory restInfoFactory, HttpClient httpClient)
-        {
-            this.restInfo = restInfoFactory.GetRestInfo(this.GetType());
-            this.httpClient = httpClient;
-        }
+
         #endregion
 
+        #region public
 
         public Task SendHttp(ApiInfo apiInfo)
         {
             return SendHttpAsResponse(apiInfo);
         }
+        public async Task<T> SendHttp<T>(ApiInfo apiInfo)
+        {
+            var response = await this.SendHttpAsResponse(apiInfo);
+            return FromResponse<T>(response);
+        }
+        #endregion
+
+        #region protected
+
         protected virtual async Task<HttpResponseMessage> SendHttpAsResponse(ApiInfo apiInfo)
         {
             _ = apiInfo ?? throw new ArgumentNullException(nameof(apiInfo));
 
-
-            var requestPath = TranslatePath(apiInfo, apiInfo.Path);
-            var queryString = BuildQueryString(apiInfo);
-            if (!string.IsNullOrEmpty(queryString))
+            using (var request = new HttpRequestMessage())
             {
-                if (requestPath.Contains("?"))
-                {
-                    requestPath = requestPath + queryString;
-                }
-                else
-                {
-                    requestPath = requestPath + "?" + queryString;
-                }
-            }
+                request.Method = apiInfo.Method;
+                request.RequestUri = BuildRequestUri(apiInfo);
+                request.Content = apiInfo.Body;
 
+                this.AppendAttributeHeaders(request);
+                this.AppendRestInfoHeaders(request);
+                this.AppendRequestHeaders(apiInfo, request);
 
-            using (var request = CreateRequestMessage(apiInfo.Method, requestPath))
-            {
-                this.AppendRequestHeader(apiInfo, request);
-                this.AppendRequestJsonBody(apiInfo, request);
-                this.AppendRequestUrlEncodeForm(apiInfo, request);
                 var response = await httpClient.SendAsync(request);
                 response.EnsureSuccessStatusCode();
                 return response;
             }
         }
 
-        private void AppendRequestUrlEncodeForm(ApiInfo apiInfo, HttpRequestMessage request)
+        protected virtual T FromResponse<T>(HttpResponseMessage response)
         {
-            var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.FormUrlEncoded);
-            if (bodyItem != null)
-            {
-                var kvs = ObjectToStringKeyValuePairs(bodyItem.Value);
-                request.Content = new FormUrlEncodedContent(kvs);
-            }
-        }
-
-
-
-        private Uri CombinUri(string baseAddress, string requestPath)
-        {
-            if (string.IsNullOrEmpty(baseAddress))
-            {
-                return new Uri(requestPath, UriKind.Relative);
-            }
-            if (requestPath.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) || requestPath.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return new Uri(requestPath);
-            }
-            return new Uri(baseAddress.TrimEnd('/') + "/" + requestPath.TrimStart('/'));
-
-        }
-        private HttpRequestMessage CreateRequestMessage(HttpMethod method, string requestPath)
-        {
-            var uri = CombinUri(restInfo.BaseAddress, requestPath);
-            var message = new HttpRequestMessage(method, uri);
-            if (restInfo.DefaultHeaders != null)
-            {
-                foreach (var kv in restInfo.DefaultHeaders)
-                {
-                    message.Headers.Add(kv.Key, kv.Value);
-                }
-            }
-            return message;
-        }
-
-
-        public async Task<T> SendHttp<T>(ApiInfo apiInfo)
-        {
-            var response = await this.SendHttpAsResponse(apiInfo);
-            return FromResponse<T>(response);
-        }
-        private T FromResponse<T>(HttpResponseMessage response)
-        {
-            response.EnsureSuccessStatusCode();
+            _ = response ?? throw new ArgumentNullException(nameof(response));
             var content = response.Content;
             var responseData = content.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(responseData))
@@ -135,98 +79,125 @@ namespace YS.Knife.Rest.Client
             }
             return JsonSerializer.Deserialize<T>(responseData, JsonOptions);
         }
+        #endregion
 
-        private string TranslatePath(ApiInfo apiInfo, string path)
-        {
+        #region Header
 
-            // replace {key},{key:int},{age:range(18,120)},{ssn:regex(^\d{{3}}-\d{{2}}-\d{{4}}$)}
-            var path2 = Regex.Replace(path, "\\{(?<nm>\\w+)(\\?)?(:.+)?\\}", (m) =>
-            {
-                var nm = m.Groups["nm"].Value;
-                var argument = apiInfo.Arguments.Single(p => p.Source == ArgumentSource.Router && nm.Equals(p.Name, StringComparison.InvariantCultureIgnoreCase));
-                return ValueToString(argument.Value);
-            });
-            return path2;
-        }
-        private static string ValueToString(object value)
+        private void AppendAttributeHeaders(HttpRequestMessage message)
         {
-            if (value == null) return null;
-            if (value is string) return value as string;
-            var converter = System.ComponentModel.TypeDescriptor.GetConverter(value);
-            return converter.ConvertToInvariantString(value);
-        }
-
-
-        private string BuildQueryString(ApiInfo apiInfo)
-        {
-            var queryItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.Query).ToList();
-            if (queryItems.Count == 0) return string.Empty;
-            var dic = new Dictionary<string, string>();
-            foreach (var queryItem in queryItems)
+            var headers = Attribute.GetCustomAttributes(this.GetType(), typeof(RequestHeaderAttribute), true)
+                         .Cast<RequestHeaderAttribute>();
+            foreach (var kv in headers)
             {
-                // TODO array ,list 
-                dic.Add(queryItem.Name, HttpUtility.UrlEncode(ValueToString(queryItem.Value)));
-            }
-            return string.Join("&", dic.Select(kv => $"{kv.Key}={kv.Value}"));
-        }
-
-        private void AppendRequestHeader(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
-        {
-            var headerItems = apiInfo.Arguments.Where(p => p.Source == ArgumentSource.Header);
-            foreach (var headerItem in headerItems)
-            {
-                httpRequestMessage.Headers.Add(headerItem.Name, ValueToString(headerItem.Value));
-            }
-        }
-        private void AppendRequestJsonBody(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
-        {
-            var bodyItem = apiInfo.Arguments.SingleOrDefault(p => p.Source == ArgumentSource.BodyJson);
-            if (bodyItem != null)
-            {
-                var text = JsonSerializer.Serialize(bodyItem.Value);
-                httpRequestMessage.Content = new StringContent(text, Encoding.UTF8, "application/json");
-            }
-        }
-
-        internal IDictionary<string, object> ObjectToMap(object obj)
-        {
-            if (obj == null) return null;
-            if (obj is IDictionary<string, object>)
-            {
-                return obj as IDictionary<string, object>;
-            }
-            if (obj is IDictionary<string, string> strdic)
-            {
-                return strdic.ToDictionary(p => p.Key, p => p.Value as object);
-            }
-            return obj.GetType().GetProperties().Where(p => p.CanRead).ToDictionary(p => p.Name, p => p.GetValue(obj));
-        }
-        internal IEnumerable<KeyValuePair<string, string>> ObjectToStringKeyValuePairs(object obj)
-        {
-            if (obj == null) return Enumerable.Empty<KeyValuePair<string, string>>();
-
-            return obj.GetType().GetProperties()
-                 .Where(p => p.CanRead)
-                 .SelectMany(p => GetPropertyValues(p, obj));
-        }
-        internal IEnumerable<KeyValuePair<string, string>> GetPropertyValues(PropertyInfo p, object obj)
-        {
-            var value = p.GetValue(obj);
-            if ((Type.GetTypeCode(value.GetType()) == TypeCode.Object) && (value is IEnumerable valueList))
-            {
-                foreach (var item in valueList)
+                if (!string.IsNullOrEmpty(kv.Key))
                 {
-                    //if (item != null)
+                    message.Headers.Add(kv.Key, kv.Value);
+                }
+
+            }
+        }
+        private void AppendRestInfoHeaders(HttpRequestMessage message)
+        {
+            if (restInfo.Headers != null)
+            {
+                foreach (var kv in restInfo.Headers)
+                {
+                    if (!string.IsNullOrEmpty(kv.Key))
                     {
-                        yield return new KeyValuePair<string, string>(p.Name, ValueToString(item));
+                        message.Headers.Add(kv.Key, kv.Value);
+                    }
+
+                }
+            }
+        }
+        private void AppendRequestHeaders(ApiInfo apiInfo, HttpRequestMessage httpRequestMessage)
+        {
+            if (apiInfo.Headers != null)
+            {
+                foreach (var kv in apiInfo.Headers)
+                {
+                    if (!string.IsNullOrEmpty(kv.Key))
+                    {
+                        httpRequestMessage.Headers.Add(kv.Key, kv.Value);
                     }
                 }
             }
-            else if (value != null)
-            {
-                yield return new KeyValuePair<string, string>(p.Name, ValueToString(value));
-            }
         }
+
+        #endregion
+
+        #region Url
+        private Uri BuildRequestUri(ApiInfo apiInfo)
+        {
+            var requestPath = GetTranslatedPath(apiInfo);
+            var queryString = BuildQueryString(apiInfo);
+            var requestPathWithQuery = CombinQueryString(requestPath, queryString);
+            return CombinUri(requestPathWithQuery);
+        }
+        private string GetTranslatedPath(ApiInfo apiInfo)
+        {
+            // replace {key},{key:int},{age:range(18,120)},{ssn:regex(^\d{{3}}-\d{{2}}-\d{{4}}$)}
+            if (apiInfo.Route == null) return apiInfo.Path;
+            return Regex.Replace(apiInfo.Path ?? string.Empty, "\\{(?<nm>\\w+)(\\?)?(:.+)?\\}", (m) =>
+              {
+                  var nm = m.Groups["nm"].Value;
+                  if (apiInfo.Route.TryGetValue(nm, out string value))
+                  {
+                      return UrlEncoder.Default.Encode(value);
+                  }
+                  else
+                  {
+                      return m.Value;
+                  }
+              });
+        }
+
+        private string BuildQueryString(ApiInfo apiInfo)
+        {
+            if (apiInfo.Query == null) return string.Empty;
+            return string.Join("&", apiInfo.Query.Where(p => !string.IsNullOrEmpty(p.Key))
+                .Select(kv => $"{UrlEncoder.Default.Encode(kv.Key)}={UrlEncoder.Default.Encode(kv.Value ?? string.Empty)}"));
+        }
+        private string CombinQueryString(string requestPath, string query)
+        {
+            if (!string.IsNullOrEmpty(query))
+            {
+                if (requestPath.Contains("?"))
+                {
+
+                    return requestPath + query;
+                }
+                else
+                {
+                    return requestPath + "?" + query;
+                }
+            }
+            return requestPath;
+        }
+
+        private Uri CombinUri(string requestPath)
+        {
+            if (requestPath.StartsWith("http://", StringComparison.InvariantCultureIgnoreCase) || requestPath.StartsWith("https://", StringComparison.InvariantCultureIgnoreCase))
+            {
+                return new Uri(requestPath);
+            }
+            string baseAddress = restInfo.BaseAddress;
+            if (string.IsNullOrEmpty(baseAddress))
+            {
+                var attr = Attribute.GetCustomAttribute(this.GetType(), typeof(RestClientClassAttribute)) as RestClientClassAttribute;
+                if (attr != null)
+                {
+                    baseAddress = attr.DefaultBaseAddress;
+                }
+            }
+            if (string.IsNullOrEmpty(baseAddress))
+            {
+                return new Uri(requestPath, UriKind.Relative);
+            }
+            return new Uri(baseAddress.TrimEnd('/') + "/" + requestPath.TrimStart('/'));
+        }
+        #endregion
+
 
     }
 

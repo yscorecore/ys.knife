@@ -1,31 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 
 namespace YS.Knife.Rest.Client.UnitTest.Clients
 {
-    class GitHubClient
+    [RequestHeader("Accept", "application/vnd.github.v3+json")]
+    [RequestHeader("User-Agent", "RestClient-Test")]
+    [RestClientClass("https://api.github.com/")]
+    public class GitHubClient : RestClient, IGitHubService
     {
-        //[TestMethod]
-        //public async Task ShouldSuccessWhenGetGithubAndSetHeaderFromRestInfo()
-        //{
-        //    var factory = this.GetService<IHttpClientFactory>();
-        //    var restInfo = new RestInfo
-        //    {
-        //        BaseAddress = "https://api.github.com/",
-        //        DefaultHeaders = new Dictionary<string, string>
-        //        {
-        //            ["Accept"] = "application/vnd.github.v3+json",
-        //            ["User-Agent"] = "RestClient-Test",
-        //        },
-        //    };
-        //    var client = new RestClient(restInfo, factory.CreateClient());
-        //    var issues = await client.Get<IEnumerable<GitHubIssue>>(
-        //        "/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc");
-        //    Assert.IsNotNull(issues);
-        //    Assert.IsTrue(issues.Count() > 0);
-        //}
+
+        public GitHubClient(RestInfo<GitHubClient> restInfo, HttpClient httpClient) : base(restInfo, httpClient)
+        {
+
+        }
+
+        public Task<IEnumerable<GitHubIssue>> GetIssues()
+        {
+            return this.Get<IEnumerable<GitHubIssue>>("/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc");
+        }
+
     }
 
     /// <summary>
@@ -41,5 +38,10 @@ namespace YS.Knife.Rest.Client.UnitTest.Clients
 
         [JsonPropertyName("created_at")]
         public DateTime Created { get; set; }
+    }
+
+    public interface IGitHubService
+    {
+        Task<IEnumerable<GitHubIssue>> GetIssues();
     }
 }

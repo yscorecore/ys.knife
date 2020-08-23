@@ -6,7 +6,7 @@ using YS.Knife.Test;
 
 namespace YS.Knife.Rest.Client.UnitTest
 {
-    // [TestClass]
+    [TestClass]
     public class TestEnvironment
     {
         public static string TestServerUrl { get; private set; } = "http://127.0.0.1:8080";

@@ -16,8 +16,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathStartWithBackslash()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl + "/api", factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl + "/api");
             var all = await client.Get<string[]>("/testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
@@ -25,8 +24,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathStartWithBackslash()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl + "/api/", factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl + "/api/");
             var all = await client.Get<string[]>("/testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
@@ -34,8 +32,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathNotStartWithBackslash()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl + "/api", factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl + "/api");
             var all = await client.Get<string[]>("testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
@@ -43,8 +40,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathNotStartWithBackslash()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl + "/api/", factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl + "/api/");
             var all = await client.Get<string[]>("testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
@@ -55,8 +51,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenNoArgs()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.Get<string[]>("api/testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
@@ -65,8 +60,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenAddHeaderDictionary()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.Get<string[]>("/api/testget/abc",
                 null,
                 new Dictionary<string, string>
@@ -80,8 +74,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenAddQueryDictionary()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.Get<string[]>("/api/testget/abc",
                 new Dictionary<string, string>
                 {
@@ -93,8 +86,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenAddQueryObject()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.Get<string[]>("api/testget/abc",
                 new
                 {
@@ -106,8 +98,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenAddHeaderAndQueryObject()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.Get<string[]>("/api/testget/abc",
                 new
                 {
@@ -124,13 +115,12 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldGetAllValueWhenUseSendHttpAndAddHeaderAndQueryObject()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var all = await client.SendGet<string[]>(
                 "/api/testget/{id}",
-                new ApiArgument(ArgumentSource.Query, "arg1", 11),
-                new ApiArgument(ArgumentSource.Header, "arg2", 22),
-                new ApiArgument(ArgumentSource.Router, "id", "abc"));
+                new { Id = "abc" },
+                new { Arg1 = 11 },
+                new { Arg2 = 22 });
             all.Should().BeEquivalentTo(new string[] { "abc", "11", "22" });
         }
 
@@ -141,8 +131,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldPostJsonSuccess()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var result = await client.PostJson<Result>("api/testpost/body", new
             {
                 Id = 1,
@@ -154,8 +143,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         [TestMethod]
         public async Task ShouldPostUrlEncodeFormSuccess()
         {
-            var factory = this.GetService<IHttpClientFactory>();
-            var client = new RestClient(TestEnvironment.TestServerUrl, factory.CreateClient());
+            var client = NewRestClient(TestEnvironment.TestServerUrl);
             var result = await client.PostUrlEncodeForm<Result>("api/testpost/form", new
             {
                 Id = 1,
@@ -165,6 +153,13 @@ namespace YS.Knife.Rest.Client.UnitTest
             result.Should().BeEquivalentTo(new Result { Success = true, Message = "1-zhangsan-a--c" });
         }
         #endregion
+
+        private RestClient NewRestClient(string baseAddress)
+        {
+            var restInfo = new RestInfo(baseAddress);
+            var factory = this.GetService<IHttpClientFactory>();
+            return new RestClient(restInfo, factory.CreateClient());
+        }
     }
     public class Result
     {
