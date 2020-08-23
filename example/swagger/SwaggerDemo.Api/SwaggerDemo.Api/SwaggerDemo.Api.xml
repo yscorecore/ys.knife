@@ -4,6 +4,11 @@
         <name>SwaggerDemo.Api</name>
     </assembly>
     <members>
+        <member name="T:SwaggerDemo.Api.CalcController">
+            <summary>
+            表示运算的服务
+            </summary>
+        </member>
         <member name="M:SwaggerDemo.Api.CalcController.Add(System.Int32,System.Int32)">
             <summary>
             加法运算

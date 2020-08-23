@@ -5,7 +5,10 @@ using SwaggerDemo.Core;
 
 namespace SwaggerDemo.Api
 {
-    public class CalcController : YS.Knife.Api.ApiBase<ICalcService>, ICalcService
+    /// <summary>
+    /// 表示运算的服务
+    /// </summary>
+    public class CalcController : YS.Knife.Rest.Api.ApiBase<ICalcService>, ICalcService
     {
         /// <summary>
         /// 加法运算

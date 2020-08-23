@@ -5,10 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="YS.Knife.Core" Version="1.2.0" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\YS.Knife.Core\YS.Knife.Core.csproj" />
     <ProjectReference Include="..\SwaggerDemo.Core\SwaggerDemo.Core.csproj" />
   </ItemGroup>
 

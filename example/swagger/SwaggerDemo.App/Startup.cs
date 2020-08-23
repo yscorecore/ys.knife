@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,12 +29,7 @@ namespace SwaggerDemo.App
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-            });
+            UseSwagger(app);
 
             app.UseHttpsRedirection();
 
@@ -44,6 +40,22 @@ namespace SwaggerDemo.App
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+        }
+
+        private void UseSwagger(IApplicationBuilder app)
+        {
+            var swaggerOptions = app.ApplicationServices.GetRequiredService<SwaggerOptions>();
+            var ui = swaggerOptions.UI ?? new UIInfo();
+            var api = swaggerOptions.Api ?? new ApiInfo();
+            app.UseSwagger(c => { c.RouteTemplate = api.RouteTemplate; });
+            app.UseSwaggerUI(c =>
+            {
+                c.RoutePrefix = swaggerOptions.UI.RoutePrefix;
+                var documentName = swaggerOptions.GetDocumentNameOrEntryAssemblyName();
+                string swaggerPath =  api.RouteTemplate.Replace("{documentName}", UrlEncoder.Default.Encode(documentName));
+                c.SwaggerEndpoint(swaggerPath, documentName);
+
             });
         }
     }

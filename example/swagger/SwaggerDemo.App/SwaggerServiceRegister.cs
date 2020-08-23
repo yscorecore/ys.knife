@@ -14,12 +14,30 @@ namespace SwaggerDemo.App
     {
         public void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
+            var swaggerOptions = context.Configuration.GetConfigOrNew<SwaggerOptions>();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
-                var basePath = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-                var xmlPath = Path.Combine(basePath, "SwaggerDemo.Api/SwaggerDemo.Api.xml");
-                c.IncludeXmlComments(xmlPath);
+                var api = swaggerOptions.Api ?? new ApiInfo();
+                var documentName = swaggerOptions.GetDocumentNameOrEntryAssemblyName();
+                c.SwaggerDoc(documentName,
+                    new OpenApiInfo
+                    {
+                        Title = api.GetTitleOrAssemblyTitle(),
+                        Version = api.GetVersionOrAssemblyVersion(),
+                        Description = api.GetDescriptionOrAssemblyDescription()
+                    });
+                if (api.IncludeXmlComments)
+                {
+                    var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+                    foreach (var file in System.IO.Directory.GetFiles(basePath, api.XmlComentsFiles))
+                    {
+                        c.IncludeXmlComments(file);
+                    };
+                    //var xmlPath = Path.Combine(basePath, "SwaggerDemo.Api/SwaggerDemo.Api.xml");
+                    //c.IncludeXmlComments(xmlPath);
+                }
+
             });
         }
     }
