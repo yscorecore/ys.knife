@@ -4,10 +4,12 @@
     <TargetFrameworks>netcoreapp3.0;netcoreapp3.1</TargetFrameworks>
     <OutputType>Library</OutputType>
     <IsPackable>true</IsPackable>
+    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+      <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1" />
   </ItemGroup>
 
 </Project>

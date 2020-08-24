@@ -7,14 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.2.1" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj" />
     <ProjectReference Include="..\SwaggerDemo.Api\SwaggerDemo.Api.csproj" />
     <ProjectReference Include="..\SwaggerDemo.Impl\SwaggerDemo.Impl.csproj" />
   </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 
 </Project>

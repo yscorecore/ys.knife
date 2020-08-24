@@ -4,25 +4,40 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
-namespace SwaggerDemo.App
+namespace YS.Knife.Hosting.Web.Swagger
 {
-    [YS.Knife.OptionsClass]
+    [OptionsClass("Knife.Swagger")]
     public class SwaggerOptions
     {
-        public bool Enabled { get; set; }
+        public Mode Mode { get; set; } = Mode.All;
+        /// <summary>
+        /// 获取或设置文档的名称
+        /// </summary>
         public string DocumentName { get; set; }
 
         public ApiInfo Api { get; set; } = new ApiInfo();
 
         public UIInfo UI { get; set; } = new UIInfo();
     }
-
+    public enum Mode
+    {
+        None,
+        Api,
+        All
+    }
     public class ApiInfo
     {
+        /// <summary>
+        /// 获取或设置Api版本版本
+        /// </summary>        
         public string Version { get; set; }
-
+        /// <summary>
+        /// 获取或设置Api描述信息
+        /// </summary>
         public string Description { get; set; }
-
+        /// <summary>
+        /// 获取或设置标题信息
+        /// </summary>
         public string Title { get; set; }
 
         /// <summary>
@@ -95,5 +110,4 @@ namespace SwaggerDemo.App
             return apiInfo.Version;
         }
     }
-
 }

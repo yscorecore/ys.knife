@@ -6,15 +6,15 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using YS.Knife;
 
-namespace SwaggerDemo.App
+namespace YS.Knife.Hosting.Web.Swagger
 {
     public class SwaggerServiceRegister : IServiceRegister
     {
         public void RegisteServices(IServiceCollection services, IRegisteContext context)
         {
-            var swaggerOptions = context.Configuration.GetConfigOrNew<SwaggerOptions>();
+            var swaggerOptions = context?.Configuration.GetConfigOrNew<SwaggerOptions>();
+            if (swaggerOptions.Mode == Mode.None) return;
             services.AddSwaggerGen(c =>
             {
                 var api = swaggerOptions.Api ?? new ApiInfo();
@@ -30,12 +30,10 @@ namespace SwaggerDemo.App
                 {
                     var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    foreach (var file in System.IO.Directory.GetFiles(basePath, api.XmlComentsFiles))
+                    foreach (var file in Directory.GetFiles(basePath, api.XmlComentsFiles))
                     {
                         c.IncludeXmlComments(file);
                     };
-                    //var xmlPath = Path.Combine(basePath, "SwaggerDemo.Api/SwaggerDemo.Api.xml");
-                    //c.IncludeXmlComments(xmlPath);
                 }
 
             });

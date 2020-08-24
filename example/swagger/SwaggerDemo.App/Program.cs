@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using YS.Knife.Hosting;
 
 namespace SwaggerDemo.App
 {
@@ -13,10 +14,7 @@ namespace SwaggerDemo.App
     {
         public static void Main(string[] args)
         {
-            using (var host = new YS.Knife.Hosting.KnifeWebHost<Startup>())
-            {
-                host.Run();
-            }
+            KnifeWebHost.Start(args);
         }
     }
 }

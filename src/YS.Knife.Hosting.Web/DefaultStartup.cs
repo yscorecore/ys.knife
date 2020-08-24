@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using YS.Knife.Hosting.Web.Swagger;
 
 namespace YS.Knife.Hosting.Web
 {
@@ -33,6 +34,8 @@ namespace YS.Knife.Hosting.Web
             }
 
             UseStaticFiles(app);
+
+            app.UseKnifeSwagger();
 
             app.UseHttpsRedirection();
 
@@ -70,6 +73,8 @@ namespace YS.Knife.Hosting.Web
                 }
             }
         }
+
+
 
     }
 }
