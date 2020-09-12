@@ -3,7 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HealthCheck.Demo.App", "HealthCheck.Demo.App\HealthCheck.Demo.App.csproj", "{3D86F86D-B01A-47CA-98F0-2815DB6B1B43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HealthCheck.Demo.App", "HealthCheck.Demo.App\HealthCheck.Demo.App.csproj", "{3D86F86D-B01A-47CA-98F0-2815DB6B1B43}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Core", "..\..\src\YS.Knife.Core\YS.Knife.Core.csproj", "{807E71C6-11C1-4E02-B089-3C19CD1D1F95}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting", "..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{BCA8B8D3-AB81-497B-AE6B-99C4004F4FEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting.Web", "..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj", "{B67BD0BD-5675-469F-B8D5-B06546D0ADD6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{3D86F86D-B01A-47CA-98F0-2815DB6B1B43}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D86F86D-B01A-47CA-98F0-2815DB6B1B43}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D86F86D-B01A-47CA-98F0-2815DB6B1B43}.Release|Any CPU.Build.0 = Release|Any CPU
+		{807E71C6-11C1-4E02-B089-3C19CD1D1F95}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{807E71C6-11C1-4E02-B089-3C19CD1D1F95}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{807E71C6-11C1-4E02-B089-3C19CD1D1F95}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{807E71C6-11C1-4E02-B089-3C19CD1D1F95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCA8B8D3-AB81-497B-AE6B-99C4004F4FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCA8B8D3-AB81-497B-AE6B-99C4004F4FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCA8B8D3-AB81-497B-AE6B-99C4004F4FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCA8B8D3-AB81-497B-AE6B-99C4004F4FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B67BD0BD-5675-469F-B8D5-B06546D0ADD6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B67BD0BD-5675-469F-B8D5-B06546D0ADD6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B67BD0BD-5675-469F-B8D5-B06546D0ADD6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B67BD0BD-5675-469F-B8D5-B06546D0ADD6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

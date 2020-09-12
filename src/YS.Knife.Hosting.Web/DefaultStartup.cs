@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
+using YS.Knife.Hosting.Web.Health;
 using YS.Knife.Hosting.Web.Swagger;
 
 namespace YS.Knife.Hosting.Web
@@ -46,6 +47,7 @@ namespace YS.Knife.Hosting.Web
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapKnifeHealthCheckWhenProvided();
             });
         }
         private void UseStaticFiles(IApplicationBuilder app)

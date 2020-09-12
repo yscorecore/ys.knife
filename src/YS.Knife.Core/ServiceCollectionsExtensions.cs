@@ -7,6 +7,7 @@ namespace YS.Knife
 {
     public static class ServiceCollectionsExtensions
     {
+
         public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IRegisteContext context)
         {
             foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceRegister>())

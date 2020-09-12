@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace YS.Knife.Hosting.Web.Swagger
 {
@@ -67,7 +64,7 @@ namespace YS.Knife.Hosting.Web.Swagger
     {
         public static string GetDocumentNameOrEntryAssemblyName(this SwaggerOptions swaggerOptions)
         {
-            if (string.IsNullOrEmpty(swaggerOptions.DocumentName))
+            if (string.IsNullOrEmpty(swaggerOptions?.DocumentName))
             {
                 return Assembly.GetEntryAssembly().GetName().Name;
             }
@@ -79,7 +76,7 @@ namespace YS.Knife.Hosting.Web.Swagger
         }
         public static string GetTitleOrAssemblyTitle(this ApiInfo apiInfo)
         {
-            if (string.IsNullOrEmpty(apiInfo.Title))
+            if (string.IsNullOrEmpty(apiInfo?.Title))
             {
                 var attr = Attribute.GetCustomAttribute(Assembly.GetEntryAssembly(), typeof(AssemblyTitleAttribute)) as AssemblyTitleAttribute;
                 if (attr != null)
@@ -91,7 +88,7 @@ namespace YS.Knife.Hosting.Web.Swagger
         }
         public static string GetDescriptionOrAssemblyDescription(this ApiInfo apiInfo)
         {
-            if (string.IsNullOrEmpty(apiInfo.Description))
+            if (string.IsNullOrEmpty(apiInfo?.Description))
             {
                 var attr = Attribute.GetCustomAttribute(Assembly.GetEntryAssembly(), typeof(AssemblyDescriptionAttribute)) as AssemblyDescriptionAttribute;
                 if (attr != null)
@@ -103,7 +100,7 @@ namespace YS.Knife.Hosting.Web.Swagger
         }
         public static string GetVersionOrAssemblyVersion(this ApiInfo apiInfo)
         {
-            if (string.IsNullOrEmpty(apiInfo.Version))
+            if (string.IsNullOrEmpty(apiInfo?.Version))
             {
                 return Assembly.GetEntryAssembly().GetName().Version.ToString(3);
             }

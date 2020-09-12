@@ -35,7 +35,6 @@ namespace YS.Knife.Hosting.Web.Swagger
                         c.IncludeXmlComments(file);
                     };
                 }
-
             });
         }
     }

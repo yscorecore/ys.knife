@@ -50,7 +50,7 @@ namespace YS.Knife.Hosting
                 .ConfigureAppConfiguration(OnConfigureAppConfiguration)
                 .ConfigureServices((builder, serviceCollection) =>
                 {
-                    LoadKnifeServices(serviceCollection, builder.Configuration);
+                    serviceCollection.AddAllKnifeServices(builder.Configuration);
                     this.OnLoadCustomService(builder, serviceCollection);
                 });
         }
@@ -107,19 +107,6 @@ namespace YS.Knife.Hosting
             {
                 knifeHost.Run();
             }
-        }
-        [SuppressMessage("Reliability", "IDE0067:丢失范围之前释放对象", Justification = "<挂起>")]
-        [SuppressMessage("Reliability", "CA2000:丢失范围之前释放对象", Justification = "<挂起>")]
-        public static void LoadKnifeServices(IServiceCollection services, IConfiguration configuration)
-        {
-            var serviceProvider = services.BuildServiceProvider();
-            var loggerFactory = serviceProvider.GetService<ILoggerFactory>() ?? new LoggerFactory();
-            var logger = loggerFactory.CreateLogger("Knife");
-            var options = configuration.GetConfigOrNew<KnifeOptions>();
-
-            PluginRegister.LoadPlugins(options.Plugins, logger);
-            var knifeTypeFilter = new KnifeTypeFilter(options);
-            services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
 
 
