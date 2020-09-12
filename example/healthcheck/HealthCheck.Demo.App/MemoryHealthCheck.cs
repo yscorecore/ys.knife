@@ -9,7 +9,7 @@ using YS.Knife;
 
 namespace HealthCheck.Demo.App
 {
-    [HealthCheck(Tags = new string[] { "abc" })]
+    [HealthCheck(Tags = new string[] { "memory","gc" })]
     public class MemoryHealthCheck : IHealthCheck
     {
         private readonly IOptionsMonitor<MemoryCheckOptions> _options;

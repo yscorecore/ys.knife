@@ -7,7 +7,6 @@ namespace YS.Knife.Hosting.Web
     [OptionsClass("Knife")]
     public class KnifeWebOptions : KnifeOptions
     {
-        public string[] MvcParts { get; set; } = new[] { "*.Api" };
         public Dictionary<string, StaticFileInfo> StaticFiles { get; set; } = new Dictionary<string, StaticFileInfo>();
     }
     public class StaticFileInfo

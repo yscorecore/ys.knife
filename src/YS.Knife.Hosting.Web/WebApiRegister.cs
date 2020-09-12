@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Hosting.Web
@@ -15,10 +16,11 @@ namespace YS.Knife.Hosting.Web
             IMvcBuilder mvcBuilder = services.AddControllers((mvc) =>
             {
             });
-            var parts = from p in AppDomain.CurrentDomain.GetAssemblies()
-                        where p.GetName().Name.IsMatchWildcardAnyOne(options.MvcParts, StringComparison.OrdinalIgnoreCase)
-                        select p;
-            foreach (var mvcPart in parts)
+
+            var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()
+                                    .Select(p => p.Assembly)
+                                    .Distinct();
+            foreach (var mvcPart in controllerAssemblies)
             {
                 mvcBuilder.AddApplicationPart(mvcPart);
             }
