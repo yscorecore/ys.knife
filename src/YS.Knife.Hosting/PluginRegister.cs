@@ -8,37 +8,28 @@ namespace YS.Knife.Hosting
 {
     class PluginRegister
     {
-        public static void LoadPlugins(IEnumerable<string> plugins, ILogger logger)
+        public static void LoadPluginPaths(IEnumerable<string> paths, ILogger logger)
         {
-            if (plugins == null) return;
-            var (includes, ignores) = ParsePlugins(plugins);
             var rootPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            foreach (var file in Directory.GetFiles(rootPath, "*.dll", SearchOption.AllDirectories))
+            foreach (var path in (paths ?? Enumerable.Empty<string>()).Distinct())
             {
-                string relativePath = file.Substring(rootPath.Length).TrimStart(Path.DirectorySeparatorChar);
+                if (string.IsNullOrEmpty(path))
+                {
+                    continue;
 
-                if (relativePath.IsMatchWildcardAnyOne(ignores, StringComparison.InvariantCultureIgnoreCase))
+                }
+                string fullPath = Path.GetFullPath(Path.Combine(rootPath, path));
+                if (!Directory.Exists(fullPath))
                 {
                     continue;
                 }
-
-                if (relativePath.IsMatchWildcardAnyOne(includes, StringComparison.InvariantCultureIgnoreCase))
+                foreach (var dllFile in Directory.GetFiles(fullPath, "*.dll", SearchOption.TopDirectoryOnly))
                 {
-                    LoadAssembly(file, logger);
+                    LoadAssembly(dllFile, logger);
                 }
             }
         }
-        private static (List<string> Includes, List<string> Ignores) ParsePlugins(IEnumerable<string> plugins)
-        {
-            var allPlugins = plugins.Where(p => !string.IsNullOrWhiteSpace(p)).Distinct().ToList();
-            var includes = allPlugins.Where(p => p[0] != '!').ToList();
-            var ignores = allPlugins.Where(p => p[0] == '!')
-                    .Select(p => p.Substring(1))
-                    .Select(p => p.Replace('/', Path.DirectorySeparatorChar))
-                    .Select(p => p.Replace('\\', Path.DirectorySeparatorChar))
-                    .ToList();
-            return (includes, ignores);
-        }
+
         private static void LoadAssembly(string dll, ILogger logger)
         {
             try

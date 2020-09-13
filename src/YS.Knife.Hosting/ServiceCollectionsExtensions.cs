@@ -20,7 +20,7 @@ namespace YS.Knife.Hosting
             var logger = loggerFactory.CreateLogger("Knife");
             var options = configuration.GetConfigOrNew<KnifeOptions>();
 
-            PluginRegister.LoadPlugins(options.Plugins, logger);
+            PluginRegister.LoadPluginPaths(options.PluginPaths, logger);
             var knifeTypeFilter = new KnifeTypeFilter(options);
             services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
