@@ -184,7 +184,7 @@ namespace YS.Knife.Rest.Client
             string baseAddress = restInfo.BaseAddress;
             if (string.IsNullOrEmpty(baseAddress))
             {
-                var attr = Attribute.GetCustomAttribute(this.GetType(), typeof(RestClientClassAttribute)) as RestClientClassAttribute;
+                var attr = Attribute.GetCustomAttribute(this.GetType(), typeof(RestClientAttribute)) as RestClientAttribute;
                 if (attr != null)
                 {
                     baseAddress = attr.DefaultBaseAddress;

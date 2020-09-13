@@ -2,7 +2,7 @@
 
 namespace YS.Knife.Options
 {
-    [OptionsClass]
+    [Options]
     public class Custom8Options
     {
         public int Number { get; set; }

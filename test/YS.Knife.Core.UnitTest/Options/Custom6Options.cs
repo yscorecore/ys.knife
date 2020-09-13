@@ -1,6 +1,6 @@
 ﻿namespace YS.Knife.Options
 {
-    [OptionsClass("")]
+    [Options("")]
     public class Custom6Options
     {
         public string Value { get; set; }

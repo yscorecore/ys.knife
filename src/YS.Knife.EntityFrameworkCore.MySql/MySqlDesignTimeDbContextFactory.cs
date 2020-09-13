@@ -50,9 +50,9 @@ namespace Microsoft.EntityFrameworkCore
         }
         private string GetConnectionStringKey()
         {
-            if (Attribute.IsDefined(typeof(T), typeof(MySqlDbContextClassAttribute)))
+            if (Attribute.IsDefined(typeof(T), typeof(MySqlDbContextAttribute)))
             {
-                var attr = typeof(T).GetCustomAttribute<MySqlDbContextClassAttribute>();
+                var attr = typeof(T).GetCustomAttribute<MySqlDbContextAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;

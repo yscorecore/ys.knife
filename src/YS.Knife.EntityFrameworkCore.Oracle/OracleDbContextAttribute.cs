@@ -2,9 +2,9 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class OracleDbContextClassAttribute : DbContextClassAttribute
+    public class OracleDbContextAttribute : DbContextAttribute
     {
-        public OracleDbContextClassAttribute(string connectionStringKey) : base(connectionStringKey)
+        public OracleDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
 
         }

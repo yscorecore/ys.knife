@@ -7,7 +7,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace YS.Knife.HostedService.UnitTest
 {
-    [HostedClass]
+    [HostedService]
     public class BackService : BackgroundService
     {
         public static bool Triggered = false;

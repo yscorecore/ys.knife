@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace YS.Knife.Options
 {
-    [OptionsClass]
+    [Options]
     public class Custom9Options
     {
         public string Text { get; set; }

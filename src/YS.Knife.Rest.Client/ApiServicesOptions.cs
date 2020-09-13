@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace YS.Knife.Rest.Client
 {
-    [OptionsClass()]
+    [Options()]
     public class ApiServicesOptions
     {
         public Dictionary<string, ServiceOptions> Services { get; set; } = new Dictionary<string, ServiceOptions>();

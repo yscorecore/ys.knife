@@ -10,10 +10,10 @@ namespace YS.Knife
             where T : class
 
         {
-            var configAttr = typeof(T).GetCustomAttribute<OptionsClassAttribute>();
+            var configAttr = typeof(T).GetCustomAttribute<OptionsAttribute>();
             if (configAttr == null)
             {
-                throw new InvalidOperationException($"Can not find {nameof(OptionsClassAttribute)} in type {typeof(T).FullName}.");
+                throw new InvalidOperationException($"Can not find {nameof(OptionsAttribute)} in type {typeof(T).FullName}.");
             }
             var optionsSection = configuration.GetOptionsConfiguration<T>(configAttr.ConfigKey);
             return optionsSection?.Get<T>();

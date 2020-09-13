@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace YS.Knife.Hosting.Web.Swagger
 {
-    [OptionsClass("Knife.Swagger")]
+    [Options("Knife.Swagger")]
     public class SwaggerOptions
     {
         public Mode Mode { get; set; } = Mode.All;

@@ -8,9 +8,9 @@ using YS.Knife;
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public abstract class DbContextClassAttribute : KnifeAttribute
+    public abstract class DbContextAttribute : KnifeAttribute
     {
-        public DbContextClassAttribute(string connectionStringKey) : base(typeof(DbContext))
+        public DbContextAttribute(string connectionStringKey) : base(typeof(DbContext))
         {
             this.ConnectionStringKey = connectionStringKey;
         }
@@ -34,7 +34,7 @@ namespace Microsoft.EntityFrameworkCore
                 var injectType = declareType;
                 while (injectType != typeof(DbContext))
                 {
-                    var method = typeof(DbContextClassAttribute).GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(injectType, declareType);
+                    var method = typeof(DbContextAttribute).GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(injectType, declareType);
                     method.Invoke(this, new object[] { services, connectionString });
                     injectType = injectType.BaseType;
                 }

@@ -69,7 +69,7 @@ namespace YS.Knife.Aop.UnitTest
         }
     }
 
-    [ServiceClass]
+    [Service]
     public class LoggingTestService : ILoggingTestService
     {
         public void Hello()

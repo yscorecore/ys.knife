@@ -4,7 +4,7 @@ using System.Text;
 
 namespace YS.Knife.Options
 {
-    [OptionsClass("C__B__D")]
+    [Options("C__B__D")]
     public class Custom5Options
     {
         public string Value { get; set; }

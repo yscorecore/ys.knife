@@ -2,7 +2,7 @@
 
 namespace YS.Knife
 {
-    [OptionsClass()]
+    [Options()]
     public class AppOptions
     {
         public string DataFolder { get; set; } = "app_data";

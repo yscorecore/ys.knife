@@ -9,7 +9,7 @@ namespace YS.Knife.Rest.Client.UnitTest.Clients
 {
     [RequestHeader("Accept", "application/vnd.github.v3+json")]
     [RequestHeader("User-Agent", "RestClient-Test")]
-    [RestClientClass("https://api.github.com/")]
+    [RestClient("https://api.github.com/")]
     public class GitHubClient : RestClient, IGitHubService
     {
 

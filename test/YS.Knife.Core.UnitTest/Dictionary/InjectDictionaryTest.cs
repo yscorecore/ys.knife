@@ -52,11 +52,11 @@ namespace YS.Knife.Dictionary
     {
     }
 
-    [ServiceClass()]
+    [Service()]
     public class Class1 : IInterface1
     {
     }
-    [ServiceClass()]
+    [Service()]
     [DictionaryKey("c2")]
     public class Class2 : IInterface1
     {

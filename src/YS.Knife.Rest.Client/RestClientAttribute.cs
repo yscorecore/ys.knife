@@ -8,15 +8,15 @@ using Microsoft.Extensions.DependencyInjection;
 namespace YS.Knife.Rest.Client
 {
 
-    public class RestClientClassAttribute : KnifeAttribute
+    public class RestClientAttribute : KnifeAttribute
     {
         public string DefaultBaseAddress { get; set; }
         public Type InjectType { get; set; }
-        public RestClientClassAttribute() : base(typeof(RestClient))
+        public RestClientAttribute() : base(typeof(RestClient))
         {
 
         }
-        public RestClientClassAttribute(string defaultBaseAddress) : base(typeof(RestClient))
+        public RestClientAttribute(string defaultBaseAddress) : base(typeof(RestClient))
         {
             this.DefaultBaseAddress = defaultBaseAddress;
         }
@@ -29,7 +29,7 @@ namespace YS.Knife.Rest.Client
             {
                 services.AddTransient(injectType, (sp) => sp.GetService(declareType));
             }
-            var method = typeof(RestClientClassAttribute).GetMethod(nameof(RegisteHttpClientAndRestInfo), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+            var method = typeof(RestClientAttribute).GetMethod(nameof(RegisteHttpClientAndRestInfo), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services });
         }
         private void RegisteHttpClientAndRestInfo<T>(IServiceCollection services)

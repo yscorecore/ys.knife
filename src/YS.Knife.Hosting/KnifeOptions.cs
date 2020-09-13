@@ -2,7 +2,7 @@
 
 namespace YS.Knife
 {
-    [OptionsClass]
+    [Options]
     public class KnifeOptions
     {
         public string Stage { get; set; } = "";

@@ -131,8 +131,8 @@ namespace YS.Knife.Aop
 
 
 
-    [ServiceClass(typeof(IDefineParameterValidation))]
-    [ServiceClass(typeof(INoDefineParameterValidation))]
+    [Service(typeof(IDefineParameterValidation))]
+    [Service(typeof(INoDefineParameterValidation))]
     public class Servic1 : IDefineParameterValidation, INoDefineParameterValidation
     {
         public void AnyString([Url] string url)

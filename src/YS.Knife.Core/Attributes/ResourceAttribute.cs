@@ -2,9 +2,9 @@
 using Microsoft.Extensions.DependencyInjection;
 namespace YS.Knife
 {
-    public class ResourceClassAttribute : KnifeAttribute
+    public class ResourceAttribute : KnifeAttribute
     {
-        public ResourceClassAttribute() : base(null)
+        public ResourceAttribute() : base(null)
         {
         }
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)

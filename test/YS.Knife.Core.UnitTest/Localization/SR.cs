@@ -6,7 +6,7 @@ using Microsoft.Extensions.Localization;
 namespace YS.Knife.Localization
 {
 
-    [ResourceClass()]
+    [Resource]
     public class SR
     {
         private readonly IStringLocalizer<SR> stringLocalizer;

@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YS.Knife.Hosting.Web.Health
 {
-    [OptionsClass("Knife.Health")]
+    [Options("Knife.Health")]
     public class HealthOptions
     {
         [Required(AllowEmptyStrings = false)]

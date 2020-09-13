@@ -50,9 +50,9 @@ namespace Microsoft.EntityFrameworkCore
         }
         private string GetConnectionStringKey()
         {
-            if (Attribute.IsDefined(typeof(T), typeof(PostgreSqlDbContextClassAttribute)))
+            if (Attribute.IsDefined(typeof(T), typeof(PostgreSqlDbContextAttribute)))
             {
-                var attr = typeof(T).GetCustomAttribute<PostgreSqlDbContextClassAttribute>();
+                var attr = typeof(T).GetCustomAttribute<PostgreSqlDbContextAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;

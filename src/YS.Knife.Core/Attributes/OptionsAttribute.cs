@@ -7,9 +7,9 @@ using Microsoft.Extensions.Options;
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class OptionsClassAttribute : KnifeAttribute
+    public class OptionsAttribute : KnifeAttribute
     {
-        public OptionsClassAttribute(string configKey = default) : base(null)
+        public OptionsAttribute(string configKey = default) : base(null)
         {
             this.ConfigKey = configKey;
         }
@@ -17,7 +17,7 @@ namespace YS.Knife
 
         public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
-            var method = typeof(OptionsClassAttribute).GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+            var method = typeof(OptionsAttribute).GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services, context?.Configuration });
         }
         private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)

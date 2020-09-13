@@ -4,12 +4,12 @@ using Microsoft.Extensions.DependencyInjection;
 namespace YS.Knife
 {
 
-    public class ServiceClassAttribute : KnifeAttribute
+    public class ServiceAttribute : KnifeAttribute
     {
-        public ServiceClassAttribute() : base(null)
+        public ServiceAttribute() : base(null)
         {
         }
-        public ServiceClassAttribute(Type injectType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) : base(null)
+        public ServiceAttribute(Type injectType, ServiceLifetime serviceLifetime = ServiceLifetime.Scoped) : base(null)
         {
             this.InjectType = injectType;
             this.Lifetime = serviceLifetime;

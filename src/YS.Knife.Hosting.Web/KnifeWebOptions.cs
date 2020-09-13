@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace YS.Knife.Hosting.Web
 {
-    [OptionsClass("Knife")]
+    [Options("Knife")]
     public class KnifeWebOptions : KnifeOptions
     {
         public Dictionary<string, StaticFileInfo> StaticFiles { get; set; } = new Dictionary<string, StaticFileInfo>();

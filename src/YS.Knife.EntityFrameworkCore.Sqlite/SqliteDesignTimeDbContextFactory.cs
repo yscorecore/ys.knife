@@ -48,9 +48,9 @@ namespace Microsoft.EntityFrameworkCore
         }
         private string GetConnectionStringKey()
         {
-            if (Attribute.IsDefined(typeof(T), typeof(SqliteDbContextClassAttribute)))
+            if (Attribute.IsDefined(typeof(T), typeof(SqliteDbContextAttribute)))
             {
-                var attr = typeof(T).GetCustomAttribute<SqliteDbContextClassAttribute>();
+                var attr = typeof(T).GetCustomAttribute<SqliteDbContextAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;
