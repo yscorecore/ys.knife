@@ -11,7 +11,7 @@ namespace YS.Knife.Hosting.Web.Swagger
 {
     public class SwaggerServiceRegister : IServiceRegister
     {
-        public void RegisteServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisteContext context)
         {
             var swaggerOptions = context?.Configuration.GetConfigOrNew<SwaggerOptions>();
             if (swaggerOptions.Mode == Mode.None) return;

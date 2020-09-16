@@ -9,7 +9,7 @@ namespace YS.Knife.Hosting.Web
 {
     public class WebApiRegister : IServiceRegister
     {
-        public void RegisteServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisteContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
