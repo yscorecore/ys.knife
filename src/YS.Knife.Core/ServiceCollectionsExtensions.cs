@@ -13,7 +13,7 @@ namespace YS.Knife
             foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceRegister>())
             {
                 var loader = Activator.CreateInstance(loaderType) as IServiceRegister;
-                loader.RegisteServices(services, context);
+                loader.RegisterServices(services, context);
             }
             return services;
         }

@@ -5,7 +5,7 @@ namespace YS.Knife.Rest.Client
 {
     public class HttpClientRegister : IServiceRegister
     {
-        public void RegisteServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisteContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             services.AddHttpClient();

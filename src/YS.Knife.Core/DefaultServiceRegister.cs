@@ -4,7 +4,7 @@ namespace YS.Knife
 {
     public class DefaultServiceRegister : IServiceRegister
     {
-        public void RegisteServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisteContext context)
         {
             services.AddOptions();
             services.AddLogging();
