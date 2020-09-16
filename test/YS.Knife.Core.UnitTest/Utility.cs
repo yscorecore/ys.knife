@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -23,6 +24,15 @@ namespace YS.Knife
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
             return services.RegisteKnifeServices(configuration).BuildServiceProvider();
+        }
+
+        public static IHost BuildHost()
+        {
+            return Host.CreateDefaultBuilder(Array.Empty<string>())
+                .ConfigureServices((builder, serviceCollection) =>
+                {
+                    serviceCollection.RegisteKnifeServices(builder.Configuration);
+                }).Build();
         }
     }
 }
