@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,56 +8,58 @@ using YS.Knife.Hosting.Web;
 
 namespace YS.Knife.Hosting
 {
-    public class KnifeWebHost<TStartup> : KnifeHost
-        where TStartup : class
+    public class KnifeWebHost : KnifeHost
     {
         public KnifeWebHost() : base()
         {
-
         }
-        public KnifeWebHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
+
+        public KnifeWebHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) :
+            base(args, configureDelegate)
         {
-
         }
-        public KnifeWebHost(IDictionary<string, object> args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
+
+        public KnifeWebHost(IDictionary<string, object> args,
+            Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
         {
-
         }
+
+        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        {
+            base.OnConfigureCustomService(builder, serviceCollection);
+            serviceCollection.AddSingleton(typeof(KnifeWebHost), this);
+        }
+
+        protected virtual void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            AppConfiguration.ConfigureDefaultWebApp(app, env);
+        }
+
         protected override IHostBuilder CreateHostBuilder()
         {
             return base.CreateHostBuilder()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<TStartup>();
+                    webBuilder.UseStartup<CommonStartup>();
                 });
         }
 
-    }
-
-    public class KnifeWebHost : KnifeWebHost<DefaultStartup>
-    {
-        public KnifeWebHost()
+        public class CommonStartup
         {
-
-        }
-        public KnifeWebHost(IDictionary<string, object> args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
-        {
-
-        }
-        public KnifeWebHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
-        {
-
-        }
-
-        #region Static
-
-        public static new void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
-        {
-            using (var knifeHost = new KnifeWebHost(args, configureDelegate))
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
-                knifeHost.Run();
+                var webHost = app.ApplicationServices.GetRequiredService<KnifeWebHost>();
+                webHost.ConfigureWebApp(app, env);
+            }
+
+            public void ConfigureServices(IServiceCollection services)
+            {
+                // services.Configure<ApiBehaviorOptions>(options =>
+                // {
+                //     // disable auto validate model
+                //     options.SuppressModelStateInvalidFilter = true;
+                // });
             }
         }
-        #endregion
     }
 }

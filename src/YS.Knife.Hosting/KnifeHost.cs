@@ -51,10 +51,10 @@ namespace YS.Knife.Hosting
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     serviceCollection.AddAllKnifeServices(builder.Configuration);
-                    this.OnLoadCustomService(builder, serviceCollection);
+                    this.OnConfigureCustomService(builder, serviceCollection);
                 });
         }
-        protected virtual void OnLoadCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected virtual void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
             configureDelegate?.Invoke(builder, serviceCollection);
         }
