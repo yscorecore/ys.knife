@@ -56,7 +56,8 @@ namespace YS.Knife.Hosting.Web
                 {
                     app.UseDirectoryBrowser(new DirectoryBrowserOptions
                     {
-                        FileProvider = new PhysicalFileProvider(fullPath), RequestPath = requestPath
+                        FileProvider = new PhysicalFileProvider(fullPath),
+                        RequestPath = requestPath
                     });
                 }
             }
