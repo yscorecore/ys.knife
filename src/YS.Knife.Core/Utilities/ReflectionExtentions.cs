@@ -19,7 +19,7 @@ namespace YS.Knife
                 {
                     if (type.IsClass
                         && !type.IsAbstract
-                        && Attribute.IsDefined(type, typeof(T), false)
+                        && Attribute.IsDefined(type, typeof(T), true)
                         && customFilter(type))
                     {
                         yield return type;
@@ -59,7 +59,7 @@ namespace YS.Knife
                 {
                     if (type.IsClass
                         && !type.IsAbstract
-                        && Attribute.IsDefined(type, typeof(TAttrbute), false)
+                        && Attribute.IsDefined(type, typeof(TAttrbute), true)
                         && typeof(TBase).IsAssignableFrom(type)
                         && customFilter(type))
                     {

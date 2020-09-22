@@ -18,7 +18,6 @@ namespace YS.Knife.Rest.Client.UnitTest
         public async Task ShouldGetGithubIssuesWhenUseClientType()
         {
             var client = this.GetService<GitHubClient>();
-            var client2 = this.GetService<GitHubClient>();
             var issues = await client.GetIssues();
             Assert.IsNotNull(issues);
             Assert.IsTrue(issues.Count() > 0);
