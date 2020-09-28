@@ -29,7 +29,7 @@ namespace YS.Knife.Registers
                             }
                         }
                     }
-                    injectAttribute.RegisteService(services, context, type);
+                    injectAttribute.RegisterService(services, context, type);
                 }
             }
         }

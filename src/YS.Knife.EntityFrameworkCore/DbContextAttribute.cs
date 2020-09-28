@@ -21,7 +21,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public abstract void BuildOptions(DbContextOptionsBuilder builder, string connectionString);
 
-        public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             _ = context ?? throw new ArgumentNullException(nameof(context));

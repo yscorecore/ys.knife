@@ -20,7 +20,7 @@ namespace YS.Knife.Rest.Client
         {
             this.DefaultBaseAddress = defaultBaseAddress;
         }
-        public override void RegisteService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
 
