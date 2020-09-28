@@ -15,7 +15,11 @@ namespace Microsoft.Extensions.Hosting
         {
             using (var scope = host.Services.CreateScope())
             {
-                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>().Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
+                var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>()
+                    .Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase))
+                    .Where(p => p.EnvironmentName == "*" || string.Equals(p.EnvironmentName, environment.EnvironmentName, StringComparison.InvariantCultureIgnoreCase))
+                    .ToList();
                 var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
                 var logger = loggerFactory.CreateLogger(typeof(StageRunner));
                 logger.LogInformation($"There are {handlers.Count} handlers in {name} stage.");

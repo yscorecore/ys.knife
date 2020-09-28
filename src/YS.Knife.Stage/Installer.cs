@@ -7,6 +7,8 @@ namespace YS.Knife.Stage
     {
         public string StageName => "install";
 
+        public virtual string EnvironmentName => "*";
+
         public abstract Task Run(CancellationToken cancellationToken = default);
     }
 }

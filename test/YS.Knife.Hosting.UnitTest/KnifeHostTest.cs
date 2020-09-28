@@ -55,7 +55,7 @@ namespace YS.Knife.Hosting
         [TestMethod]
         public void ShouldRunTempStageServiceWhenRunStageTemp()
         {
-            var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp");
+            var tempStageService = Mock.Of<IStageService>(p => p.StageName == "temp" && p.EnvironmentName == "*");
             using (var knifeHost = new KnifeHost(new string[] { "Knife:Stage=temp" }, (builder, serviceCollection) =>
             {
                 serviceCollection.AddSingleton<IStageService>(tempStageService);
