@@ -7,9 +7,6 @@ namespace Microsoft.EntityFrameworkCore
         public MySqlDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }
-
-        public override string DbType => "mysql";
-
         public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)
         {
             builder.UseMySql(connectionString, (op) =>

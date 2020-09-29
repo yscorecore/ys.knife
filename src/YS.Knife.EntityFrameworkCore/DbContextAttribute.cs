@@ -17,8 +17,6 @@ namespace Microsoft.EntityFrameworkCore
 
         public string ConnectionStringKey { get; set; }
 
-        public abstract string DbType { get; }
-
         public abstract void BuildOptions(DbContextOptionsBuilder builder, string connectionString);
 
         public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
@@ -27,35 +25,33 @@ namespace Microsoft.EntityFrameworkCore
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
 
-            string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey) ? declareType.Name : this.ConnectionStringKey;
-
-            if (CanRegister(context.Configuration, connectionStringKey, out string connectionString))
+            string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey)
+                ? declareType.Name
+                : this.ConnectionStringKey;
+            string connectionString = context.Configuration.GetConnectionString(connectionStringKey);
+            if (String.IsNullOrEmpty(connectionString))
             {
-                var injectType = declareType;
-                while (injectType != typeof(DbContext))
-                {
-                    var method = typeof(DbContextAttribute).GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(injectType, declareType);
-                    method.Invoke(this, new object[] { services, connectionString });
-                    injectType = injectType.BaseType;
-                }
+                throw new ApplicationException($"Can not find connection string by key \"{connectionStringKey}\".");
+            }
+            var injectType = declareType;
+            while (injectType != typeof(DbContext))
+            {
+                var method = typeof(DbContextAttribute)
+                    .GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic)
+                    ?.MakeGenericMethod(injectType, declareType);
+                method.Invoke(this, new object[] { services, connectionString });
+                injectType = injectType.BaseType;
             }
         }
+
         private void AddDbContext2<InjectType, ImplType>(IServiceCollection services, string connectionString)
             where InjectType : class
-               where ImplType : DbContext, InjectType
+            where ImplType : DbContext, InjectType
         {
             services.AddDbContextPool<InjectType, ImplType>((build) =>
             {
                 this.BuildOptions(build, connectionString);
             });
-        }
-        private bool CanRegister(IConfiguration configuration, string connectionKey, out string connectionString)
-        {
-            connectionString = string.Empty;
-            // 存在已经匹配的连接字符串时才进行注册
-            var connectionInfo = configuration.GetConnectionInfo(connectionKey);
-            if (connectionInfo != null) connectionString = connectionInfo.Value;
-            return connectionInfo != null && string.Equals(connectionInfo.DBType, this.DbType, StringComparison.InvariantCultureIgnoreCase);
         }
     }
 }

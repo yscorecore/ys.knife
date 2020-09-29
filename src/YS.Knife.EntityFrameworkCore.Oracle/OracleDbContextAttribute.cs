@@ -8,9 +8,6 @@ namespace Microsoft.EntityFrameworkCore
         {
 
         }
-
-        public override string DbType => "oracle";
-
         public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)
         {
             throw new NotImplementedException();
