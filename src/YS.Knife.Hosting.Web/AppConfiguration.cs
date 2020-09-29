@@ -20,6 +20,7 @@ namespace YS.Knife.Hosting.Web
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseExceptionHandler(build => { });
             UseStaticFiles(app);
 
             app.UseKnifeSwagger();

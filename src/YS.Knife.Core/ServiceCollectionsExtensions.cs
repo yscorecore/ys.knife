@@ -8,18 +8,18 @@ namespace YS.Knife
     public static class ServiceCollectionsExtensions
     {
 
-        public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IRegisteContext context)
+        public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IRegisteContext context)
         {
             foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceRegister>())
             {
                 var loader = Activator.CreateInstance(loaderType) as IServiceRegister;
-                loader.RegisterServices(services, context);
+                loader?.RegisterServices(services, context);
             }
             return services;
         }
-        public static IServiceCollection RegisteKnifeServices(this IServiceCollection services, IConfiguration configuration, ILogger logger = null, Func<Type, bool> typeFilter = null)
+        public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IConfiguration configuration, ILogger logger = null, Func<Type, bool> typeFilter = null)
         {
-            return services.RegisteKnifeServices(new RegisteContext
+            return services.RegisterKnifeServices(new RegisteContext
             {
                 Configuration = configuration,
                 Logger = logger,

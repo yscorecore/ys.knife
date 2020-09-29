@@ -4,17 +4,17 @@ using System.Reflection;
 
 namespace YS.Knife
 {
-    public static class ReflectionExtentions
+    public static class ReflectionExtensions
     {
-        public static IEnumerable<Type> FindInstanceTypesByAttribute<T>(this AppDomain appDomain, Func<Type, bool> filter = null)
-         where T : Attribute
+        public static IEnumerable<Type> FindInstanceTypesByAttribute<T>(this AppDomain appDomain,
+            Func<Type, bool> filter = null)
+            where T : Attribute
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
             var customFilter = filter ?? (type => true);
 
-            foreach (var assembly in appDomain.GetAssemblies())
+            foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -28,13 +28,13 @@ namespace YS.Knife
             }
         }
 
-        public static IEnumerable<Type> FindInstanceTypesByBaseType<TBase>(this AppDomain appDomain, Func<Type, bool> filter = null)
+        public static IEnumerable<Type> FindInstanceTypesByBaseType<TBase>(this AppDomain appDomain,
+            Func<Type, bool> filter = null)
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
             var customFilter = filter ?? (type => true);
-            foreach (var assembly in appDomain.GetAssemblies())
+            foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -47,14 +47,15 @@ namespace YS.Knife
                 }
             }
         }
-        public static IEnumerable<Type> FindInstanceTypesByAttributeAndBaseType<TAttrbute, TBase>(this AppDomain appDomain, Func<Type, bool> filter = null)
-           where TAttrbute : Attribute
+
+        public static IEnumerable<Type> FindInstanceTypesByAttributeAndBaseType<TAttrbute, TBase>(
+            this AppDomain appDomain, Func<Type, bool> filter = null)
+            where TAttrbute : Attribute
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
             var customFilter = filter ?? (type => true);
-            foreach (var assembly in appDomain.GetAssemblies())
+            foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                if (assembly.IsFromMicrosoft()) continue;
                 foreach (var type in assembly.GetTypes())
                 {
                     if (type.IsClass
@@ -68,10 +69,25 @@ namespace YS.Knife
                 }
             }
         }
+
         public static bool IsFromMicrosoft(this Assembly assembly)
         {
             var companyAttr = assembly.GetCustomAttribute<AssemblyCompanyAttribute>();
-            return companyAttr != null ? companyAttr.Company == "Microsoft Corporation" : false;
+            return companyAttr?.Company == "Microsoft Corporation";
+        }
+
+        private static IEnumerable<Assembly> GetAllAssembliesIgnoreSystem(this AppDomain appDomain)
+        {
+            var entryAssembly = Assembly.GetEntryAssembly();
+            foreach (var assembly in appDomain.GetAssemblies())
+            {
+                if (assembly != entryAssembly && !IsFromMicrosoft(assembly))
+                {
+                    yield return assembly;
+                }
+            }
+
+            yield return entryAssembly;
         }
     }
 }

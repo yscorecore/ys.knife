@@ -23,7 +23,7 @@ namespace YS.Knife
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            return services.RegisteKnifeServices(configuration).BuildServiceProvider();
+            return services.RegisterKnifeServices(configuration).BuildServiceProvider();
         }
 
         public static IHost BuildHost()
@@ -31,7 +31,7 @@ namespace YS.Knife
             return Host.CreateDefaultBuilder(Array.Empty<string>())
                 .ConfigureServices((builder, serviceCollection) =>
                 {
-                    serviceCollection.RegisteKnifeServices(builder.Configuration);
+                    serviceCollection.RegisterKnifeServices(builder.Configuration);
                 }).Build();
         }
     }

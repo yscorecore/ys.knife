@@ -14,7 +14,7 @@ namespace YS.Knife
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
-            var sp = services.RegisteKnifeServices(configuration).BuildServiceProvider();
+            var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<MutilSerivce>();
             Assert.AreEqual(4, instances.Count());
         }
@@ -24,7 +24,7 @@ namespace YS.Knife
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
-            var sp = services.RegisteKnifeServices(configuration).BuildServiceProvider();
+            var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<SubClass>();
             Assert.AreEqual(0, instances.Count());
         }
@@ -34,7 +34,7 @@ namespace YS.Knife
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
-            var sp = services.RegisteKnifeServices(configuration).BuildServiceProvider();
+            var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<OutterClass.InnerClass>();
             Assert.AreEqual(4, instances.Count());
         }

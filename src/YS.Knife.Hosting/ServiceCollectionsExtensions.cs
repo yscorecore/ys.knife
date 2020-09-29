@@ -22,7 +22,7 @@ namespace YS.Knife.Hosting
 
             PluginRegister.LoadPluginPaths(options.PluginPaths, logger);
             var knifeTypeFilter = new KnifeTypeFilter(options);
-            services.RegisteKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
+            services.RegisterKnifeServices(configuration, logger, knifeTypeFilter.IsFilter);
         }
     }
 }
