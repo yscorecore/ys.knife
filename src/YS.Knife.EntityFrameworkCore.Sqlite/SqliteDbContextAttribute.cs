@@ -2,6 +2,10 @@
 {
     public class SqliteDbContextAttribute : DbContextAttribute
     {
+        public SqliteDbContextAttribute()
+        {
+
+        }
         public SqliteDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }

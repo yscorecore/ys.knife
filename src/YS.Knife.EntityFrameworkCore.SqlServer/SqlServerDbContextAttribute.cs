@@ -2,6 +2,10 @@
 {
     public class SqlServerDbContextAttribute : DbContextAttribute
     {
+        public SqlServerDbContextAttribute()
+        {
+
+        }
         public SqlServerDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
             this.ConnectionStringKey = connectionStringKey;

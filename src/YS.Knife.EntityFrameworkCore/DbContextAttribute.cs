@@ -10,6 +10,10 @@ namespace Microsoft.EntityFrameworkCore
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public abstract class DbContextAttribute : KnifeAttribute
     {
+        public DbContextAttribute() : base(typeof(DbContext))
+        {
+
+        }
         public DbContextAttribute(string connectionStringKey) : base(typeof(DbContext))
         {
             this.ConnectionStringKey = connectionStringKey;

@@ -4,6 +4,10 @@ namespace Microsoft.EntityFrameworkCore
 {
     public class OracleDbContextAttribute : DbContextAttribute
     {
+        public OracleDbContextAttribute()
+        {
+
+        }
         public OracleDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
 

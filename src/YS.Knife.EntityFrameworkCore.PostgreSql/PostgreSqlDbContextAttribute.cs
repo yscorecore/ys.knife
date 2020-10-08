@@ -2,6 +2,10 @@
 {
     public class PostgreSqlDbContextAttribute : DbContextAttribute
     {
+        public PostgreSqlDbContextAttribute()
+        {
+
+        }
         public PostgreSqlDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
 
