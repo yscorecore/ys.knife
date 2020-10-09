@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Threading;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -13,12 +14,14 @@ namespace Microsoft.Extensions.Hosting
     {
         public static void RunStage(this IHost host, string name, CancellationToken cancellation = default)
         {
+            _ = host ?? throw new ArgumentNullException(nameof(host));
             using (var scope = host.Services.CreateScope())
             {
                 var environment = scope.ServiceProvider.GetRequiredService<IHostEnvironment>();
                 var handlers = scope.ServiceProvider.GetRequiredService<IEnumerable<IStageService>>()
                     .Where(p => string.Equals(name, p.StageName, StringComparison.InvariantCultureIgnoreCase))
-                    .Where(p => p.EnvironmentName == "*" || string.Equals(p.EnvironmentName, environment.EnvironmentName, StringComparison.InvariantCultureIgnoreCase))
+                    .Where(p => p.EnvironmentName == "*" || string.Equals(p.EnvironmentName,
+                        environment.EnvironmentName, StringComparison.InvariantCultureIgnoreCase))
                     .ToList();
                 var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
                 var logger = loggerFactory.CreateLogger(typeof(StageRunner));
@@ -29,6 +32,7 @@ namespace Microsoft.Extensions.Hosting
                     {
                         break;
                     }
+
                     var index = i + 1;
                     var handler = handlers[i];
                     logger.LogInformation($"[{index:d2}] Start exec handler {handler.GetType().Name}.");
