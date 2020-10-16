@@ -11,7 +11,7 @@ using YS.Knife.Hosting.Web.Swagger;
 
 namespace YS.Knife.Hosting.Web
 {
-    public class AppConfiguration
+    public static class AppConfiguration
     {
         public static void ConfigureDefaultWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
@@ -21,11 +21,14 @@ namespace YS.Knife.Hosting.Web
             }
 
             app.UseExceptionHandler(build => { });
+
             UseStaticFiles(app);
 
             app.UseKnifeSwagger();
 
             app.UseHttpsRedirection();
+
+            app.UseCorrelationId();
 
             app.UseRouting();
 
