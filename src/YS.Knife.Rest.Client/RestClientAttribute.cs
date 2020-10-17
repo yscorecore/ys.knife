@@ -56,11 +56,20 @@ namespace YS.Knife.Rest.Client
         private Type DeduceInjectType(Type serviceType)
         {
             var allInterfaces = serviceType.GetInterfaces();
-            if (allInterfaces.Length != 1)
+            if (allInterfaces.Length > 1)
             {
                 throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}'.");
             }
-            return allInterfaces.FirstOrDefault();
+            else if (allInterfaces.Length == 0)
+            {
+                return serviceType;
+            }
+            else
+            {
+                return allInterfaces.FirstOrDefault();
+            }
+
+
         }
     }
 }

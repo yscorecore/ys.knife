@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace YS.Knife.Hosting.Web
 {
@@ -12,18 +14,29 @@ namespace YS.Knife.Hosting.Web
         public void RegisterServices(IServiceCollection services, IRegisteContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
+            RegisterController(services, context);
+            RegisterHttpContext(services);
+        }
+
+        private void RegisterController(IServiceCollection services, IRegisteContext context)
+        {
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
             IMvcBuilder mvcBuilder = services.AddControllers((mvc) =>
             {
             });
 
             var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()
-                                    .Select(p => p.Assembly)
-                                    .Distinct();
+                .Select(p => p.Assembly)
+                .Distinct();
             foreach (var mvcPart in controllerAssemblies)
             {
                 mvcBuilder.AddApplicationPart(mvcPart);
             }
+        }
+
+        private void RegisterHttpContext(IServiceCollection services)
+        {
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
         }
     }
 }

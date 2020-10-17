@@ -19,5 +19,8 @@ namespace YS.Knife.Hosting.Web.CorrelationId
         /// Controls whether the correlation ID is returned in the response headers
         /// </summary>
         public bool IncludeInResponse { get; set; } = true;
+
+        public bool AddToLoggingScope { get; set; } = true;
+        public string LoggingScopeKey { get; set; } = "CorrelationID";
     }
 }

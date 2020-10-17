@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Options;
+using YS.Knife.Hosting.Web.CorrelationId;
 
 namespace Microsoft.AspNetCore.Builder
 {

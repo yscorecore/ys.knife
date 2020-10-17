@@ -69,7 +69,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Aws.DynamoDB", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Rest.Client.UnitTest", "test\YS.Knife.Rest.Client.UnitTest\YS.Knife.Rest.Client.UnitTest.csproj", "{3FAC5519-2084-459D-992D-1F1DC5C8C785}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Rest.Client.TestServer", "test\YS.Knife.Rest.Client.TestServer\YS.Knife.Rest.Client.TestServer.csproj", "{4BA7BF48-73B8-4010-8129-FF0025EC71D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Rest.Client.TestServer", "test\YS.Knife.Rest.Client.TestServer\YS.Knife.Rest.Client.TestServer.csproj", "{4BA7BF48-73B8-4010-8129-FF0025EC71D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiDemo", "example\WebApiDemo\WebApiDemo.csproj", "{23F020E8-7F06-415A-AECD-2B4FEA74E6F3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -189,6 +191,10 @@ Global
 		{4BA7BF48-73B8-4010-8129-FF0025EC71D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4BA7BF48-73B8-4010-8129-FF0025EC71D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4BA7BF48-73B8-4010-8129-FF0025EC71D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{23F020E8-7F06-415A-AECD-2B4FEA74E6F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{23F020E8-7F06-415A-AECD-2B4FEA74E6F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{23F020E8-7F06-415A-AECD-2B4FEA74E6F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{23F020E8-7F06-415A-AECD-2B4FEA74E6F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

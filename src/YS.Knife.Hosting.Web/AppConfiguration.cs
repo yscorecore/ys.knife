@@ -28,7 +28,7 @@ namespace YS.Knife.Hosting.Web
 
             app.UseHttpsRedirection();
 
-            app.UseCorrelationId();
+            //app.UseCorrelationId();
 
             app.UseRouting();
 

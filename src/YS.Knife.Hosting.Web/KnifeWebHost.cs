@@ -44,6 +44,20 @@ namespace YS.Knife.Hosting
                 });
         }
 
+        #region Static
+
+        public static new void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
+        {
+            using (var knifeHost = new KnifeWebHost(args, configureDelegate))
+            {
+                knifeHost.Run();
+            }
+        }
+
+
+
+        #endregion
+
         public class CommonStartup
         {
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
