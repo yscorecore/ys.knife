@@ -15,12 +15,14 @@ namespace YS.Knife.Hosting.Web
     {
         public static void ConfigureDefaultWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseResponseTraceId();
+
+            app.UseRequestLogging();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
-            app.UseExceptionHandler(build => { });
 
             UseStaticFiles(app);
 
