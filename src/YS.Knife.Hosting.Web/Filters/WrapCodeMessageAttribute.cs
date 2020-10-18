@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace YS.Knife.Hosting.Web.Filters
 {
-    public class WrapCodeMessageAttribute : Attribute, IResultFilter,IExceptionFilter
+    public class WrapCodeMessageAttribute : Attribute, IResultFilter, IExceptionFilter
     {
         public void OnException(ExceptionContext context)
         {
@@ -15,7 +15,7 @@ namespace YS.Knife.Hosting.Web.Filters
             {
                 Code = "error",
                 Message = context.Exception.Message,
-            }) ;
+            });
             context.ExceptionHandled = true;
         }
 

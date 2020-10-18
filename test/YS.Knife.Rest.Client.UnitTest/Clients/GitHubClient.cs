@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using YS.Knife.Rest.Client.Handlers;
 
 namespace YS.Knife.Rest.Client.UnitTest.Clients
 {
@@ -21,6 +22,12 @@ namespace YS.Knife.Rest.Client.UnitTest.Clients
         public Task<IEnumerable<GitHubIssue>> GetIssues()
         {
             return this.Get<IEnumerable<GitHubIssue>>("/repos/aspnet/AspNetCore.Docs/issues?state=open&sort=created&direction=desc");
+        }
+
+        public Task<Dictionary<string, string>> GetInfo()
+        {
+            return this.Get<Dictionary<string, string>>("/");
+
         }
 
     }
@@ -43,5 +50,6 @@ namespace YS.Knife.Rest.Client.UnitTest.Clients
     public interface IGitHubService
     {
         Task<IEnumerable<GitHubIssue>> GetIssues();
+        Task<Dictionary<string, string>> GetInfo();
     }
 }

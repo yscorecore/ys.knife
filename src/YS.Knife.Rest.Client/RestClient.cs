@@ -72,6 +72,7 @@ namespace YS.Knife.Rest.Client
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
             var content = response.Content;
+
             var responseData = content.ReadAsStringAsync().Result;
             if (string.IsNullOrEmpty(responseData))
             {

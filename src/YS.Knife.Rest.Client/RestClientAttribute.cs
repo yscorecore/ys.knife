@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Reflection;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,13 +13,37 @@ namespace YS.Knife.Rest.Client
     {
         public string DefaultBaseAddress { get; set; }
         public Type InjectType { get; set; }
-        public RestClientAttribute() : base(typeof(RestClient))
+        public Type[] MessageHandlerTypes { get; }
+        public RestClientAttribute(params Type[] messageHandlerTypes) : base(typeof(RestClient))
         {
-
+            this.MessageHandlerTypes = messageHandlerTypes;
         }
-        public RestClientAttribute(string defaultBaseAddress) : base(typeof(RestClient))
+        public RestClientAttribute(string defaultBaseAddress, params Type[] messageHandlerTypes) : base(typeof(RestClient))
         {
             this.DefaultBaseAddress = defaultBaseAddress;
+            this.MessageHandlerTypes = messageHandlerTypes;
+        }
+        private void CheckMessageHandlerTypes(Type[] messageHandlerTypes)
+        {
+            if (messageHandlerTypes != null)
+            {
+                foreach (var messageHandler in messageHandlerTypes)
+                {
+                    if (messageHandler == null) continue;
+                    if (!messageHandler.IsClass)
+                    {
+                        throw new ArgumentException($"The type \"{messageHandler.FullName}\" should be a class type.");
+                    }
+                    if (messageHandler.IsAbstract)
+                    {
+                        throw new ArgumentException($"The type \"{messageHandler.FullName}\" should not be an abstract type.");
+                    }
+                    if (!typeof(DelegatingHandler).IsAssignableFrom(messageHandler))
+                    {
+                        throw new ArgumentException($"The type \"{messageHandler.FullName}\" should not be a sub type from \"{typeof(DelegatingHandler).FullName}\".");
+                    }
+                }
+            }
         }
         public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
         {
@@ -30,12 +55,13 @@ namespace YS.Knife.Rest.Client
                 services.AddTransient(injectType, (sp) => sp.GetService(declareType));
             }
             var method = typeof(RestClientAttribute).GetMethod(nameof(RegisteHttpClientAndRestInfo), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
-            method.Invoke(this, new object[] { services });
+            method.Invoke(this, new object[] { services, this.MessageHandlerTypes });
         }
-        private void RegisteHttpClientAndRestInfo<T>(IServiceCollection services)
+        private void RegisteHttpClientAndRestInfo<T>(IServiceCollection services, Type[] handlers)
            where T : class
         {
-            services.AddHttpClient<T>();
+            var httpClientBuilder = services.AddHttpClient<T>();
+            AddMessageHandlers(httpClientBuilder, handlers);
             services.AddSingleton<RestInfo<T>>((sp) =>
             {
                 var options = sp.GetRequiredService<ApiServicesOptions>();
@@ -51,6 +77,20 @@ namespace YS.Knife.Rest.Client
                 {
                 };
             });
+        }
+        private void AddMessageHandlers(IHttpClientBuilder builder, Type[] handlerTypes)
+        {
+            if (handlerTypes != null)
+            {
+                Array.ForEach(handlerTypes, handlerType => AddMessageHandler(builder, handlerType));
+            }
+        }
+        private void AddMessageHandler(IHttpClientBuilder builder, Type handlerType)
+        {
+            if (handlerType != null)
+            {
+                builder.AddHttpMessageHandler((sp) => (DelegatingHandler)ActivatorUtilities.CreateInstance(sp, handlerType));
+            }
         }
 
         private Type DeduceInjectType(Type serviceType)

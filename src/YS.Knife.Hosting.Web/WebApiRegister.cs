@@ -28,7 +28,7 @@ namespace YS.Knife.Hosting.Web
                 {
                     mvc.Filters.Add(typeof(WrapCodeMessageAttribute));
                 }
-               
+
             });
 
             var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()

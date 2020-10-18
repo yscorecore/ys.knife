@@ -21,7 +21,7 @@ namespace YS.Knife.Hosting.Web.Middlewares
             _ = context ?? throw new ArgumentNullException(nameof(context));
             context.Response.OnStarting(() =>
             {
-                context.Response.Headers.Add("TraceId", new[] { GetTraceId(Activity.Current)??context.TraceIdentifier });
+                context.Response.Headers.Add("TraceId", new[] { GetTraceId(Activity.Current) ?? context.TraceIdentifier });
                 return Task.CompletedTask;
             });
             await next(context);
