@@ -8,6 +8,8 @@ namespace YS.Knife.Hosting.Web
     public class KnifeWebOptions : KnifeOptions
     {
         public Dictionary<string, StaticFileInfo> StaticFiles { get; set; } = new Dictionary<string, StaticFileInfo>();
+
+        public bool WrapCodeMessageResult { get; set; } = false;
     }
     public class StaticFileInfo
     {

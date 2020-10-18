@@ -29,7 +29,7 @@ namespace YS.Knife.Hosting.Web
             app.UseKnifeSwagger();
 
             app.UseHttpsRedirection();
-
+           
             //app.UseCorrelationId();
 
             app.UseRouting();

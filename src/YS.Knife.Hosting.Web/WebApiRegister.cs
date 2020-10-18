@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using YS.Knife.Hosting.Web.Filters;
 
 namespace YS.Knife.Hosting.Web
 {
@@ -23,6 +24,11 @@ namespace YS.Knife.Hosting.Web
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
             IMvcBuilder mvcBuilder = services.AddControllers((mvc) =>
             {
+                if (options.WrapCodeMessageResult)
+                {
+                    mvc.Filters.Add(typeof(WrapCodeMessageAttribute));
+                }
+               
             });
 
             var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()
