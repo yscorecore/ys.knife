@@ -38,22 +38,22 @@ namespace YS.Knife.Rest.Client.Handlers
         {
             string text = await message.Content.ReadAsStringAsync();
 
-            var values = JsonSerializer.Deserialize<Dictionary<string, object>>(text);
-            var code = values[unwrapCodeMessageOptions.CodeProperty].ToString();
+            var values = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(text);
+            var code = values[unwrapCodeMessageOptions.CodeProperty].GetString();
             if (code == unwrapCodeMessageOptions.SuccessCodeValue)
             {
                 if (values.TryGetValue(unwrapCodeMessageOptions.ResultProperty, out var res))
                 {
-                    message.Content = new JsonContent(JsonSerializer.Serialize(res));
+                    message.Content = new StringContent(res.GetRawText(), Encoding.UTF8);
                 }
                 else
                 {
-                    message.Content = new JsonContent("null");
+                    message.Content = new StringContent(string.Empty, Encoding.UTF8);
                 }
             }
             else
             {
-                string errorMessage = (string)values[unwrapCodeMessageOptions.MessageProperty];
+                string errorMessage = values[unwrapCodeMessageOptions.MessageProperty].GetString();
                 throw new CodeException(code, errorMessage);
             }
             //JsonDocument document = JsonDocument.Parse(text);

@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using YS.Knife.Rest.Client.Handlers;
 
@@ -18,5 +15,14 @@ namespace YS.Knife.Rest.Client.UnitTest.Clients
         {
             return this.Get<int>("success");
         }
+        public Task<Person> GetObject()
+        {
+            return this.Get<Person>("object");
+        }
+    }
+    public class Person
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
     }
 }

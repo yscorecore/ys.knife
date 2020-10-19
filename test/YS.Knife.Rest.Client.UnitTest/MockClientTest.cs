@@ -18,5 +18,12 @@ namespace YS.Knife.Rest.Client.UnitTest
             var value = await mockClient.GetValue();
             Assert.AreEqual(1, value);
         }
+        [TestMethod]
+        public async Task MyTestMethod2()
+        {
+            var mockClient = this.GetService<MockClient>();
+            var value = await mockClient.GetObject();
+            Assert.AreEqual("001", value.Id);
+        }
     }
 }

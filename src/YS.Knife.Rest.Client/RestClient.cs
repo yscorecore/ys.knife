@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
-using System.Reflection;
-using System.Text;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Web;
 
 namespace YS.Knife.Rest.Client
 {
@@ -63,7 +57,6 @@ namespace YS.Knife.Rest.Client
                 this.AppendRequestHeaders(apiInfo, request);
 
                 var response = await httpClient.SendAsync(request);
-                response.EnsureSuccessStatusCode();
                 return response;
             }
         }
@@ -79,6 +72,16 @@ namespace YS.Knife.Rest.Client
                 return default;
             }
             return JsonSerializer.Deserialize<T>(responseData, JsonOptions);
+
+
+
+
+        }
+
+        private T ToObject<T>(JsonElement element)
+        {
+            var json = element.GetRawText();
+            return JsonSerializer.Deserialize<T>(json, JsonOptions);
         }
         #endregion
 
