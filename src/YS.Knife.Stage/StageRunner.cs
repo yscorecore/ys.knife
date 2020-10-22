@@ -25,19 +25,25 @@ namespace Microsoft.Extensions.Hosting
                     .ToList();
                 var loggerFactory = scope.ServiceProvider.GetRequiredService<ILoggerFactory>();
                 var logger = loggerFactory.CreateLogger(typeof(StageRunner));
-                logger.LogInformation($"There are {handlers.Count} handlers in {name} stage.");
-                for (int i = 0; i < handlers.Count; i++)
+                using (logger.BeginScope(new Dictionary<string, object>
                 {
-                    if (cancellation.IsCancellationRequested)
+                    ["StageName"] = name
+                }))
+                {
+                    logger.LogInformation($"There are {handlers.Count} handlers in {name} stage.");
+                    for (int i = 0; i < handlers.Count; i++)
                     {
-                        break;
+                        if (cancellation.IsCancellationRequested)
+                        {
+                            break;
+                        }
+                        var index = i + 1;
+                        var handler = handlers[i];
+                        logger.LogInformation($"[{index:d2}] Start exec handler {handler.GetType().Name}.");
+                        handler.Run(cancellation).Wait();
                     }
-
-                    var index = i + 1;
-                    var handler = handlers[i];
-                    logger.LogInformation($"[{index:d2}] Start exec handler {handler.GetType().Name}.");
-                    handler.Run(cancellation).Wait();
                 }
+
             }
         }
     }
