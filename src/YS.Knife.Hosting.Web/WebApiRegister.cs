@@ -28,8 +28,9 @@ namespace YS.Knife.Hosting.Web
                 {
                     mvc.Filters.Add(typeof(WrapCodeMessageAttribute));
                 }
-
-            });
+                // if the Accept type not provide, return 406 code
+                mvc.ReturnHttpNotAcceptable = true;
+            }).AddXmlDataContractSerializerFormatters() ;
 
             var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()
                 .Select(p => p.Assembly)
