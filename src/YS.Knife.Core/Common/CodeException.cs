@@ -10,6 +10,8 @@ namespace YS.Knife
     public sealed class CodeException : ApplicationException
     {
         public string Code { get; set; }
+        public string MessageTemplate{get;}
+        
         public CodeException(string code)
         {
             this.Code = code;
