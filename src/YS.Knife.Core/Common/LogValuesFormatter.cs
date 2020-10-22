@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,61 +116,28 @@ namespace Microsoft.Extensions.Logging
 
         public string Format(object[] values)
         {
+            object[] formatedValues = new object[values == null ? 0 : values.Length];
             if (values != null)
             {
                 for (int i = 0; i < values.Length; i++)
                 {
-                    values[i] = FormatArgument(values[i]);
+                    formatedValues[i] = FormatArgument(values[i]);
                 }
             }
 
-            return string.Format(CultureInfo.InvariantCulture, _format, values ?? Array.Empty<object>());
+            return string.Format(CultureInfo.InvariantCulture, _format, formatedValues ?? Array.Empty<object>());
         }
 
-        internal string Format()
-        {
-            return _format;
-        }
+       
 
-        internal string Format(object arg0)
-        {
-            return string.Format(CultureInfo.InvariantCulture, _format, FormatArgument(arg0));
-        }
-
-        internal string Format(object arg0, object arg1)
-        {
-            return string.Format(CultureInfo.InvariantCulture, _format, FormatArgument(arg0), FormatArgument(arg1));
-        }
-
-        internal string Format(object arg0, object arg1, object arg2)
-        {
-            return string.Format(CultureInfo.InvariantCulture, _format, FormatArgument(arg0), FormatArgument(arg1), FormatArgument(arg2));
-        }
-
-        public KeyValuePair<string, object> GetValue(object[] values, int index)
-        {
-            if (index < 0 || index > _valueNames.Count)
-            {
-                throw new IndexOutOfRangeException(nameof(index));
-            }
-
-            if (_valueNames.Count > index)
-            {
-                return new KeyValuePair<string, object>(_valueNames[index], values[index]);
-            }
-
-            return new KeyValuePair<string, object>("{OriginalFormat}", OriginalFormat);
-        }
 
         public IEnumerable<KeyValuePair<string, object>> GetValues(object[] values)
         {
-            var valueArray = new KeyValuePair<string, object>[values.Length + 1];
-            for (int index = 0; index != _valueNames.Count; ++index)
+            var valueArray = new KeyValuePair<string, object>[values.Length];
+            for (int index = 0; index < _valueNames.Count; ++index)
             {
                 valueArray[index] = new KeyValuePair<string, object>(_valueNames[index], values[index]);
             }
-
-            valueArray[valueArray.Length - 1] = new KeyValuePair<string, object>("{OriginalFormat}", OriginalFormat);
             return valueArray;
         }
 

@@ -54,7 +54,7 @@ namespace YS.Knife.Rest.Client.Handlers
             else
             {
                 string errorMessage = values[unwrapCodeMessageOptions.MessageProperty].GetString();
-                throw new CodeException(code, errorMessage);
+                throw new KnifeException(code, errorMessage);
             }
             //JsonDocument document = JsonDocument.Parse(text);
 
