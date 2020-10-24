@@ -5,19 +5,19 @@ using System.Linq;
 using System.Globalization;
 using System.Text;
 
-namespace Microsoft.Extensions.Logging
+namespace YS.Knife
 {
     /// <summary>
     /// Formatter to convert the named format items like {NamedformatItem} to <see cref="string.Format(IFormatProvider, string, object)"/> format.
     /// </summary>
-    internal class LogValuesFormatter
+    internal class ValuesFormatter
     {
         private const string NullValue = "(null)";
         private static readonly char[] FormatDelimiters = {',', ':'};
         private readonly string _format;
         private readonly List<string> _valueNames = new List<string>();
 
-        public LogValuesFormatter(string format)
+        public ValuesFormatter(string format)
         {
             if (format == null)
             {
@@ -127,10 +127,6 @@ namespace Microsoft.Extensions.Logging
 
             return string.Format(CultureInfo.InvariantCulture, _format, formatedValues ?? Array.Empty<object>());
         }
-
-       
-
-
         public IEnumerable<KeyValuePair<string, object>> GetValues(object[] values)
         {
             var valueArray = new KeyValuePair<string, object>[values.Length];

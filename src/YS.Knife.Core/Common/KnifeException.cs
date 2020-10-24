@@ -1,17 +1,20 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Logging;
+using System.Globalization;
+using System.Linq;
 
 namespace YS.Knife
 {
 
 
     [Serializable]
-    public sealed class KnifeException : ApplicationException
+    public class KnifeException : ApplicationException
     {
         public string Code { get; set; }
-        
+        public KnifeException()
+        {
+        }
         public KnifeException(string code)
         {
             this.Code = code;
@@ -21,6 +24,10 @@ namespace YS.Knife
         {
             this.Code = code;
         }
+        public KnifeException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
         public KnifeException(string code, string message, Exception inner) : base(message, inner)
         {
             this.Code = code;
@@ -28,45 +35,72 @@ namespace YS.Knife
         protected KnifeException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-
-
-        public static KnifeException FromTemplate(string code, string template, params object[] args)
+        public static KnifeException FromTemplate(string code, string message)
+        {
+            return FromTemplate(code, message, null);
+        }
+        public static KnifeException FromTemplate(string code, string template, object args)
         {
             return FromTemplate(null, code, template, args);
         }
-        public static KnifeException FromTemplate(Exception inner, string code, string template, params object[] args)
+        public static KnifeException FromTemplate(Exception inner, string code, string message)
         {
-            var messageFormatter = new LogValuesFormatter(template ?? code ?? string.Empty);
-            var arguments = GetArguments(messageFormatter.ValueNames.Count, args);
-
-            string message= messageFormatter.Format(arguments);
-            var exception = new KnifeException(code, message, inner);
-            foreach (var kv in messageFormatter.GetValues(arguments))
+            return FromTemplate(inner, code, message, null);
+        }
+        public static KnifeException FromTemplate(Exception inner, string code, string template, object args)
+        {
+            var messageFormatter = new ValuesFormatter(template ?? code ?? string.Empty);
+            var argumentMap = ObjectToStringDictionary(args);
+            var argumentArray = messageFormatter.ValueNames.Select(p =>
             {
-                exception.Data[kv.Key] = kv.Value;
+                if (argumentMap.TryGetValue(p, out var val))
+                {
+                    return val;
+                }
+                return null;
+            }).ToArray();
+            string message = messageFormatter.Format(argumentArray);
+            var exception = new KnifeException(code, message, inner);
+
+            foreach (var name in messageFormatter.ValueNames)
+            {
+                if (argumentMap.TryGetValue(name, out var value))
+                {
+                    exception.Data[name] = value;
+                }
             }
             return exception;
         }
-        private static object[] GetArguments(int placeholderLength, object[] args)
+        private static IDictionary<string, object> ObjectToStringDictionary(object obj)
         {
-            if (args == null)
+            if (obj == null) return new Dictionary<string, object>();
+            var objType = obj.GetType();
+            if (Type.GetTypeCode(objType) != TypeCode.Object)
             {
-                return new object[placeholderLength];
+                // sample value
+                return new Dictionary<string, object>
+                {
+                    ["0"] = obj
+                };
             }
-            else if (placeholderLength == args.Length)
+            if (objType.GetInterfaces().Any(p => p == typeof(IDictionary)))
             {
-                return args;
+                var dic = obj as IDictionary;
+                return dic.Keys.OfType<string>().ToDictionary(p => p, p => dic[p]);
             }
-            else if (placeholderLength < args.Length)
+            if (obj is IEnumerable enumerable)
             {
-                return args.AsSpan(0, placeholderLength).ToArray();
+                return enumerable.OfType<object>().Select(
+                    (p, index) => new KeyValuePair<string, object>(index.ToString(CultureInfo.InvariantCulture), p)
+                ).ToDictionary(kv => kv.Key, kv => kv.Value);
             }
-            else
-            {
-                var results = new object[placeholderLength];
-                Array.Copy(args, results, args.Length);
-                return results;
-            }
+
+            var kvalues = objType.GetProperties()
+               .Where(p => p.CanRead)
+               .ToDictionary(p => p.Name, p => p.GetValue(obj));
+            return new Dictionary<string, object>(kvalues);
         }
+
+        
     }
 }
