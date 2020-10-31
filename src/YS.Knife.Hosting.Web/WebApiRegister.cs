@@ -30,7 +30,7 @@ namespace YS.Knife.Hosting.Web
                 }
                 // if the Accept type not provide, return 406 code
                 mvc.ReturnHttpNotAcceptable = true;
-            }).AddXmlDataContractSerializerFormatters() ;
+            }).AddXmlDataContractSerializerFormatters();
 
             var controllerAssemblies = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<ControllerAttribute>()
                 .Select(p => p.Assembly)

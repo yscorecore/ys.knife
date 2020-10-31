@@ -13,16 +13,10 @@ namespace System.ComponentModel.DataAnnotations
         {
 
         }
-        public override bool IsValid(object value)
-        {
-            return base.IsValid(value);
-        }
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            var results = new List<ValidationResult>();
-            var context = new ValidationContext(value, null, null);
-            Validator.TryValidateObject(value, context, results, true);
-          
+            var results = ValidComplexObject(value, validationContext);
+
             if (results.Count != 0)
             {
                 var compositeResults = new CompositeValidationResult(string.Format(CultureInfo.InvariantCulture, "{0} validate failed!", validationContext.MemberName));
@@ -34,15 +28,33 @@ namespace System.ComponentModel.DataAnnotations
             return ValidationResult.Success;
         }
 
-        protected override ValidationResult IsValidDic(object value, ValidationContext validationContext)
+        private List<ValidationResult> ValidComplexObject(object value, ValidationContext validationContext)
         {
+            var results = new List<ValidationResult>();
             if (value is IDictionary dictionary)
             {
                 foreach (var val in dictionary.Values)
-                { 
-                    
+                {
+                    if (val == null) continue;
+                    var context = new ValidationContext(val, null, null);
+                    Validator.TryValidateObject(val, context, results, true);
                 }
             }
+            if (value is IEnumerable enumerable)
+            {
+                foreach (var val in enumerable)
+                {
+                    if (val == null) continue;
+                    var context = new ValidationContext(val, null, null);
+                    Validator.TryValidateObject(val, context, results, true);
+                }
+            }
+            if (value != null)
+            {
+                var context = new ValidationContext(value, null, null);
+                Validator.TryValidateObject(value, context, results, true);
+            }
+            return results;
         }
     }
 

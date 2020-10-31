@@ -53,7 +53,7 @@ namespace YS.Knife.Common
         public void ShouldGetExpectedExceptionWhenUseTemplateAndArray()
         {
             var exception = KnifeException.FromTemplate("001", "My name is {0}, I'm {1} years old.",
-                new object [] {"zhangsan",12 }
+                new object[] { "zhangsan", 12 }
                 );
             Assert.AreEqual("001", exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm 12 years old.", exception.Message);

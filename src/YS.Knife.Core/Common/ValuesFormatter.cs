@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 
 namespace YS.Knife
@@ -13,7 +13,7 @@ namespace YS.Knife
     internal class ValuesFormatter
     {
         private const string NullValue = "(null)";
-        private static readonly char[] FormatDelimiters = {',', ':'};
+        private static readonly char[] FormatDelimiters = { ',', ':' };
         private readonly string _format;
         private readonly List<string> _valueNames = new List<string>();
 

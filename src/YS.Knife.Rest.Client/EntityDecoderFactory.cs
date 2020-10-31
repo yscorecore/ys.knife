@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Rest.Client
@@ -20,11 +20,11 @@ namespace YS.Knife.Rest.Client
             ["application/xml"] = XML_DECODER,
             ["application/json"] = JSON_DECODER
         };
-        
+
         public static IEntityDecoder GetDecoder(string contentType)
         {
-            
-           
+
+
             if (decoders.TryGetValue(contentType, out var decoder))
             {
                 return decoder;
