@@ -156,5 +156,17 @@ namespace YS.Knife.Options
             Assert.IsNotNull(options.Value);
             Assert.AreEqual("__some_text", options.Value.Text);
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OptionsValidationException))]
+        public void ShouldThrowExceptionWhenNestedObjectConfigInvalidValue()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["DeepObject:Address:Province:Code"] = "invalidValue"
+            });
+            var options = provider.GetService<IOptions<DeepObjectOptions>>().Value;
+
+        }
     }
 }
