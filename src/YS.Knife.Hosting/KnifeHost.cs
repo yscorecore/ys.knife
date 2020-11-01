@@ -99,18 +99,5 @@ namespace YS.Knife.Hosting
         }
         #endregion
 
-        #region Static
-
-        public static void Start(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
-        {
-            using (var knifeHost = new KnifeHost(args, configureDelegate))
-            {
-                knifeHost.Run();
-            }
-        }
-
-
-
-        #endregion
     }
 }
