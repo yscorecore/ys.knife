@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
-    <ProjectReference Include="..\YS.Knife.Stage\YS.Knife.Stage.csproj" />
     <ProjectReference Include="..\YS.Knife.Aop\YS.Knife.Aop.csproj" />
   </ItemGroup>
 

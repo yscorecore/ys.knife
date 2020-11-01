@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace YS.Knife.Stage
+namespace YS.Knife.Stages
 {
     public class StageAttribute : KnifeAttribute
     {

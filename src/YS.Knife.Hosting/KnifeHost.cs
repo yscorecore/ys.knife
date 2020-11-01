@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using YS.Knife.Stage;
+using YS.Knife.Stages;
 namespace YS.Knife.Hosting
 {
 
