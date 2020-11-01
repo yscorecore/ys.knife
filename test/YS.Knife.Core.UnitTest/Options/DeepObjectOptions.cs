@@ -23,6 +23,16 @@ namespace YS.Knife.Options
     }
 
 
+    [Options]
+    public class DeepDicOptions
+    {
+        public string Text { get; set; }
+
+        [Required,ValidateObject]
+        public Dictionary<string, AddressInfo> Addresses { get; set; }
+    }
+
+
     public class AddressInfo
     {
         public string Street { get; set; }

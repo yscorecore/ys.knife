@@ -180,5 +180,17 @@ namespace YS.Knife.Options
             var options = provider.GetService<IOptions<DeepListOptions>>().Value;
 
         }
+
+        [TestMethod]
+        [ExpectedException(typeof(OptionsValidationException))]
+        public void ShouldThrowExceptionWhenNestedDicConfigInvalidValue()
+        {
+            var provider = Utility.BuildProvider(new Dictionary<string, string>
+            {
+                ["DeepDic:Addresses:name:Province:Code"] = "invalidValue"
+            });
+            var options = provider.GetService<IOptions<DeepDicOptions>>().Value;
+
+        }
     }
 }
