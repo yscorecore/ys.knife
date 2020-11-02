@@ -44,7 +44,7 @@ namespace YS.Knife.Hosting
                 });
         }
 
-        
+
 
         protected class CommonStartup
         {

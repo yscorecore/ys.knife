@@ -18,7 +18,7 @@ namespace YS.Knife.Options
     {
         public string Text { get; set; }
 
-        [Required,ValidateObject]
+        [Required, ValidateObject]
         public List<AddressInfo> Addresses { get; set; }
     }
 
@@ -28,7 +28,7 @@ namespace YS.Knife.Options
     {
         public string Text { get; set; }
 
-        [Required,ValidateObject]
+        [Required, ValidateObject]
         public Dictionary<string, AddressInfo> Addresses { get; set; }
     }
 
