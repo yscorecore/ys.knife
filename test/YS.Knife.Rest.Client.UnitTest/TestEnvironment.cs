@@ -11,11 +11,12 @@ namespace YS.Knife.Rest.Client.UnitTest
     {
         public static string TestServerUrl { get; private set; } = "http://127.0.0.1:8080";
         [AssemblyInitialize()]
-        public static void Setup(TestContext _)
+        public static void Setup(TestContext t)
         {
+            // DockerCompose.OutputLine = t.WriteLine;
             var availablePort = Utility.GetAvailableTcpPort(8080);
-
             StartContainer(availablePort);
+
         }
 
         [AssemblyCleanup()]

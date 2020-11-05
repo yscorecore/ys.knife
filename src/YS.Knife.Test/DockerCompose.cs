@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Net;
+using System.Threading;
 
 namespace YS.Knife.Test
 {
     public static class DockerCompose
     {
+        public static Action<string> OutputLine { get; set; } = Console.WriteLine;
+        public static int MaxTimeOutSeconds { get; set; } = 60 * 30;
         public static void Up(IDictionary<string, object> envs = null, int reportStatusPort = 8901, int maxWaitStatusSeconds = 120)
         {
             envs = envs ?? new Dictionary<string, object>();
@@ -15,7 +18,7 @@ namespace YS.Knife.Test
             {
                 envs.Add("REPORT_TO_HOST_PORT", reportStatusPort);
             }
-            Exec("docker-compose", "up --build -d", envs);
+            Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
             if (reportStatusPort > 0)
             {
                 WaitContainerReportStatus(reportStatusPort, maxWaitStatusSeconds);
@@ -23,14 +26,16 @@ namespace YS.Knife.Test
         }
         public static void Down()
         {
-            Exec("docker-compose", "down", null);
+            Exec("docker-compose", "down", null, OutputLine ?? Console.WriteLine);
         }
-        private static int Exec(string fileName, string arguments, IDictionary<string, object> envs)
+        private static int Exec(string fileName, string arguments, IDictionary<string, object> envs, Action<string> outputLine)
         {
             var startInfo = new ProcessStartInfo
             {
                 FileName = fileName,
                 Arguments = arguments,
+                RedirectStandardError = true,
+                RedirectStandardOutput = true,
 
             };
             if (envs != null)
@@ -40,13 +45,52 @@ namespace YS.Knife.Test
                     startInfo.Environment.Add(kv.Key, Convert.ToString(kv.Value, CultureInfo.InvariantCulture));
                 }
             }
-            var process = Process.Start(startInfo);
-            process.WaitForExit();
-            if (process.ExitCode != 0)
+            using (var process = Process.Start(startInfo))
             {
-                throw new Exception($"Exec process return {process.ExitCode}.");
+
+                using (AutoResetEvent outputWaitHandle = new AutoResetEvent(false))
+                using (AutoResetEvent errorWaitHandle = new AutoResetEvent(false))
+                {
+                    process.OutputDataReceived += (s, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            outputWaitHandle.Set();
+                        }
+                        else
+                        {
+                            outputLine(e.Data);
+                        }
+                    };
+                    process.ErrorDataReceived += (s, e) =>
+                    {
+                        if (e.Data == null)
+                        {
+                            errorWaitHandle.Set();
+                        }
+                        else
+                        {
+                            outputLine(e.Data);
+                        }
+                    };
+                    process.BeginOutputReadLine();
+                    process.BeginErrorReadLine();
+                    var timeout = MaxTimeOutSeconds * 1000;
+                    if (process.WaitForExit(timeout) && outputWaitHandle.WaitOne(timeout) && errorWaitHandle.WaitOne(timeout))
+                    {
+                        if (process.ExitCode != 0)
+                        {
+                            throw new Exception($"Exec process return {process.ExitCode}.");
+                        }
+                    }
+                    else
+                    {
+                        throw new Exception($"Exec process timeout, total seconds > {MaxTimeOutSeconds}s.");
+                    }
+                }
+                return process.ExitCode;
             }
-            return process.ExitCode;
+
         }
 
         private static void WaitContainerReportStatus(int port = 8901, int maxSeconds = 120)
