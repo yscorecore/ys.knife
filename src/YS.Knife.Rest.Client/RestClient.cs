@@ -10,10 +10,7 @@ namespace YS.Knife.Rest.Client
 {
     public class RestClient
     {
-        static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-        };
+      
 
         private readonly RestInfo restInfo;
         private readonly HttpClient httpClient;
@@ -65,24 +62,11 @@ namespace YS.Knife.Rest.Client
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
             var content = response.Content;
-
             var responseData = content.ReadAsStringAsync().Result;
-            if (string.IsNullOrEmpty(responseData))
-            {
-                return default;
-            }
-            return JsonSerializer.Deserialize<T>(responseData, JsonOptions);
-
-
-
-
+            return EntityDecoderFactory.Decode<T>(response.Content.Headers?.ContentType?.MediaType, responseData);
         }
 
-        private T ToObject<T>(JsonElement element)
-        {
-            var json = element.GetRawText();
-            return JsonSerializer.Deserialize<T>(json, JsonOptions);
-        }
+
         #endregion
 
         #region Header

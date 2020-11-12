@@ -1,30 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Text.Json;
+using System.Xml.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Rest.Client
 {
     public class EntityDecoderFactory
     {
-        private static IEntityDecoder TEXT_DECODER = new TextDecoder();
-        private static IEntityDecoder JSON_DECODER = new JsonDecoder();
-        private static IEntityDecoder XML_DECODER = new XmlDecoder();
-        private static IDictionary<string, IEntityDecoder> decoders = new Dictionary<string, IEntityDecoder>(StringComparer.InvariantCultureIgnoreCase)
+        private static IEntityResolver _textResolver = new TextResolver();
+        private static IEntityResolver _jsonResolver = new JsonResolver();
+        private static IEntityResolver _xmlResolver = new XmlResolver();
+        public static IDictionary<string, IEntityResolver> decoders = new Dictionary<string, IEntityResolver>(StringComparer.InvariantCultureIgnoreCase)
         {
-            ["text/plain"] = TEXT_DECODER,
-            ["text/html"] = TEXT_DECODER,
-            ["text/xml"] = XML_DECODER,
-            ["application/xml"] = XML_DECODER,
-            ["application/json"] = JSON_DECODER
+            ["text/plain"] = _textResolver,
+            ["text/html"] = _textResolver,
+            ["text/xml"] = _xmlResolver,
+            ["application/xml"] = _xmlResolver,
+            ["application/json"] = _jsonResolver
         };
 
-        public static IEntityDecoder GetDecoder(string contentType)
+        public static IEntityResolver GetDecoder(string contentType)
         {
-
-
             if (decoders.TryGetValue(contentType, out var decoder))
             {
                 return decoder;
@@ -32,30 +33,49 @@ namespace YS.Knife.Rest.Client
             string contentTypes = string.Join(",", decoders.Keys.Select(p => "\"${p}\""));
             throw new NotSupportedException($"Only support content types: {contentTypes}.");
         }
+
+        public static T Decode<T>(string contentType, string content)
+        {
+            var decoder = GetDecoder(contentType);
+            return decoder.Decode<T>(content);
+        }
+
     }
-    public interface IEntityDecoder
+    public interface IEntityResolver
     {
         T Decode<T>(string content);
     }
-    public class JsonDecoder : IEntityDecoder
+    public class JsonResolver : IEntityResolver
     {
+        static readonly JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+        };
         public T Decode<T>(string content)
         {
-            throw new NotImplementedException();
+            return JsonSerializer.Deserialize<T>(content, JsonOptions);
         }
     }
-    public class TextDecoder : IEntityDecoder
+    public class TextResolver : IEntityResolver
     {
         public T Decode<T>(string content)
         {
-            throw new NotImplementedException();
+            if (typeof(T) == typeof(string))
+            {
+                return (T)(object)content;
+            }
+            throw new NotSupportedException();
         }
     }
-    public class XmlDecoder : IEntityDecoder
+    public class XmlResolver : IEntityResolver
     {
         public T Decode<T>(string content)
         {
-            throw new NotImplementedException();
+            var ser = new System.Xml.Serialization.XmlSerializer(typeof(T));
+            using (StringReader sr = new StringReader(content))
+            {
+                return (T)ser.Deserialize(sr);
+            }
         }
     }
 }

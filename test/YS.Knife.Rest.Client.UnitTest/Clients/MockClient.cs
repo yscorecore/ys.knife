@@ -4,7 +4,7 @@ using YS.Knife.Rest.Client.Handlers;
 
 namespace YS.Knife.Rest.Client.UnitTest.Clients
 {
-    [RestClient("https://1e863a9d-ad99-446d-985b-153f28bf6c1c.mock.pstmn.io", typeof(UnwrapCodeMessageHandler))]
+    [RestClient("https://1e863a9d-ad99-446d-985b-153f28bf6c1c.mock.pstmn.io",typeof(EnsureStatusCodeMessageHandler))]
     public class MockClient : RestClient
     {
         public MockClient(RestInfo<MockClient> restInfo, HttpClient httpClient) : base(restInfo, httpClient)
