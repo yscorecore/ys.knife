@@ -6,6 +6,7 @@ namespace YS.Knife.Data
     {
         public FilterInfo Filter { get; set; } 
         public OrderInfo Order { get; set; }
+        public LimitInfo LimitInfo { get; set; }
         
     }
 

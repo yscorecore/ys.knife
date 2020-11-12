@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Text.Encodings.Web;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using YS.Knife.Rest.Client.Resolves;
 
 namespace YS.Knife.Rest.Client
 {
     public class RestClient
     {
-      
-
         private readonly RestInfo restInfo;
         private readonly HttpClient httpClient;
         #region 构造函数
@@ -63,7 +62,7 @@ namespace YS.Knife.Rest.Client
             _ = response ?? throw new ArgumentNullException(nameof(response));
             var content = response.Content;
             var responseData = content.ReadAsStringAsync().Result;
-            return EntityDecoderFactory.Decode<T>(response.Content.Headers?.ContentType?.MediaType, responseData);
+            return EntityResolver.Resolve<T>(response.Content.Headers?.ContentType?.MediaType, responseData);
         }
 
 
@@ -152,7 +151,6 @@ namespace YS.Knife.Rest.Client
             {
                 if (requestPath.Contains("?"))
                 {
-
                     return requestPath + query;
                 }
                 else
@@ -172,7 +170,7 @@ namespace YS.Knife.Rest.Client
             string baseAddress = restInfo.BaseAddress;
             if (string.IsNullOrEmpty(baseAddress))
             {
-                var attr = Attribute.GetCustomAttribute(this.GetType(), typeof(RestClientAttribute)) as RestClientAttribute;
+                var attr = this.GetType().GetCustomAttribute<RestClientAttribute>();
                 if (attr != null)
                 {
                     baseAddress = attr.DefaultBaseAddress;
