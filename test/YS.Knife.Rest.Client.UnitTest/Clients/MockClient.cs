@@ -1,23 +1,24 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
 using YS.Knife.Rest.Client.Handlers;
+using YS.Knife.Data;
 
 namespace YS.Knife.Rest.Client.UnitTest.Clients
 {
-    [RestClient("https://1e863a9d-ad99-446d-985b-153f28bf6c1c.mock.pstmn.io",typeof(EnsureStatusCodeMessageHandler))]
+    [RestClient("https://1e863a9d-ad99-446d-985b-153f28bf6c1c.mock.pstmn.io", typeof(EnsureStatusCodeMessageHandler))]
     public class MockClient : RestClient
     {
         public MockClient(RestInfo<MockClient> restInfo, HttpClient httpClient) : base(restInfo, httpClient)
         {
 
         }
-        public Task<int> GetValue()
+        public async Task<int> GetValue()
         {
-            return this.Get<int>("success");
+            return (await this.Get<ApiResult<int>>("success")).Result;
         }
-        public Task<Person> GetObject()
+        public async Task<Person> GetObject()
         {
-            return this.Get<Person>("object");
+            return (await this.Get<ApiResult<Person>>("object")).Result;
         }
     }
     public class Person
