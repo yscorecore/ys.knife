@@ -11,22 +11,22 @@ namespace YS.Knife.Common
         [TestMethod]
         public void ShouldUseCodeValueWhenTemplateIsNull()
         {
-            var exception = KnifeException.FromTemplate("001", null);
-            Assert.AreEqual("001", exception.Code);
-            Assert.AreEqual("001", exception.Message);
+            var exception = KnifeException.FromTemplate(1, null);
+            Assert.AreEqual(1, exception.Code);
+            Assert.AreEqual(string.Empty, exception.Message);
             Assert.AreEqual(0, exception.Data.Count);
         }
 
         [TestMethod]
         public void ShouldGetExpectedExceptionWhenUseTemplateAndObject()
         {
-            var exception = KnifeException.FromTemplate("001", "My name is {user}, I'm {age} years old.",
+            var exception = KnifeException.FromTemplate(1, "My name is {user}, I'm {age} years old.",
                 new
                 {
                     user = "zhangsan",
                     age = 12
                 });
-            Assert.AreEqual("001", exception.Code);
+            Assert.AreEqual(1, exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm 12 years old.", exception.Message);
             Assert.AreEqual(2, exception.Data.Count);
             Assert.IsTrue(exception.Data.Contains("user"));
@@ -36,14 +36,14 @@ namespace YS.Knife.Common
         [TestMethod]
         public void ShouldGetExpectedExceptionWhenUseTemplateAndDictionary()
         {
-            var exception = KnifeException.FromTemplate("001", "My name is {user}, I'm {age} years old.",
+            var exception = KnifeException.FromTemplate(1, "My name is {user}, I'm {age} years old.",
                 new Dictionary<object, object>
                 {
                     ["user"] = "zhangsan",
                     ["age"] = 12
                 }
                 );
-            Assert.AreEqual("001", exception.Code);
+            Assert.AreEqual(1, exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm 12 years old.", exception.Message);
             Assert.AreEqual(2, exception.Data.Count);
             Assert.AreEqual("zhangsan", exception.Data["user"]);
@@ -52,10 +52,10 @@ namespace YS.Knife.Common
         [TestMethod]
         public void ShouldGetExpectedExceptionWhenUseTemplateAndArray()
         {
-            var exception = KnifeException.FromTemplate("001", "My name is {0}, I'm {1} years old.",
+            var exception = KnifeException.FromTemplate(1, "My name is {0}, I'm {1} years old.",
                 new object[] { "zhangsan", 12 }
                 );
-            Assert.AreEqual("001", exception.Code);
+            Assert.AreEqual(1, exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm 12 years old.", exception.Message);
             Assert.AreEqual(2, exception.Data.Count);
             Assert.AreEqual("zhangsan", exception.Data["0"]);
@@ -65,12 +65,12 @@ namespace YS.Knife.Common
         [TestMethod]
         public void ShouldUseNullValuesWhenUseTemplateAndProvideTooLessValue()
         {
-            var exception = KnifeException.FromTemplate("001",
+            var exception = KnifeException.FromTemplate(1,
                 "My name is {user}, I'm {age} years old.", new Dictionary<object, object>
                 {
                     ["user"] = "zhangsan"
                 });
-            Assert.AreEqual("001", exception.Code);
+            Assert.AreEqual(1, exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm (null) years old.", exception.Message);
             Assert.AreEqual(1, exception.Data.Count);
             Assert.AreEqual("zhangsan", exception.Data["user"]);
@@ -78,14 +78,14 @@ namespace YS.Knife.Common
         [TestMethod]
         public void ShouldIgnoreExtralValuesWhenUseTemplateAndProvideTooMuchValue()
         {
-            var exception = KnifeException.FromTemplate("001",
+            var exception = KnifeException.FromTemplate(1,
                 "My name is {user}, I'm {age} years old.", new Dictionary<string, object>
                 {
                     ["user"] = "zhangsan",
                     ["age"] = 12,
                     ["tel"] = "123456"
                 });
-            Assert.AreEqual("001", exception.Code);
+            Assert.AreEqual(1, exception.Code);
             Assert.AreEqual("My name is zhangsan, I'm 12 years old.", exception.Message);
             Assert.AreEqual(2, exception.Data.Count);
             Assert.AreEqual("zhangsan", exception.Data["user"]);

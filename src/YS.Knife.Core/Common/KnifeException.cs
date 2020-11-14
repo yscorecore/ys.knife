@@ -11,16 +11,16 @@ namespace YS.Knife
     [Serializable]
     public class KnifeException : ApplicationException
     {
-        public string Code { get; set; }
+        public int Code { get; set; }
         public KnifeException()
         {
         }
-        public KnifeException(string code)
+        public KnifeException(int code)
         {
             this.Code = code;
         }
 
-        public KnifeException(string code, string message) : base(message)
+        public KnifeException(int code, string message) : base(message)
         {
             this.Code = code;
         }
@@ -28,28 +28,28 @@ namespace YS.Knife
         {
         }
 
-        public KnifeException(string code, string message, Exception inner) : base(message, inner)
+        public KnifeException(int code, string message, Exception inner) : base(message, inner)
         {
             this.Code = code;
         }
         protected KnifeException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-        public static KnifeException FromTemplate(string code, string message)
+        public static KnifeException FromTemplate(int code, string message)
         {
             return FromTemplate(code, message, null);
         }
-        public static KnifeException FromTemplate(string code, string template, object args)
+        public static KnifeException FromTemplate(int code, string template, object args)
         {
             return FromTemplate(null, code, template, args);
         }
-        public static KnifeException FromTemplate(Exception inner, string code, string message)
+        public static KnifeException FromTemplate(Exception inner, int code, string message)
         {
             return FromTemplate(inner, code, message, null);
         }
-        public static KnifeException FromTemplate(Exception inner, string code, string template, object args)
+        public static KnifeException FromTemplate(Exception inner, int code, string template, object args)
         {
-            var messageFormatter = new ValuesFormatter(template ?? code ?? string.Empty);
+            var messageFormatter = new ValuesFormatter(template ?? string.Empty);
             var argumentMap = ObjectToStringDictionary(args);
             var argumentArray = messageFormatter.ValueNames.Select(p =>
             {

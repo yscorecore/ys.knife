@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace YS.Knife.Rest.Client.Resolves
 {
-    public class EntityResolver
+    public static class EntityResolver
     {
         private static readonly IEntityResolver _textResolver = new TextResolver();
         private static readonly IEntityResolver _jsonResolver = new JsonResolver();

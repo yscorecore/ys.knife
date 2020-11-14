@@ -1,17 +1,40 @@
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace YS.Knife.Data
 {
+    [Serializable]
     public class ApiResult
     {
-        public string Code { get; set; }
+        public int Code { get; set; }
         public string Message{get;set;}
+        public Dictionary<string, object> ErrorData { get; set; }
+
+        public void Assert()
+        {
+            if (Code != default)
+            {
+                var exception= Knife.KnifeException.FromTemplate(Code, Message);
+                if (ErrorData != null)
+                {
+                    foreach (var kv in ErrorData)
+                    {
+                        exception.Data[kv.Key] = kv.Value;
+                    }
+                }
+                throw exception;
+            }
+        }
     }
+    [Serializable]
     public class ApiResult<T>:ApiResult
     {
         public T Result{get;set;}
 
+        public T Extract()
+        {
+            return this.Result;
+        }
     }
 
 

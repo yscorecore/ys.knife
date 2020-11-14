@@ -2,6 +2,11 @@
 
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>YS.Knife</RootNamespace>
     </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    </ItemGroup>
 
 </Project>
