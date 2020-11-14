@@ -7,7 +7,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Aop\YS.Knife.Aop.csproj" />
     <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    <ProjectReference Include="..\YS.Knife.Data\YS.Knife.Data.csproj" />
   </ItemGroup>
 
 </Project>

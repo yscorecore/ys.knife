@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife;
+using YS.Knife.EntityFrameworkCore;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -21,6 +23,8 @@ namespace Microsoft.EntityFrameworkCore
 
         public string ConnectionStringKey { get; set; }
 
+        public bool RegisteEntityStore { get; set; } = true;
+
         public abstract void BuildOptions(DbContextOptionsBuilder builder, string connectionString);
 
         public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
@@ -33,7 +37,7 @@ namespace Microsoft.EntityFrameworkCore
                 ? declareType.Name
                 : this.ConnectionStringKey;
             string connectionString = context.Configuration.GetConnectionString(connectionStringKey);
-            if (String.IsNullOrEmpty(connectionString))
+            if (string.IsNullOrEmpty(connectionString))
             {
                 throw new ApplicationException($"Can not find connection string by key \"{connectionStringKey}\".");
             }
@@ -46,6 +50,10 @@ namespace Microsoft.EntityFrameworkCore
                 method.Invoke(this, new object[] { services, connectionString });
                 injectType = injectType.BaseType;
             }
+            if (RegisteEntityStore)
+            {
+                AddEntityStoresInternal(services, declareType);
+            }
         }
 
         private void AddDbContext2<InjectType, ImplType>(IServiceCollection services, string connectionString)
@@ -56,6 +64,20 @@ namespace Microsoft.EntityFrameworkCore
             {
                 this.BuildOptions(build, connectionString);
             });
+        }
+
+        private static void AddEntityStoresInternal(IServiceCollection services, Type contextType)
+        {
+            var entityTypes = from p in contextType.GetProperties()
+                              let pType = p.PropertyType
+                              where pType.IsGenericType && pType.GetGenericTypeDefinition() == typeof(DbSet<>)
+                              select pType.GetGenericArguments().First();
+            foreach (var entityType in entityTypes)
+            {
+                var storeType = typeof(IEntityStore<>).MakeGenericType(entityType);
+                var implType = typeof(EFEntityStore<,>).MakeGenericType(entityType, contextType);
+                services.AddScoped(storeType, implType);
+            }
         }
     }
 }
