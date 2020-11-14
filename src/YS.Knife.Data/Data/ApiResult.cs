@@ -14,7 +14,7 @@ namespace YS.Knife.Data
         {
             if (Code != default)
             {
-                var exception= Knife.KnifeException.FromTemplate(Code, Message);
+                var exception = new KnifeException(Code, Message);
                 if (ErrorData != null)
                 {
                     foreach (var kv in ErrorData)
