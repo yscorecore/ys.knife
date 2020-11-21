@@ -28,7 +28,7 @@ namespace YS.Knife.EntityFrameworkCore
                 }
                 await next.Invoke(context);
 
-                foreach (var tran in group.Transactions.Values)
+                foreach (var tran in group.Transactions)
                 {
                     try
                     {
@@ -43,29 +43,17 @@ namespace YS.Knife.EntityFrameworkCore
             }
 
         }
-    }
-    public interface ITransactionContext:IDisposable
-    {
-        Dictionary<string, ITransaction> Transactions { get;  }
-    }
-    public interface ITransaction
-    {
-        void Commit();
-        void Rollback();
-    }
-    public class DefaultTransactionContext:ITransactionContext
-    {
-        public Dictionary<string, ITransaction> Transactions { get; private set; } = new Dictionary<string, ITransaction>();
 
-        public void Dispose()
+        private class DefaultTransactionContext : ITransactionContext
         {
-            
+
+            public List<ITransaction> Transactions => new List<ITransaction>();
+
+            public void Dispose()
+            {
+
+            }
         }
     }
     
-
-    public interface ITransactionStep
-    {
-        void UseTransaction(ITransactionContext transactionContext);
-    }
 }

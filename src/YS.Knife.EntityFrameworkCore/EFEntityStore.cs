@@ -18,11 +18,16 @@ namespace YS.Knife.EntityFrameworkCore
     {
         public EFEntityStore(TContext context)
         {
-            
+
             _ = context ?? throw new ArgumentNullException(nameof(context));
             this.Context = context;
             this.Set = context.Set<TEntity>();
         }
+
+        public EFEntityStore()
+        {
+        }
+
         public TContext Context
         {
             get;
@@ -57,7 +62,7 @@ namespace YS.Knife.EntityFrameworkCore
 
         public virtual IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> conditions)
         {
-            IQueryable<TEntity> query =  this.Set;
+            IQueryable<TEntity> query = this.Set;
             return conditions == null ?
             query :
             query.Where(conditions);
@@ -91,8 +96,19 @@ namespace YS.Knife.EntityFrameworkCore
             return this.Context.SaveChangesAsync(cancellationToken);
         }
 
-
-
-
+        public void UseTransaction(ITransactionContext transactionContext)
+        {
+            _ = transactionContext ?? throw new ArgumentNullException(nameof(transactionContext));
+            var currrentDatabaseTran = transactionContext.Transactions.OfType<DatabaseTransaction>().FirstOrDefault();
+            if (currrentDatabaseTran != null)
+            {
+               
+            }
+            else
+            {
+                var tran = this.Context.Database.BeginTransaction();
+                transactionContext.Transactions.Add(new DatabaseTransaction(tran.GetDbTransaction()));
+            }
+        }
     }
 }
