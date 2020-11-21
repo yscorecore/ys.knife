@@ -67,7 +67,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Rest.Client.TestSe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data", "src\YS.Knife.Data\YS.Knife.Data.csproj", "{0D25E492-3D6B-4569-9512-A03233E4925F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Data.UnitTest", "test\YS.Knife.Data.UnitTest\YS.Knife.Data.UnitTest.csproj", "{ED934540-0BE2-485D-9341-AAA49552D171}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data.UnitTest", "test\YS.Knife.Data.UnitTest\YS.Knife.Data.UnitTest.csproj", "{ED934540-0BE2-485D-9341-AAA49552D171}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

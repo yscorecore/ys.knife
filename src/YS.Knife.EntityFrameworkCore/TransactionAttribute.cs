@@ -10,16 +10,16 @@ using System.Linq;
 namespace YS.Knife.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class DbTransactionAttribute : Aop.BaseAopAttribute
+    public class TransactionAttribute : Aop.BaseAopAttribute
     {
         private Type[] commandTypes;
 
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
-            using (var group = new DefaultTransactionGroup())
+            using (var group = new DefaultTransactionContext())
             {
 
-                var instances = commandTypes.Select(p => context.ServiceProvider.GetService(p)).OfType<ITransactionCommand>().ToList();
+                var instances = commandTypes.Select(p => context.ServiceProvider.GetService(p)).OfType<ITransactionStep>().ToList();
 
 
                 foreach (var instance in instances)
@@ -44,19 +44,18 @@ namespace YS.Knife.EntityFrameworkCore
 
         }
     }
-    public interface IDBTransactionGroup:IDisposable
+    public interface ITransactionContext:IDisposable
     {
-        Dictionary<string, ITransaction> Transactions { get; set; }
+        Dictionary<string, ITransaction> Transactions { get;  }
     }
     public interface ITransaction
     {
-        void Begin();
         void Commit();
         void Rollback();
     }
-    public class DefaultTransactionGroup:IDBTransactionGroup
-    { 
-       public Dictionary<string, ITransaction> Transactions { get; set; }
+    public class DefaultTransactionContext:ITransactionContext
+    {
+        public Dictionary<string, ITransaction> Transactions { get; private set; } = new Dictionary<string, ITransaction>();
 
         public void Dispose()
         {
@@ -65,8 +64,8 @@ namespace YS.Knife.EntityFrameworkCore
     }
     
 
-    public interface ITransactionCommand
+    public interface ITransactionStep
     {
-        void UseTransaction(IDBTransactionGroup transactionGroup);
+        void UseTransaction(ITransactionContext transactionContext);
     }
 }
