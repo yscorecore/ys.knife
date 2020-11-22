@@ -1,12 +1,12 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqlServerDbContextAttribute : EFContextAttribute
+    public class SqlServerEFContextAttribute : EFContextAttribute
     {
-        public SqlServerDbContextAttribute()
+        public SqlServerEFContextAttribute()
         {
 
         }
-        public SqlServerDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public SqlServerEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
             this.ConnectionStringKey = connectionStringKey;
         }

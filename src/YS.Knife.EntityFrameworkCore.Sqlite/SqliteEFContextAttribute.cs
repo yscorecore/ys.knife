@@ -1,12 +1,12 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqliteDbContextAttribute : EFContextAttribute
+    public class SqliteEFContextAttribute : EFContextAttribute
     {
-        public SqliteDbContextAttribute()
+        public SqliteEFContextAttribute()
         {
 
         }
-        public SqliteDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public SqliteEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }
 

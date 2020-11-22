@@ -50,9 +50,9 @@ namespace Microsoft.EntityFrameworkCore
         }
         private string GetConnectionStringKey()
         {
-            if (Attribute.IsDefined(typeof(T), typeof(SqlServerDbContextAttribute)))
+            if (Attribute.IsDefined(typeof(T), typeof(SqlServerEFContextAttribute)))
             {
-                var attr = typeof(T).GetCustomAttribute<SqlServerDbContextAttribute>();
+                var attr = typeof(T).GetCustomAttribute<SqlServerEFContextAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;

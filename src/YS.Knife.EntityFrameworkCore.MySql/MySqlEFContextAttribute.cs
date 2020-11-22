@@ -2,13 +2,13 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class MySqlDbContextAttribute : EFContextAttribute
+    public class MySqlEFContextAttribute : EFContextAttribute
     {
-        public MySqlDbContextAttribute()
+        public MySqlEFContextAttribute()
         {
 
         }
-        public MySqlDbContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public MySqlEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
         {
         }
         public override void BuildOptions(DbContextOptionsBuilder builder, string connectionString)

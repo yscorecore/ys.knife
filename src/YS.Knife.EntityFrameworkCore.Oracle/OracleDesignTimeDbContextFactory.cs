@@ -50,9 +50,9 @@ namespace Microsoft.EntityFrameworkCore
         }
         private string GetConnectionStringKey()
         {
-            if (Attribute.IsDefined(typeof(T), typeof(OracleDbContextAttribute)))
+            if (Attribute.IsDefined(typeof(T), typeof(OracleEFContextAttribute)))
             {
-                var attr = typeof(T).GetCustomAttribute<OracleDbContextAttribute>();
+                var attr = typeof(T).GetCustomAttribute<OracleEFContextAttribute>();
                 if (!string.IsNullOrEmpty(attr.ConnectionStringKey))
                 {
                     return attr.ConnectionStringKey;
