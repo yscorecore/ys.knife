@@ -5,7 +5,7 @@ using System.Text;
 
 namespace YS.Knife
 {
-    public enum SearchType:int
+    public enum SearchType : int
     {
         /// <summary>
         /// ==

@@ -27,7 +27,7 @@ namespace YS.Knife.Data
             this.TotalCount = source.Count;
             this.lst.AddRange(source.Skip(offset).Take(limit).ToList());
         }
-        public LimitData(IEnumerable<TData> listData, int offset, int limit,int totalCount)
+        public LimitData(IEnumerable<TData> listData, int offset, int limit, int totalCount)
         {
             this.Limit = limit;
             this.Offset = offset;
@@ -62,10 +62,10 @@ namespace YS.Knife.Data
         }
 
         public int Offset { get; set; }
-       
+
 
         public int TotalCount { get; set; }
-        
+
 
         public IList GetList()
         {

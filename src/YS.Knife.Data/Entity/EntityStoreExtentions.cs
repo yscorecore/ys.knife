@@ -12,7 +12,7 @@ using YS.Knife.Entity.Model;
 
 namespace YS.Knife.Entity
 {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:指定 StringComparison", Justification = "<挂起>")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:指定 StringComparison", Justification = "<挂起>")]
 
     public static class EntityStoreExtentions
     {
@@ -52,7 +52,7 @@ namespace YS.Knife.Entity
         public static TR Max<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TR> fieldSelector)
               where T : class
         {
-           
+
             return store.Query(conditions).Max(fieldSelector);
         }
         public static TR Min<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TR> fieldSelector)

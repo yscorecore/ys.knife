@@ -114,7 +114,7 @@ namespace YS.Knife.Entity.Model
     /// 表示树状结构的
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface ISelfTree<T>:IId<T>
+    public interface ISelfTree<T> : IId<T>
     {
         T ParentId { get; set; }
         string NodePath { get; set; }
@@ -144,7 +144,7 @@ namespace YS.Knife.Entity.Model
 
 
 
-   
+
 
     public interface IExtentionObject<T>
     {
@@ -153,7 +153,7 @@ namespace YS.Knife.Entity.Model
         T SchemaId { get; set; }
     }
 
-   
+
 
     /// <summary>
     /// 表示实体的属性值

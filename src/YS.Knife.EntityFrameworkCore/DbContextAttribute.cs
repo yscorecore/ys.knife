@@ -58,7 +58,7 @@ namespace Microsoft.EntityFrameworkCore
             }
             if (RegisteAutoSubmitContext)
             {
-                services.AddScoped<IAutoSubmitContext>(sp =>
+                services.AddScoped<ICommitEFChangesContext>(sp =>
                 {
                     var dbcontext = sp.GetService(declareType) as DbContext;
                     return new AutoSubmitContext(dbcontext);
@@ -90,7 +90,7 @@ namespace Microsoft.EntityFrameworkCore
             }
         }
 
-        private class AutoSubmitContext : IAutoSubmitContext
+        private class AutoSubmitContext : ICommitEFChangesContext
         {
             public AutoSubmitContext(DbContext dbContext)
             {

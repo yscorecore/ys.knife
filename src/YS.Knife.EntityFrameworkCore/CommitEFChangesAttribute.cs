@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using System.Linq;
-using YS.Knife.Aop;
 using Microsoft.EntityFrameworkCore.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using YS.Knife.Aop;
+using YS.Knife.EntityFrameworkCore;
 
 namespace YS.Knife.EntityFrameworkCore
 {
-    public class AutoSubmitAttribute : BaseAopAttribute
+    public class CommitEFChangesAttribute : BaseAopAttribute
     {
-        public AutoSubmitAttribute()
+        public CommitEFChangesAttribute()
         {
             this.Order = 10000;
         }
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
-            var services = context?.ServiceProvider.GetService<IEnumerable<IAutoSubmitContext>>().ToList(); ;
+            var services = context?.ServiceProvider.GetService<IEnumerable<ICommitEFChangesContext>>().ToList(); ;
             if (services.Count == 0)
             {
                 await next?.Invoke(context);
@@ -70,8 +71,5 @@ namespace YS.Knife.EntityFrameworkCore
         }
     }
 
-    public interface IAutoSubmitContext
-    {
-        DbContext DbContext { get; }
-    }
+
 }

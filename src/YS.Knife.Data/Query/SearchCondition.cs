@@ -12,14 +12,14 @@ namespace YS.Knife
         {
             this.Items = new List<SearchCondition>();
         }
-        public SearchCondition(string fieldName, SearchType searchType, object value):this()
+        public SearchCondition(string fieldName, SearchType searchType, object value) : this()
         {
             this.OpType = OpType.SingleItem;
             this.FieldName = fieldName;
             this.SearchType = searchType;
             this.Value = value;
         }
-        public SearchCondition(IEnumerable<SearchCondition> items, OpType opType = OpType.AndItems):this()
+        public SearchCondition(IEnumerable<SearchCondition> items, OpType opType = OpType.AndItems) : this()
         {
             this.OpType = opType;
             this.Items.AddRange(items);

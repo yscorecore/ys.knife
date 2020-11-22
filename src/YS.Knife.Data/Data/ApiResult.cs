@@ -7,7 +7,7 @@ namespace YS.Knife.Data
     public class ApiResult
     {
         public int Code { get; set; }
-        public string Message{get;set;}
+        public string Message { get; set; }
         public Dictionary<string, object> ErrorData { get; set; }
 
         public void Assert()
@@ -27,9 +27,9 @@ namespace YS.Knife.Data
         }
     }
     [Serializable]
-    public class ApiResult<T>:ApiResult
+    public class ApiResult<T> : ApiResult
     {
-        public T Result{get;set;}
+        public T Result { get; set; }
 
         public T Extract()
         {

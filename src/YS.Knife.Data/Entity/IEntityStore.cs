@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace YS.Knife
 {
-    public interface IEntityStore<T>: IEntityReadStore<T>,IEntityWriteStore<T>
+    public interface IEntityStore<T> : IEntityReadStore<T>, IEntityWriteStore<T>
     {
     }
 
