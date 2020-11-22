@@ -2,7 +2,7 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class MySqlDbContextAttribute : DbContextAttribute
+    public class MySqlDbContextAttribute : EFContextAttribute
     {
         public MySqlDbContextAttribute()
         {

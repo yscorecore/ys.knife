@@ -2,7 +2,7 @@
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class OracleDbContextAttribute : DbContextAttribute
+    public class OracleDbContextAttribute : EFContextAttribute
     {
         public OracleDbContextAttribute()
         {

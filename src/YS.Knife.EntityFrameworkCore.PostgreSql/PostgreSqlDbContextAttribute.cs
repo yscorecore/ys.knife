@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class PostgreSqlDbContextAttribute : DbContextAttribute
+    public class PostgreSqlDbContextAttribute : EFContextAttribute
     {
         public PostgreSqlDbContextAttribute()
         {

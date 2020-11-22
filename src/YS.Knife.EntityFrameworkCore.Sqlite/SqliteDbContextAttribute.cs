@@ -1,6 +1,6 @@
 ﻿namespace Microsoft.EntityFrameworkCore
 {
-    public class SqliteDbContextAttribute : DbContextAttribute
+    public class SqliteDbContextAttribute : EFContextAttribute
     {
         public SqliteDbContextAttribute()
         {

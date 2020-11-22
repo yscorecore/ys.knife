@@ -69,6 +69,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data", "src\YS.Kni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data.UnitTest", "test\YS.Knife.Data.UnitTest\YS.Knife.Data.UnitTest.csproj", "{ED934540-0BE2-485D-9341-AAA49552D171}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EFcore", "EFcore", "{2D663756-58FD-46AD-A1DA-4DFFCD17DCDF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.EntityFrameworkCore.Sqlite.UnitTest", "test\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.csproj", "{2EA9B5F5-22A1-423D-84B6-E42F03301F44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -183,6 +187,10 @@ Global
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,6 +226,8 @@ Global
 		{4BA7BF48-73B8-4010-8129-FF0025EC71D4} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 		{0D25E492-3D6B-4569-9512-A03233E4925F} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{ED934540-0BE2-485D-9341-AAA49552D171} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
+		{2D663756-58FD-46AD-A1DA-4DFFCD17DCDF} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
+		{2EA9B5F5-22A1-423D-84B6-E42F03301F44} = {2D663756-58FD-46AD-A1DA-4DFFCD17DCDF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
