@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace YS.Knife.EntityFrameworkCore
 {
@@ -94,21 +93,6 @@ namespace YS.Knife.EntityFrameworkCore
         public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return this.Context.SaveChangesAsync(cancellationToken);
-        }
-
-        public void UseTransaction(ITransactionContext transactionContext)
-        {
-            _ = transactionContext ?? throw new ArgumentNullException(nameof(transactionContext));
-            var currrentDatabaseTran = transactionContext.Transactions.OfType<DatabaseTransaction>().FirstOrDefault();
-            if (currrentDatabaseTran != null)
-            {
-               
-            }
-            else
-            {
-                var tran = this.Context.Database.BeginTransaction();
-                transactionContext.Transactions.Add(new DatabaseTransaction(tran.GetDbTransaction()));
-            }
         }
     }
 }

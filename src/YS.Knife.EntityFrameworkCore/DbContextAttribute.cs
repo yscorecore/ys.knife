@@ -25,6 +25,8 @@ namespace Microsoft.EntityFrameworkCore
 
         public bool RegisteEntityStore { get; set; } = true;
 
+        public bool RegisteAutoSubmitContext { get; set; } = true;
+
         public abstract void BuildOptions(DbContextOptionsBuilder builder, string connectionString);
 
         public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
@@ -54,6 +56,14 @@ namespace Microsoft.EntityFrameworkCore
             {
                 AddEntityStoresInternal(services, declareType);
             }
+            if (RegisteAutoSubmitContext)
+            {
+                services.AddScoped<IAutoSubmitContext>(sp =>
+                {
+                    var dbcontext = sp.GetService(declareType) as DbContext;
+                    return new AutoSubmitContext(dbcontext);
+                });
+            }
         }
 
         private void AddDbContext2<InjectType, ImplType>(IServiceCollection services, string connectionString)
@@ -78,6 +88,16 @@ namespace Microsoft.EntityFrameworkCore
                 var implType = typeof(EFEntityStore<,>).MakeGenericType(entityType, contextType);
                 services.AddScoped(storeType, implType);
             }
+        }
+
+        private class AutoSubmitContext : IAutoSubmitContext
+        {
+            public AutoSubmitContext(DbContext dbContext)
+            {
+                this.DbContext = dbContext;
+            }
+
+            public DbContext DbContext { get; }
         }
     }
 }
