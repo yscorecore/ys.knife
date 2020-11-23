@@ -90,7 +90,7 @@ namespace YS.Knife.EntityFrameworkCore
         }
 
 
-        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             return this.Context.SaveChangesAsync(cancellationToken);
         }

@@ -1,12 +1,14 @@
-﻿namespace Microsoft.EntityFrameworkCore
+﻿using System;
+
+namespace Microsoft.EntityFrameworkCore
 {
     public class SqlServerEFContextAttribute : EFContextAttribute
     {
-        public SqlServerEFContextAttribute()
+        public SqlServerEFContextAttribute(params Type[] interceptorTypes) : base(interceptorTypes)
         {
 
         }
-        public SqlServerEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public SqlServerEFContextAttribute(string connectionStringKey, params Type[] interceptorTypes) : base(connectionStringKey, interceptorTypes)
         {
             this.ConnectionStringKey = connectionStringKey;
         }

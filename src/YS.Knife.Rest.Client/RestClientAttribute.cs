@@ -17,11 +17,13 @@ namespace YS.Knife.Rest.Client
         public RestClientAttribute(params Type[] messageHandlerTypes) : base(typeof(RestClient))
         {
             this.MessageHandlerTypes = messageHandlerTypes;
+            this.CheckMessageHandlerTypes(messageHandlerTypes);
         }
         public RestClientAttribute(string defaultBaseAddress, params Type[] messageHandlerTypes) : base(typeof(RestClient))
         {
             this.DefaultBaseAddress = defaultBaseAddress;
             this.MessageHandlerTypes = messageHandlerTypes;
+            this.CheckMessageHandlerTypes(messageHandlerTypes);
         }
         private void CheckMessageHandlerTypes(Type[] messageHandlerTypes)
         {

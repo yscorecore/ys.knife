@@ -1,12 +1,14 @@
-﻿namespace Microsoft.EntityFrameworkCore
+﻿using System;
+
+namespace Microsoft.EntityFrameworkCore
 {
     public class PostgreSqlEFContextAttribute : EFContextAttribute
     {
-        public PostgreSqlEFContextAttribute()
+        public PostgreSqlEFContextAttribute(params Type[] interceptorTypes) : base(interceptorTypes)
         {
 
         }
-        public PostgreSqlEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public PostgreSqlEFContextAttribute(string connectionStringKey, params Type[] interceptorTypes) : base(connectionStringKey, interceptorTypes)
         {
 
         }

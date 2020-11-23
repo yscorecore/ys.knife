@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
+using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts

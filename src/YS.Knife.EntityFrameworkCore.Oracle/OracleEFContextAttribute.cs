@@ -4,11 +4,11 @@ namespace Microsoft.EntityFrameworkCore
 {
     public class OracleEFContextAttribute : EFContextAttribute
     {
-        public OracleEFContextAttribute()
+        public OracleEFContextAttribute(params Type[] interceptorTypes) : base(interceptorTypes)
         {
 
         }
-        public OracleEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public OracleEFContextAttribute(string connectionStringKey, params Type[] interceptorTypes) : base(connectionStringKey, interceptorTypes)
         {
 
         }

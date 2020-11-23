@@ -1,14 +1,14 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
     [TestClass]
-    public class UnitTest1:KnifeHost
+    public class UnitTest1 : KnifeHost
     {
-      
+
         [TestMethod]
         public void ShouldGetBloggingContext()
         {

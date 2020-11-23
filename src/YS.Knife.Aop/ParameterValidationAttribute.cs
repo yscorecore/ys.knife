@@ -54,8 +54,8 @@ namespace YS.Knife.Aop
             public IEnumerable<ValidationAttribute> GetValidationAttributes(ParameterInfo implParameterInfo, ParameterInfo serviceParameterInfo)
             {
                 var key = implParameterInfo.GetHashCode() ^ serviceParameterInfo.GetHashCode();
-                IEnumerable<ValidationAttribute> attributes;
-                if (cacheData.TryGetValue(key, out attributes))
+
+                if (cacheData.TryGetValue(key, out var attributes))
                 {
                     return attributes;
                 }

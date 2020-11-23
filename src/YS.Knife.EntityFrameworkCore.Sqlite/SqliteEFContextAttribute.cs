@@ -1,12 +1,14 @@
-﻿namespace Microsoft.EntityFrameworkCore
+﻿using System;
+
+namespace Microsoft.EntityFrameworkCore
 {
     public class SqliteEFContextAttribute : EFContextAttribute
     {
-        public SqliteEFContextAttribute()
+        public SqliteEFContextAttribute(params Type[] interceptorTypes) : base(interceptorTypes)
         {
 
         }
-        public SqliteEFContextAttribute(string connectionStringKey) : base(connectionStringKey)
+        public SqliteEFContextAttribute(string connectionStringKey, params Type[] interceptorTypes) : base(connectionStringKey, interceptorTypes)
         {
         }
 

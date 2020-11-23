@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
 {
-    [SqliteDbContext("blogging")]
+    [SqliteEFContext("blogging")]
     public class BloggingContext : DbContext
     {
         public BloggingContext(DbContextOptions<BloggingContext> options) : base(options)
