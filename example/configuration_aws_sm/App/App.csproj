@@ -6,9 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\src\YS.Knife.HostedService\YS.Knife.HostedService.csproj" />
+      <ProjectReference Include="..\..\..\src\YS.Knife.Core\YS.Knife.Core.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="appsettings.json">

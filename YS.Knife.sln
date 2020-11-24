@@ -71,7 +71,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data.UnitTest", "t
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EFcore", "EFcore", "{2D663756-58FD-46AD-A1DA-4DFFCD17DCDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.EntityFrameworkCore.Sqlite.UnitTest", "test\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.csproj", "{2EA9B5F5-22A1-423D-84B6-E42F03301F44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.EntityFrameworkCore.Sqlite.UnitTest", "test\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest\YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.csproj", "{2EA9B5F5-22A1-423D-84B6-E42F03301F44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Extensions", "Extensions", "{416F90AD-82E9-4DD2-BDC1-77574D6019F7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Extensions.Configuration.Api", "src\YS.Knife.Extensions.Configuration.Api\YS.Knife.Extensions.Configuration.Api.csproj", "{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -191,6 +195,10 @@ Global
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -228,6 +236,8 @@ Global
 		{ED934540-0BE2-485D-9341-AAA49552D171} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 		{2D663756-58FD-46AD-A1DA-4DFFCD17DCDF} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44} = {2D663756-58FD-46AD-A1DA-4DFFCD17DCDF}
+		{416F90AD-82E9-4DD2-BDC1-77574D6019F7} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
+		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E} = {416F90AD-82E9-4DD2-BDC1-77574D6019F7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}

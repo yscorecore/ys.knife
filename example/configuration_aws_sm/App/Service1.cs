@@ -2,7 +2,7 @@
 using System.Threading;
 using Microsoft.Extensions.Options;
 using YS.Knife;
-using YS.Knife.HostedService;
+using YS.Knife.;
 
 namespace App
 {
