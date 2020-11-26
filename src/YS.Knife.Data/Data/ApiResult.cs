@@ -33,6 +33,7 @@ namespace YS.Knife.Data
 
         public T Extract()
         {
+            this.Assert();
             return this.Result;
         }
     }
