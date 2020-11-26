@@ -9,6 +9,14 @@ namespace YS.Knife.Data
     [TypeConverter(typeof(LimitIntoTypeConverter))]
     public class LimitInfo
     {
+        public LimitInfo()
+        {
+        }
+        public LimitInfo(int offset, int limit)
+        {
+            this.Offset = offset;
+            this.Limit = limit;
+        }
         public int Offset { get; set; }
         public int Limit { get; set; }
 
