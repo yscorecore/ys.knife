@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -37,6 +37,15 @@ namespace YS.Knife.Data
             {
                 Offset = match.Groups["offset"].Success ? int.Parse(match.Groups["offset"].Value) : 0,
                 Limit = int.Parse(match.Groups["limit"].Value)
+            };
+        }
+
+        public static LimitInfo FromPageInfo(int pageIndex, int pageSize)
+        {
+            return new LimitInfo
+            {
+                Offset = (pageIndex - 1) * pageSize,
+                Limit = pageSize
             };
         }
     }

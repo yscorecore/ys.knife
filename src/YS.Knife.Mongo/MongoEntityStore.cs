@@ -1,8 +1,8 @@
-using System;
+﻿using System;
 
 namespace YS.Knife.Mongo
 {
-    public class MongoEntityStore<T>:IEntityStore<T>
+    public class MongoEntityStore<T> : IEntityStore<T>
     {
     }
 }

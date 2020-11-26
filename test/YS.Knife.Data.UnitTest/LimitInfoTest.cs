@@ -1,6 +1,6 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
 using System.ComponentModel;
-using System;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YS.Knife.Data.UnitTest
 {
@@ -57,6 +57,16 @@ namespace YS.Knife.Data.UnitTest
             Assert.AreEqual(true, canToString);
             LimitInfo limitInfo = new LimitInfo(100, 20);
             Assert.AreEqual("100,20", typeConverter.ConvertTo(limitInfo, typeof(string)));
+        }
+
+        [DataTestMethod]
+        [DataRow(1, 10, 0, 10)]
+        [DataRow(2, 99, 99, 99)]
+        public void ShouldParsePageInfoSuccess(int pageIndex, int pageSize, int offset, int limit)
+        {
+            var limitInfo = LimitInfo.FromPageInfo(pageIndex, pageSize);
+            Assert.AreEqual(offset, limitInfo.Offset);
+            Assert.AreEqual(limit, limitInfo.Limit);
         }
     }
 }
