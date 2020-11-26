@@ -195,7 +195,6 @@ Global
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED934540-0BE2-485D-9341-AAA49552D171}.Release|Any CPU.Build.0 = Release|Any CPU
-<<<<<<< HEAD
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EA9B5F5-22A1-423D-84B6-E42F03301F44}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -204,12 +203,10 @@ Global
 		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E}.Release|Any CPU.Build.0 = Release|Any CPU
-=======
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Release|Any CPU.Build.0 = Release|Any CPU
->>>>>>> add mongodb sdk
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
