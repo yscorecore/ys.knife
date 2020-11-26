@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+
+<ItemGroup>
+  <ProjectReference Include="..\YS.Knife.Data\YS.Knife.Data.csproj" />
+  <PackageReference Include="MongoDB.Driver" Version="2.11.4" />
+</ItemGroup>
+</Project>
