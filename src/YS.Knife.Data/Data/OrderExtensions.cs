@@ -4,9 +4,15 @@ using YS.Knife.Data;
 
 namespace System.Linq
 {
-    public static class OrderItemExtensions
+    public static class OrderExtensions
     {
-        public static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderitems)
+
+        public static IQueryable<T> Order<T>(this IQueryable<T> source, OrderInfo orderInfo)
+        {
+            _ = source ?? throw new ArgumentNullException(nameof(source));
+            return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
+        }
+        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderitems)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             HashSet<string> used = new HashSet<string>();
@@ -46,28 +52,28 @@ namespace System.Linq
         public static IQueryable<T> Order<T>(this IQueryable<T> source, params OrderItem[] orderitems)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            return Order<T>(source, orderitems as IEnumerable<OrderItem>);
+            return Order(source, orderitems as IEnumerable<OrderItem>);
         }
-        public static IOrderedQueryable<T> Asc<T>(this IQueryable<T> source, string fieldName)
+        private static IOrderedQueryable<T> Asc<T>(this IQueryable<T> source, string fieldName)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
             return DoOrder(source, nameof(Enumerable.OrderBy), fieldName);
         }
-        public static IOrderedQueryable<T> ThenAsc<T>(this IQueryable<T> source, string fieldName)
+        private static IOrderedQueryable<T> ThenAsc<T>(this IQueryable<T> source, string fieldName)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
 
             return DoOrder(source, nameof(Enumerable.ThenBy), fieldName);
         }
-        public static IOrderedQueryable<T> Desc<T>(this IQueryable<T> source, string fieldName)
+        private static IOrderedQueryable<T> Desc<T>(this IQueryable<T> source, string fieldName)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = fieldName ?? throw new ArgumentNullException(nameof(fieldName));
             return DoOrder(source, nameof(Enumerable.OrderByDescending), fieldName);
         }
-        public static IOrderedQueryable<T> ThenDesc<T>(this IQueryable<T> source, string fieldName)
+        private static IOrderedQueryable<T> ThenDesc<T>(this IQueryable<T> source, string fieldName)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = fieldName ?? throw new ArgumentNullException(nameof(fieldName));

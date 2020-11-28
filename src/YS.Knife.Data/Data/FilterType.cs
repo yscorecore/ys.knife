@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace YS.Knife
+namespace YS.Knife.Data
 {
-    public enum SearchType : int
+    public enum FilterType : int
     {
         /// <summary>
         /// ==

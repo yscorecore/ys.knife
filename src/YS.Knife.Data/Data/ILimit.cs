@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.Collections.Generic;
 
 namespace YS.Knife.Data
 {
@@ -16,28 +14,6 @@ namespace YS.Knife.Data
         List<TData> ListData { get; }
     }
 
-    public static class LimitDataExtensions
-    {
-        public static IListSource AsListSource<T>(this ILimitData<T> limtData)
-        {
-            return new LimitDataListSource<T>(limtData);
-        }
-
-        
-    }
-    public class LimitDataListSource<T> : IListSource
-    {
-        private ILimitData<T> limitData;
-        public LimitDataListSource(ILimitData<T> limitData)
-        {
-            _ = limitData ?? throw new System.ArgumentNullException(nameof(limitData));
-            this.limitData = limitData;
-        }
-        public bool ContainsListCollection => true;
-
-        public IList GetList()
-        {
-            return limitData.ListData;
-        }
-    }
+  
+   
 }
