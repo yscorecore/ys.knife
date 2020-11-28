@@ -1,13 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using YS.Knife;
 using YS.Knife.Entity.Model;
 
 namespace YS.Knife.Entity
@@ -16,72 +11,86 @@ namespace YS.Knife.Entity
 
     public static class EntityStoreExtentions
     {
-        //public static void Add<T>(this IEntityStore<T> store, IEnumerable<T> entities)
-        //    where T : class
-        //{
-        //    if (entities == null) return;
-        //    entities.ForEach(p => store.Add(p));
-        //}
-        //public static void Delete<T>(this IEntityStore<T> store, IEnumerable<T> entities)
-        //      where T : class
-        //{
-        //    if (entities == null) return;
-        //    entities.ForEach(p => store.Delete(p));
-        //}
-        //public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities)
-        //      where T : class
-        //{
-        //    if (entities == null) return;
-        //    entities.ForEach(p => store.Update(p));
-        //}
-        //public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities, params string[] fields)
-        //     where T : class
-        //{
-        //    if (entities == null) return;
-        //    entities.ForEach(p => store.Update(p, fields));
-        //}
+
+        private static void ForEach<T>(this IEnumerable<T> sources, Action<T> action)
+        {
+            foreach (var item in sources ?? Enumerable.Empty<T>())
+            {
+                action?.Invoke(item);
+            }
+        }
+        public static void Add<T>(this IEntityStore<T> store, IEnumerable<T> entities)
+            where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            entities.ForEach(p => store.Add(p));
+        }
+        public static void Delete<T>(this IEntityStore<T> store, IEnumerable<T> entities)
+              where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            entities.ForEach(p => store.Delete(p));
+        }
+        public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities)
+              where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            entities.ForEach(p => store.Update(p));
+        }
+        public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities, params string[] fields)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            entities.ForEach(p => store.Update(p, fields));
+        }
         public static int Count<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
              where T : class
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).Count();
         }
         public static long LongCount<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).LongCount();
         }
         public static TR Max<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TR> fieldSelector)
               where T : class
         {
-
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).Max(fieldSelector);
         }
         public static TR Min<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TR> fieldSelector)
               where T : class
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).Max(fieldSelector);
         }
 
         public static decimal? Sum<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, decimal?> fieldSelector)
            where T : class
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).Sum(fieldSelector);
         }
         public static decimal SumOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, decimal?> fieldSelector)
            where T : class
         {
             var res = store.Sum(conditions, fieldSelector);
-            return res.HasValue ? res.Value : default(decimal);
+            return res.HasValue ? res.Value : default;
         }
         public static int? Sum<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, int?> fieldSelector)
            where T : class
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).Sum(fieldSelector);
         }
         public static int SumOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, int?> fieldSelector)
           where T : class
         {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
             var res = store.Sum(conditions, fieldSelector);
-            return res.HasValue ? res.Value : default(int);
+            return res.HasValue ? res.Value : default;
         }
 
 
@@ -165,94 +174,106 @@ namespace YS.Knife.Entity
         //}
         //#endregion
 
-        //#region Single
+        #region Single
 
-        //public static T FindSingle<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //      where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.Single();
-        //}
-        //public static R FindSingle<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).Single();
-        //}
-        //public static T FindSingleOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //         where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.SingleOrDefault();
-        //}
-        //public static R FindSingleOrDefault<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).SingleOrDefault();
-        //}
-        //#endregion
+        public static T FindSingle<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+              where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.Single();
+        }
+        public static TR FindSingle<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).Single();
+        }
+        public static T FindSingleOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+                 where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.SingleOrDefault();
+        }
+        public static TR FindSingleOrDefault<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).SingleOrDefault();
+        }
+        #endregion
 
-        //#region First
-        //public static T FindFirst<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //      where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.First();
-        //}
-        //public static R FindFirst<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).First();
-        //}
-        //public static T FindFirstOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //         where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.FirstOrDefault();
-        //}
-        //public static R FindFirstOrDefault<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).FirstOrDefault();
-        //}
-        //#endregion
+        #region First
+        public static T FindFirst<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+              where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.First();
+        }
+        public static TR FindFirst<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).First();
+        }
+        public static T FindFirstOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+                 where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.FirstOrDefault();
+        }
+        public static TR FindFirstOrDefault<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).FirstOrDefault();
+        }
+        #endregion
 
-        //#region Last
-        //public static T FindLast<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //      where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.Last();
-        //}
-        //public static R FindLast<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).Last();
-        //}
-        //public static T FindLastOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //         where T : class
-        //{
-        //    var query = store.Query(conditions);
-        //    return query.LastOrDefault();
-        //}
-        //public static R FindLastOrDefault<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<R>> selector)
-        //     where T : class
-        //{
-        //    if (selector == null) throw new ArgumentNullException("selector");
-        //    var query = store.Query(conditions);
-        //    return selector(query).LastOrDefault();
-        //}
+        #region Last
+        public static T FindLast<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+              where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.Last();
+        }
+        public static TR FindLast<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).Last();
+        }
+        public static T FindLastOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+                 where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.LastOrDefault();
+        }
+        public static TR FindLastOrDefault<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<IQueryable<T>, IQueryable<TR>> selector)
+             where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = selector ?? throw new ArgumentNullException(nameof(selector));
+            var query = store.Query(conditions);
+            return selector(query).LastOrDefault();
+        }
 
-        //#endregion
+        #endregion
 
         //#region ListAll
         //public static List<T> ListAll<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems)
@@ -261,11 +282,12 @@ namespace YS.Knife.Entity
         //    var query = store.Query(conditions);
         //    return query.Order(orderItems).ToList();
         //}
-        //public static List<R> ListAll<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<R>> selector)
+        //public static List<TR> ListAll<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<TR>> selector)
         //    where T : class
         //{
         //    if (selector == null) throw new ArgumentNullException("selector");
         //    var query = store.Query(conditions);
+
         //    return selector(query.Order(orderItems)).ToList();
         //}
         //#endregion
@@ -283,7 +305,7 @@ namespace YS.Knife.Entity
         //    return new PageData<T>(sortedQuery, pageIndex, pageSize);
         //}
 
-        //public static PageData<R> ListPage<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<R>> selector, int pageIndex, int pageSize)
+        //public static PageData<TR> ListPage<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<TR>> selector, int pageIndex, int pageSize)
         //      where T : class
         //{
         //    if (selector == null) throw new ArgumentNullException("selector");
@@ -293,7 +315,7 @@ namespace YS.Knife.Entity
         //    if (pageIndex < 0) throw new ArgumentOutOfRangeException("pageIndex", "pageIndex必须为正数");
         //    var query = store.Query(conditions);
         //    var sortedQuery = selector(query).Order(orderItems);
-        //    return new PageData<R>(sortedQuery, pageIndex, pageSize);
+        //    return new PageData<TR>(sortedQuery, pageIndex, pageSize);
         //}
         //#endregion
 
@@ -310,7 +332,7 @@ namespace YS.Knife.Entity
         //    return new LimitData<T>(sortedQuery, offset, limit);
         //}
 
-        //public static LimitData<R> ListLimit<T, R>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<R>> selector, int offset, int limit)
+        //public static LimitData<TR> ListLimit<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<TR>> selector, int offset, int limit)
         //      where T : class
         //{
         //    if (selector == null) throw new ArgumentNullException(nameof(selector));
@@ -320,16 +342,17 @@ namespace YS.Knife.Entity
         //    if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)}必须为正数或零");
         //    var query = store.Query(conditions);
         //    var sortedQuery = selector(query).Order(orderItems);
-        //    return new LimitData<R>(sortedQuery, offset, limit);
+        //    return new LimitData<TR>(sortedQuery, offset, limit);
         //}
         //#endregion
-        //#region DeleteByCondition
-        //public static void Delete<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
-        //    where T : class
-        //{
-        //    var list = store.Query(conditions).ToList();
-        //    store.Delete(list);
-        //}
-        //#endregion
+        #region DeleteByCondition
+        public static void Delete<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+            where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var list = store.Query(conditions).ToList();
+            store.Delete(list);
+        }
+        #endregion
     }
 }
