@@ -55,7 +55,7 @@ namespace YS.Knife.Entity.Model
         /// </summary>
         string AuditUser { get; set; }
     }
-   
+
     /// <summary>
     /// 表示是否删除
     /// </summary>
@@ -136,5 +136,5 @@ namespace YS.Knife.Entity.Model
 
 
 
-  
+
 }

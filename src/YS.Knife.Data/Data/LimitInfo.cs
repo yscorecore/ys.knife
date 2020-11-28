@@ -36,7 +36,7 @@ namespace YS.Knife.Data
             return new LimitInfo
             {
                 Offset = match.Groups["offset"].Success ? Convert.ToInt32(match.Groups["offset"].Value, CultureInfo.InvariantCulture) : 0,
-                Limit = Convert.ToInt32(match.Groups["limit"].Value,CultureInfo.InvariantCulture)
+                Limit = Convert.ToInt32(match.Groups["limit"].Value, CultureInfo.InvariantCulture)
             };
         }
 

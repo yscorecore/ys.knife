@@ -12,7 +12,7 @@ namespace System.Linq
         {
             return new LimitDataListSource<T>(limtData);
         }
-        public static LimitData<T> ToLimitData<T>(this IQueryable<T> source, int offset,int limit)
+        public static LimitData<T> ToLimitData<T>(this IQueryable<T> source, int offset, int limit)
         {
             return source.ToLimitData(new LimitInfo(offset, limit));
         }

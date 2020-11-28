@@ -2,7 +2,7 @@
 
 namespace YS.Knife.Data
 {
-    public interface ILimit 
+    public interface ILimit
     {
         int Offset { get; }
         int Limit { get; }
@@ -14,6 +14,6 @@ namespace YS.Knife.Data
         List<TData> ListData { get; }
     }
 
-  
-   
+
+
 }

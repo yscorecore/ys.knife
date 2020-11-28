@@ -18,7 +18,7 @@ namespace YS.Knife.Data
             this.TotalCount = totalCount;
             this.ListData = (limitListData ?? Enumerable.Empty<TData>()).ToList();
         }
-        
+
 
         public bool HasNext
         {
@@ -30,7 +30,7 @@ namespace YS.Knife.Data
 
         public int Limit { get; set; }
 
-       
+
         public List<TData> ListData { get; set; }
 
         public int Offset { get; set; }

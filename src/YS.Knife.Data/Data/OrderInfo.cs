@@ -62,9 +62,9 @@ namespace YS.Knife.Data
             this.Items.Add(orderItem);
             return this;
         }
-        public OrderInfo Add(string fieldName,OrderType orderType)
+        public OrderInfo Add(string fieldName, OrderType orderType)
         {
-            return this.Add(new OrderItem(fieldName,orderType));
+            return this.Add(new OrderItem(fieldName, orderType));
         }
     }
 

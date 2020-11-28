@@ -15,7 +15,7 @@ namespace YS.Knife.Data.UnitTest
             Assert.AreEqual(expected, orderItem.ToString());
         }
         [DataTestMethod]
-        [DataRow("+Field1", "Field1",OrderType.Asc)]
+        [DataRow("+Field1", "Field1", OrderType.Asc)]
         [DataRow("Field1", "Field1", OrderType.Asc)]
         [DataRow("-Field1", "Field1", OrderType.Desc)]
         [DataRow("++Field1", "Field1", OrderType.Asc)]
