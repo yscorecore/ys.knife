@@ -35,8 +35,8 @@ namespace YS.Knife.Data
             }
             return new LimitInfo
             {
-                Offset = match.Groups["offset"].Success ? int.Parse(match.Groups["offset"].Value) : 0,
-                Limit = int.Parse(match.Groups["limit"].Value)
+                Offset = match.Groups["offset"].Success ? Convert.ToInt32(match.Groups["offset"].Value, CultureInfo.InvariantCulture) : 0,
+                Limit = Convert.ToInt32(match.Groups["limit"].Value,CultureInfo.InvariantCulture)
             };
         }
 
@@ -50,17 +50,8 @@ namespace YS.Knife.Data
         }
     }
 
-    public class LimitIntoTypeConverter : System.ComponentModel.TypeConverter
+    public class LimitIntoTypeConverter : StringConverter
     {
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
-        }
-
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
             if (value is string str)
@@ -68,15 +59,6 @@ namespace YS.Knife.Data
                 return LimitInfo.Parse(str);
             }
             return base.ConvertFrom(context, culture, value);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-        {
-            if (value is LimitInfo limit && destinationType == typeof(string))
-            {
-                return limit.ToString();
-            }
-            return base.ConvertTo(context, culture, value, destinationType);
         }
     }
 }

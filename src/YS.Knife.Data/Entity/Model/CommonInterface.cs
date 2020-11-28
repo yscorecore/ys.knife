@@ -55,20 +55,7 @@ namespace YS.Knife.Entity.Model
         /// </summary>
         string AuditUser { get; set; }
     }
-    /// <summary>
-    /// 表示发布跟踪
-    /// </summary>
-    public interface IPublishTrack
-    {
-        /// <summary>
-        /// 表示发布时间
-        /// </summary>
-        DateTime? PublishTime { get; set; }
-        /// <summary>
-        /// 表示发布用户
-        /// </summary>
-        string PublishUser { get; set; }
-    }
+   
     /// <summary>
     /// 表示是否删除
     /// </summary>
@@ -146,27 +133,8 @@ namespace YS.Knife.Entity.Model
 
 
 
-    public interface IExtentionObject<T>
-    {
-        List<PropertyValue<T>> Properties { get; set; }
-
-        T SchemaId { get; set; }
-    }
 
 
 
-    /// <summary>
-    /// 表示实体的属性值
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class PropertyValue<T> : IId<T>
-    {
-        public T Id
-        {
-            get; set;
-        }
-        public T EntityId { get; set; }
-        public T PropertyId { get; set; }
-        public string Value { get; set; }
-    }
+  
 }

@@ -113,34 +113,35 @@ namespace YS.Knife.Entity
 
         #region 树
 
-        public static void AddTreeNode<T, TKey>(this IEntityStore<T> store, T treeItem, string treePathSplitChar = ".")
+        public static void AddTreeNode<T, TKey>(this IEntityStore<T> store, T treeNode, string treePathSplitChar = ".")
            where T : class, ISelfTree<TKey>
         {
-            //_ = treeItem ?? throw new ArgumentNullException(nameof(treeItem));
-            if (default(TKey).Equals(treeItem.ParentId))
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            _ = treeNode ?? throw new ArgumentNullException(nameof(treeNode));
+            if (default(TKey).Equals(treeNode.ParentId))
             {
                 //root node
-                treeItem.Depth = 0;
-                treeItem.NodePath = Hex36Convert.ConvertDecToHex36(0);
-                treeItem.PathValue = 0;
-                store.Add(treeItem);
+                treeNode.Depth = 0;
+                treeNode.NodePath = Hex36Convert.ConvertDecToHex36(0);
+                treeNode.PathValue = 0;
+                store.Add(treeNode);
             }
             else
             {
-                var parent = store.FindByKey(treeItem.ParentId);
+                var parent = store.FindByKey(treeNode.ParentId);
                 if (parent == null)
                 {
                     throw new ApplicationException("can not find parent node.");
                 }
-                treeItem.Depth = parent.Depth + 1;
+                treeNode.Depth = parent.Depth + 1;
                 string prefix = parent.NodePath + treePathSplitChar;
                 //fid current max value
 
                 var currentMax = store.Max(p => p.NodePath.StartsWith(prefix), p => (int?)p.PathValue);
                 var nextPathValue = (currentMax.HasValue ? currentMax.Value : 0) + 1;
-                treeItem.PathValue = nextPathValue;
-                treeItem.NodePath = $"{parent.NodePath}{treePathSplitChar}{Hex36Convert.ConvertDecToHex36(nextPathValue)}";
-                store.Add(treeItem);
+                treeNode.PathValue = nextPathValue;
+                treeNode.NodePath = $"{parent.NodePath}{treePathSplitChar}{Hex36Convert.ConvertDecToHex36(nextPathValue)}";
+                store.Add(treeNode);
             }
         }
 
