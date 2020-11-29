@@ -60,7 +60,7 @@ namespace YS.Knife.Data
 
         public string FieldName { get; set; }
 
-        public FilterType? FilterType { get; set; }
+        public FilterType FilterType { get; set; }
 
         public object Value { get; set; }
 
