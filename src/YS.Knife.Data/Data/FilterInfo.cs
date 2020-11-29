@@ -183,7 +183,7 @@ namespace YS.Knife.Data
         }
         private string FilterTypeToString(FilterType? filterType)
         {
-            if (filterType.HasValue && FilterTypeNameMapper.TryGetValue(filterType.Value ,out var res))
+            if (filterType.HasValue && FilterTypeNameMapper.TryGetValue(filterType.Value, out var res))
             {
                 return res;
             }

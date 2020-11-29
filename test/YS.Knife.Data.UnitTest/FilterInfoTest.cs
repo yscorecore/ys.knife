@@ -176,7 +176,7 @@ namespace YS.Knife.Data.UnitTest
                         new FilterInfo("Age", FilterType.GreaterThan, 1),
                         new FilterInfo("Name", FilterType.StartsWith, "Zhang")),
                     FilterInfo.CreateAnd(
-                        new FilterInfo("Id", FilterType.In, new [] { 1, 3, 4 }),
+                        new FilterInfo("Id", FilterType.In, new[] { 1, 3, 4 }),
                         new FilterInfo("Tel", FilterType.Contains, "135")));
 
             Assert.AreEqual("((Age > 1) and (Name starts \"Zhang\")) or ((Id in [1,3,4]) and (Tel contains \"135\"))", filter.ToString());

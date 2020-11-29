@@ -44,6 +44,25 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("Age", FilterType.LessThan, 20, "001,004")]
         [DataRow("Score", FilterType.LessThanOrEqual, 70, "001,003")]
         [DataRow("Age", FilterType.LessThanOrEqual, 20, "001,002,003,004")]
+
+
+        [DataRow("Name", FilterType.Contains, "a", "001,003,004")]
+        [DataRow("Name", FilterType.NotContains, "a", "002,005")]
+
+        [DataRow("Name", FilterType.StartsWith, "W", "003,004")]
+        [DataRow("Name", FilterType.NotStartsWith, "W", "001,002,005")]
+
+        [DataRow("Name", FilterType.EndsWith, "i", "002,004")]
+        [DataRow("Name", FilterType.NotEndsWith, "i", "001,003,005")]
+
+        [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
+        [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
+
+        [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
+        [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
+
+        [DataRow("Age", FilterType.Between, new object[] { 19, 20 }, "001,002,003,004")]
+        [DataRow("Age", FilterType.NotBetween, new object[] { 19, 20 }, "005")]
         public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, FilterType filterType, object value, string expectedIds)
         {
             var filter = FilterInfo.CreateItem(fieldName, filterType, value);
@@ -60,7 +79,7 @@ namespace YS.Knife.Data.UnitTest
             CreateTestUsers().WhereCondition(filter).ToList();
         }
 
-       
+
         public class User
         {
             public string Id { get; set; }
