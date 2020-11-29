@@ -5,12 +5,9 @@ using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-
 using CompareFunc = System.Func<System.Linq.Expressions.Expression, System.Linq.Expressions.Expression, System.Linq.Expressions.BinaryExpression>;
 namespace YS.Knife.Data
 {
-
     public static class FilterInfoExtensions
     {
         private static bool IsNullableType(this Type type)
@@ -40,8 +37,6 @@ namespace YS.Knife.Data
                 left = Expression.Property(left, nameof(Nullable<int>.Value));
             return left;
         }
-
-
         public static IQueryable<T> WhereCondition<T>(this IQueryable<T> source, FilterInfo filterInfo)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
@@ -82,7 +77,6 @@ namespace YS.Knife.Data
             foreach (FilterInfo item in andCondition.Items)
             {
                 var next = FromContidtionInternal(entityType, item, p);
-
                 current = Expression.AndAlso(current, next);
             }
             return current;
@@ -102,11 +96,8 @@ namespace YS.Knife.Data
                 ty = pinfo.PropertyType;
                 exp = Expression.Property(exp, pinfo);
             }
-
             pinfo = ty.GetProperty(paths.Last());
             if (pinfo == null) throw new ArgumentException(string.Format("在类型{0}中无法找到指定的属性{1}", ty.FullName, paths.Last()));
-
-
             var val = singleItem.Value;
             if (val == DBNull.Value) val = null;//忽略dbnull.value
             var converter = GetConvertByFilterType(singleItem.FilterType);
@@ -132,6 +123,12 @@ namespace YS.Knife.Data
             }
         }
         private static ExpressionConverter GetConvertByFilterType(FilterType searchType)
+        {
+            var instance = CreateConverterInstance(searchType);
+            instance.FilterType = searchType;
+            return instance;
+        }
+        private static ExpressionConverter CreateConverterInstance(FilterType searchType)
         {
             switch (searchType)
             {
@@ -171,11 +168,9 @@ namespace YS.Knife.Data
                     throw new ArgumentException(string.Format("无效的类型{0}", searchType));
             }
         }
-
-
         abstract class ExpressionConverter
         {
-            protected abstract FilterType FilterType { get; }
+            public FilterType FilterType { get; set; }
             public abstract Expression ConvertValue(Expression p, PropertyInfo propInfo, object value);
             protected object ChangeType(object value, Type changeType)
             {
@@ -202,8 +197,6 @@ namespace YS.Knife.Data
         }
         class EqualExpressionConverter : ExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.Equals;
-
             private Expression ConvertNullValue(Expression p, PropertyInfo propInfo)
             {
                 if (propInfo.PropertyType.IsNullableType())
@@ -241,7 +234,6 @@ namespace YS.Knife.Data
                     var right = Expression.Constant(this.ChangeType(value, propInfo.PropertyType));
                     return Expression.Equal(left, right);
                 }
-
             }
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
@@ -257,8 +249,6 @@ namespace YS.Knife.Data
         }
         class NotEqualExpressionConverter : ExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotEquals;
-
             private Expression ConvertNullValue(Expression p, PropertyInfo propInfo)
             {
                 if (propInfo.PropertyType.IsNullableType())
@@ -292,12 +282,10 @@ namespace YS.Knife.Data
                 }
                 else
                 {
-
                     var left = Expression.Property(p, propInfo);
                     var right = Expression.Constant(this.ChangeType(value, propInfo.PropertyType));
                     return Expression.NotEqual(left, right);
                 }
-
             }
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
@@ -311,17 +299,14 @@ namespace YS.Knife.Data
                 }
             }
         }
-
         abstract class StringExpressionConverter : ExpressionConverter
         {
             protected abstract string MethodName { get; }
-
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 if (IsNull(value)) throw new InvalidOperationException(string.Format("{0} 无法处理null值", this.FilterType));
                 if (propInfo.PropertyType != typeof(string)) throw new InvalidOperationException(string.Format("{0} 只适用于string类型", this.FilterType));
                 string val = ChangeToString(value);
-
                 return Expression.AndAlso(
                                 Expression.NotEqual(Expression.Property(p, propInfo), Expression.Constant(null)),
                                  Expression.Call(
@@ -329,18 +314,14 @@ namespace YS.Knife.Data
                                          typeof(string).GetMethod(MethodName, new Type[] { typeof(string) }),
                                          Expression.Constant(val)
                                          ));
-
             }
         }
         class ContainsExpressionConverter : StringExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.Contains;
-
             protected override string MethodName => nameof(string.Contains);
         }
         class NotContainsExpressionConverter : ContainsExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotContains;
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
@@ -348,34 +329,26 @@ namespace YS.Knife.Data
         }
         class StartWithExpressionConverter : StringExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.StartsWith;
-
             protected override string MethodName => nameof(string.StartsWith);
         }
         class NotStartWithExpressionConverter : StartWithExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotStartsWith;
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
             }
-
         }
         class EndWidhExpressionConverter : StringExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.EndsWith;
-
             protected override string MethodName => nameof(string.EndsWith);
         }
         class NotEndWithExpressionConverter : EndWidhExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotEndsWith;
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
             }
         }
-
         abstract class OpExpressionConverter : ExpressionConverter
         {
             public static Type[] SupportOpTypes = new Type[]
@@ -396,7 +369,6 @@ namespace YS.Knife.Data
                 };
             protected abstract CompareFunc CompareFunc { get; }
             protected abstract CompareFunc ReverseCompareFunc { get; }
-
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 if (IsNull(value)) throw new FilterInfoExpressionException($"Can not handle null value for {this.FilterType}.");
@@ -423,47 +395,31 @@ namespace YS.Knife.Data
                                 Expression.Property(Expression.Property(p, propInfo), nameof(Nullable<int>.HasValue)),
                                 expression)
                             : expression;
-
-
                 }
             }
         }
-
         class GreaterThanExpressionConverter : OpExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.GreaterThan;
-
             protected override CompareFunc CompareFunc => Expression.GreaterThan;
-
             protected override CompareFunc ReverseCompareFunc => Expression.LessThan;
         }
         class GreaterThanOrEqualExpressionConverter : OpExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.GreaterThanOrEqual;
-
             protected override CompareFunc CompareFunc => Expression.GreaterThanOrEqual;
-
             protected override CompareFunc ReverseCompareFunc => Expression.LessThanOrEqual;
         }
         class LessThanExpressionConverter : OpExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.LessThan;
-
             protected override CompareFunc CompareFunc => Expression.LessThan;
-
             protected override CompareFunc ReverseCompareFunc => Expression.GreaterThan;
         }
         class LessThanOrEqualExpressionConverter : OpExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.LessThanOrEqual;
-
             protected override CompareFunc CompareFunc => Expression.LessThanOrEqual;
-
             protected override CompareFunc ReverseCompareFunc => Expression.GreaterThanOrEqual;
         }
         class BetweenExpressionConverter : ExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.Between;
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 if (value == null) throw new InvalidOperationException(string.Format("{0} 无法处理null值", FilterType.Between));
@@ -480,27 +436,22 @@ namespace YS.Knife.Data
                 {
                     throw new InvalidOperationException(string.Format("{0} 只能处理实现了IComparable<{1}>接口的类型", FilterType.Between, ptype.FullName));
                 }
-
                 var propExpression = Expression.Property(p, propInfo);
                 if (isnullabletype)
                     propExpression = Expression.Property(propExpression, "Value");
-
                 var left = Expression.GreaterThanOrEqual(Expression.Call(
                                          propExpression,
                                          ptype.GetMethod("CompareTo", new Type[] { ptype }),
                                          Expression.Constant(this.ChangeType(firstvalue, ptype))), Expression.Constant(0));
-
                 var right = Expression.LessThanOrEqual(Expression.Call(
                                          propExpression,
                                          ptype.GetMethod("CompareTo", new Type[] { ptype }),
                                          Expression.Constant(this.ChangeType(lastvalue, ptype))), Expression.Constant(0));
-
                 return Expression.AndAlso(left, right);
             }
         }
         class NotBetweenExpressionConverter : BetweenExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotBetween;
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
@@ -508,14 +459,11 @@ namespace YS.Knife.Data
         }
         class InExpressionConverter : ExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.In;
-
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 if (value == null) throw new InvalidOperationException(string.Format("{0} 无法处理null值", FilterType));
                 IEnumerable arr = value as IEnumerable;
                 if (arr == null) throw new InvalidOperationException(string.Format("{0} 值必须为可枚举类型", FilterType));
-
                 var isnullabletype = propInfo.PropertyType.IsNullableType();
                 var ptype = isnullabletype ? Nullable.GetUnderlyingType(propInfo.PropertyType) : propInfo.PropertyType;
                 var lst = Activator.CreateInstance(typeof(List<>).MakeGenericType(propInfo.PropertyType)) as IList;
@@ -540,19 +488,15 @@ namespace YS.Knife.Data
                 if (lst.Count == 0) return Expression.Constant(false);
                 var methods = lst.GetType().GetMethod("Contains", new Type[] { propInfo.PropertyType });
                 return Expression.Call(Expression.Constant(lst), methods, Expression.Property(p, propInfo));
-
                 //return null;
             }
         }
         class NotInExpressionConverter : InExpressionConverter
         {
-            protected override FilterType FilterType => FilterType.NotIn;
-
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
             }
         }
     }
-
 }
