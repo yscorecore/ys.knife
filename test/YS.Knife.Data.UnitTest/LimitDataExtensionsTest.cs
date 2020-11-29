@@ -6,6 +6,15 @@ namespace YS.Knife.Data.UnitTest
     public class LimitDataExtensionsTest
     {
         [TestMethod]
+        public void ShouldGetListSourceWhenAsListSource()
+        {
+            var listSource = Enumerable.Range(1, 100).AsQueryable()
+                .ToLimitData(50, 15).AsListSource();
+            Assert.AreEqual(true, listSource.ContainsListCollection);
+            Assert.AreEqual(15, listSource.GetList().Count);
+        }
+
+        [TestMethod]
         public void ShouldGetExpectedLimitData()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(50, 15);

@@ -11,7 +11,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("Field1", OrderType.Desc, "-Field1")]
         public void ShouldGetExpectedStringWhenToString(string field, OrderType orderType, string expected)
         {
-            var orderItem = new OrderItem(field, orderType);
+            var orderItem = new OrderItem { FieldName = field, OrderType = orderType };
             Assert.AreEqual(expected, orderItem.ToString());
         }
         [DataTestMethod]

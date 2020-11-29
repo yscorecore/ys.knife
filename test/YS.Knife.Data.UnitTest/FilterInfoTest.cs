@@ -149,5 +149,40 @@ namespace YS.Knife.Data.UnitTest
 
         }
 
+        [TestMethod]
+        public void ShouldConvertToStringAndConvertFromString()
+        {
+            var filter = FilterInfo.CreateOr(
+                FilterInfo.CreateAnd(
+                    new FilterInfo("Age", FilterType.GreaterThan, 1),
+                    new FilterInfo("Name", FilterType.StartsWith, "Zhang")),
+                FilterInfo.CreateAnd(
+                    new FilterInfo("Id", FilterType.StartsWith, "0"),
+                    new FilterInfo("Tel", FilterType.Contains, "135")));
+            var converter = System.ComponentModel.TypeDescriptor.GetConverter(typeof(FilterInfo));
+            Assert.IsTrue(converter.CanConvertTo(typeof(string)));
+            Assert.IsTrue(converter.CanConvertFrom(typeof(string)));
+            var plainText = converter.ConvertTo(filter, typeof(string)) as string;
+            Assert.IsNotNull(plainText);
+            var filter2 = converter.ConvertFrom(plainText) as FilterInfo;
+            Assert.AreEqual(OpType.OrItems, filter2.OpType);
+            Assert.AreEqual(2, filter2.Items.Count);
+        }
+        [TestMethod]
+        public void ShouldReturnStringExpressionWhenToString()
+        {
+            var filter = FilterInfo.CreateOr(
+                    FilterInfo.CreateAnd(
+                        new FilterInfo("Age", FilterType.GreaterThan, 1),
+                        new FilterInfo("Name", FilterType.StartsWith, "Zhang")),
+                    FilterInfo.CreateAnd(
+                        new FilterInfo("Id", FilterType.In, new [] { 1, 3, 4 }),
+                        new FilterInfo("Tel", FilterType.Contains, "135")));
+
+            Assert.AreEqual("((Age > 1) and (Name starts \"Zhang\")) or ((Id in [1,3,4]) and (Tel contains \"135\"))", filter.ToString());
+            Assert.AreEqual("((Age <= 1) or (Name not starts \"Zhang\")) and ((Id not in [1,3,4]) or (Tel not contains \"135\"))", filter.Not().ToString());
+
+        }
+
     }
 }

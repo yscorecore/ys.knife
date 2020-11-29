@@ -16,7 +16,8 @@ namespace YS.Knife.Data
 
         public OrderInfo(IEnumerable<OrderItem> orderItems)
         {
-            this.Items.AddRange(orderItems ?? Enumerable.Empty<OrderItem>());
+            var items = (orderItems ?? Enumerable.Empty<OrderItem>()).Where(p => p != null);
+            this.Items.AddRange(items);
         }
 
         public List<OrderItem> Items { get; private set; } = new List<OrderItem>();
@@ -27,8 +28,7 @@ namespace YS.Knife.Data
         /// <param name="orderItem"></param>
         public static implicit operator OrderInfo(OrderItem orderItem)
         {
-            if (orderItem == null) return new OrderInfo(null);
-            return new OrderInfo(new OrderItem[] { orderItem });
+            return FromOrderItem(orderItem);
         }
 
         public static OrderInfo FromOrderItem(OrderItem orderItem)
@@ -72,11 +72,7 @@ namespace YS.Knife.Data
     {
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string orderText)
-            {
-                return OrderInfo.Parse(orderText);
-            }
-            return base.ConvertFrom(context, culture, value);
+            return (value is string orderText) ? OrderInfo.Parse(orderText) : base.ConvertFrom(context, culture, value);
         }
 
     }

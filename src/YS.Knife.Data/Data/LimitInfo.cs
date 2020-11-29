@@ -54,11 +54,7 @@ namespace YS.Knife.Data
     {
         public override object ConvertFrom(ITypeDescriptorContext context, System.Globalization.CultureInfo culture, object value)
         {
-            if (value is string str)
-            {
-                return LimitInfo.Parse(str);
-            }
-            return base.ConvertFrom(context, culture, value);
+            return (value is string limttInfo) ? LimitInfo.Parse(limttInfo) : base.ConvertFrom(context, culture, value);
         }
     }
 }
