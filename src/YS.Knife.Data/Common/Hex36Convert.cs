@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YS.Knife.Entity
+namespace YS.Knife.Data
 {
-    internal class Hex36Convert
+    public class Hex36Convert
     {
         static char[] chs;
         static Dictionary<char, int> dic;
