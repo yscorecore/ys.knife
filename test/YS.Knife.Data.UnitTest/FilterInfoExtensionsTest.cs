@@ -57,7 +57,7 @@ namespace YS.Knife.Data.UnitTest
 
         [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
         [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
-
+        [DataRow("Age", FilterType.In, new object[] { }, "")]
         [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
         [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
 

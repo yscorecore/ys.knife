@@ -13,7 +13,6 @@ namespace YS.Knife.Rest.Client.UnitTest
         [AssemblyInitialize()]
         public static void Setup(TestContext t)
         {
-            t.WriteLine("=================");
             DockerCompose.OutputLine = t.WriteLine;
             var availablePort = Utility.GetAvailableTcpPort(8080);
             StartContainer(availablePort);

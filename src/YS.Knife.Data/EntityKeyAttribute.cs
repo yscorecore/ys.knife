@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -30,13 +30,13 @@ namespace YS.Knife.Data
         }
     }
 
-    public sealed class DefaultOrderKeyAttribute:System.Attribute
+    public sealed class DefaultOrderKeyAttribute : System.Attribute
     {
         public string PropName { get; set; }
-        public OrderType OrderType {get;set;} = OrderType.Asc;
+        public OrderType OrderType { get; set; } = OrderType.Asc;
     }
 
-    internal class LocalCache<TKey, TValue>
+    public class LocalCache<TKey, TValue>
     {
         Dictionary<TKey, TValue> cachedData = new Dictionary<TKey, TValue>();
 
@@ -66,7 +66,7 @@ namespace YS.Knife.Data
                 var keyAttr = entityType.GetCustomAttributes(typeof(EntityKeyAttribute), true).OfType<EntityKeyAttribute>().FirstOrDefault();
                 if (keyAttr != null)
                 {
-                    return keyAttr.Keys.Select(p=>type.GetProperty(p)).ToArray();
+                    return keyAttr.Keys.Select(p => type.GetProperty(p)).ToArray();
                 }
                 var idProp = entityType.GetProperties()
                      .Where(p => p.Name.Equals($"{entityType.Name}Id", StringComparison.InvariantCultureIgnoreCase) || p.Name.Equals("Id", StringComparison.InvariantCultureIgnoreCase))
