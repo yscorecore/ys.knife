@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using System.Linq;
 using System.Linq.Expressions;
+using YS.Knife.Data;
 using YS.Knife.Entity.Model;
 
 namespace YS.Knife.Entity

@@ -9,7 +9,7 @@ namespace YS.Knife.Data
 {
     public static class SequentialKey
     {
-        private static readonly Random _random = new Random((int)DateTime.Now.Ticks);
+        private static readonly Random _random = new Random(unchecked((int)DateTime.Now.Ticks));
         private static int sequenceValue = 0;
         private static long lastTicks = 0;
         /// <summary>

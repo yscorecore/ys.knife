@@ -81,6 +81,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mongo", "Mongo", "{073CE990
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Mongo", "src\YS.Knife.Mongo\YS.Knife.Mongo.csproj", "{C20FCC26-B073-4399-A35A-77BBB40DAD7D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Mongo.UnitTest", "test\YS.Knife.Mongo.UnitTest\YS.Knife.Mongo.UnitTest.csproj", "{72FBC790-3744-4BFC-9B9F-91946E77E8BC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -207,6 +209,10 @@ Global
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72FBC790-3744-4BFC-9B9F-91946E77E8BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FBC790-3744-4BFC-9B9F-91946E77E8BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FBC790-3744-4BFC-9B9F-91946E77E8BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FBC790-3744-4BFC-9B9F-91946E77E8BC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -248,6 +254,7 @@ Global
 		{416F90AD-82E9-4DD2-BDC1-77574D6019F7} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{A1F61EB3-CD3E-44CB-BB6E-C297A8C7CE0E} = {416F90AD-82E9-4DD2-BDC1-77574D6019F7}
 		{C20FCC26-B073-4399-A35A-77BBB40DAD7D} = {073CE990-2896-11EB-A478-0D7261AD93BF}
+		{72FBC790-3744-4BFC-9B9F-91946E77E8BC} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
