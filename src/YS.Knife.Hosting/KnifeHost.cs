@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -50,13 +52,35 @@ namespace YS.Knife.Hosting
                 .ConfigureAppConfiguration(OnConfigureAppConfiguration)
                 .ConfigureServices((builder, serviceCollection) =>
                 {
-                    serviceCollection.AddAllKnifeServices(builder.Configuration);
+                    serviceCollection.AddAllKnifeServices(builder.Configuration, ShouldFilterType);
                     this.OnConfigureCustomService(builder, serviceCollection);
                 });
         }
         protected virtual void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
             configureDelegate?.Invoke(builder, serviceCollection);
+            this.InjectServices(builder, serviceCollection);
+        }
+        protected virtual bool ShouldFilterType(Type type)
+        {
+            return false;
+        }
+        private void InjectServices(HostBuilderContext builder, IServiceCollection serviceCollection)
+        {
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectAttribute)));
+            foreach (var field in fields)
+            {
+                InjectAttribute inject = field.GetCustomAttribute<InjectAttribute>();
+                serviceCollection.Add(new ServiceDescriptor(field.FieldType, (sp) => field.GetValue(this), inject.Lifetime));
+            }
+            // props
+            var props = this.GetType().GetProperties(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectAttribute)));
+            foreach (var prop in props)
+            {
+                InjectAttribute inject = prop.GetCustomAttribute<InjectAttribute>();
+                serviceCollection.Add(new ServiceDescriptor(prop.PropertyType, (sp) => prop.GetValue(this), inject.Lifetime));
+            }
         }
         protected virtual void OnConfigureAppConfiguration(HostBuilderContext hostBuilderContext, IConfigurationBuilder configurationBuilder)
         {
