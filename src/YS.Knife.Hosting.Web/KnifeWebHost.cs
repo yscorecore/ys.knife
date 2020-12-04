@@ -14,13 +14,12 @@ namespace YS.Knife.Hosting
         {
         }
 
-        public KnifeWebHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null) :
-            base(args, configureDelegate)
+        public KnifeWebHost(string[] args) :
+            base(args)
         {
         }
 
-        public KnifeWebHost(IDictionary<string, object> args,
-            Action<HostBuilderContext, IServiceCollection> configureDelegate = null) : base(args, configureDelegate)
+        public KnifeWebHost(IDictionary<string, object> args) : base(args)
         {
         }
 
