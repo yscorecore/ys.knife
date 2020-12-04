@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -22,16 +22,16 @@ namespace YS.Knife.Mongo
     }
 
     [MongoContext()]
-    public class BookContext:MongoContext
+    public class BookContext : MongoContext
     {
-        public IMongoCollection<User> Users{get; set;}
-        public IMongoCollection<Store> Store{get; set;}
+        public IMongoCollection<User> Users { get; set; }
+        public IMongoCollection<Store> Store { get; set; }
     }
     public class User
     {
 
     }
-     public class Store
+    public class Store
     {
 
     }

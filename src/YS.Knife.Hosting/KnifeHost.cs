@@ -19,20 +19,18 @@ namespace YS.Knife.Hosting
         public KnifeHost() : this(Array.Empty<string>())
         {
         }
-        public KnifeHost(IDictionary<string, object> args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
-            : this(args?.Select(p => $"/{p.Key}={p.Value}").ToArray(), configureDelegate)
+        public KnifeHost(IDictionary<string, object> args)
+            : this(args?.Select(p => $"/{p.Key}={p.Value}").ToArray())
         {
         }
-        public KnifeHost(string[] args, Action<HostBuilderContext, IServiceCollection> configureDelegate = null)
+        public KnifeHost(string[] args)
         {
             this.args = args;
-            this.configureDelegate = configureDelegate;
 #pragma warning disable CA2214 // 不要在构造函数中调用可重写的方法
             this.host = CreateHostBuilder().Build();
 #pragma warning restore CA2214 // 不要在构造函数中调用可重写的方法
         }
 
-        private readonly Action<HostBuilderContext, IServiceCollection> configureDelegate;
         private readonly string[] args;
         private readonly IHost host;
 
@@ -58,8 +56,8 @@ namespace YS.Knife.Hosting
         }
         protected virtual void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            configureDelegate?.Invoke(builder, serviceCollection);
             this.InjectServices(builder, serviceCollection);
+            serviceCollection.AddSingleton(typeof(KnifeHost), this);
         }
         protected virtual bool ShouldFilterType(Type type)
         {

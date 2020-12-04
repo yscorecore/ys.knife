@@ -15,7 +15,7 @@ namespace YS.Knife.Hosting
         public static void AddAllKnifeServices(this IServiceCollection services, IConfiguration configuration)
         {
             _ = configuration ?? throw new ArgumentNullException(nameof(configuration));
-            AddAllKnifeServices(services,configuration,null);
+            AddAllKnifeServices(services, configuration, null);
         }
         [SuppressMessage("Reliability", "IDE0067:丢失范围之前释放对象", Justification = "<挂起>")]
         [SuppressMessage("Reliability", "CA2000:丢失范围之前释放对象", Justification = "<挂起>")]
