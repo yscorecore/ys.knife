@@ -47,6 +47,7 @@ namespace YS.Knife.Hosting
         {
             return Host.CreateDefaultBuilder(args ?? Array.Empty<string>())
                 .UseAopServiceProviderFactory()
+                .ConfigureLogging(OnConfigureLogging)
                 .ConfigureAppConfiguration(OnConfigureAppConfiguration)
                 .ConfigureServices((builder, serviceCollection) =>
                 {
@@ -54,6 +55,7 @@ namespace YS.Knife.Hosting
                     this.OnConfigureCustomService(builder, serviceCollection);
                 });
         }
+
         protected virtual void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
             this.InjectServices(builder, serviceCollection);
@@ -79,6 +81,9 @@ namespace YS.Knife.Hosting
                 InjectAttribute inject = prop.GetCustomAttribute<InjectAttribute>();
                 serviceCollection.Add(new ServiceDescriptor(prop.PropertyType, (sp) => prop.GetValue(this), inject.Lifetime));
             }
+        }
+        protected virtual void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
+        {
         }
         protected virtual void OnConfigureAppConfiguration(HostBuilderContext hostBuilderContext, IConfigurationBuilder configurationBuilder)
         {
