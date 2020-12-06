@@ -12,6 +12,7 @@ namespace YS.Knife
         [Inject]
         private ITest test = Mock.Of<ITest>();
 
+        [Inject]
         private ITest2 Prop { get; set; } = Mock.Of<ITest2>();
 
         [TestMethod]
@@ -25,7 +26,7 @@ namespace YS.Knife
             Assert.IsNotNull(this.GetService<ITest2>());
         }
 
-        interface ITest { }
-        interface ITest2 { }
+        public interface ITest { }
+        public interface ITest2 { }
     }
 }

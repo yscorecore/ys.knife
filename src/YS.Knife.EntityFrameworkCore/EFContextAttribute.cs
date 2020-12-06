@@ -83,7 +83,7 @@ namespace Microsoft.EntityFrameworkCore
                 var method = typeof(EFContextAttribute)
                     .GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic)
                     ?.MakeGenericMethod(injectType, declareType);
-                method.Invoke(this, new object[] { services, connectionString });
+                method.Invoke(this, new object[] { services, connectionString, this.InterceptorTypes });
                 injectType = injectType.BaseType;
             }
             if (RegisteEntityStore)
