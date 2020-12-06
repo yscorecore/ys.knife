@@ -10,9 +10,9 @@ namespace YS.Knife.Mongo.UnitTest
     [TestClass]
     public class MongoContextTest : YS.Knife.Hosting.KnifeHost
     {
-        public MongoContextTest():base(new Dictionary<string, object>
-        { 
-            ["ConnectionStrings:cms"] =TestEnvironment.MongoConnectionString
+        public MongoContextTest() : base(new Dictionary<string, object>
+        {
+            ["ConnectionStrings:cms"] = TestEnvironment.MongoConnectionString
         })
         {
         }

@@ -20,7 +20,7 @@ namespace YS.Knife.Mongo.UnitTest
             DockerCompose.OutputLine = t.WriteLine;
             MongoPort = Utility.GetAvailableTcpPort(27017);
             MongoPassword = Utility.NewPassword();
-            int hostReportPort = (int)Utility.GetAvailableTcpPort(8901); 
+            var hostReportPort = Utility.GetAvailableTcpPort(8901);
             DockerCompose.Up(new Dictionary<string, object>
             {
                 ["MONGO_PORT"] = MongoPort,
@@ -34,6 +34,6 @@ namespace YS.Knife.Mongo.UnitTest
         {
             DockerCompose.Down();
         }
-       
+
     }
 }
