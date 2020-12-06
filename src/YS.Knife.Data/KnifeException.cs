@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace YS.Knife
 {
-
-
     [Serializable]
     public class KnifeException : ApplicationException
     {
