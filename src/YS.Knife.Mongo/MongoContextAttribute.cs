@@ -24,7 +24,7 @@ namespace YS.Knife.Mongo
         public string DataBaseName { get; }
 
         public bool RegisteEntityStore { get; set; } = true;
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             services.AddScoped(declareType, (sp) =>

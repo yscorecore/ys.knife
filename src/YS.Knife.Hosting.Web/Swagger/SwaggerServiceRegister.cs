@@ -11,7 +11,7 @@ namespace YS.Knife.Hosting.Web.Swagger
 {
     public class SwaggerServiceRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             var swaggerOptions = context?.Configuration.GetConfigOrNew<SwaggerOptions>();
             if (swaggerOptions.Mode == Mode.None) return;
@@ -30,7 +30,7 @@ namespace YS.Knife.Hosting.Web.Swagger
                 {
                     var basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 
-                    foreach (var file in Directory.GetFiles(basePath, api.XmlComentsFiles))
+                    foreach (var file in Directory.GetFiles(basePath, api.XmlCommentsFiles))
                     {
                         c.IncludeXmlComments(file);
                     };

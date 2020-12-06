@@ -25,6 +25,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
         public void ShouldEntityStoreDoCRUD()
         {
             var context = this.GetService<BloggingContext>();
+            context.Database.EnsureDeleted();
             context.Database.EnsureCreated();
             var service = this.GetService<IBlogingServices>();
             service.AddTwoBlog();

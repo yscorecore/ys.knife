@@ -21,12 +21,12 @@ namespace YS.Knife.Rest.Client
             if (obj is IDictionary<string, object> objDic)
             {
                 return objDic.Where(kv => !String.IsNullOrEmpty(kv.Key))
-                    .SelectMany(p => GetMutilValues(p.Key, p.Value));
+                    .SelectMany(p => GetMultiValues(p.Key, p.Value));
             }
 
             return obj.GetType().GetProperties()
                  .Where(p => p.CanRead)
-                 .SelectMany(p => GetMutilValues(p.Name, p.GetValue(obj)));
+                 .SelectMany(p => GetMultiValues(p.Name, p.GetValue(obj)));
         }
         public static IDictionary<string, string> ObjectToStringDictionary(object obj, bool ignoreCase = true)
         {
@@ -46,12 +46,12 @@ namespace YS.Knife.Rest.Client
                 return new Dictionary<string, string>(origins, comparer);
             }
 
-            var kvalues = obj.GetType().GetProperties()
+            var keyValues = obj.GetType().GetProperties()
                .Where(p => p.CanRead)
                .ToDictionary(p => p.Name, p => ValueToString(p.GetValue(obj)));
-            return new Dictionary<string, string>(kvalues, comparer);
+            return new Dictionary<string, string>(keyValues, comparer);
         }
-        private static IEnumerable<KeyValuePair<string, string>> GetMutilValues(string name, object value)
+        private static IEnumerable<KeyValuePair<string, string>> GetMultiValues(string name, object value)
         {
             if ((value is IEnumerable valueList) && !(value is string))
             {

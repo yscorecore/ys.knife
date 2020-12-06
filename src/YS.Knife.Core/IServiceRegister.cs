@@ -4,6 +4,6 @@ namespace YS.Knife
 {
     public interface IServiceRegister
     {
-        void RegisterServices(IServiceCollection services, IRegisteContext context);
+        void RegisterServices(IServiceCollection services, IRegisterContext context);
     }
 }

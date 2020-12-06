@@ -6,8 +6,6 @@ using System.Linq;
 
 namespace YS.Knife
 {
-
-
     [Serializable]
     public class KnifeException : ApplicationException
     {
@@ -95,10 +93,10 @@ namespace YS.Knife
                 ).ToDictionary(kv => kv.Key, kv => kv.Value);
             }
 
-            var kvalues = objType.GetProperties()
+            var keyValues = objType.GetProperties()
                .Where(p => p.CanRead)
                .ToDictionary(p => p.Name, p => p.GetValue(obj));
-            return new Dictionary<string, object>(kvalues);
+            return new Dictionary<string, object>(keyValues);
         }
 
 

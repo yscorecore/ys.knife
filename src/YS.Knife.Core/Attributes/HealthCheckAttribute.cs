@@ -16,7 +16,7 @@ namespace YS.Knife
         public string[] Tags { get; set; }
         public TimeSpan? TimeOut { get; set; }
 
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             services.AddHealthChecks();
             string healthCheckName = this.Name == null ? declareType?.FullName : this.Name;

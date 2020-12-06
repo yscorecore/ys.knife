@@ -3,13 +3,13 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.TestData
 {
-    public class MutilAttribute : KnifeAttribute
+    public class MultiAttribute : KnifeAttribute
     {
-        public MutilAttribute() : base(default)
+        public MultiAttribute() : base(default)
         {
 
         }
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             services.AddSingleton(declareType);
         }

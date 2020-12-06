@@ -8,7 +8,7 @@ namespace YS.Knife
     public static class ServiceCollectionsExtensions
     {
 
-        public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IRegisteContext context)
+        public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IRegisterContext context)
         {
             foreach (var loaderType in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IServiceRegister>())
             {
@@ -19,7 +19,7 @@ namespace YS.Knife
         }
         public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IConfiguration configuration, ILogger logger = null, Func<Type, bool> typeFilter = null)
         {
-            return services.RegisterKnifeServices(new RegisteContext
+            return services.RegisterKnifeServices(new RegisterContext
             {
                 Configuration = configuration,
                 Logger = logger,
@@ -27,7 +27,7 @@ namespace YS.Knife
             });
         }
 
-        class RegisteContext : IRegisteContext
+        class RegisterContext : IRegisterContext
         {
             public IServiceCollection Services { get; set; }
             public IConfiguration Configuration { get; set; }

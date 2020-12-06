@@ -44,7 +44,7 @@ namespace YS.Knife.Hosting.Web.Swagger
         /// <summary>
         /// xml文档的搜索通配符
         /// </summary>
-        public string XmlComentsFiles { get; set; } = "*.xml";
+        public string XmlCommentsFiles { get; set; } = "*.xml";
 
         /// <summary>
         /// 表示swagger文档的请求地址模板

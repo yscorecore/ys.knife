@@ -15,12 +15,12 @@ namespace YS.Knife
         }
         public string ConfigKey { get; set; }
 
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
-            var method = typeof(OptionsAttribute).GetMethod(nameof(RegisteOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+            var method = typeof(OptionsAttribute).GetMethod(nameof(RegisterOptions), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services, context?.Configuration });
         }
-        private void RegisteOptions<T>(IServiceCollection services, IConfiguration configuration)
+        private void RegisterOptions<T>(IServiceCollection services, IConfiguration configuration)
             where T : class, new()
         {
             var optionsConfiguration = configuration.GetOptionsConfiguration<T>(ConfigKey);

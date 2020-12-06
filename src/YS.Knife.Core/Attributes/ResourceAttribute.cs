@@ -7,7 +7,7 @@ namespace YS.Knife
         public ResourceAttribute() : base(null)
         {
         }
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             services.AddSingleton(declareType);
         }

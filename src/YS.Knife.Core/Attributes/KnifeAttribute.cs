@@ -11,7 +11,7 @@ namespace YS.Knife
             this.ValidateFromType = validateFromType;
         }
         public Type ValidateFromType { get; private set; }
-        public abstract void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType);
+        public abstract void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType);
     }
 
 

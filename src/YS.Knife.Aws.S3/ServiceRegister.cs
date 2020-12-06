@@ -4,7 +4,7 @@ namespace YS.Knife.Aws.S3
 {
     public class ServiceRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             services.TryAddAWSService<IAmazonS3>();
         }

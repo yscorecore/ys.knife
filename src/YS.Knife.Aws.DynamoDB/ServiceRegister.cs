@@ -5,7 +5,7 @@ namespace YS.Knife.Aws.DynamoDB
 {
     public class ServiceRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             services.TryAddAWSService<IAmazonDynamoDB>();
         }

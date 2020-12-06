@@ -7,15 +7,15 @@ using YS.Knife.TestData;
 namespace YS.Knife
 {
     [TestClass]
-    public class MutilServiceTest
+    public class MultiServiceTest
     {
         [TestMethod]
-        public void ShouldGetMutilInstanceWhenMutilDefineKnifeAttribute()
+        public void ShouldGetMultiInstanceWhenMultiDefineKnifeAttribute()
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
             var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
-            var instances = sp.GetServices<MutilSerivce>();
+            var instances = sp.GetServices<MultiService>();
             Assert.AreEqual(4, instances.Count());
         }
 
@@ -30,7 +30,7 @@ namespace YS.Knife
         }
 
         [TestMethod]
-        public void ShouldGetMutilInstanceWhenMutilDefineKnifeAttributeInNestedType()
+        public void ShouldGetMultiInstanceWhenMultiDefineKnifeAttributeInNestedType()
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();

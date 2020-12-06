@@ -8,7 +8,7 @@ namespace YS.Knife.Registers
 {
     public class DictionaryRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             if (context.HasFiltered(typeof(IDictionary<,>))) return;
             services.AddTransient(typeof(IDictionary<,>), typeof(KnifeInjectionDictionary<,>));
