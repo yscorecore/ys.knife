@@ -6,12 +6,12 @@ namespace YS.Knife.TestData
     [Multi]
     [Multi2]
     [Multi2]
-    public class MultiSerivce
+    public class MultiService
     {
 
     }
 
-    public class SubClass : MultiSerivce
+    public class SubClass : MultiService
     {
     }
     internal class OutterClass

@@ -15,7 +15,7 @@ namespace YS.Knife
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
             var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
-            var instances = sp.GetServices<MultiSerivce>();
+            var instances = sp.GetServices<MultiService>();
             Assert.AreEqual(4, instances.Count());
         }
 
