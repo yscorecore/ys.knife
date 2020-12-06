@@ -114,7 +114,7 @@ namespace YS.Knife.Entity.Model
     }
     public interface IName
     {
-        [System.ComponentModel.DataAnnotations.StringLength(32)]
+        
         string Name { get; set; }
     }
 

@@ -34,9 +34,9 @@ namespace YS.Knife.Hosting
             AppConfiguration.ConfigureDefaultWebApp(app, env);
         }
 
-        protected override IHostBuilder CreateHostBuilder()
+        protected override IHostBuilder CreateHostBuilder(string[] args)
         {
-            return base.CreateHostBuilder()
+            return base.CreateHostBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<CommonStartup>();
@@ -53,7 +53,7 @@ namespace YS.Knife.Hosting
                 webHost.ConfigureWebApp(app, env);
             }
 
-            public void ConfigureServices(IServiceCollection services)
+            public void ConfigureServices(IServiceCollection _)
             {
                 // services.Configure<ApiBehaviorOptions>(options =>
                 // {

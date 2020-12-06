@@ -25,13 +25,11 @@ namespace YS.Knife.Hosting
         }
         public KnifeHost(string[] args)
         {
-            this.args = args;
-#pragma warning disable CA2214 // 不要在构造函数中调用可重写的方法
-            this.host = CreateHostBuilder().Build();
-#pragma warning restore CA2214 // 不要在构造函数中调用可重写的方法
+#pragma warning disable CA2214 
+            this.host = CreateHostBuilder(args??Array.Empty<string>()).Build();
+#pragma warning restore CA2214
         }
 
-        private readonly string[] args;
         private readonly IHost host;
 
         public object GetService(Type serviceType)
@@ -43,9 +41,9 @@ namespace YS.Knife.Hosting
             return ServiceProviderServiceExtensions.GetService<T>(this);
         }
 
-        protected virtual IHostBuilder CreateHostBuilder()
+        protected virtual IHostBuilder CreateHostBuilder(string[] args)
         {
-            return Host.CreateDefaultBuilder(args ?? Array.Empty<string>())
+            return Host.CreateDefaultBuilder(args)
                 .UseAopServiceProviderFactory()
                 .ConfigureLogging(OnConfigureLogging)
                 .ConfigureAppConfiguration(OnConfigureAppConfiguration)

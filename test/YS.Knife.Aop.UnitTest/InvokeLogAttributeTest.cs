@@ -12,13 +12,9 @@ namespace YS.Knife.Aop.UnitTest
     public class InvokeLogAttributeTest : KnifeHost
     {
         private TestLoggerStore loggerStore = new TestLoggerStore();
-        protected override IHostBuilder CreateHostBuilder()
+        protected override void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
         {
-            return base.CreateHostBuilder().ConfigureLogging((lb) =>
-            {
-                lb.ClearProviders();
-                lb.AddProvider(new TestLoggerProvider(loggerStore));
-            });
+            loggingBuilder.ClearProviders().AddProvider(new TestLoggerProvider(loggerStore));
         }
         [TestMethod]
         public void ShouldHasStartLoggerWhenInvokeMethod()
