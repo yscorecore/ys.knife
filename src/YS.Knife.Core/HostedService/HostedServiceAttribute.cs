@@ -13,7 +13,7 @@ namespace YS.Knife
         {
 
         }
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             var method = typeof(HostedServiceAttribute).GetMethod(nameof(AddHostedService), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services });

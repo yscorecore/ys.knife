@@ -2,24 +2,24 @@
 
 namespace YS.Knife.TestData
 {
-    [Mutil]
-    [Mutil]
-    [Mutil2]
-    [Mutil2]
-    public class MutilSerivce
+    [Multi]
+    [Multi]
+    [Multi2]
+    [Multi2]
+    public class MultiSerivce
     {
 
     }
 
-    public class SubClass : MutilSerivce
+    public class SubClass : MultiSerivce
     {
     }
     internal class OutterClass
     {
-        [Mutil]
-        [Mutil]
-        [Mutil2]
-        [Mutil2]
+        [Multi]
+        [Multi]
+        [Multi2]
+        [Multi2]
         internal class InnerClass
         {
 

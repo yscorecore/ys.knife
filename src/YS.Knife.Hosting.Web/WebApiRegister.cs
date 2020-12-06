@@ -12,14 +12,14 @@ namespace YS.Knife.Hosting.Web
 {
     public class WebApiRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             RegisterController(services, context);
             RegisterHttpContext(services);
         }
 
-        private void RegisterController(IServiceCollection services, IRegisteContext context)
+        private void RegisterController(IServiceCollection services, IRegisterContext context)
         {
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
             IMvcBuilder mvcBuilder = services.AddControllers((mvc) =>

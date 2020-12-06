@@ -28,8 +28,8 @@ namespace YS.Knife.EntityFrameworkCore
             else if (services.Count == 1)
             {
                 await next?.Invoke(context);
-                var dbcontext = services.First().DbContext;
-                if (dbcontext.ChangeTracker.HasChanges())
+                var dbContext = services.First().DbContext;
+                if (dbContext.ChangeTracker.HasChanges())
                 {
                     await services.First().DbContext.SaveChangesAsync();
                 }
@@ -44,22 +44,22 @@ namespace YS.Knife.EntityFrameworkCore
                 if (allChangedContext.Count > 1)
                 {
                     var tran = await allChangedContext.First().Database.BeginTransactionAsync();
-                    var dbtran = tran.GetDbTransaction();
+                    var dbTran = tran.GetDbTransaction();
                     for (int i = 1; i < allChangedContext.Count; i++)
                     {
-                        allChangedContext[i].Database.UseTransaction(dbtran);
+                        allChangedContext[i].Database.UseTransaction(dbTran);
                     }
                     try
                     {
-                        foreach (var efcontext in allChangedContext)
+                        foreach (var efContext in allChangedContext)
                         {
-                            await efcontext.SaveChangesAsync();
+                            await efContext.SaveChangesAsync();
                         }
-                        dbtran.Commit();
+                        dbTran.Commit();
                     }
                     catch (Exception)
                     {
-                        dbtran.Rollback();
+                        dbTran.Rollback();
                         throw;
                     }
                 }

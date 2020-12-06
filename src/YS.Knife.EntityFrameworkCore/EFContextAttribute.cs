@@ -29,9 +29,9 @@ namespace Microsoft.EntityFrameworkCore
 
         public Type[] InterceptorTypes { get; }
 
-        public bool RegisteEntityStore { get; set; } = true;
+        public bool RegisterEntityStore { get; set; } = true;
 
-        public bool RegisteAutoSubmitContext { get; set; } = true;
+        public bool RegisterAutoSubmitContext { get; set; } = true;
 
 
         private void CheckInterceptorTypes(Type[] interceptorTypes)
@@ -63,7 +63,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public abstract void BuildOptions(DbContextOptionsBuilder builder, string connectionString);
 
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             _ = context ?? throw new ArgumentNullException(nameof(context));
@@ -86,16 +86,16 @@ namespace Microsoft.EntityFrameworkCore
                 method.Invoke(this, new object[] { services, connectionString, this.InterceptorTypes });
                 injectType = injectType.BaseType;
             }
-            if (RegisteEntityStore)
+            if (RegisterEntityStore)
             {
                 AddEntityStoresInternal(services, declareType);
             }
-            if (RegisteAutoSubmitContext)
+            if (RegisterAutoSubmitContext)
             {
                 services.AddScoped<ICommitEFChangesContext>(sp =>
                 {
-                    var dbcontext = sp.GetService(declareType) as DbContext;
-                    return new AutoSubmitContext(dbcontext);
+                    var dbContext = sp.GetService(declareType) as DbContext;
+                    return new AutoSubmitContext(dbContext);
                 });
             }
         }

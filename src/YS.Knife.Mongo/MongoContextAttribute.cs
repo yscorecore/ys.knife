@@ -20,7 +20,7 @@ namespace YS.Knife.Mongo
 
         public string ConnectionStringKey { get; set; }
 
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
 
             string connectionStringKey = string.IsNullOrEmpty(this.ConnectionStringKey)

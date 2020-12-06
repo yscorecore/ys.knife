@@ -12,7 +12,7 @@ namespace YS.Knife
         {
 
         }
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             var optionsType = FindOptionsType(declareType);

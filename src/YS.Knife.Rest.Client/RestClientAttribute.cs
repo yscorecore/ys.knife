@@ -47,7 +47,7 @@ namespace YS.Knife.Rest.Client
                 }
             }
         }
-        public override void RegisterService(IServiceCollection services, IRegisteContext context, Type declareType)
+        public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
 
@@ -56,10 +56,10 @@ namespace YS.Knife.Rest.Client
             {
                 services.AddTransient(injectType, (sp) => sp.GetService(declareType));
             }
-            var method = typeof(RestClientAttribute).GetMethod(nameof(RegisteHttpClientAndRestInfo), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+            var method = typeof(RestClientAttribute).GetMethod(nameof(RegisterHttpClientAndRestInfo), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services, this.MessageHandlerTypes });
         }
-        private void RegisteHttpClientAndRestInfo<T>(IServiceCollection services, Type[] handlers)
+        private void RegisterHttpClientAndRestInfo<T>(IServiceCollection services, Type[] handlers)
            where T : class
         {
             var httpClientBuilder = services.AddHttpClient<T>();

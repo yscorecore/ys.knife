@@ -6,7 +6,7 @@ namespace YS.Knife.Aop
 {
     public class ServiceRegister : IServiceRegister
     {
-        public void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             services.ConfigureDynamicProxy(config =>
             {

@@ -5,7 +5,7 @@ namespace YS.Knife.Registers
 {
     public class AttributeServiceRegister : IServiceRegister
     {
-        public virtual void RegisterServices(IServiceCollection services, IRegisteContext context)
+        public virtual void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
             foreach (var type in AppDomain.CurrentDomain.FindInstanceTypesByAttribute<KnifeAttribute>())
             {

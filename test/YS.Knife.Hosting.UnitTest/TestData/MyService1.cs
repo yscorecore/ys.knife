@@ -4,7 +4,7 @@ using System.Text;
 
 namespace YS.Knife.TestData
 {
-    [Mutil]
+    [Multi]
     public class MyService1
     {
     }
