@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace YS.Knife.Test
 {
@@ -11,18 +12,25 @@ namespace YS.Knife.Test
     {
         public static Action<string> OutputLine { get; set; } = Console.WriteLine;
         public static int MaxTimeOutSeconds { get; set; } = 60 * 30;
-        public static void Up(IDictionary<string, object> envs = null, int reportStatusPort = 8901, int maxWaitStatusSeconds = 120)
+
+        public static void Up(IDictionary<string, object> envs = null)
         {
             envs = envs ?? new Dictionary<string, object>();
-            if (reportStatusPort > 0)
-            {
-                envs.Add("REPORT_TO_HOST_PORT", reportStatusPort);
-            }
             Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
-            if (reportStatusPort > 0)
-            {
-                WaitContainerReportStatus(reportStatusPort, maxWaitStatusSeconds);
-            }
+        }
+
+        public static void Up(IDictionary<string, object> envs , uint reportStatusPort , int maxWaitStatusSeconds = 120)
+        {
+            envs = envs ?? new Dictionary<string, object>();
+       
+                
+            
+           
+     
+                RunDockerComposeAndWaitContainerReportStatus(envs,reportStatusPort,
+                 maxWaitStatusSeconds);
+            
+            
         }
         public static void Down()
         {
@@ -93,7 +101,7 @@ namespace YS.Knife.Test
 
         }
 
-        private static void WaitContainerReportStatus(int port = 8901, int maxSeconds = 120)
+        private static void RunDockerComposeAndWaitContainerReportStatus(IDictionary<string, object> envs, uint port = 8901, int maxSeconds = 120)
         {
             using (var httpListener = new HttpListener())
             {
@@ -101,6 +109,12 @@ namespace YS.Knife.Test
                 httpListener.Start();
                 IAsyncResult result = httpListener.BeginGetContext(new AsyncCallback(ListenerCallback), httpListener);
                 Console.WriteLine("Waiting for request to be processed asyncronously.");
+                Task.Run(() =>
+                {
+                    envs.Add("REPORT_TO_HOST_PORT", port);
+                    Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
+                });
+                
                 result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(maxSeconds));
                 Console.WriteLine("Request processed asyncronously.");
             }

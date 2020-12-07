@@ -15,7 +15,8 @@ namespace YS.Knife.Rest.Client.UnitTest
         {
             DockerCompose.OutputLine = t.WriteLine;
             var availablePort = Utility.GetAvailableTcpPort(8080);
-            StartContainer(availablePort);
+            var hostReportPort = Utility.GetAvailableTcpPort(8901);
+            StartContainer(availablePort, hostReportPort);
 
         }
 
@@ -24,12 +25,12 @@ namespace YS.Knife.Rest.Client.UnitTest
         {
             DockerCompose.Down();
         }
-        private static void StartContainer(uint port)
+        private static void StartContainer(uint port, uint reportPort)
         {
             DockerCompose.Up(new Dictionary<string, object>
             {
                 ["SERVER_PORT"] = port
-            });
+            }, reportPort);
             TestServerUrl = $"http://127.0.0.1:{port}";
         }
 

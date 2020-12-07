@@ -26,7 +26,7 @@ namespace YS.Knife.Hosting
         public KnifeHost(string[] args)
         {
 #pragma warning disable CA2214 
-            this.host = CreateHostBuilder(args??Array.Empty<string>()).Build();
+            this.host = CreateHostBuilder(args ?? Array.Empty<string>()).Build();
 #pragma warning restore CA2214
         }
 
