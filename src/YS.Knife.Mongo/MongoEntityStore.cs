@@ -12,6 +12,7 @@ namespace YS.Knife.Mongo
         where TEntity : class
     {
         static readonly FilterDefinitionBuilder<TEntity> Filter = Builders<TEntity>.Filter;
+        static readonly UpdateDefinitionBuilder<TEntity> UpdateBuilder = Builders<TEntity>.Update;
         public MongoEntityStore(TContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
@@ -54,12 +55,23 @@ namespace YS.Knife.Mongo
 
         public void Update(TEntity entity, params string[] fields)
         {
-            throw new NotImplementedException();
+           
+            var idMap = GetIdValueMap(entity);
+            var updateFields = (fields ?? Array.Empty<string>()).Except(idMap.Select(p => p.Key)).ToList();
+            if (updateFields.Count > 0)
+            {
+                var filter = Filter.And(idMap.Select(kv => Filter.Eq(kv.Key, kv.Value)));
+                var updates = updateFields
+                    .Select(p => UpdateBuilder.Set(p, typeof(TEntity).GetProperty(p).GetValue(entity))).ToList();
+                var allUpdates = UpdateBuilder.Combine(updates);
+                Store.UpdateOne(filter, allUpdates, new UpdateOptions());
+            }
         }
 
         private IEnumerable<KeyValuePair<string, object>> GetIdValueMap(TEntity entity)
         {
             return typeof(TEntity).GetEntityKeyProps().Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(entity)));
         }
+        
     }
 }

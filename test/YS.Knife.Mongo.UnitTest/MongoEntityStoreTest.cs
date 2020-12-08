@@ -41,6 +41,27 @@ namespace YS.Knife.Mongo.UnitTest
             Assert.IsNotNull(topicInDb);
             Assert.AreEqual(title, topicInDb.Title);
         }
+        [TestMethod]
+        public void ShouldUpdateEntitySuccess()
+        {
+            var store = this.GetService<IEntityStore<Topic>>();
+            var entity = new Topic
+            {
+                Title = "title",
+                Content = "content",
+                CreateTime = DateTimeOffset.Now,
+                Summary = "summary"
+            };
+            store.Add(entity);
+            Assert.IsNotNull(entity.Id);
+            var newEntity = new Topic {Id = entity.Id, Title = "new title", Content = "new content"};
+            store.Update(newEntity,nameof(Topic.Title),nameof(Topic.Content));
+            var topicInDb = store.FindByKey(entity.Id);
+            Assert.IsNotNull(topicInDb);
+            Assert.AreEqual("new title", topicInDb.Title);
+            Assert.AreEqual("new content", topicInDb.Content);
+            Assert.AreEqual("summary", topicInDb.Summary);
+        }
         
         [TestMethod]
         public void ShouldDeleteEntitySuccess()
