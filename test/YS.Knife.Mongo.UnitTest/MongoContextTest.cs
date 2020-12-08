@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using YS.Knife.Data;
+using YS.Knife.Mongo.UnitTest.Contents;
+
 namespace YS.Knife.Mongo.UnitTest
 {
     [TestClass]
@@ -41,7 +43,7 @@ namespace YS.Knife.Mongo.UnitTest
             });
             Assert.IsNotNull(context);
         }
-
+       
         [TestMethod]
         public void ShouldQueryListTopicItemSuccess()
         {

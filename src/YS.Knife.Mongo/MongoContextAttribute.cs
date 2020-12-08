@@ -23,7 +23,7 @@ namespace YS.Knife.Mongo
         }
         public string DataBaseName { get; }
 
-        public bool RegisteEntityStore { get; set; } = true;
+        public bool RegisterEntityStore { get; set; } = true;
         public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
@@ -39,7 +39,7 @@ namespace YS.Knife.Mongo
                  var database = client.GetDatabase(DataBaseName);
                  return ctor.Invoke(new object[] { database });
              });
-            if (RegisteEntityStore)
+            if (RegisterEntityStore)
             {
                 AddEntityStoresInternal(services, declareType);
             }

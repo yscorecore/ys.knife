@@ -11,7 +11,7 @@ namespace YS.Knife.Mongo
         where TContext : MongoContext
         where TEntity : class
     {
-        static FilterDefinitionBuilder<TEntity> Filter = Builders<TEntity>.Filter;
+        static readonly FilterDefinitionBuilder<TEntity> Filter = Builders<TEntity>.Filter;
         public MongoEntityStore(TContext context)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
