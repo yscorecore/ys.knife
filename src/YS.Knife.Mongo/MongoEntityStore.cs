@@ -11,7 +11,7 @@ namespace YS.Knife.Mongo
         where TContext : MongoContext
         where TEntity : class
     {
-        static readonly FilterDefinitionBuilder<TEntity> Filter = Builders<TEntity>.Filter;
+        static readonly FilterDefinitionBuilder<TEntity> FilterBuilder = Builders<TEntity>.Filter;
         static readonly UpdateDefinitionBuilder<TEntity> UpdateBuilder = Builders<TEntity>.Update;
         public MongoEntityStore(TContext context)
         {
@@ -32,14 +32,14 @@ namespace YS.Knife.Mongo
         public void Delete(TEntity entity)
         {
             var idMap = GetIdValueMap(entity);
-            var filter = Filter.And(idMap.Select(kv => Filter.Eq(kv.Key, kv.Value)));
+            var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
             Store.DeleteOne(filter);
         }
 
         public TEntity FindByKey(params object[] keyValues)
         {
             var idMap = typeof(TEntity).GetEntityKeyProps().Zip(keyValues, (p, v) => new KeyValuePair<string, object>(p.Name, v));
-            var filter = Filter.And(idMap.Select(kv => Filter.Eq(kv.Key, kv.Value)));
+            var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
             return Store.Find(filter).FirstOrDefault();
         }
 
@@ -60,7 +60,7 @@ namespace YS.Knife.Mongo
             var updateFields = (fields ?? Array.Empty<string>()).Except(idMap.Select(p => p.Key)).ToList();
             if (updateFields.Count > 0)
             {
-                var filter = Filter.And(idMap.Select(kv => Filter.Eq(kv.Key, kv.Value)));
+                var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
                 var updates = updateFields
                     .Select(p => UpdateBuilder.Set(p, typeof(TEntity).GetProperty(p).GetValue(entity))).ToList();
                 var allUpdates = UpdateBuilder.Combine(updates);
