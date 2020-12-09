@@ -7,11 +7,11 @@ using YS.Knife.Test;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    [TestClass]
+    //[TestClass]
     public class TestEnvironment
     {
-        public static string MongoPassword { get; private set; }
-        public static uint MongoPort { get; private set; }
+        public static string MongoPassword { get; private set; } = "example";
+        public static uint MongoPort { get; private set; } = 27017;
 
         public static string MongoConnectionString { get => $"mongodb://root:{WebUtility.UrlEncode(MongoPassword)}@127.0.0.1:{MongoPort}"; }
         [AssemblyInitialize()]

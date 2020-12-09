@@ -26,26 +26,53 @@ namespace YS.Knife.Mongo
 
         public void Add(TEntity entity)
         {
-            Store.InsertOne(entity);
+            if (Context.Transaction != null)
+            {
+                Store.InsertOne(Context.Transaction, entity);
+            }
+            else
+            {
+                Store.InsertOne(entity);
+            }
+
         }
 
         public void Delete(TEntity entity)
         {
             var idMap = GetIdValueMap(entity);
             var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
-            Store.DeleteOne(filter);
+
+            if (Context.Transaction != null)
+            {
+                Store.DeleteOne(Context.Transaction, filter);
+            }
+            else
+            {
+                Store.DeleteOne(filter);
+            }
         }
 
         public TEntity FindByKey(params object[] keyValues)
         {
             var idMap = typeof(TEntity).GetEntityKeyProps().Zip(keyValues, (p, v) => new KeyValuePair<string, object>(p.Name, v));
             var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
-            return Store.Find(filter).FirstOrDefault();
+            if (Context.Transaction != null)
+            {
+                return Store.Find(Context.Transaction, filter).FirstOrDefault();
+            }
+            else
+            {
+                return Store.Find(filter).FirstOrDefault();
+            }
+
         }
 
         public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> conditions)
         {
-            return conditions != null ? Store.AsQueryable().Where(conditions) : Store.AsQueryable();
+            var querable = Context.Transaction != null ? Store.AsQueryable(Context.Transaction) : Store.AsQueryable();
+            return conditions != null ? querable.Where(conditions) : querable;
+
+
         }
 
         public void Update(TEntity entity)
@@ -55,7 +82,7 @@ namespace YS.Knife.Mongo
 
         public void Update(TEntity entity, params string[] fields)
         {
-           
+
             var idMap = GetIdValueMap(entity);
             var updateFields = (fields ?? Array.Empty<string>()).Except(idMap.Select(p => p.Key)).ToList();
             if (updateFields.Count > 0)
@@ -64,7 +91,14 @@ namespace YS.Knife.Mongo
                 var updates = updateFields
                     .Select(p => UpdateBuilder.Set(p, typeof(TEntity).GetProperty(p).GetValue(entity))).ToList();
                 var allUpdates = UpdateBuilder.Combine(updates);
-                Store.UpdateOne(filter, allUpdates, new UpdateOptions());
+                if (Context.Transaction != null)
+                {
+                    Store.UpdateOne(Context.Transaction, filter, allUpdates, new UpdateOptions());
+                }
+                else
+                {
+                    Store.UpdateOne(filter, allUpdates, new UpdateOptions());
+                }
             }
         }
 
@@ -72,6 +106,6 @@ namespace YS.Knife.Mongo
         {
             return typeof(TEntity).GetEntityKeyProps().Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(entity)));
         }
-        
+
     }
 }

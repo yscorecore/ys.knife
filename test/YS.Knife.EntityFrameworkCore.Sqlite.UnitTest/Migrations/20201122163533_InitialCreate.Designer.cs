@@ -7,7 +7,7 @@ using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Migrations
 {
-    [DbContext(typeof(BloggingContext))]
+    [DbContext(typeof(MongoContext))]
     [Migration("20201122163533_InitialCreate")]
     partial class InitialCreate
     {

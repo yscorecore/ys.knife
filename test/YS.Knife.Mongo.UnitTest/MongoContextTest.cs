@@ -5,12 +5,13 @@ using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using YS.Knife.Data;
+using YS.Knife.Hosting;
 using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
 {
     [TestClass]
-    public class MongoContextTest : YS.Knife.Hosting.KnifeHost
+    public class MongoContextTest : KnifeHost
     {
         public MongoContextTest() : base(new Dictionary<string, object>
         {

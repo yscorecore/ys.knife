@@ -22,9 +22,9 @@ namespace YS.Knife.Mongo
         {
             _ = entityType ?? throw new ArgumentNullException(nameof(entityType));
             var attr = GetCustomAttribute(entityType, typeof(MongoCollectionNameAttribute)) as MongoCollectionNameAttribute;
-#pragma warning disable CA1308 // 将字符串规范化为大写
+#pragma warning disable CA1308 
             return attr != null ? attr.CollectionName : entityType.Name.ToLowerInvariant();
-#pragma warning restore CA1308 // 将字符串规范化为大写
+#pragma warning restore CA1308
         }
     }
 }

@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Text.RegularExpressions;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
-using YS.Knife.Data;
 namespace YS.Knife.Mongo
 {
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
@@ -39,11 +35,12 @@ namespace YS.Knife.Mongo
                  var database = client.GetDatabase(DataBaseName);
                  return ctor.Invoke(new object[] { database });
              });
+            // add mongo context
+            services.AddScoped(sp => sp.GetService(declareType) as MongoContext);
             if (RegisterEntityStore)
             {
                 AddEntityStoresInternal(services, declareType);
             }
-
         }
 
 

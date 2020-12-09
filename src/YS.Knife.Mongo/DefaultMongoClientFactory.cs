@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
-using YS.Knife.Data;
 
 namespace YS.Knife.Mongo
 {
@@ -26,7 +23,9 @@ namespace YS.Knife.Mongo
                  {
                      throw new ApplicationException($"Can not find connection string by name \"{nm}\".");
                  }
-                 return new MongoClient(connectionString);
+                 MongoUrlBuilder builder = new MongoUrlBuilder(connectionString);
+                 builder.RetryWrites = false;
+                 return new MongoClient(builder.ToMongoUrl());
              });
         }
     }

@@ -19,7 +19,7 @@ namespace YS.Knife.Mongo
         public IMongoClient Client { get; }
         public IMongoDatabase Database { get; }
 
-        public IClientSessionHandle Transaction { get; }
+        public IClientSessionHandle Transaction { get; internal set; }
         private LocalCache<Type, object> collectionCache = new LocalCache<Type, object>();
 
         public IMongoCollection<T> GetCollection<T>()
@@ -27,7 +27,7 @@ namespace YS.Knife.Mongo
             return collectionCache.Get(typeof(T), (type) =>
              {
                  string collectionName = MongoCollectionNameAttribute.GetCollectionName(type);
-                 return Database.GetCollection<T>(collectionName);
+                 return Database.GetCollection<T>(collectionName).WithWriteConcern(WriteConcern.WMajority);
              }) as IMongoCollection<T>;
         }
 
