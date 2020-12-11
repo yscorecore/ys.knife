@@ -1,24 +1,47 @@
-﻿version: '3.3'
-
+﻿version: "3.3"
 services:
-
-  mongo:
+  mongo-1:
     image: mongo
+    hostname: mongo-1
+    restart: always
     ports:
-      - ${MONGO_PORT:-27017}:27017
+      - 27011:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-example}
-  wait-compose-ready:
-    image: ysknife/wait-compose-ready
+      MONGO_INITDB_ROOT_PASSWORD: 123
+    command:
+      - --replSet
+      - rs
+  mongo-2:
+    image: mongo
+    hostname: mongo-2
+    ports:
+      - 27012:27017
+    restart: always
+    command:
+      - --replSet
+      - rs
+  mongo-3:
+    image: mongo
+    hostname: mongo-3
+    restart: always
+    ports:
+      - 27013:27017
+    command:
+      - --replSet
+      - rs
+  mongo-init:
+    build:
+      context: .
+    depends_on:
+      - mongo-1
+      - mongo-2
+      - mongo-3
     environment:
-      REPORT_TO_HOST_PORT: ${REPORT_TO_HOST_PORT:-8901}
-      WAIT_HOSTS: mongo:27017
-#  mongo-express:
-#    image: mongo-express
-#    restart: always
-#    ports:
-#      - ${MONGO_EXPRESS_PORT-27017}:8081
-#    environment:
-#      ME_CONFIG_MONGODB_ADMINUSERNAME: root
-#      ME_CONFIG_MONGODB_ADMINPASSWORD: example
+      WAIT_HOSTS: mongo-1:27017, mongo-2:27017, mongo-3:27017
+    command:
+      - /bin/bash 
+      - -c 
+      - |
+        /wait 
+        mongo mongodb://root:123@mongo-1/admin --eval 'rs.initiate({ _id: "rs", members: [{_id:1,host:"mongo-1"},{_id:2,host:"mongo-2"},{_id:3,host:"mongo-3"}]})'
