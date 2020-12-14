@@ -71,7 +71,7 @@ namespace YS.Knife.Hosting
         }
         private void InjectInternalServices(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic| BindingFlags.Static;
             var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectAttribute)));
             foreach (var field in fields)
             {
@@ -89,7 +89,7 @@ namespace YS.Knife.Hosting
         private void InjectInternalConfigurations(HostBuilderContext _, IConfigurationBuilder configurationBuilder)
         {
             Dictionary<string, string> configurationDatas = new Dictionary<string, string>();
-            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectConfigurationAttribute)));
             this.AppendFieldsConfigurationData(fields, configurationDatas);
             // props
