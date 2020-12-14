@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -46,24 +47,29 @@ namespace YS.Knife.Hosting
             return Host.CreateDefaultBuilder(args)
                 .UseAopServiceProviderFactory()
                 .ConfigureLogging(OnConfigureLogging)
-                .ConfigureAppConfiguration(OnConfigureAppConfiguration)
+                .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
+                {
+                    this.OnConfigureAppConfiguration(hostBuilderContext, configurationBuilder);
+                    this.InjectInternalConfigurations(hostBuilderContext, configurationBuilder);
+                })
                 .ConfigureServices((builder, serviceCollection) =>
                 {
                     serviceCollection.AddAllKnifeServices(builder.Configuration, ShouldFilterType);
+
                     this.OnConfigureCustomService(builder, serviceCollection);
+                    this.InjectInternalServices(builder, serviceCollection);
                 });
         }
 
         protected virtual void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            this.InjectServices(builder, serviceCollection);
             serviceCollection.AddSingleton(typeof(KnifeHost), this);
         }
         protected virtual bool ShouldFilterType(Type type)
         {
             return false;
         }
-        private void InjectServices(HostBuilderContext builder, IServiceCollection serviceCollection)
+        private void InjectInternalServices(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
             var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
             var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectAttribute)));
@@ -79,6 +85,52 @@ namespace YS.Knife.Hosting
                 InjectAttribute inject = prop.GetCustomAttribute<InjectAttribute>();
                 serviceCollection.Add(new ServiceDescriptor(prop.PropertyType, (sp) => prop.GetValue(this), inject.Lifetime));
             }
+        }
+        private void InjectInternalConfigurations(HostBuilderContext _, IConfigurationBuilder configurationBuilder)
+        {
+            Dictionary<string, string> configurationDatas = new Dictionary<string, string>();
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectConfigurationAttribute)));
+            this.AppendFieldsConfigurationData(fields, configurationDatas);
+            // props
+            var props = this.GetType().GetProperties(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectConfigurationAttribute)));
+            this.AppendPropertiesConfigurationData(props, configurationDatas);
+
+            if (configurationDatas.Count > 0)
+            {
+                configurationBuilder.AddInMemoryCollection(configurationDatas);
+            }
+
+        }
+        private void AppendFieldsConfigurationData(IEnumerable<FieldInfo> fieldInfos, Dictionary<string, string> datas)
+        {
+            foreach (var field in fieldInfos)
+            {
+                var attr = field.GetCustomAttribute<InjectConfigurationAttribute>();
+                AppendConfigurationDataValue(datas, attr.ConfigurationKey, field.GetValue(this));
+            }
+        }
+        private void AppendPropertiesConfigurationData(IEnumerable<PropertyInfo> peoperties, Dictionary<string, string> datas)
+        {
+            foreach (var prop in peoperties)
+            {
+                var attr = prop.GetCustomAttribute<InjectConfigurationAttribute>();
+                AppendConfigurationDataValue(datas, attr.ConfigurationKey, prop.GetValue(this));
+            }
+        }
+        private void AppendConfigurationDataValue(Dictionary<string, string> datas, string key, object value)
+        {
+            if (value is null) return;
+            if (value is IDictionary dic)
+            {
+                foreach (var subKey in dic.Keys)
+                {
+                    string childKey = $"{key}:{subKey}";
+                    AppendConfigurationDataValue(datas, childKey, dic[subKey]);
+                }
+            }
+            datas[key] = value.ToString();
+            
         }
         protected virtual void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
         {

@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using YS.Knife.Hosting;
-using YS.Knife.TestData;
 
-namespace YS.Knife
+
+namespace YS.Knife.Hosting
 {
     [TestClass]
     public class InjectServiceTest : KnifeHost
