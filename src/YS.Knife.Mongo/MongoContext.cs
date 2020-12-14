@@ -27,7 +27,7 @@ namespace YS.Knife.Mongo
             return collectionCache.Get(typeof(T), (type) =>
              {
                  string collectionName = MongoCollectionNameAttribute.GetCollectionName(type);
-                 return Database.GetCollection<T>(collectionName).WithWriteConcern(WriteConcern.WMajority);
+                 return Database.GetCollection<T>(collectionName);
              }) as IMongoCollection<T>;
         }
 
