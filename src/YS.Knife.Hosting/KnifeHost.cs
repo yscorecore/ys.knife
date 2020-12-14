@@ -110,9 +110,9 @@ namespace YS.Knife.Hosting
                 AppendConfigurationDataValue(datas, attr.ConfigurationKey, field.GetValue(this));
             }
         }
-        private void AppendPropertiesConfigurationData(IEnumerable<PropertyInfo> peoperties, Dictionary<string, string> datas)
+        private void AppendPropertiesConfigurationData(IEnumerable<PropertyInfo> properties, Dictionary<string, string> datas)
         {
-            foreach (var prop in peoperties)
+            foreach (var prop in properties)
             {
                 var attr = prop.GetCustomAttribute<InjectConfigurationAttribute>();
                 AppendConfigurationDataValue(datas, attr.ConfigurationKey, prop.GetValue(this));

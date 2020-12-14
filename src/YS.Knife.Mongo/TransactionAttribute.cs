@@ -2,11 +2,15 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
+using DnsClient.Internal;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using YS.Knife.Aop;
 using MongoDB.Driver;
+using ILogger = DnsClient.Internal.ILogger;
 
 namespace YS.Knife.Mongo
 {
@@ -17,63 +21,75 @@ namespace YS.Knife.Mongo
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             _ = next ?? throw new ArgumentNullException(nameof(next));
-            var mongoContexts = context.ServiceProvider.GetService<IEnumerable<MongoContext>>()
-                .Where(p => p.Transaction == null).ToList();
-            List<MongoContext> successContexts = new List<MongoContext>();
+            ITransactionManagement transactionManagement = GetCurrentTransactionManagement(context);
+            if (transactionManagement == null)
+            {
+                var logger =
+                    context.ServiceProvider.GetService(
+                        typeof(ILogger<>).MakeGenericType(context.ImplementationMethod.DeclaringType)) as ILogger;
+                logger.LogWarning($"Can not find transaction management in current type '{context.ImplementationMethod.DeclaringType}', {nameof(TransactionAttribute)} will be ignored.");
+                await  next?.Invoke(context);
+               return;
+            }
+
+            bool started = false;
             try
             {
-                StartTransactionPerClient(mongoContexts);
+                started = transactionManagement.StartTransaction();
                 await next?.Invoke(context);
-                await CommitTransaction(mongoContexts, successContexts);
+                if (started)
+                {
+                    transactionManagement.CommitTransaction();
+                }
             }
             catch
             {
-                await RollbackTransaction(mongoContexts, successContexts);
+                if (started)
+                {
+                    transactionManagement.RollbackTransaction();
+                }
                 throw;
             }
             finally
             {
-                ReleaseTransactionPerClient(mongoContexts);
+                if (started)
+                {
+                    transactionManagement.ResetTransaction();
+                }
             }
         }
 
-        private async Task CommitTransaction(List<MongoContext> allContexts, List<MongoContext> successContexts)
+        private ITransactionManagement GetCurrentTransactionManagement(AspectContext context)
         {
-            foreach (var context in allContexts)
+            var transactionManagements = context.ImplementationMethod.DeclaringType.GetFields(BindingFlags.Instance |
+                    BindingFlags.Public |
+                    BindingFlags.NonPublic)
+                .Select(p => p.GetValue(context.Implementation))
+                .Where(p => p is ITransactionManagement)
+                .OfType<ITransactionManagement>()
+                .Distinct()
+                .ToList();
+            if (transactionManagements.Count > 1)
             {
-                await context.Transaction.CommitTransactionAsync();
-                successContexts.Add(context);
+                throw new Exception($"Can't deduce transaction management, there are too many transaction management fields in '{context.ImplementationMethod.DeclaringType}' type.");
             }
-        }
-        private async Task RollbackTransaction(List<MongoContext> allContexts, List<MongoContext> successContexts)
-        {
-            foreach (var context in allContexts.Except(successContexts))
-            {
 
-                    await context.Transaction.AbortTransactionAsync();
-              
-                
-               
-            }
+            return transactionManagements.FirstOrDefault();
         }
 
-        private void StartTransactionPerClient(IEnumerable<MongoContext> mongoContexts)
-        {
-            foreach (var context in mongoContexts)
-            {
-                context.Transaction = context.Client.StartSession();
-                context.Transaction.StartTransaction(new TransactionOptions(
-        readPreference: ReadPreference.Primary,
-        readConcern: ReadConcern.Local,
-        writeConcern: WriteConcern.WMajority));
-            }
-        }
-        private void ReleaseTransactionPerClient(IEnumerable<MongoContext> mongoContexts)
-        {
-            foreach (var context in mongoContexts)
-            {
-                context.Transaction = null;
-            }
-        }
+
+    }
+
+    public interface IEntityStoreTransactionProvider
+    {
+        ITransactionManagement GetTransactionManagement();
+    }
+
+    public interface ITransactionManagement
+    {
+        bool StartTransaction();
+        void CommitTransaction();
+        void RollbackTransaction();
+        void ResetTransaction();
     }
 }

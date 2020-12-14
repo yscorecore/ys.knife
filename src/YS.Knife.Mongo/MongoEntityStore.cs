@@ -7,7 +7,7 @@ using MongoDB.Driver.Linq;
 using YS.Knife.Data;
 namespace YS.Knife.Mongo
 {
-    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>
+    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>,IEntityStoreTransactionProvider
         where TContext : MongoContext
         where TEntity : class
     {
@@ -26,9 +26,9 @@ namespace YS.Knife.Mongo
 
         public void Add(TEntity entity)
         {
-            if (Context.Transaction != null)
+            if (Context.Session != null)
             {
-                Store.InsertOne(Context.Transaction, entity);
+                Store.InsertOne(Context.Session, entity);
             }
             else
             {
@@ -42,9 +42,9 @@ namespace YS.Knife.Mongo
             var idMap = GetIdValueMap(entity);
             var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
 
-            if (Context.Transaction != null)
+            if (Context.Session != null)
             {
-                Store.DeleteOne(Context.Transaction, filter);
+                Store.DeleteOne(Context.Session, filter);
             }
             else
             {
@@ -56,9 +56,9 @@ namespace YS.Knife.Mongo
         {
             var idMap = typeof(TEntity).GetEntityKeyProps().Zip(keyValues, (p, v) => new KeyValuePair<string, object>(p.Name, v));
             var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
-            if (Context.Transaction != null)
+            if (Context.Session != null)
             {
-                return Store.Find(Context.Transaction, filter).FirstOrDefault();
+                return Store.Find(Context.Session, filter).FirstOrDefault();
             }
             else
             {
@@ -69,7 +69,7 @@ namespace YS.Knife.Mongo
 
         public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> conditions)
         {
-            var querable = Context.Transaction != null ? Store.AsQueryable(Context.Transaction) : Store.AsQueryable();
+            var querable = Context.Session != null ? Store.AsQueryable(Context.Session) : Store.AsQueryable();
             return conditions != null ? querable.Where(conditions) : querable;
 
 
@@ -91,9 +91,9 @@ namespace YS.Knife.Mongo
                 var updates = updateFields
                     .Select(p => UpdateBuilder.Set(p, typeof(TEntity).GetProperty(p).GetValue(entity))).ToList();
                 var allUpdates = UpdateBuilder.Combine(updates);
-                if (Context.Transaction != null)
+                if (Context.Session != null)
                 {
-                    Store.UpdateOne(Context.Transaction, filter, allUpdates, new UpdateOptions());
+                    Store.UpdateOne(Context.Session, filter, allUpdates, new UpdateOptions());
                 }
                 else
                 {
@@ -107,5 +107,59 @@ namespace YS.Knife.Mongo
             return typeof(TEntity).GetEntityKeyProps().Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(entity)));
         }
 
+        public ITransactionManagement GetTransactionManagement()
+        {
+            return new MongoTransactionManagement(Context);
+        }
+
+        class MongoTransactionManagement:ITransactionManagement
+        {
+            private readonly MongoContext _mongoContext;
+
+            public MongoTransactionManagement(MongoContext mongoContext)
+            {
+                _mongoContext = mongoContext;
+            }
+            public bool StartTransaction()
+            {
+                if (_mongoContext.Session == null)
+                {
+                    _mongoContext.Session = _mongoContext.Client.StartSession();
+                    _mongoContext.Session.StartTransaction();
+                    return true;
+                }
+                return false;
+            }
+
+            public void CommitTransaction()
+            {
+                _mongoContext.Session?.CommitTransaction();
+            }
+
+            public void RollbackTransaction()
+            {
+                _mongoContext.Session?.AbortTransaction();
+            }
+
+            public void ResetTransaction()
+            {
+                _mongoContext.Session = null;
+            }
+
+            public override bool Equals(object obj)
+            {
+                if (obj is MongoTransactionManagement mongoTransactionManagement)
+                {
+                    return this._mongoContext == mongoTransactionManagement._mongoContext;
+                }
+                return false;
+            }
+
+            public override int GetHashCode()
+            {
+                return this._mongoContext.GetHashCode();
+            }
+        }
     }
+    
 }
