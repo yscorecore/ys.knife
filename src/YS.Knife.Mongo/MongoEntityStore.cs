@@ -5,9 +5,11 @@ using System.Linq.Expressions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using YS.Knife.Data;
+using YS.Knife.Data.Transactions;
+
 namespace YS.Knife.Mongo
 {
-    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>,IEntityStoreTransactionProvider
+    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>,ITransactionManagerProvider
         where TContext : MongoContext
         where TEntity : class
     {
@@ -109,57 +111,10 @@ namespace YS.Knife.Mongo
 
         public ITransactionManagement GetTransactionManagement()
         {
-            return new MongoTransactionManagement(Context);
+            return this.Context.GetTransactionManagement();
         }
 
-        class MongoTransactionManagement:ITransactionManagement
-        {
-            private readonly MongoContext _mongoContext;
-
-            public MongoTransactionManagement(MongoContext mongoContext)
-            {
-                _mongoContext = mongoContext;
-            }
-            public bool StartTransaction()
-            {
-                if (_mongoContext.Session == null)
-                {
-                    _mongoContext.Session = _mongoContext.Client.StartSession();
-                    _mongoContext.Session.StartTransaction();
-                    return true;
-                }
-                return false;
-            }
-
-            public void CommitTransaction()
-            {
-                _mongoContext.Session?.CommitTransaction();
-            }
-
-            public void RollbackTransaction()
-            {
-                _mongoContext.Session?.AbortTransaction();
-            }
-
-            public void ResetTransaction()
-            {
-                _mongoContext.Session = null;
-            }
-
-            public override bool Equals(object obj)
-            {
-                if (obj is MongoTransactionManagement mongoTransactionManagement)
-                {
-                    return this._mongoContext == mongoTransactionManagement._mongoContext;
-                }
-                return false;
-            }
-
-            public override int GetHashCode()
-            {
-                return this._mongoContext.GetHashCode();
-            }
-        }
+        
     }
     
 }

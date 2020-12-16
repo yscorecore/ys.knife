@@ -5,12 +5,11 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
-using DnsClient.Internal;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using YS.Knife.Aop;
 using MongoDB.Driver;
-using ILogger = DnsClient.Internal.ILogger;
+using YS.Knife.Data.Transactions;
 
 namespace YS.Knife.Mongo
 {
@@ -65,8 +64,9 @@ namespace YS.Knife.Mongo
                     BindingFlags.Public |
                     BindingFlags.NonPublic)
                 .Select(p => p.GetValue(context.Implementation))
-                .Where(p => p is ITransactionManagement)
-                .OfType<ITransactionManagement>()
+                .Where(p => p is ITransactionManagerProvider)
+                .OfType<ITransactionManagerProvider>()
+                .Select(p=>p.GetTransactionManagement())
                 .Distinct()
                 .ToList();
             if (transactionManagements.Count > 1)
@@ -80,16 +80,7 @@ namespace YS.Knife.Mongo
 
     }
 
-    public interface IEntityStoreTransactionProvider
-    {
-        ITransactionManagement GetTransactionManagement();
-    }
 
-    public interface ITransactionManagement
-    {
-        bool StartTransaction();
-        void CommitTransaction();
-        void RollbackTransaction();
-        void ResetTransaction();
-    }
+
+
 }

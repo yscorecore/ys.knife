@@ -14,7 +14,7 @@ namespace YS.Knife.Mongo.UnitTest
         public static uint MongoPort1 { get; private set; } = 27011;
         public static uint MongoPort2 { get; private set; } = 27012;
         public static uint MongoPort3 { get; private set; } = 27013;
-        public static string MongoConnectionString { get => $"mongodb://root:{WebUtility.UrlEncode(MongoPassword)}@127.0.0.1:{MongoPort1},127.0.0.1:{MongoPort2},127.0.0.1:{MongoPort3}"; }
+        public static string MongoConnectionString { get => $"mongodb://root:{WebUtility.UrlEncode(MongoPassword)}@127.0.0.1:{MongoPort1}?replicaSet=rs"; }
         [AssemblyInitialize()]
         public static void Setup(TestContext t)
         {
