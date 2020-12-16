@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data;
+using YS.Knife.Hosting;
 using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
@@ -11,12 +12,8 @@ namespace YS.Knife.Mongo.UnitTest
     [TestClass]
     public class MongoEntityStoreTest : Knife.Hosting.KnifeHost
     {
-        public MongoEntityStoreTest() : base(new Dictionary<string, object>
-        {
-            ["ConnectionStrings:cms"] = TestEnvironment.MongoConnectionString
-        })
-        {
-        }
+        [InjectConfiguration("connectionstrings:cms")]
+        private string _ = TestEnvironment.MongoConnectionString;
 
         [TestMethod]
         public void ShouldGetStoreInstanceFromDiContainer()
@@ -54,15 +51,15 @@ namespace YS.Knife.Mongo.UnitTest
             };
             store.Add(entity);
             Assert.IsNotNull(entity.Id);
-            var newEntity = new Topic {Id = entity.Id, Title = "new title", Content = "new content"};
-            store.Update(newEntity,nameof(Topic.Title),nameof(Topic.Content));
+            var newEntity = new Topic { Id = entity.Id, Title = "new title", Content = "new content" };
+            store.Update(newEntity, nameof(Topic.Title), nameof(Topic.Content));
             var topicInDb = store.FindByKey(entity.Id);
             Assert.IsNotNull(topicInDb);
             Assert.AreEqual("new title", topicInDb.Title);
             Assert.AreEqual("new content", topicInDb.Content);
             Assert.AreEqual("summary", topicInDb.Summary);
         }
-        
+
         [TestMethod]
         public void ShouldDeleteEntitySuccess()
         {

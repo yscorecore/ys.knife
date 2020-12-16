@@ -5,11 +5,10 @@ using System.Linq.Expressions;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using YS.Knife.Data;
-using YS.Knife.Data.Transactions;
 
 namespace YS.Knife.Mongo
 {
-    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>,ITransactionManagerProvider
+    public class MongoEntityStore<TEntity, TContext> : IEntityStore<TEntity>, IMongoContextConsumer
         where TContext : MongoContext
         where TEntity : class
     {
@@ -19,24 +18,25 @@ namespace YS.Knife.Mongo
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             this.Context = context;
-            this.Store = context.GetCollection<TEntity>();
+            this.Collection = context.GetCollection<TEntity>();
         }
 
         public TContext Context { get; }
 
-        public IMongoCollection<TEntity> Store { get; }
+        public IMongoCollection<TEntity> Collection { get; }
+
+        MongoContext IMongoContextConsumer.MongoContext => this.Context;
 
         public void Add(TEntity entity)
         {
             if (Context.Session != null)
             {
-                Store.InsertOne(Context.Session, entity);
+                Collection.InsertOne(Context.Session, entity);
             }
             else
             {
-                Store.InsertOne(entity);
+                Collection.InsertOne(entity);
             }
-
         }
 
         public void Delete(TEntity entity)
@@ -46,11 +46,11 @@ namespace YS.Knife.Mongo
 
             if (Context.Session != null)
             {
-                Store.DeleteOne(Context.Session, filter);
+                Collection.DeleteOne(Context.Session, filter);
             }
             else
             {
-                Store.DeleteOne(filter);
+                Collection.DeleteOne(filter);
             }
         }
 
@@ -60,18 +60,18 @@ namespace YS.Knife.Mongo
             var filter = FilterBuilder.And(idMap.Select(kv => FilterBuilder.Eq(kv.Key, kv.Value)));
             if (Context.Session != null)
             {
-                return Store.Find(Context.Session, filter).FirstOrDefault();
+                return Collection.Find(Context.Session, filter).FirstOrDefault();
             }
             else
             {
-                return Store.Find(filter).FirstOrDefault();
+                return Collection.Find(filter).FirstOrDefault();
             }
 
         }
 
         public IQueryable<TEntity> Query(Expression<Func<TEntity, bool>> conditions)
         {
-            var querable = Context.Session != null ? Store.AsQueryable(Context.Session) : Store.AsQueryable();
+            var querable = Context.Session != null ? Collection.AsQueryable(Context.Session) : Collection.AsQueryable();
             return conditions != null ? querable.Where(conditions) : querable;
 
 
@@ -95,11 +95,11 @@ namespace YS.Knife.Mongo
                 var allUpdates = UpdateBuilder.Combine(updates);
                 if (Context.Session != null)
                 {
-                    Store.UpdateOne(Context.Session, filter, allUpdates, new UpdateOptions());
+                    Collection.UpdateOne(Context.Session, filter, allUpdates, new UpdateOptions());
                 }
                 else
                 {
-                    Store.UpdateOne(filter, allUpdates, new UpdateOptions());
+                    Collection.UpdateOne(filter, allUpdates, new UpdateOptions());
                 }
             }
         }
@@ -109,12 +109,8 @@ namespace YS.Knife.Mongo
             return typeof(TEntity).GetEntityKeyProps().Select(p => new KeyValuePair<string, object>(p.Name, p.GetValue(entity)));
         }
 
-        public ITransactionManagement GetTransactionManagement()
-        {
-            return this.Context.GetTransactionManagement();
-        }
 
-        
+
     }
-    
+
 }

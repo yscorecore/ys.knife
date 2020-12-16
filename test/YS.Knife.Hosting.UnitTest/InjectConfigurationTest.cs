@@ -9,25 +9,25 @@ namespace YS.Knife.Hosting
     [TestClass]
     public class InjectConfigurationTest : KnifeHost
     {
-        public InjectConfigurationTest():base(new Dictionary<string, object>
+        public InjectConfigurationTest() : base(new Dictionary<string, object>
         {
-            ["prop_a"]="value from command line",
-            ["prop_b"]="value from command line"
+            ["prop_a"] = "value from command line",
+            ["prop_b"] = "value from command line"
         })
         {
         }
         [InjectConfiguration("prop_b")]
         private const string ValueWillOverwriteCommand = "value from injection";
-        
+
         [InjectConfiguration("connectionstrings:private_const")]
         private const string ConnectionStringFromPrivateConst = "value_from_private_const";
-        
+
         [InjectConfiguration("connectionstrings:public_const")]
         public const string ConnectionStringFromPublicConst = "value_from_public_const";
 
         [InjectConfiguration("connectionstrings:private_static_field")]
         private static string ConnectionStringFromPrivateStaticField = "value_from_private_static_field";
-        
+
         [InjectConfiguration("connectionstrings:public_static_field")]
         public static string ConnectionStringFromPublicStaticField = "value_from_public_static_field";
 
@@ -42,7 +42,7 @@ namespace YS.Knife.Hosting
 
         [InjectConfiguration("connectionstrings:public_static_property")]
         public static string ConnectionStringFromPublicStaticProperty { get; set; } = "value_from_public_static_property";
-        
+
         [InjectConfiguration("connectionstrings:private_instance_property")]
         public string ConnectionStringFromPrivateInstanceProperty { get; set; } = "value_from_private_instance_property";
 
@@ -56,7 +56,7 @@ namespace YS.Knife.Hosting
             ["int_value"] = 123456
         };
 
-        
+
         [DataRow("private_const", ConnectionStringFromPrivateConst)]
         [DataRow("public_const", ConnectionStringFromPublicConst)]
         [DataRow("private_static_field", "value_from_private_static_field")]
@@ -79,7 +79,7 @@ namespace YS.Knife.Hosting
 
         [TestMethod]
         public void ShouldHaveHighestPriority()
-        { 
+        {
             var configuration = this.GetService<IConfiguration>();
             Assert.AreEqual("value from command line", configuration.GetSection("prop_a").Get<string>());
             Assert.AreEqual("value from injection", configuration.GetSection("prop_b").Get<string>());

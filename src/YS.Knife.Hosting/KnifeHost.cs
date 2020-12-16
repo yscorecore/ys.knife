@@ -71,7 +71,7 @@ namespace YS.Knife.Hosting
         }
         private void InjectInternalServices(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic| BindingFlags.Static;
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
             var fields = this.GetType().GetFields(bindingFlags).Where(p => Attribute.IsDefined(p, typeof(InjectAttribute)));
             foreach (var field in fields)
             {
@@ -130,7 +130,7 @@ namespace YS.Knife.Hosting
                 }
             }
             datas[key] = value.ToString();
-            
+
         }
         protected virtual void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
         {

@@ -3,33 +3,26 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
-using YS.Knife.Hosting;
 using YS.Knife.Entity;
+using YS.Knife.Hosting;
 namespace YS.Knife.Mongo.UnitTest
 {
 
     [TestClass]
     public class TransactionAttributeTest : KnifeHost
     {
-        public TransactionAttributeTest()
-            : base(new Dictionary<string, object>
-            {
-                ["connectionStrings:user_db"] = TestEnvironment.MongoConnectionString,
-                ["connectionStrings:book_db"] = TestEnvironment.MongoConnectionString
-            })
-        {
-
-        }
+        [InjectConfiguration("connectionStrings:book_db")]
+        private string _ = TestEnvironment.MongoConnectionString;
 
         [TestMethod]
-        public void ShouldInsertOneBookWhenNoTransaction()
+        public void ShouldInsertOneBookWhenNoTransactionAndThrowError()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
-            var beforeCount = entityStore.Count(p=>p.Id>0);
+            var beforeCount = entityStore.Count(p => p.Id > 0);
             var bookService = this.GetService<IBookService>();
             try
             {
-                bookService.AddTwoBookWithNoTransaction();
+                bookService.AddTwoBookNoTransaction(true);
             }
             catch
             {
@@ -38,25 +31,47 @@ namespace YS.Knife.Mongo.UnitTest
             }
         }
         [TestMethod]
-        public void ShouldInsertZeroBookWhenWithTransaction()
+        public void ShouldInsertTwoBookWhenNoTransaction()
+        {
+            var entityStore = this.GetService<IEntityStore<Book>>();
+            var beforeCount = entityStore.Count(p => p.Id > 0);
+            var bookService = this.GetService<IBookService>();
+            bookService.AddTwoBookNoTransaction(false);
+            var afterCount = entityStore.Count(p => p.Id > 0);
+            Assert.IsTrue(afterCount - beforeCount == 2);
+        }
+
+        [TestMethod]
+        public void ShouldInsertZeroBookWhenWithTransactionAndThrowError()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
             var beforeCount = entityStore.Count(p => p.Id > 0);
             var bookService = this.GetService<IBookService>();
             try
             {
-                bookService.AddTwoBookWithTransaction();
+                bookService.AddTwoBookWithTransaction(true);
             }
             catch
             {
                 var afterCount = entityStore.Count(p => p.Id > 0);
-                Assert.AreEqual(afterCount ,beforeCount);
+                Assert.AreEqual(afterCount, beforeCount);
             }
         }
+        [TestMethod]
+        public void ShouldInsertTwoBookWhenWithTransaction()
+        {
+            var entityStore = this.GetService<IEntityStore<Book>>();
+            var beforeCount = entityStore.Count(p => p.Id > 0);
+            var bookService = this.GetService<IBookService>();
+            bookService.AddTwoBookNoTransaction(false);
+            var afterCount = entityStore.Count(p => p.Id > 0);
+            Assert.IsTrue(afterCount - beforeCount == 2);
+        }
+
         public interface IBookService
         {
-            void AddTwoBookWithNoTransaction();
-            void AddTwoBookWithTransaction();
+            void AddTwoBookNoTransaction(bool throwError);
+            void AddTwoBookWithTransaction(bool throwError);
         }
 
         [Service]
@@ -68,21 +83,20 @@ namespace YS.Knife.Mongo.UnitTest
             {
                 this.entityStore = entityStore;
             }
-            public void AddBook()
-            {
 
-            }
             [Transaction]
-            public void AddTwoBookWithTransaction()
+            public void AddTwoBookWithTransaction(bool throwError)
             {
                 entityStore.Add(new Book { Id = DateTime.Now.Ticks, Name = "book" });
-                throw new ApplicationException("throw some exception");
+                if (throwError)
+                    throw new ApplicationException("throw some exception");
                 entityStore.Add(new Book { Id = DateTime.Now.Ticks, Name = "book" });
             }
-            public void AddTwoBookWithNoTransaction()
+            public void AddTwoBookNoTransaction(bool throwError)
             {
                 entityStore.Add(new Book { Id = DateTime.Now.Ticks, Name = "book" });
-                throw new ApplicationException("throw some exception");
+                if (throwError)
+                    throw new ApplicationException("throw some exception");
                 entityStore.Add(new Book { Id = DateTime.Now.Ticks, Name = "book" });
             }
         }

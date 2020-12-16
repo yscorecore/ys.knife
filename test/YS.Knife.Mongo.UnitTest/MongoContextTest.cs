@@ -1,24 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
-using YS.Knife.Data;
 using YS.Knife.Hosting;
-using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
 {
     [TestClass]
     public class MongoContextTest : KnifeHost
     {
-        public MongoContextTest() : base(new Dictionary<string, object>
-        {
-            ["ConnectionStrings:cms"] = TestEnvironment.MongoConnectionString
-        })
-        {
-        }
+        [InjectConfiguration("connectionStrings:cms")]
+        private string _ = TestEnvironment.MongoConnectionString;
+
         [TestMethod]
         public void ShouldGetContextInstanceFromDIContainer()
         {
@@ -44,7 +37,7 @@ namespace YS.Knife.Mongo.UnitTest
             });
             Assert.IsNotNull(context);
         }
-       
+
         [TestMethod]
         public void ShouldQueryListTopicItemSuccess()
         {

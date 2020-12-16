@@ -61,13 +61,13 @@ namespace YS.Knife.Data
             return OrderByCache.Get(type, (entityType) =>
             {
                 var orderByAttr = entityType.GetCustomAttribute<DefaultOrderByAttribute>();
-                if(orderByAttr!=null)
+                if (orderByAttr != null)
                 {
                     return OrderInfo.Parse(orderByAttr.OrderInfo);
                 }
                 else
                 {
-                    var keyOrderItems = type.GetEntityKeyProps().Select(p=> new OrderItem(p.Name, OrderType.Asc));
+                    var keyOrderItems = type.GetEntityKeyProps().Select(p => new OrderItem(p.Name, OrderType.Asc));
                     return new OrderInfo(keyOrderItems);
                 }
             });

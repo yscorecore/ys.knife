@@ -1,33 +1,28 @@
 ﻿version: "3.3"
-
 services:
   mongo-1:
     image: mongo
-    hostname: mongo-1
-
     ports:
-      - ${MONGO_PORT1:-27011}:${MONGO_PORT1:-27011}
+      - ${MONGO_PORT1:-27017}:${MONGO_PORT1:-27017}
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-example}
     command:
       - --port
-      - ${MONGO_PORT1:-27011}
+      - ${MONGO_PORT1:-27017}
       - --replSet
-      - rs
-      - --bind_ip_all
- 
+      - rs 
   mongo-init:
     build:
       context: .
     depends_on:
       - mongo-1
     environment:
-      WAIT_HOSTS: mongo-1:${MONGO_PORT1:-27011}
+      WAIT_HOSTS: mongo-1:${MONGO_PORT1:-27017}
     command:
       - /bin/bash 
       - -c 
       - |
         /wait 
-        mongo mongodb://root:${MONGO_PASSWORD:-example}@mongo-1:${MONGO_PORT1:-27011}/admin --eval 'rs.initiate({ _id: "rs", members: [{_id:1,host:"localhost:${MONGO_PORT1:-27011}"}]})'    
+        mongo mongodb://root:${MONGO_PASSWORD:-example}@mongo-1:${MONGO_PORT1:-27017}/admin --eval 'rs.initiate({ _id: "rs", members: [{_id:1,host:"localhost:${MONGO_PORT1:-27017}"}]})'    
         wget 'http://host.docker.internal:${REPORT_TO_HOST_PORT:-8901}'

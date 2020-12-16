@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using YS.Knife.Aop;
 using MongoDB.Driver;
-using YS.Knife.Data.Transactions;
+using YS.Knife.Aop;
 
 namespace YS.Knife.Mongo
 {
@@ -20,32 +16,32 @@ namespace YS.Knife.Mongo
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             _ = next ?? throw new ArgumentNullException(nameof(next));
-            ITransactionManagement transactionManagement = GetCurrentTransactionManagement(context);
-            if (transactionManagement == null)
+            var mongoContext = GetCurrentMongoContext(context);
+            if (mongoContext == null)
             {
                 var logger =
                     context.ServiceProvider.GetService(
                         typeof(ILogger<>).MakeGenericType(context.ImplementationMethod.DeclaringType)) as ILogger;
-                logger.LogWarning($"Can not find transaction management in current type '{context.ImplementationMethod.DeclaringType}', {nameof(TransactionAttribute)} will be ignored.");
-                await  next?.Invoke(context);
-               return;
+                logger.LogWarning($"Can not find mongo context in current type '{context.ImplementationMethod.DeclaringType}', {nameof(TransactionAttribute)} will be ignored.");
+                await next?.Invoke(context);
+                return;
             }
 
             bool started = false;
             try
             {
-                started = transactionManagement.StartTransaction();
+                started = StartTransaction(mongoContext);
                 await next?.Invoke(context);
                 if (started)
                 {
-                    transactionManagement.CommitTransaction();
+                    CommitTransaction(mongoContext);
                 }
             }
             catch
             {
                 if (started)
                 {
-                    transactionManagement.RollbackTransaction();
+                    RollbackTransaction(mongoContext);
                 }
                 throw;
             }
@@ -53,31 +49,55 @@ namespace YS.Knife.Mongo
             {
                 if (started)
                 {
-                    transactionManagement.ResetTransaction();
+                    ResetTransaction(mongoContext);
                 }
             }
         }
 
-        private ITransactionManagement GetCurrentTransactionManagement(AspectContext context)
+        private MongoContext GetCurrentMongoContext(AspectContext context)
         {
-            var transactionManagements = context.ImplementationMethod.DeclaringType.GetFields(BindingFlags.Instance |
+            var mongoContexts = context.ImplementationMethod.DeclaringType.GetFields(BindingFlags.Instance |
                     BindingFlags.Public |
                     BindingFlags.NonPublic)
                 .Select(p => p.GetValue(context.Implementation))
-                .Where(p => p is ITransactionManagerProvider)
-                .OfType<ITransactionManagerProvider>()
-                .Select(p=>p.GetTransactionManagement())
+                .Where(p => p is MongoContext || p is IMongoContextConsumer)
+                .Select(p => p is MongoContext ? p : (p as IMongoContextConsumer).MongoContext)
+                .OfType<MongoContext>()
                 .Distinct()
                 .ToList();
-            if (transactionManagements.Count > 1)
+            if (mongoContexts.Count > 1)
             {
-                throw new Exception($"Can't deduce transaction management, there are too many transaction management fields in '{context.ImplementationMethod.DeclaringType}' type.");
+                throw new NotSupportedException($"Can't deduce mongo context, there are too many mongo context fields in '{context.ImplementationMethod.DeclaringType}' type, please start transaction manually.");
             }
 
-            return transactionManagements.FirstOrDefault();
+            return mongoContexts.FirstOrDefault();
         }
 
+        private bool StartTransaction(MongoContext mongoContext)
+        {
+            if (mongoContext.Session == null)
+            {
+                mongoContext.Session = mongoContext.Client.StartSession();
+                mongoContext.Session.StartTransaction();
+                return true;
+            }
+            return false;
+        }
 
+        private void CommitTransaction(MongoContext _mongoContext)
+        {
+            _mongoContext.Session?.CommitTransaction();
+        }
+
+        private void RollbackTransaction(MongoContext mongoContext)
+        {
+            mongoContext.Session?.AbortTransaction();
+        }
+
+        private void ResetTransaction(MongoContext mongoContext)
+        {
+            mongoContext.Session = null;
+        }
     }
 
 

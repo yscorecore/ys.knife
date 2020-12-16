@@ -19,18 +19,18 @@ namespace YS.Knife.Test
             Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
         }
 
-        public static void Up(IDictionary<string, object> envs , uint reportStatusPort , int maxWaitStatusSeconds = 120)
+        public static void Up(IDictionary<string, object> envs, uint reportStatusPort, int maxWaitStatusSeconds = 120)
         {
             envs = envs ?? new Dictionary<string, object>();
-       
-                
-            
-           
-     
-                RunDockerComposeAndWaitContainerReportStatus(envs,reportStatusPort,
-                 maxWaitStatusSeconds);
-            
-            
+
+
+
+
+
+            RunDockerComposeAndWaitContainerReportStatus(envs, reportStatusPort,
+             maxWaitStatusSeconds);
+
+
         }
         public static void Down()
         {
@@ -114,7 +114,7 @@ namespace YS.Knife.Test
                     envs.Add("REPORT_TO_HOST_PORT", port);
                     Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
                 });
-                
+
                 result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(maxSeconds));
                 Console.WriteLine("Request processed asyncronously.");
             }

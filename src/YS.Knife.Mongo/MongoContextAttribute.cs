@@ -9,15 +9,20 @@ namespace YS.Knife.Mongo
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
     public sealed class MongoContextAttribute : KnifeAttribute
     {
-        public MongoContextAttribute(string dataBaseName) : base(typeof(MongoContext))
+        public MongoContextAttribute(string dataBaseName) : this(dataBaseName, dataBaseName)
+        {
+        }
+        public MongoContextAttribute(string dataBaseName, string connectionStringKey) : base(typeof(MongoContext))
         {
             if (string.IsNullOrEmpty(dataBaseName) || !Regex.IsMatch(dataBaseName, @"^\w+$"))
             {
                 throw new ArgumentException($"Invalid mongo data base name '{dataBaseName}'.");
             }
             this.DataBaseName = dataBaseName;
+            this.ConnectionStringKey = connectionStringKey ?? dataBaseName;
         }
         public string DataBaseName { get; }
+        public string ConnectionStringKey { get; }
 
         public bool RegisterEntityStore { get; set; } = true;
         public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
@@ -31,7 +36,7 @@ namespace YS.Knife.Mongo
                      throw new ArgumentException($"Can not find constructor with '{typeof(IMongoDatabase).FullName}' argument in [{declareType.FullName}].");
                  }
                  var clientFactory = sp.GetRequiredService<IMongoClientFactory>();
-                 var client = clientFactory.Create(DataBaseName);
+                 var client = clientFactory.Create(ConnectionStringKey);
                  var database = client.GetDatabase(DataBaseName);
                  return ctor.Invoke(new object[] { database });
              });

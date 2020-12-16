@@ -14,9 +14,9 @@ namespace YS.Knife.Mongo
         {
             this.configuration = configuration;
         }
-        public IMongoClient Create(string name)
+        public IMongoClient Create(string connectionStringKey)
         {
-            return localCache.Get(name, (nm) =>
+            return localCache.Get(connectionStringKey, (nm) =>
              {
                  string connectionString = configuration.GetConnectionString(nm);
                  if (string.IsNullOrEmpty(connectionString))

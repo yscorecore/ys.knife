@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using MongoDB.Driver;
-using System;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using MongoDB.Driver;
 using YS.Knife.Hosting;
 using YS.Knife.Mongo.UnitTest.Contents;
 
@@ -11,16 +11,11 @@ namespace YS.Knife.Mongo.UnitTest
     [TestClass]
     public class MongoContextAttributeTest : KnifeHost
     {
+        [InjectConfiguration("connectionStrings:book_db")]
+        private string book_conn = TestEnvironment.MongoConnectionString;
+        [InjectConfiguration("connectionStrings:user_db")]
+        private string user_conn = TestEnvironment.MongoConnectionString;
 
-        public MongoContextAttributeTest()
-            : base(new Dictionary<string, object>
-            {
-                ["connectionStrings:user_db"] = TestEnvironment.MongoConnectionString,
-                ["connectionStrings:book_db"] = TestEnvironment.MongoConnectionString
-            })
-        {
-
-        }
         [DataTestMethod]
         [DataRow(typeof(UserContext))]
         [DataRow(typeof(BookContext))]

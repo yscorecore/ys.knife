@@ -7,6 +7,6 @@ namespace YS.Knife.Mongo
 {
     public interface IMongoClientFactory
     {
-        IMongoClient Create(string name);
+        IMongoClient Create(string connectionStringKey);
     }
 }

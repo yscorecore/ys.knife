@@ -10,7 +10,7 @@ using YS.Knife.Rest.Client.UnitTest.Clients;
 namespace YS.Knife.Rest.Client.UnitTest
 {
 
-   // [TestClass]
+    // [TestClass]
     public class GitHubClientTest : KnifeHost
     {
 
