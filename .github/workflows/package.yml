@@ -14,13 +14,13 @@ jobs:
       with:
         dotnet-version: 3.1.100
     - name: 03 Set Dotnet Tools Path
-      run: echo "::set-env name=PATH::${PATH}:${HOME}/.dotnet/tools"
+      run: echo echo PATH=${PATH}:${HOME}/.dotnet/tools >> $GITHUB_ENV
     - name: 04 Check Code Format
       run: dotnet tool install -g dotnet-format && dotnet format --dry-run --check
     - name: 05 Build with dotnet
       run: dotnet build
     - name: 06 Count Test Projects
-      run: echo "::set-env name=TEST_PROJ_COUNT::$(ls -l test |grep "^d"|wc -l)"
+      run: echo TEST_PROJ_COUNT=$(ls -l test |grep "^d"|wc -l) >> $GITHUB_ENV
     - name: 07 Run Unit test
       if: env.TEST_PROJ_COUNT>0
       run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
@@ -41,14 +41,14 @@ jobs:
         flags: unittests
         fail_ci_if_error: true
     - name: 11 Set Git Tag Name
-      run: echo "::set-env name=GIT_TAG::${GITHUB_REF:10}"
+      run: echo GIT_TAG=${GITHUB_REF:10} >> $GITHUB_ENV
     - name: 12 Set Pack Version
-      run: echo "::set-env name=PACK_VERSION::${GIT_TAG#v}"
+      run: echo PACK_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
     - name: 13 Create Package
       run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
     - name: 14 Push Package
       run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}
     - name: 15 Set Image Tag
-      run: echo "::set-env name=IMAGE_VERSION::${GIT_TAG#v}"
+      run: echo IMAGE_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
     - name: 16 Build and Push Image Tag
       run: bash ./.github/scripts/pushdocker.sh ${{secrets.DOCKER_USERNAME}} ${{secrets.DOCKER_PASSWORD}}
