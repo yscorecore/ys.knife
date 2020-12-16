@@ -14,7 +14,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
         {
             this.blogStore = store;
         }
-        [CommitEFChanges]
+        [Transaction]
         public void AddTwoBlog()
         {
             blogStore.Add(new Blog { Url = "http://www.baidu.com" });

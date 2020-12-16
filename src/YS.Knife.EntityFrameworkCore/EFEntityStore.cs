@@ -11,13 +11,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace YS.Knife.EntityFrameworkCore
 {
-    public class EFEntityStore<TEntity, TContext> : IEntityStore<TEntity>
+    public class EFEntityStore<TEntity, TContext> : IEntityStore<TEntity>, IDbContextConsumer
         where TContext : DbContext
         where TEntity : class
     {
         public EFEntityStore(TContext context)
         {
-
             _ = context ?? throw new ArgumentNullException(nameof(context));
             this.Context = context;
             this.Set = context.Set<TEntity>();
@@ -37,6 +36,9 @@ namespace YS.Knife.EntityFrameworkCore
             get;
             private set;
         }
+
+        DbContext IDbContextConsumer.DbContext => this.Context;
+
         public virtual void Add(TEntity entity)
         {
             this.Set.Add(entity);

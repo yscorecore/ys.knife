@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -31,9 +30,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public bool RegisterEntityStore { get; set; } = true;
 
-        public bool RegisterAutoSubmitContext { get; set; } = true;
-
-
+      
         private void CheckInterceptorTypes(Type[] interceptorTypes)
         {
             if (interceptorTypes != null)
@@ -90,14 +87,6 @@ namespace Microsoft.EntityFrameworkCore
             {
                 AddEntityStoresInternal(services, declareType);
             }
-            if (RegisterAutoSubmitContext)
-            {
-                services.AddScoped<ICommitEFChangesContext>(sp =>
-                {
-                    var dbContext = sp.GetService(declareType) as DbContext;
-                    return new AutoSubmitContext(dbContext);
-                });
-            }
         }
 
         private void AddDbContext2<InjectType, ImplType>(IServiceCollection services, string connectionString, Type[] interceptorTypes)
@@ -125,16 +114,6 @@ namespace Microsoft.EntityFrameworkCore
                 var implType = typeof(EFEntityStore<,>).MakeGenericType(entityType, contextType);
                 services.AddScoped(storeType, implType);
             }
-        }
-
-        private class AutoSubmitContext : ICommitEFChangesContext
-        {
-            public AutoSubmitContext(DbContext dbContext)
-            {
-                this.DbContext = dbContext;
-            }
-
-            public DbContext DbContext { get; }
         }
     }
 }
