@@ -6,7 +6,6 @@
  </ItemGroup>
 
  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>YS.Knife.Aop</RootNamespace>
   </PropertyGroup>
 
