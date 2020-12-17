@@ -3,15 +3,15 @@ using System.Reflection;
 
 namespace YS.Knife
 {
-    [AttributeUsage(AttributeTargets.Method,AllowMultiple = false, Inherited = false)]
-    public  class FunctionAttribute:Attribute
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
+    public class FunctionAttribute : Attribute
     {
         public FunctionAttribute(string code)
         {
-            this.Code = code??string.Empty;
+            this.Code = code ?? string.Empty;
         }
 
-        public string Code { get;  }
+        public string Code { get; }
     }
 
     public static class FunctionExtensions

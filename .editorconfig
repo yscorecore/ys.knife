@@ -135,6 +135,13 @@ dotnet_diagnostic.CA1056.severity = none
 
 # CA1822: 将成员标记为 static
 dotnet_diagnostic.CA1822.severity = none
+
+# CA1054: 类 URI 参数不应为字符串
+dotnet_diagnostic.CA1054.severity = none
+
+# CA1801: 检查未使用的参数
+dotnet_diagnostic.CA1801.severity = none
+
 [*.vb]
 # Modifier preferences
 visual_basic_preferred_modifier_order = Partial,Default,Private,Protected,Public,Friend,NotOverridable,Overridable,MustOverride,Overloads,Overrides,MustInherit,NotInheritable,Static,Shared,Shadows,ReadOnly,WriteOnly,Dim,Const,WithEvents,Widening,Narrowing,Custom,Async:suggestion

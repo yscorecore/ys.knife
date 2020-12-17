@@ -16,7 +16,7 @@ namespace System.ComponentModel.DataAnnotations
 
             if (results.Count != 0)
             {
-                var compositeResults = new CompositeValidationResult(string.Format(CultureInfo.InvariantCulture, "{0} validate failed!", validationContext.MemberName));
+                var compositeResults = new CompositeValidationResult(string.Format(CultureInfo.InvariantCulture, "{0} validate failed!", validationContext?.MemberName));
                 results.ForEach(compositeResults.AddResult);
 
                 return compositeResults;

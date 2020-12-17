@@ -17,7 +17,7 @@ namespace YS.Knife.EntityFrameworkCore
             this.Order = 10000;
         }
 
-        public  override async Task Invoke(AspectContext context, AspectDelegate next)
+        public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             _ = next ?? throw new ArgumentNullException(nameof(next));

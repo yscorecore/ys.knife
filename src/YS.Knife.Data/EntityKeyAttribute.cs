@@ -26,7 +26,7 @@ namespace YS.Knife.Data
         {
             this.OrderInfo = new OrderItem(propName, orderType).ToString();
         }
-        public string OrderInfo { get;  }
+        public string OrderInfo { get; }
     }
 
 

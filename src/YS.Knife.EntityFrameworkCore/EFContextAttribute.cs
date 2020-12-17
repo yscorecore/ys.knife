@@ -30,7 +30,7 @@ namespace Microsoft.EntityFrameworkCore
 
         public bool RegisterEntityStore { get; set; } = true;
 
-      
+
         private void CheckInterceptorTypes(Type[] interceptorTypes)
         {
             if (interceptorTypes != null)

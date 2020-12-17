@@ -8,8 +8,8 @@ namespace Microsoft.Extensions.Configuration
         public static IConfigurationBuilder AddApiConfiguration(
             this IConfigurationBuilder builder, Action<ApiConfigurationSource> action)
         {
+            _ = builder ?? throw new ArgumentNullException(nameof(builder));
             var source = new ApiConfigurationSource();
-
             action?.Invoke(source);
             return builder.Add(source);
         }

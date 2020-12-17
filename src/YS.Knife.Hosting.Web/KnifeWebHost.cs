@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -48,6 +49,7 @@ namespace YS.Knife.Hosting
         {
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
+                _ = app ?? throw new ArgumentNullException(nameof(app));
                 var webHost = app.ApplicationServices.GetRequiredService<KnifeWebHost>();
                 webHost.ConfigureWebApp(app, env);
             }
