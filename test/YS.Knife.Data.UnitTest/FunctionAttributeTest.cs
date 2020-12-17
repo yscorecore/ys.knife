@@ -20,7 +20,7 @@ namespace YS.Knife.Data.UnitTest
 
     }
 
-    public class Class1:BaseClass
+    public class Class1 : BaseClass
     {
         [Function("FunctionCode1")]
         public void SayHello()
@@ -53,8 +53,8 @@ namespace YS.Knife.Data.UnitTest
     {
         [Function("Function5")]
         public virtual void SayHello5()
-        { 
-        
+        {
+
         }
 
         [Function("Function6")]
@@ -63,5 +63,5 @@ namespace YS.Knife.Data.UnitTest
 
         }
     }
-    
+
 }
