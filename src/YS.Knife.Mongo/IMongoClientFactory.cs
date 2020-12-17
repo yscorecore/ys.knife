@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace YS.Knife.Mongo
 {

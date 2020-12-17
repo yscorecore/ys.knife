@@ -11,7 +11,7 @@ namespace YS.Knife.Data
     [Serializable]
     public class FilterInfo
     {
-        static Dictionary<FilterType, string> FilterTypeNameMapper = new Dictionary<FilterType, string>
+        static readonly Dictionary<FilterType, string> FilterTypeNameMapper = new Dictionary<FilterType, string>
         {
             [Data.FilterType.Equals] = "==",
             [Data.FilterType.NotEquals] = "!=",

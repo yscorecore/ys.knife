@@ -5,7 +5,7 @@ namespace YS.Knife.Data
 {
     public class LimitDataListSource<T> : IListSource
     {
-        private ILimitData<T> limitData;
+        private readonly ILimitData<T> limitData;
         public LimitDataListSource(ILimitData<T> limitData)
         {
             _ = limitData ?? throw new System.ArgumentNullException(nameof(limitData));

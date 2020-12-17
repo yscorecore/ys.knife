@@ -19,7 +19,7 @@ namespace YS.Knife.Mongo
         public IMongoDatabase Database { get; }
 
         public IClientSessionHandle Session { get; internal set; }
-        private LocalCache<Type, object> collectionCache = new LocalCache<Type, object>();
+        private readonly LocalCache<Type, object> collectionCache = new LocalCache<Type, object>();
 
         public IMongoCollection<T> GetCollection<T>()
         {

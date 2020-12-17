@@ -2,8 +2,6 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using YS.Knife.Stages;
 namespace YS.Knife.Hosting
 {
     [TestClass]

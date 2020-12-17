@@ -17,7 +17,7 @@ namespace YS.Knife.Rest.Api
         {
             this.delegaterFactory = new Lazy<T>(() => this.HttpContext.RequestServices.GetRequiredService<T>());
         }
-        private Lazy<T> delegaterFactory;
+        private readonly Lazy<T> delegaterFactory;
         protected T Delegater { get { return delegaterFactory.Value; } }
     }
 }

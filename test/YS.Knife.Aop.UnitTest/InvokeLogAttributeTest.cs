@@ -11,7 +11,7 @@ namespace YS.Knife.Aop.UnitTest
     [TestClass]
     public class InvokeLogAttributeTest : KnifeHost
     {
-        private TestLoggerStore loggerStore = new TestLoggerStore();
+        private readonly TestLoggerStore loggerStore = new TestLoggerStore();
         protected override void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
         {
             loggingBuilder.ClearProviders().AddProvider(new TestLoggerProvider(loggerStore));

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using AspectCore.DynamicProxy;
+﻿using AspectCore.DynamicProxy;
 
 namespace YS.Knife.Aop
 {

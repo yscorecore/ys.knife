@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
@@ -9,7 +7,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
     [Service(Lifetime = ServiceLifetime.Scoped)]
     public class BlogingServices : IBlogingServices
     {
-        IEntityStore<Blog> blogStore;
+        readonly IEntityStore<Blog> blogStore;
         public BlogingServices(IEntityStore<Blog> store)
         {
             this.blogStore = store;

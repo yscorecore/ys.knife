@@ -1,5 +1,4 @@
-﻿using AspectCore.Configuration;
-using AspectCore.Extensions.DependencyInjection;
+﻿using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Aop

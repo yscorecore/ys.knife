@@ -4,7 +4,6 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using YS.Knife.Hosting;
-using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
 {
@@ -12,9 +11,9 @@ namespace YS.Knife.Mongo.UnitTest
     public class MongoContextAttributeTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:book_db")]
-        private string book_conn = TestEnvironment.MongoConnectionString;
+        private readonly string book_conn = TestEnvironment.MongoConnectionString;
         [InjectConfiguration("connectionStrings:user_db")]
-        private string user_conn = TestEnvironment.MongoConnectionString;
+        private readonly string user_conn = TestEnvironment.MongoConnectionString;
 
         [DataTestMethod]
         [DataRow(typeof(UserContext))]

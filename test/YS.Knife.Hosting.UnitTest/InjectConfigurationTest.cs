@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -26,7 +24,7 @@ namespace YS.Knife.Hosting
         public const string ConnectionStringFromPublicConst = "value_from_public_const";
 
         [InjectConfiguration("connectionstrings:private_static_field")]
-        private static string ConnectionStringFromPrivateStaticField = "value_from_private_static_field";
+        private static readonly string ConnectionStringFromPrivateStaticField = "value_from_private_static_field";
 
         [InjectConfiguration("connectionstrings:public_static_field")]
         public static string ConnectionStringFromPublicStaticField = "value_from_public_static_field";
@@ -50,7 +48,7 @@ namespace YS.Knife.Hosting
         public string ConnectionStringFromPublicInstanceProperty { get; set; } = "value_from_public_instance_property";
 
         [InjectConfiguration("connectionstrings")]
-        private IDictionary<string, object> Connections = new Dictionary<string, object>
+        private readonly IDictionary<string, object> Connections = new Dictionary<string, object>
         {
             ["string_value"] = "string_value",
             ["int_value"] = 123456

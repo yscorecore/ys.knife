@@ -33,7 +33,7 @@ namespace Microsoft.EntityFrameworkCore
 
             await dbContext.Database.EnsureDeletedAsync();
 
-            await migrator.MigrateAsync((string)null);
+            await migrator.MigrateAsync(null);
 
             foreach (var migration in dbContext.Database.GetMigrations().Reverse())
             {

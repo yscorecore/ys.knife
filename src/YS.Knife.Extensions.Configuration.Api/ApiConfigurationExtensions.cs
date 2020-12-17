@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Extensions.Configuration;
 using YS.Knife.Extensions.Configuration.Api;
 
 namespace Microsoft.Extensions.Configuration

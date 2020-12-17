@@ -10,7 +10,7 @@ namespace YS.Knife.Mongo.UnitTest
     public class MongoContextTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:cms")]
-        private string _ = TestEnvironment.MongoConnectionString;
+        private readonly string _ = TestEnvironment.MongoConnectionString;
 
         [TestMethod]
         public void ShouldGetContextInstanceFromDIContainer()

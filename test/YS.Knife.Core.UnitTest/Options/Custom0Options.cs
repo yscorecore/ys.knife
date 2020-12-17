@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace YS.Knife.Options
+﻿namespace YS.Knife.Options
 {
     public class Custom0Options
     {

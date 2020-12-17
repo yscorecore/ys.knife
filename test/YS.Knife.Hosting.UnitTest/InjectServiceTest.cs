@@ -8,7 +8,7 @@ namespace YS.Knife.Hosting
     public class InjectServiceTest : KnifeHost
     {
         [Inject]
-        private ITest test = Mock.Of<ITest>();
+        private readonly ITest test = Mock.Of<ITest>();
 
         [Inject]
         private ITest2 Prop { get; set; } = Mock.Of<ITest2>();

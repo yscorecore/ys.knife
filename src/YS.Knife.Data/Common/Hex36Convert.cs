@@ -6,8 +6,8 @@ namespace YS.Knife.Data
 {
     public class Hex36Convert
     {
-        static char[] chs;
-        static Dictionary<char, int> dic;
+        static readonly char[] chs;
+        static readonly Dictionary<char, int> dic;
         static Hex36Convert()
         {
             chs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();

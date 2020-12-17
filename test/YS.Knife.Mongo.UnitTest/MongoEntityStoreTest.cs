@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data;
 using YS.Knife.Hosting;
@@ -13,7 +11,7 @@ namespace YS.Knife.Mongo.UnitTest
     public class MongoEntityStoreTest : Knife.Hosting.KnifeHost
     {
         [InjectConfiguration("connectionstrings:cms")]
-        private string _ = TestEnvironment.MongoConnectionString;
+        private readonly string _ = TestEnvironment.MongoConnectionString;
 
         [TestMethod]
         public void ShouldGetStoreInstanceFromDiContainer()

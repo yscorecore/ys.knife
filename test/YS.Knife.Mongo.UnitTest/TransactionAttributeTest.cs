@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
 using YS.Knife.Entity;
@@ -12,7 +10,7 @@ namespace YS.Knife.Mongo.UnitTest
     public class TransactionAttributeTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:book_db")]
-        private string _ = TestEnvironment.MongoConnectionString;
+        private readonly string _ = TestEnvironment.MongoConnectionString;
 
         [TestMethod]
         public void ShouldInsertOneBookWhenNoTransactionAndThrowError()

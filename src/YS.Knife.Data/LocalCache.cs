@@ -6,7 +6,7 @@ namespace YS.Knife
 {
     public class LocalCache<TKey, TValue>
     {
-        Dictionary<TKey, TValue> cachedData = new Dictionary<TKey, TValue>();
+        readonly Dictionary<TKey, TValue> cachedData = new Dictionary<TKey, TValue>();
 
         public TValue Get(TKey key, Func<TKey, TValue> createFunc)
         {
