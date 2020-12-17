@@ -14,7 +14,7 @@ namespace YS.Knife.Data
         public EntityKeyAttribute(params string[] keys)
         {
             _ = keys ?? throw new ArgumentNullException(nameof(keys));
-            if (keys.Length < 0)
+            if (keys.Length == 0)
             {
                 throw new ArgumentException("Must provide one key.");
             }
@@ -29,14 +29,14 @@ namespace YS.Knife.Data
         {
             this.OrderInfo = new OrderItem(propName, orderType).ToString();
         }
-        public string OrderInfo { get; set; }
+        public string OrderInfo { get;  }
     }
 
 
     public static class EntityExtensions
     {
-        static LocalCache<Type, PropertyInfo[]> KeyCache = new LocalCache<Type, PropertyInfo[]>();
-        static LocalCache<Type, OrderInfo> OrderByCache = new LocalCache<Type, OrderInfo>();
+        static readonly LocalCache<Type, PropertyInfo[]> KeyCache = new LocalCache<Type, PropertyInfo[]>();
+        static readonly LocalCache<Type, OrderInfo> OrderByCache = new LocalCache<Type, OrderInfo>();
         public static PropertyInfo[] GetEntityKeyProps(this Type type)
         {
             return KeyCache.Get(type, (entityType) =>
@@ -44,11 +44,11 @@ namespace YS.Knife.Data
                 var keyAttr = entityType.GetCustomAttributes(typeof(EntityKeyAttribute), true).OfType<EntityKeyAttribute>().FirstOrDefault();
                 if (keyAttr != null)
                 {
-                    return keyAttr.Keys.Select(p => type.GetProperty(p)).ToArray();
+                    return keyAttr.Keys.Select(type.GetProperty).ToArray();
                 }
-                var idProp = entityType.GetProperties()
-                     .Where(p => p.Name.Equals($"{entityType.Name}Id", StringComparison.InvariantCultureIgnoreCase) || p.Name.Equals("Id", StringComparison.InvariantCultureIgnoreCase))
-                     .FirstOrDefault();
+                var idProp = entityType
+                    .GetProperties()
+                    .FirstOrDefault(p => p.Name.Equals($"{entityType.Name}Id", StringComparison.InvariantCultureIgnoreCase) || p.Name.Equals("Id", StringComparison.InvariantCultureIgnoreCase));
                 if (idProp == null)
                 {
                     throw new InvalidOperationException($"Can not find entity key property from type '{entityType.FullName}', please use '{typeof(EntityKeyAttribute).FullName}' to define the keys.");

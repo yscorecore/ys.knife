@@ -33,19 +33,13 @@ namespace YS.Knife
         protected KnifeException(
           System.Runtime.Serialization.SerializationInfo info,
           System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-        public static KnifeException FromTemplate(int code, string message)
-        {
-            return FromTemplate(code, message, null);
-        }
-        public static KnifeException FromTemplate(int code, string template, object args)
+
+        public static KnifeException FromTemplate(int code, string template, object args = null)
         {
             return FromTemplate(null, code, template, args);
         }
-        public static KnifeException FromTemplate(Exception inner, int code, string message)
-        {
-            return FromTemplate(inner, code, message, null);
-        }
-        public static KnifeException FromTemplate(Exception inner, int code, string template, object args)
+
+        public static KnifeException FromTemplate(Exception inner, int code, string template, object args = null)
         {
             var messageFormatter = new ValuesFormatter(template ?? string.Empty);
             var argumentMap = ObjectToStringDictionary(args);
