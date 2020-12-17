@@ -8,7 +8,7 @@ namespace YS.Knife
     {
         public FunctionAttribute(string code)
         {
-            this.Code = code ?? string.Empty;
+            this.Code = code;
         }
 
         public string Code { get; }
