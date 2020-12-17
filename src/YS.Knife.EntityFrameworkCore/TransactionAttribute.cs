@@ -108,7 +108,7 @@ namespace YS.Knife.EntityFrameworkCore
             dbContext.Database.CurrentTransaction?.Rollback();
         }
 
-        private void ResetTransaction(DbContext dbContext)
+        private void ResetTransaction(DbContext _)
         {
         }
     }

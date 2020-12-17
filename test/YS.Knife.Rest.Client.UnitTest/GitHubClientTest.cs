@@ -17,7 +17,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             var client = this.GetService<GitHubClient>();
             var issues = await client.GetIssues();
             Assert.IsNotNull(issues);
-            Assert.IsTrue(issues.Count() > 0);
+            Assert.IsTrue(issues.Any());
         }
         [TestMethod]
         public async Task ShouldGetGithubIssuesWhenUseInterface()
@@ -25,7 +25,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             var client = this.GetService<IGitHubService>();
             var issues = await client.GetIssues();
             Assert.IsNotNull(issues);
-            Assert.IsTrue(issues.Count() > 0);
+            Assert.IsTrue(issues.Any());
         }
 
         [TestMethod]
@@ -34,7 +34,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             var client = this.GetService<IGitHubService>();
             var infos = await client.GetInfo();
             Assert.IsNotNull(infos);
-            Assert.IsTrue(infos.Count() > 0);
+            Assert.IsTrue(infos.Count> 0);
         }
     }
 }

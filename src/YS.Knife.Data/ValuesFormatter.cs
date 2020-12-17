@@ -19,12 +19,7 @@ namespace YS.Knife
 
         public ValuesFormatter(string format)
         {
-            if (format == null)
-            {
-                throw new ArgumentNullException(nameof(format));
-            }
-
-            OriginalFormat = format;
+            OriginalFormat = format ?? throw new ArgumentNullException(nameof(format));
 
             var sb = new StringBuilder();
             int scanIndex = 0;
@@ -151,8 +146,7 @@ namespace YS.Knife
             }
 
             // if the value implements IEnumerable, build a comma separated string.
-            var enumerable = value as IEnumerable;
-            if (enumerable != null)
+            if (value is IEnumerable enumerable)
             {
                 return string.Join(", ", enumerable.Cast<object>().Select(o => o ?? NullValue));
             }

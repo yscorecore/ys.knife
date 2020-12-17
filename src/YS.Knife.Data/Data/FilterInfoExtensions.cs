@@ -86,7 +86,7 @@ namespace YS.Knife.Data
             if (singleItem == null) throw new ArgumentNullException(nameof(singleItem));
             if (string.IsNullOrEmpty(singleItem.FieldName)) throw new ArgumentException("FieldName必须填充");
             var paths = singleItem.FieldName.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
-            PropertyInfo pinfo = null;
+            PropertyInfo pinfo;
             Type ty = entityType;
             Expression exp = p;
             for (int i = 0; i < paths.Length - 1; i++)

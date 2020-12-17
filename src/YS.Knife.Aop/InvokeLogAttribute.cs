@@ -15,7 +15,7 @@ namespace YS.Knife.Aop
         }
         [FromServiceContext]
         public ILogger<InvokeLogAttribute> Logger { get; set; }
-        public async override Task Invoke(AspectContext context, AspectDelegate next)
+        public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
             _ = context ?? throw new ArgumentNullException(nameof(context));
             _ = next ?? throw new ArgumentNullException(nameof(next));
