@@ -26,6 +26,6 @@ namespace YS.Knife.Redis
                     ConnectionMultiplexer.Connect(options.ConnectionString);
         }
 
-       
+
     }
 }

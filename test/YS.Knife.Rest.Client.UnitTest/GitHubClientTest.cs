@@ -34,7 +34,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             var client = this.GetService<IGitHubService>();
             var infos = await client.GetInfo();
             Assert.IsNotNull(infos);
-            Assert.IsTrue(infos.Count> 0);
+            Assert.IsTrue(infos.Count > 0);
         }
     }
 }
