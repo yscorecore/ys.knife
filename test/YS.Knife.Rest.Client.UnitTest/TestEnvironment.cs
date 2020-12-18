@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.Test;
+using YS.Knife.Testing;
 
 namespace YS.Knife.Rest.Client.UnitTest
 {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace YS.Knife.Test.Logging
+namespace YS.Knife.Testing.Logging
 {
     public sealed class TestLoggerProvider : ILoggerProvider
     {

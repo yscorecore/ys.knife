@@ -6,7 +6,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace YS.Knife.Test
+namespace YS.Knife.Testing
 {
     public static class DockerCompose
     {

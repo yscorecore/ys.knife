@@ -4,7 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Hosting;
-using YS.Knife.Test.Logging;
+using YS.Knife.Testing.Logging;
 
 namespace YS.Knife.Aop.UnitTest
 {

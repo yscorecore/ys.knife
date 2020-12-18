@@ -2,6 +2,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.EntityFrameworkCore.MySql\YS.Knife.EntityFrameworkCore.MySql.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
-    <ProjectReference Include="..\..\src\YS.Knife.Test\YS.Knife.Test.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Testing\YS.Knife.Testing.csproj" />
   </ItemGroup>
 </Project>
