@@ -8,7 +8,7 @@ namespace YS.Knife.Rest.Client.UnitTest
     public class TestEnvironment
     {
         public static string TestServerUrl { get; private set; } = "http://127.0.0.1:8080";
-        [AssemblyInitialize()]
+        [AssemblyInitialize]
         public static void Setup(TestContext t)
         {
             DockerCompose.OutputLine = t.WriteLine;
@@ -18,7 +18,7 @@ namespace YS.Knife.Rest.Client.UnitTest
 
         }
 
-        [AssemblyCleanup()]
+        [AssemblyCleanup]
         public static void TearDown()
         {
             DockerCompose.Down();

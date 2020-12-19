@@ -5,8 +5,6 @@ namespace YS.Knife.Stages
 {
     public interface IStageService
     {
-        string StageName { get; }
-        string EnvironmentName { get; }
         Task Run(CancellationToken cancellationToken = default);
     }
 }

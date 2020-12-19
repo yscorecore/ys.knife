@@ -14,7 +14,7 @@ namespace YS.Knife.Testing
             IPEndPoint[] endPoints = ipGlobalProperties.GetActiveTcpListeners();
             for (uint i = start; i <= stop; i++)
             {
-                if (!endPoints.Any(p => p.Port == i))
+                if (endPoints.All(p => p.Port != i))
                 {
                     return i;
                 }
@@ -33,13 +33,13 @@ namespace YS.Knife.Testing
             }
             return passwordBuilder.ToString();
         }
-        public static IDisposable WithNetcoreEnv(string envName)
+        public static IDisposable WithDotnetEnv(string envName)
         {
             return new EnvnameStore(envName);
         }
         class EnvnameStore : IDisposable
         {
-            const string ASPNETCORE_ENVKEY = "ASPNETCORE_ENVIRONMENT";
+            const string ASPNETCORE_ENVKEY = "DOTNET_ENVIRONMENT";
             public EnvnameStore(string envName)
             {
                 this.backupEnvName = Environment.GetEnvironmentVariable(ASPNETCORE_ENVKEY);

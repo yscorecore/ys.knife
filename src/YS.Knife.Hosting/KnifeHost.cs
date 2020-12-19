@@ -139,14 +139,17 @@ namespace YS.Knife.Hosting
 
         public void Run()
         {
-            var options = this.host.Services.GetService<IOptions<KnifeOptions>>();
-            if (string.IsNullOrEmpty(options.Value.Stage))
+            var options = this.host.Services.GetService<KnifeOptions>();
+
+            if (string.IsNullOrEmpty(options?.Stage))
             {
                 this.host.Run();
             }
             else
             {
-                this.host.RunStage(options.Value.Stage);
+                var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+                logger.LogInformation($"knife host is running in stage mode, the stage name is '{options?.Stage}'.");
+                this.host.RunStage(options.Stage);
             }
         }
         #region IDisposable Support

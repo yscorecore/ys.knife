@@ -23,7 +23,6 @@ namespace YS.Knife.Data
                     dic.Add(chs[i], i);
                     dic.Add(char.ToLower(chs[i]), i);
                 }
-
             }
 
         }

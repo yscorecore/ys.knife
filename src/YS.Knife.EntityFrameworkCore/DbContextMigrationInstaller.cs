@@ -4,7 +4,8 @@ using YS.Knife.Stages;
 
 namespace Microsoft.EntityFrameworkCore
 {
-    public class DbContextMigrationInstaller<T> : Installer
+    [Stage("install")]
+    public class DbContextMigrationInstaller<T> : IStageService
         where T : DbContext
     {
         public DbContextMigrationInstaller(T context)
@@ -12,7 +13,7 @@ namespace Microsoft.EntityFrameworkCore
             this.Context = context;
         }
         protected T Context { get; private set; }
-        public override Task Run(CancellationToken cancellationToken = default)
+        public Task Run(CancellationToken cancellationToken = default)
         {
             return this.Context.Database.MigrateAsync(cancellationToken);
         }

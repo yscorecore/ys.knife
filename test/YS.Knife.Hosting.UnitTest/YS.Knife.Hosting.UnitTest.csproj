@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Testing\YS.Knife.Testing.csproj" />
   </ItemGroup>
 
 </Project>
