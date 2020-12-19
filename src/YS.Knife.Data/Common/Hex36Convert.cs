@@ -4,24 +4,24 @@ using System.Text;
 
 namespace YS.Knife.Data
 {
-    public class Hex36Convert
+    public static class Hex36Convert
     {
-        static readonly char[] chs;
-        static readonly Dictionary<char, int> dic;
+        static readonly char[] Chs;
+        static readonly Dictionary<char, int> Dic;
         static Hex36Convert()
         {
-            chs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
-            dic = new Dictionary<char, int>(36);
-            for (int i = 0; i < chs.Length; i++)
+            Chs = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+            Dic = new Dictionary<char, int>(36);
+            for (int i = 0; i < Chs.Length; i++)
             {
-                if (char.IsDigit(chs[i]))
+                if (char.IsDigit(Chs[i]))
                 {
-                    dic.Add(chs[i], i);
+                    Dic.Add(Chs[i], i);
                 }
                 else
                 {
-                    dic.Add(chs[i], i);
-                    dic.Add(char.ToLower(chs[i]), i);
+                    Dic.Add(Chs[i], i);
+                    Dic.Add(char.ToLower(Chs[i]), i);
                 }
             }
 
@@ -38,8 +38,8 @@ namespace YS.Knife.Data
             num = Math.Abs(num);
             do
             {
-                sb.Insert(0, chs[num % 36]);
-                num = num / 36;
+                sb.Insert(0, Chs[num % 36]);
+                num /= 36;
             }
             while (num > 0);
             if (flag) sb.Insert(0, '-');
@@ -63,7 +63,7 @@ namespace YS.Knife.Data
             }
             for (int i = start; i < num.Length; i++)
             {
-                res = res * 36 + dic[num[i]];
+                res = res * 36 + Dic[num[i]];
             }
 
             return res * (flag ? -1 : 1);

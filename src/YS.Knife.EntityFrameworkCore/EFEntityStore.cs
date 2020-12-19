@@ -69,11 +69,6 @@ namespace YS.Knife.EntityFrameworkCore
         }
 
 
-        public virtual void Update(TEntity entity)
-        {
-            this.Set.Attach(entity).State = EntityState.Modified;
-        }
-
         public virtual void Update(TEntity entity, params string[] fields)
         {
             if (fields == null || fields.Length == 0) return;

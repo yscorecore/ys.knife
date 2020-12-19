@@ -24,19 +24,28 @@ namespace YS.Knife.Entity
             where T : class
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
-            entities.ForEach(p => store.Add(p));
+            entities.ForEach(store.Add);
         }
         public static void Delete<T>(this IEntityStore<T> store, IEnumerable<T> entities)
               where T : class
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
-            entities.ForEach(p => store.Delete(p));
+            entities.ForEach(store.Delete);
+        }
+        public static void Update<T>(this IEntityStore<T> store, T entity)
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+        
+            var allPropsExceptKey = typeof(T).GetProperties().Select(p=>p.Name)
+                        .Except(typeof(T).GetEntityKeyProps().Select(p=>p.Name))
+                        .ToArray();
+            store.Update(entity, allPropsExceptKey);
         }
         public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities)
               where T : class
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
-            entities.ForEach(p => store.Update(p));
+            entities.ForEach(p=> Update(store,p));
         }
         public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities, params string[] fields)
              where T : class
@@ -55,7 +64,7 @@ namespace YS.Knife.Entity
             _ = store ?? throw new ArgumentNullException(nameof(store));
             return store.Query(conditions).LongCount();
         }
-        public static TR Max<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TR> fieldSelector)
+        public static TResult Max<T, TResult>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, TResult> fieldSelector)
               where T : class
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
