@@ -10,7 +10,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0">
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.1.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="3.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
   </ItemGroup>
 
