@@ -35,9 +35,9 @@ namespace YS.Knife.Entity
         public static void Update<T>(this IEntityStore<T> store, T entity)
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
-        
-            var allPropsExceptKey = typeof(T).GetProperties().Select(p=>p.Name)
-                        .Except(typeof(T).GetEntityKeyProps().Select(p=>p.Name))
+
+            var allPropsExceptKey = typeof(T).GetProperties().Select(p => p.Name)
+                        .Except(typeof(T).GetEntityKeyProps().Select(p => p.Name))
                         .ToArray();
             store.Update(entity, allPropsExceptKey);
         }
@@ -45,7 +45,7 @@ namespace YS.Knife.Entity
               where T : class
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
-            entities.ForEach(p=> Update(store,p));
+            entities.ForEach(p => Update(store, p));
         }
         public static void Update<T>(this IEntityStore<T> store, IEnumerable<T> entities, params string[] fields)
              where T : class
