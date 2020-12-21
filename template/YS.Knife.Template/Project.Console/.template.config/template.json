@@ -1,0 +1,12 @@
+{
+    "$schema": "http://json.schemastore.org/template",
+    "author": "Pengbo Yang",
+    "classifications": [ "Knife", "Console", "KnifeHosting" ],
+    "identity": "YS.Knife.Template.Console",
+    "name": "YS.Knife: Console Project",
+    "shortName": "console-knife",
+    "tags": {
+      "language": "C#",
+      "type": "project"
+    }
+  }

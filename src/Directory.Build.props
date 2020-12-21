@@ -3,7 +3,7 @@
         <TargetFrameworks>netstandard2.0;netstandard2.1;net5</TargetFrameworks>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Authors>Pengbo Yang</Authors>
-        <Product>QuickCoreCore</Product>
+        <Product>YS.Knife</Product>
         <PackageIcon>icon.png</PackageIcon>
         <RepositoryType>git</RepositoryType>
         <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>

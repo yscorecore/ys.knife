@@ -3,7 +3,7 @@
         <TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
         <PackageLicenseFile>LICENSE</PackageLicenseFile>
         <Authors>Pengbo Yang</Authors>
-        <Product>QuickCoreCore</Product>
+        <Product>YS.Knife</Product>
         <PackageIcon>icon.png</PackageIcon>
         <OutputType>Exe</OutputType>
         <PackAsTool>true</PackAsTool>
