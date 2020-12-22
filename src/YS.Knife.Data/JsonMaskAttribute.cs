@@ -1,16 +1,11 @@
-﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-
-namespace System.Text.Json.Serialization
+﻿namespace System.Text.Json.Serialization
 {
-
     public class JsonMaskAttribute : JsonConverterAttribute
     {
-        public char MaskChar { get; set; } = '*';
-        public int MaskLength { get; set; } = 6;
+        public char MaskChar { get; set; }
+        public int MaskLength { get; set; }
 
-        public JsonMaskAttribute(int maskLength = 6, char maskChar = '*') : base(typeof(MaskPropertyConverter))
+        public JsonMaskAttribute(int maskLength = 6, char maskChar = '*')
         {
             this.MaskLength = maskLength;
             this.MaskChar = maskChar;
@@ -18,24 +13,34 @@ namespace System.Text.Json.Serialization
 
         public override JsonConverter CreateConverter(Type typeToConvert)
         {
-            return new MaskPropertyConverter { MaskChar = MaskChar, MaskLength = MaskLength };
-        }
-    }
-
-    public class MaskPropertyConverter : JsonConverter<string>
-    {
-        public char MaskChar { get; set; } = '*';
-        public int MaskLength { get; set; }
-
-        public override string Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            return reader.GetString();
+            var type = typeof(MaskPropertyConverter<>).MakeGenericType(typeToConvert);
+            return Activator.CreateInstance(type, new object[] { MaskLength, MaskChar }) as JsonConverter;
         }
 
-        public override void Write(Utf8JsonWriter writer, string value, JsonSerializerOptions options)
+        class MaskPropertyConverter<T> : JsonConverter<T>
         {
-            string maskString = MaskLength > 0 ? new string(MaskChar, MaskLength) : string.Empty;
-            writer.WriteStringValue(maskString);
+            public MaskPropertyConverter(int maskLength, char maskChar)
+            {
+                this.MaskLength = maskLength;
+                this.MaskChar = maskChar;
+            }
+            public char MaskChar { get; set; }
+            public int MaskLength { get; set; }
+
+            public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (typeof(string) == typeof(T))
+                {
+                    return (T)(object)(MaskLength > 0 ? new string(MaskChar, MaskLength) : string.Empty);
+                }
+                return default;
+            }
+
+            public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+            {
+                string maskString = MaskLength > 0 ? new string(MaskChar, MaskLength) : string.Empty;
+                writer.WriteStringValue(maskString);
+            }
         }
     }
 }
