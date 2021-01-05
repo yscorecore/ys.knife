@@ -1,17 +1,17 @@
-using System.Text;
+﻿using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
 
 namespace YS.Knife.Generators
 {
-[Generator]
-public class CustomGenerator : ISourceGenerator
-{
-    public void Initialize(GeneratorInitializationContext context) {}
-
-    public void Execute(GeneratorExecutionContext context)
+    [Generator]
+    public class CustomGenerator : ISourceGenerator
     {
-        context.AddSource("myGeneratedFile.cs", SourceText.From(@"
+        public void Initialize(GeneratorInitializationContext context) { }
+
+        public void Execute(GeneratorExecutionContext context)
+        {
+            context.AddSource("myGeneratedFile.cs", SourceText.From(@"
 namespace GeneratedNamespace
 {
     public class GeneratedClass
@@ -22,6 +22,6 @@ namespace GeneratedNamespace
         }
     }
 }", Encoding.UTF8));
+        }
     }
-}
 }
