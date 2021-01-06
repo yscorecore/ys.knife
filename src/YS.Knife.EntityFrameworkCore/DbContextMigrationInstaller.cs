@@ -4,7 +4,6 @@ using YS.Knife.Stages;
 
 namespace Microsoft.EntityFrameworkCore
 {
-    [Stage("install")]
     public class DbContextMigrationInstaller<T> : IStageService
         where T : DbContext
     {
