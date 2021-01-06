@@ -13,7 +13,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.4");
+                .HasAnnotation("ProductVersion", "5.0.0");
 
             modelBuilder.Entity("YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts.Blog", b =>
                 {
