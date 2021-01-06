@@ -9,6 +9,7 @@
     <ContentTargetFolders>content</ContentTargetFolders>
     <PackageTags>dotnet-new;templates;knife</PackageTags>
     <Description>Templates to use when creating a knife project.</Description>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
 
