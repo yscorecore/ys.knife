@@ -5,7 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" NoWarn="NU1608"/>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.1" NoWarn="NU1608"/>
     <PackageReference Include="Oracle.EntityFrameworkCore" Version="2.19.70" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0">
     </PackageReference>
