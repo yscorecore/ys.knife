@@ -26,5 +26,17 @@ namespace YS.Knife.Data
         {
             return Serialize(obj, withIndented);
         }
+
+        public static string Dump(this object obj, bool withIndented = false) => obj.ToJsonString(withIndented);
+        public static T FromFile<T>(string filePath)
+        {
+            return JsonSerializer.Deserialize<T>(System.IO.File.ReadAllText(filePath));
+        }
+
+        public static void DumpToFile(this object obj, string filePath, bool withIndented = true)
+        {
+            System.IO.File.WriteAllText(filePath, obj.Dump(withIndented));
+        }
+
     }
 }
