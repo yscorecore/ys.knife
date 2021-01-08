@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.EntityFrameworkCore
 {
+    [Obsolete]
     public abstract class SqlServerDesignTimeDbContextFactory<T> : IDesignTimeDbContextFactory<T>
         where T : DbContext
     {

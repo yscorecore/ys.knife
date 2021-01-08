@@ -6,8 +6,9 @@ using Microsoft.Extensions.Configuration;
 
 namespace Microsoft.EntityFrameworkCore
 {
+    [Obsolete]
     public abstract class PostgreSqlDesignTimeDbContextFactory<T> : IDesignTimeDbContextFactory<T>
-        where T : DbContext
+       where T : DbContext
     {
 
         public T CreateDbContext(string[] args)
