@@ -6,7 +6,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.0" NoWarn="NU1608"/>
-    <PackageReference Include="Oracle.EntityFrameworkCore" Version="2.19.70" />
+    <PackageReference Include="Oracle.EntityFrameworkCore" Version="3.19.80" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" Version="5.0.0">
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="5.0.0" />
