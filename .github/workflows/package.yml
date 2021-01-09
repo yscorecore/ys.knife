@@ -23,7 +23,7 @@ jobs:
       run: echo TEST_PROJ_COUNT=$(ls -l test |grep "^d"|wc -l) >> $GITHUB_ENV
     - name: 07 Run Unit test
       if: env.TEST_PROJ_COUNT>0
-      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
+      run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
     - name: 08 Combin All Test Report
       if: env.TEST_PROJ_COUNT>0
       run: dotnet tool install -g dotnet-reportgenerator-globaltool && reportgenerator  -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
@@ -45,7 +45,7 @@ jobs:
     - name: 12 Set Pack Version
       run: echo PACK_VERSION=${GIT_TAG#v} >> $GITHUB_ENV
     - name: 13 Create Package
-      run: dotnet pack -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
+      run: dotnet pack --no-restore -p:PackageVersion=${PACK_VERSION} -p:RepositoryUrl=${{github.event.repository.url}} -p:PackageProjectUrl=${{github.event.repository.url}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -o .publish --configuration Release
     - name: 14 Push Package
       run: bash ./.github/scripts/pushpack.sh .publish ${{secrets.NUGET_APIKEY}}
     - name: 15 Set Image Tag
