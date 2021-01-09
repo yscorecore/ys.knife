@@ -28,7 +28,7 @@ jobs:
       run: echo TEST_PROJ_COUNT=$(ls -l test |grep "^d"|wc -l) >> $GITHUB_ENV
     - name: 07 Run Unit test
       if: env.TEST_PROJ_COUNT>0
-      run: dotnet test --no-build /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
+      run: dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
     - name: 08 Combin All Test Report
       if: env.TEST_PROJ_COUNT>0
       run: dotnet tool install -g dotnet-reportgenerator-globaltool && reportgenerator  -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
