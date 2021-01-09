@@ -2,7 +2,7 @@
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
 {
-    public class BloggingContextDesignTimeFactory : SqliteDesignTimeDbContextFactory<BloggingContext>
+    public class BloggingContextDesignTimeFactory : DesignTimeDbContextFactoryBase<BloggingContext>
     {
     }
 }

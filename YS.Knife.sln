@@ -85,10 +85,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Redis", "src\YS.Kn
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosting", "Hosting", "{0D092072-3A6E-4CD3-A69F-1C9B8BC36276}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "template", "template", "{55B708D0-42B3-11EB-99F3-1F1C3134ED70}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Template", "template\YS.Knife.Template\YS.Knife.Template.csproj", "{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -215,10 +211,6 @@ Global
 		{00F6A8DA-EFC3-41F9-9EA3-5CC0E78F4BC4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00F6A8DA-EFC3-41F9-9EA3-5CC0E78F4BC4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00F6A8DA-EFC3-41F9-9EA3-5CC0E78F4BC4}.Release|Any CPU.Build.0 = Release|Any CPU
-		{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -263,7 +255,6 @@ Global
 		{557128CD-9954-4860-A299-45F7D4FBEA3B} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{00F6A8DA-EFC3-41F9-9EA3-5CC0E78F4BC4} = {557128CD-9954-4860-A299-45F7D4FBEA3B}
 		{0D092072-3A6E-4CD3-A69F-1C9B8BC36276} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
-		{185E3BCA-6437-4A1A-BA20-B62AE6E2BA37} = {55B708D0-42B3-11EB-99F3-1F1C3134ED70}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
