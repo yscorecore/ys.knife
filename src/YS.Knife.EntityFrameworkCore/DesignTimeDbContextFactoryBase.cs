@@ -13,7 +13,7 @@ namespace Microsoft.EntityFrameworkCore
     public abstract class DesignTimeDbContextFactoryBase<T> : IDesignTimeDbContextFactory<T>
        where T : DbContext
     {
-        public T CreateDbContext(string[] args)
+        public virtual T CreateDbContext(string[] args)
         {
             var serviceProvider = BuildProvider(args);
             var context = serviceProvider.GetService<T>();
