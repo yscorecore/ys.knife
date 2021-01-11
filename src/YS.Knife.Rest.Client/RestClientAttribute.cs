@@ -50,7 +50,7 @@ namespace YS.Knife.Rest.Client
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
 
             var injectType = this.InjectType ?? DeduceInjectType(declareType);
-            if (injectType != null)
+            if (injectType != null && injectType!= declareType)
             {
                 services.AddTransient(injectType, (sp) => sp.GetService(declareType));
             }
