@@ -15,7 +15,7 @@ namespace YS.Knife.Grpc
         {
 
         }
-        public string ServiceName { get; set; }
+        public string GrpcServiceName { get; set; }
         
         public Type InjectType { get; set; }
         
@@ -29,16 +29,12 @@ namespace YS.Knife.Grpc
             var method = typeof(OptionsAttribute).GetMethod(nameof(RegisterGrpcClient), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] {services, context?.Configuration});
             
-            var injectType = this.InjectType ?? DeduceInjectInterfaceType(declareType);
-        
+            var injectType = this.InjectType ?? (AutoDeduceInterfaceType?DeduceInjectInterfaceType(declareType):null);
             if (injectType != null &&  injectType!=declareType )
             {
                 // every time from service provider get the grpc client
                 services.AddTransient(InjectType, sp => sp.GetService(declareType));
-                
             }
-           
-
         }
         
         private void RegisterGrpcClient<T>(IServiceCollection services, IConfiguration configuration)
@@ -46,11 +42,10 @@ namespace YS.Knife.Grpc
         {
             services.AddGrpcClient<T>((sp, configAction) =>
             {
-                var grpcInfo = sp.GetRequiredService<GrpcInfo<T>>();
-                configAction.Address = new Uri(grpcInfo.BaseAddress);   
-                // configAction.Interceptors
+                string serviceName = this.GrpcServiceName ?? typeof(T).FullName;
+                var grpcInfo = sp.GetRequiredService<GrpcServicesOptions>().GetServiceInfoByName(serviceName);
+                configAction.Address = new Uri(grpcInfo.BaseAddress);
             });
-            
         }
         
         private Type DeduceInjectInterfaceType(Type serviceType)

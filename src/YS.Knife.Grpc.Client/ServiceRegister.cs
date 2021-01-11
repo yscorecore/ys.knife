@@ -2,7 +2,7 @@
 
 namespace YS.Knife.Grpc.Client
 {
-    public class ServiceRegister:YS.Knife.IServiceRegister
+    public class ServiceRegister : YS.Knife.IServiceRegister
     {
         public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
