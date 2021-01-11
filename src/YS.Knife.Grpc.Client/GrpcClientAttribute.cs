@@ -8,7 +8,7 @@ using YS.Knife.Grpc.Client;
 
 namespace YS.Knife.Grpc
 {
-    [AttributeUsage(AttributeTargets.Class,AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class GrpcClientAttribute : YS.Knife.KnifeAttribute
     {
         public GrpcClientAttribute() : base(null)
@@ -16,9 +16,9 @@ namespace YS.Knife.Grpc
 
         }
         public string GrpcServiceName { get; set; }
-        
+
         public Type InjectType { get; set; }
-        
+
         /// <summary>
         /// Get or set a value, it means that when <see cref="InjectType"/> is null, auto deduce the interface type.
         /// </summary>
@@ -27,16 +27,16 @@ namespace YS.Knife.Grpc
         {
             //services.AddGrpcClient<>()
             var method = typeof(OptionsAttribute).GetMethod(nameof(RegisterGrpcClient), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
-            method.Invoke(this, new object[] {services, context?.Configuration});
-            
-            var injectType = this.InjectType ?? (AutoDeduceInterfaceType?DeduceInjectInterfaceType(declareType):null);
-            if (injectType != null &&  injectType!=declareType )
+            method.Invoke(this, new object[] { services, context?.Configuration });
+
+            var injectType = this.InjectType ?? (AutoDeduceInterfaceType ? DeduceInjectInterfaceType(declareType) : null);
+            if (injectType != null && injectType != declareType)
             {
                 // every time from service provider get the grpc client
                 services.AddTransient(InjectType, sp => sp.GetService(declareType));
             }
         }
-        
+
         private void RegisterGrpcClient<T>(IServiceCollection services, IConfiguration configuration)
             where T : class
         {
@@ -47,7 +47,7 @@ namespace YS.Knife.Grpc
                 configAction.Address = new Uri(grpcInfo.BaseAddress);
             });
         }
-        
+
         private Type DeduceInjectInterfaceType(Type serviceType)
         {
             var allInterfaces = serviceType.GetInterfaces();
