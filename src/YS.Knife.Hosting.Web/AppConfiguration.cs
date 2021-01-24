@@ -40,6 +40,7 @@ namespace YS.Knife.Hosting.Web
             {
                 endpoints.MapControllers();
                 endpoints.MapKnifeHealthCheckWhenProvided();
+                endpoints.MapAllGrpcKnifeServices();
             });
         }
 

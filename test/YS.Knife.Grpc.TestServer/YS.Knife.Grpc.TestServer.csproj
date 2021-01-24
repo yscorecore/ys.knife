@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net5.0</TargetFramework>
+        <StartupObject>YS.Knife.Grpc.TestServer.Program</StartupObject>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\YS.Knife.Grpc.AspNetCore.Server\YS.Knife.Grpc.AspNetCore.Server.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj" />
+    </ItemGroup>
+    <!--<ItemGroup>
+        <Protobuf Include="Greeter.proto" GrpcServices="Server" />
+    </ItemGroup>-->
+</Project>

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife;
+using YS.Knife.Grpc;
 using YS.Knife.Grpc.AspNetCore.Server;
 
 namespace Microsoft.AspNetCore.Builder
@@ -17,7 +18,7 @@ namespace Microsoft.AspNetCore.Builder
         {
             var grpcTypes = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<GrpcServiceAttribute>();
             var genMethod = typeof(EndpointRouteBuilderGrpcExtensions)
-                    .GetMethod(nameof(MapGrpcService), BindingFlags.Instance | BindingFlags.NonPublic);
+                    .GetMethod(nameof(MapGrpcService), BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (var grpcType in grpcTypes)
             {
                 var method = genMethod.MakeGenericMethod(grpcType);
