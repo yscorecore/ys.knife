@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFrameworks>net5</TargetFrameworks>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net5'">
+        <PackageReference Include="Grpc.AspNetCore.Server.Reflection">
+            <Version>2.34.0</Version>
+        </PackageReference>
+    </ItemGroup>
+
+
+</Project>
