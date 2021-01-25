@@ -15,5 +15,10 @@ namespace Microsoft.AspNetCore.Builder
             _ = app ?? throw new ArgumentNullException(nameof(app));
             return app.UseMiddleware<RequestLoggingMiddleware>();
         }
+        public static IApplicationBuilder UseMappingPageInfo(this IApplicationBuilder app)
+        {
+             _ = app ?? throw new ArgumentNullException(nameof(app));
+            return app.UseMiddleware<MappingPageInfoMiddleware>();
+        }
     }
 }
