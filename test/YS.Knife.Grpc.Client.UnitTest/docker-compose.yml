@@ -1,0 +1,16 @@
+﻿version: '3.3'
+
+services:
+  testserver:
+    build: 
+      context: ../../
+      dockerfile: test/YS.Knife.Grpc.TestServer/Dockerfile
+    ports:
+    - "${SQLSERVER_PORT:-8080}:80"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+  wait-compose-ready:
+    image: ysknife/wait-compose-ready
+    environment:
+      REPORT_TO_HOST_PORT: ${REPORT_TO_HOST_PORT:-8901}
+      WAIT_HOSTS: testserver:80

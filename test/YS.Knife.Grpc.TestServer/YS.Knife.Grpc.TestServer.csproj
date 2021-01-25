@@ -9,7 +9,7 @@
         <ProjectReference Include="..\..\src\YS.Knife.Grpc.AspNetCore.Server\YS.Knife.Grpc.AspNetCore.Server.csproj" />
         <ProjectReference Include="..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj" />
     </ItemGroup>
-    <!--<ItemGroup>
+    <ItemGroup>
         <Protobuf Include="Greeter.proto" GrpcServices="Server" />
-    </ItemGroup>-->
+    </ItemGroup>
 </Project>
