@@ -17,7 +17,7 @@ namespace Microsoft.AspNetCore.Builder
         }
         public static IApplicationBuilder UseMappingPageInfo(this IApplicationBuilder app)
         {
-             _ = app ?? throw new ArgumentNullException(nameof(app));
+            _ = app ?? throw new ArgumentNullException(nameof(app));
             return app.UseMiddleware<MappingPageInfoMiddleware>();
         }
     }

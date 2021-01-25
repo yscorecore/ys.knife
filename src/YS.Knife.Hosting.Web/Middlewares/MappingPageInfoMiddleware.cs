@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
 namespace YS.Knife.Hosting.Web.Middlewares
@@ -14,7 +14,7 @@ namespace YS.Knife.Hosting.Web.Middlewares
         private readonly ILogger _logger;
         private readonly MappingPageOptions _mappingPageOptions;
 
-        public MappingPageInfoMiddleware(RequestDelegate next, ILogger<MappingPageInfoMiddleware> logger,MappingPageOptions mappingPageOptions)
+        public MappingPageInfoMiddleware(RequestDelegate next, ILogger<MappingPageInfoMiddleware> logger, MappingPageOptions mappingPageOptions)
         {
             _next = next;
             _logger = logger;
@@ -67,11 +67,11 @@ namespace YS.Knife.Hosting.Web.Middlewares
     [Options]
     public class MappingPageOptions
     {
-        
-        public string PageSizeName { get; set; }="pageSize";
-        public string PageIndexName { get; set; }="pageIndex";
 
-        public string LimitName{get;set;}="limit";
-        public string OffsetName { get; set; }="offset";
+        public string PageSizeName { get; set; } = "pageSize";
+        public string PageIndexName { get; set; } = "pageIndex";
+
+        public string LimitName { get; set; } = "limit";
+        public string OffsetName { get; set; } = "offset";
     }
 }
