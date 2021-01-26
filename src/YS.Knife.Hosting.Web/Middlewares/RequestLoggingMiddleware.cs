@@ -47,18 +47,19 @@ namespace YS.Knife.Hosting.Web.Middlewares
 
         private Action<ILogger, string, string, string, double, int, Exception> GetLogByStatusCode(int statusCode)
         {
+            if (statusCode >= 500)
+            {
+                return Logs.CriticalLog;
+            }
             if (statusCode >= 400)
             {
                 return Logs.ErrorLog;
             }
-            else if (statusCode >= 300)
+            if (statusCode >= 300)
             {
                 return Logs.WarningLog;
             }
-            else
-            {
-                return Logs.InfoLog;
-            }
+            return Logs.InfoLog;
         }
 
         private class Logs
@@ -73,8 +74,12 @@ namespace YS.Knife.Hosting.Web.Middlewares
                "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
             public static Action<ILogger, string, string, string, double, int, Exception> ErrorLog = LoggerMessage.Define<string, string, string, double, int>(
              LogLevel.Error,
-             new EventId(3, nameof(WarningLog)),
+             new EventId(3, nameof(ErrorLog)),
              "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
+            public static Action<ILogger, string, string, string, double, int, Exception> CriticalLog = LoggerMessage.Define<string, string, string, double, int>(
+                LogLevel.Critical,
+                new EventId(4, nameof(CriticalLog)),
+                "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
         }
     }
 }
