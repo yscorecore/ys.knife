@@ -1,7 +1,10 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+
 service Greeter {
   rpc SayHello (HelloRequest) returns (HelloReply);
+  rpc GetForecast(EmptyRequest) returns (ForecastListReply);
 }
 
 message HelloRequest {
@@ -10,4 +13,18 @@ message HelloRequest {
 
 message HelloReply {
   string message = 1;
+}
+
+message EmptyRequest {
+
+}
+message ForecastListReply {
+    repeated Forecast forecast = 1;
+}
+
+message Forecast{
+    google.protobuf.Timestamp date = 1;
+    int32 temperatureC=2;
+    int32 TemperatureF=3;
+    string summary=4;
 }

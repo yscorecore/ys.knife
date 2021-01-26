@@ -26,10 +26,10 @@ namespace YS.Knife.Hosting.Web.Middlewares
             }
             finally
             {
-
-                var action = GetLogingAction(context.Response.StatusCode);
-                action(_logger,
-                     context.Request.Protocol,
+                bool isGrpc = IsGrpcRequest(context);
+                var log = GetLogByStatusCode(context.Response.StatusCode);
+                log(_logger,
+                    context.Request.Protocol,
                     context.Request?.Method,
                     context.Request.GetDisplayUrl(),
                     (DateTime.Now - start).TotalSeconds,
@@ -37,7 +37,15 @@ namespace YS.Knife.Hosting.Web.Middlewares
 
             }
         }
-        private Action<ILogger, string, string, string, double, int, Exception> GetLogingAction(int statusCode)
+
+        private static bool IsGrpcRequest(HttpContext context)
+        {
+            
+            return context.GetEndpoint()?.DisplayName?.StartsWith("gRPC") ?? false;
+
+        }
+
+        private Action<ILogger, string, string, string, double, int, Exception> GetLogByStatusCode(int statusCode)
         {
             if (statusCode >= 400)
             {
@@ -58,15 +66,15 @@ namespace YS.Knife.Hosting.Web.Middlewares
             public static Action<ILogger, string, string, string, double, int, Exception> InfoLog = LoggerMessage.Define<string, string, string, double, int>(
                 LogLevel.Information,
                 new EventId(1, nameof(InfoLog)),
-                "{protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
+                "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
             public static Action<ILogger, string, string, string, double, int, Exception> WarningLog = LoggerMessage.Define<string, string, string, double, int>(
                LogLevel.Warning,
                new EventId(2, nameof(WarningLog)),
-               "{protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
+               "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
             public static Action<ILogger, string, string, string, double, int, Exception> ErrorLog = LoggerMessage.Define<string, string, string, double, int>(
              LogLevel.Error,
              new EventId(3, nameof(WarningLog)),
-             "{protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
+             "[-] {protocol} {method} {url} took {time:f4} seconds, response code {statusCode}.");
         }
     }
 }
