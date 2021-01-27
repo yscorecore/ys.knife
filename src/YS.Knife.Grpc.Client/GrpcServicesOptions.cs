@@ -5,7 +5,7 @@ namespace YS.Knife.Grpc.Client
     [Options]
     public class GrpcServicesOptions
     {
-        public string BaseAddress { get; set; }
+        public string BaseAddress { get; set; } = "localhost:5001";
         public Dictionary<string, GrpcServiceInfo> Services { get; set; } = new Dictionary<string, GrpcServiceInfo>();
     }
 

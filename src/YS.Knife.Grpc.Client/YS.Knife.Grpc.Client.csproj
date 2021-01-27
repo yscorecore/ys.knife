@@ -2,11 +2,12 @@
     <PropertyGroup>
         <GoogleProtobufVersion>3.13.0</GoogleProtobufVersion>
     </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="$(GoogleProtobufVersion)" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.34.0" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="$(GoogleProtobufVersion)" />
+        <PackageReference Include="Grpc.Net.ClientFactory" Version="2.34.0" />
+        <PackageReference Include="Grpc.Tools" Version="2.34.0" PrivateAssets="None" />
+    </ItemGroup>
 </Project>

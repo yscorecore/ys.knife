@@ -19,7 +19,7 @@ namespace YS.Knife.Grpc.TestServer
         {
             HelloReply helloReply = new HelloReply
             {
-                Message = "hello"
+                Message = $"Hello,{request.Name}"
             };
             return Task.FromResult(helloReply);
         }

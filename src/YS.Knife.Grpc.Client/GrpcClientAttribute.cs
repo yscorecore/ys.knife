@@ -26,7 +26,7 @@ namespace YS.Knife.Grpc
         public override void RegisterService(IServiceCollection services, IRegisterContext context, Type declareType)
         {
             //services.AddGrpcClient<>()
-            var method = typeof(OptionsAttribute).GetMethod(nameof(RegisterGrpcClient), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
+            var method = typeof(GrpcClientAttribute).GetMethod(nameof(RegisterGrpcClient), BindingFlags.Instance | BindingFlags.NonPublic).MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services, context?.Configuration });
 
             var injectType = this.InjectType ?? (AutoDeduceInterfaceType ? DeduceInjectInterfaceType(declareType) : null);
@@ -45,8 +45,7 @@ namespace YS.Knife.Grpc
                 string serviceName = this.GrpcServiceName ?? typeof(T).FullName;
                 var grpcInfo = sp.GetRequiredService<GrpcServicesOptions>().GetServiceInfoByName(serviceName);
                 configAction.Address = new Uri(grpcInfo.BaseAddress);
-            })
-                ;
+            });
         }
 
         private Type DeduceInjectInterfaceType(Type serviceType)

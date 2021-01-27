@@ -97,9 +97,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.AspNetCore.Se
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.TestServer", "test\YS.Knife.Grpc.TestServer\YS.Knife.Grpc.TestServer.csproj", "{E311297F-05B6-4040-9003-3DF9F0F9E18E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Grpc.Service", "src\YS.Knife.Grpc.Service\YS.Knife.Grpc.Service.csproj", "{0FA62A6C-52AA-43E2-87A3-4C9390543F22}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.Service", "src\YS.Knife.Grpc.Service\YS.Knife.Grpc.Service.csproj", "{0FA62A6C-52AA-43E2-87A3-4C9390543F22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Grpc.Client.UnitTest", "test\YS.Knife.Grpc.Client.UnitTest\YS.Knife.Grpc.Client.UnitTest.csproj", "{FA6E6C48-10CF-4778-BE17-7D0FEC9562AB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.Client.UnitTest", "test\YS.Knife.Grpc.Client.UnitTest\YS.Knife.Grpc.Client.UnitTest.csproj", "{FA6E6C48-10CF-4778-BE17-7D0FEC9562AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

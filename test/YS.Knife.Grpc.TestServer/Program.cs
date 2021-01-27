@@ -22,11 +22,11 @@ namespace YS.Knife.Grpc.TestServer
         }
         protected override void OnConfigureWebHostBuilder(IWebHostBuilder webBuilder)
         {
-            webBuilder.UseKestrel(kestrelServerOptions =>
-            {
-                kestrelServerOptions.ListenLocalhost(5000, o => o.Protocols =
-                    HttpProtocols.Http2);
-            });
+            //webBuilder.UseKestrel(kestrelServerOptions =>
+            //{
+            //    kestrelServerOptions.ListenLocalhost(5000, o => o.Protocols =
+            //        HttpProtocols.Http2);
+            //});
         }
     }
 }
