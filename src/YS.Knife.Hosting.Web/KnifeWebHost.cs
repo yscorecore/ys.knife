@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using YS.Knife.Hosting.Web;
@@ -23,23 +24,42 @@ namespace YS.Knife.Hosting
         {
         }
 
-        protected override void OnConfigureCustomService(HostBuilderContext builder, IServiceCollection serviceCollection)
+        protected override void OnConfigureCustomServices(HostBuilderContext builder, IServiceCollection serviceCollection)
         {
-            base.OnConfigureCustomService(builder, serviceCollection);
+            base.OnConfigureCustomServices(builder, serviceCollection);
             serviceCollection.AddSingleton(typeof(KnifeWebHost), this);
         }
 
-        protected virtual void ConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
+        protected virtual void OnPreConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+
+
+        }
+        protected virtual void OnConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
             AppConfiguration.ConfigureDefaultWebApp(app, env);
+        }
+
+        protected virtual void OnPostConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+
+
+        }
+
+
+
+        protected virtual void OnConfigureWebHostBuilder(IWebHostBuilder webBuilder)
+        {
+
         }
 
         protected override IHostBuilder CreateHostBuilder(string[] args)
         {
             return base.CreateHostBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+                .ConfigureWebHostDefaults((webBuilder) =>
                 {
                     webBuilder.UseStartup<CommonStartup>();
+                    OnConfigureWebHostBuilder(webBuilder);
                 });
         }
 
@@ -51,16 +71,13 @@ namespace YS.Knife.Hosting
             {
                 _ = app ?? throw new ArgumentNullException(nameof(app));
                 var webHost = app.ApplicationServices.GetRequiredService<KnifeWebHost>();
-                webHost.ConfigureWebApp(app, env);
+                webHost.OnPreConfigureWebApp(app, env);
+                webHost.OnConfigureWebApp(app, env);
+                webHost.OnPostConfigureWebApp(app, env);
             }
 
             public void ConfigureServices(IServiceCollection _)
             {
-                // services.Configure<ApiBehaviorOptions>(options =>
-                // {
-                //     // disable auto validate model
-                //     options.SuppressModelStateInvalidFilter = true;
-                // });
             }
         }
     }

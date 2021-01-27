@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FluentAssertions.Extensions;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 
@@ -26,20 +27,20 @@ namespace YS.Knife.Grpc.TestServer
         public override Task<ForecastListReply> GetForecast(EmptyRequest request, ServerCallContext context)
         {
             var rng = new Random();
-            var data= Enumerable.Range(1, 5).Select(index => new WeatherForecast
-                {
-                    Date = DateTime.Now.AddDays(index),
-                    TemperatureC = rng.Next(-20, 55),
-                    Summary = Summaries[rng.Next(Summaries.Length)]
-                })
+            var data = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+            {
+                Date = DateTime.Now.AddDays(index),
+                TemperatureC = rng.Next(-20, 55),
+                Summary = Summaries[rng.Next(Summaries.Length)]
+            })
                 .ToArray();
             var reply = new ForecastListReply() { };
-            reply.Forecast.AddRange(data.Select(p=> new Forecast
+            reply.Forecast.AddRange(data.Select(p => new Forecast
             {
-                 Date = Timestamp.FromDateTime(p.Date),
-                 TemperatureC = p.TemperatureC,
-                 TemperatureF = p.TemperatureF,
-                 Summary = p.Summary
+                Date = Timestamp.FromDateTime(p.Date.AsUtc()),
+                TemperatureC = p.TemperatureC,
+                TemperatureF = p.TemperatureF,
+                Summary = p.Summary
             }));
             return Task.FromResult(reply);
 
