@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
@@ -14,19 +15,30 @@ namespace YS.Knife.Grpc.TestServer
     {
         public Program(string[] args) : base(args)
         {
-
         }
         public static void Main(string[] args)
         {
             new Program(args).Run();
         }
-        protected override void OnConfigureWebHostBuilder(IWebHostBuilder webBuilder)
+
+        protected override void OnConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //webBuilder.UseKestrel(kestrelServerOptions =>
-            //{
-            //    kestrelServerOptions.ListenLocalhost(5000, o => o.Protocols =
-            //        HttpProtocols.Http2);
-            //});
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            
+            app.UseResponseTraceId();
+
+            app.UseRequestLogging();
+
+            app.UseRouting();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapAllGrpcKnifeServices();
+            });
         }
     }
 }

@@ -17,6 +17,7 @@
         <!--<PackageReference Include="Grpc.Tools" Version="2.34.0" PrivateAssets="None" />-->
         <ProjectReference Include="..\..\src\YS.Knife.Grpc.Client\YS.Knife.Grpc.Client.csproj" />
         <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+        <ProjectReference Include="..\..\src\YS.Knife.Testing\YS.Knife.Testing.csproj" />
     </ItemGroup>
     <ItemGroup>
         <Protobuf Include="..\YS.Knife.Grpc.TestServer\Greeter.proto" GrpcServices="Client" />

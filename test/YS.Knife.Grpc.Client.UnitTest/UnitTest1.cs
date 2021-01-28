@@ -13,7 +13,7 @@ namespace YS.Knife.Grpc.Client.UnitTest
         [InjectConfiguration("GrpcServices")]
         private readonly IDictionary<string, object> GrpcServices = new Dictionary<string, object>
         {
-            ["BaseAddress"] = "https://localhost:5001",
+            ["BaseAddress"] = "http://localhost:5000",
         };
 
         [TestMethod]

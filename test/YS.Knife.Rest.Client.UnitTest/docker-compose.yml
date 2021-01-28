@@ -6,7 +6,7 @@ services:
       context: ../../
       dockerfile: test/YS.Knife.Rest.Client.TestServer/Dockerfile
     ports:
-    - "${SQLSERVER_PORT:-8080}:80"
+    - "${SERVER_PORT:-8080}:80"
     environment:
       ASPNETCORE_ENVIRONMENT: Development
   wait-compose-ready:
