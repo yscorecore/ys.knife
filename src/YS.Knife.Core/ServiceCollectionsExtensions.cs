@@ -2,11 +2,19 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace YS.Knife
 {
     public static class ServiceCollectionsExtensions
     {
+        public static IServiceCollection AddKnifeOptions<T>(this IServiceCollection services, IConfiguration configuration)
+            where T : class
+        {
+            services.AddOptions<T>().Bind(configuration).ValidateDataAnnotations();
+            services.AddTransient<T>(sp => sp.GetRequiredService<IOptionsSnapshot<T>>().Value);
+            return services;
+        }
 
         public static IServiceCollection RegisterKnifeServices(this IServiceCollection services, IRegisterContext context)
         {

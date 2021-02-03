@@ -25,9 +25,9 @@ namespace YS.Knife.Grpc.Client.UnitTest
         {
             DockerCompose.Down();
         }
-        private static void StartContainer(uint port,uint httpsPort, uint reportPort)
+        private static void StartContainer(uint port, uint httpsPort, uint reportPort)
         {
-            
+
             DockerCompose.Up(new Dictionary<string, object>
             {
                 ["HTTP_PORT"] = port,

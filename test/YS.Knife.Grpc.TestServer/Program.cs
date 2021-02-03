@@ -27,7 +27,7 @@ namespace YS.Knife.Grpc.TestServer
             {
                 app.UseDeveloperExceptionPage();
             }
-            
+
             app.UseResponseTraceId();
 
             app.UseRequestLogging();

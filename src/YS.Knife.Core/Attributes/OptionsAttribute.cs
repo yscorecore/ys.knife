@@ -24,8 +24,7 @@ namespace YS.Knife
             where T : class, new()
         {
             var optionsConfiguration = configuration.GetOptionsConfiguration<T>(ConfigKey);
-            services.AddOptions<T>().Bind(optionsConfiguration).ValidateDataAnnotations();
-            services.AddTransient<T>(sp => sp.GetRequiredService<IOptionsSnapshot<T>>().Value);
+            services.AddKnifeOptions<T>(optionsConfiguration);
         }
     }
 }
