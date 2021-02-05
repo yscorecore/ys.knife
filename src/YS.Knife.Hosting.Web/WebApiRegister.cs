@@ -20,7 +20,7 @@ namespace YS.Knife.Hosting.Web
         private void RegisterController(IServiceCollection services, IRegisterContext context)
         {
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
-            IMvcBuilder mvcBuilder = services.AddControllers((mvc) =>
+            IMvcBuilder mvcBuilder = services.AddMvc((mvc) =>
             {
                 if (options.WrapCodeMessageResult)
                 {
