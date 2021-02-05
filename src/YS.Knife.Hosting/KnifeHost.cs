@@ -52,6 +52,8 @@ namespace YS.Knife.Hosting
         protected virtual IHostBuilder CreateHostBuilder(string[] args)
         {
             return Host.CreateDefaultBuilder(args)
+                .UseWindowsService()
+                .UseSystemd()
                 .UseAopServiceProviderFactory(ServiceProviderOptions)
                 .ConfigureLogging(OnConfigureLogging)
                 .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) =>
