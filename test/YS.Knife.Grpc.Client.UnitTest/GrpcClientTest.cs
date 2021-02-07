@@ -7,13 +7,13 @@ using static Greeter;
 namespace YS.Knife.Grpc.Client.UnitTest
 {
     [TestClass]
-    public class UnitTest1 : YS.Knife.Hosting.KnifeHost
+    public class GrpcClientTest : YS.Knife.Hosting.KnifeHost
     {
 
         [InjectConfiguration("GrpcServices")]
         private readonly IDictionary<string, object> GrpcServices = new Dictionary<string, object>
         {
-            ["BaseAddress"] = "http://localhost:5000",
+            ["BaseAddress"] = TestEnvironment.TestServerUrl
         };
 
         [TestMethod]

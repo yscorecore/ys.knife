@@ -14,9 +14,8 @@ namespace YS.Knife.Grpc.Client.UnitTest
         {
             DockerCompose.OutputLine = t.WriteLine;
             var httpPort = Utility.GetAvailableTcpPort(8080);
-            var httpsPort = Utility.GetAvailableTcpPort(8443);
             var hostReportPort = Utility.GetAvailableTcpPort(8901);
-            StartContainer(httpPort, httpsPort, hostReportPort);
+            StartContainer(httpPort, hostReportPort);
 
         }
 
@@ -25,21 +24,17 @@ namespace YS.Knife.Grpc.Client.UnitTest
         {
             DockerCompose.Down();
         }
-        private static void StartContainer(uint port, uint httpsPort, uint reportPort)
+        private static void StartContainer(uint port, uint reportPort)
         {
 
             DockerCompose.Up(new Dictionary<string, object>
             {
-                ["HTTP_PORT"] = port,
-                ["HTTPS_PORT"] = httpsPort
+                ["HTTP_PORT"] = port
             }, reportPort);
             TestServerUrl = $"http://127.0.0.1:{port}";
         }
 
-        private static bool IsMacOs()
-        {
-            return Environment.OSVersion.Platform == PlatformID.MacOSX;
-        }
+
 
     }
 }
