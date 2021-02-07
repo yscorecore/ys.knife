@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -175,6 +177,21 @@ namespace YS.Knife.Hosting
             if (string.IsNullOrEmpty(options?.Stage))
             {
                 this.host.Run();
+            }
+            else
+            {
+                var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+                logger.LogInformation($"knife host is running in stage mode, the stage name is '{options?.Stage}'.");
+                this.host.RunStage(options.Stage);
+            }
+        }
+        public async Task RunAsync(CancellationToken token = default)
+        {
+            var options = this.host.Services.GetService<KnifeOptions>();
+
+            if (string.IsNullOrEmpty(options?.Stage))
+            {
+                await this.host.RunAsync(token);
             }
             else
             {
