@@ -6,6 +6,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\src\YS.Knife.Grpc.AspNetCore\YS.Knife.Grpc.AspNetCore.csproj" />
         <ProjectReference Include="..\..\src\YS.Knife.Hosting.Web\YS.Knife.Hosting.Web.csproj" />
     </ItemGroup>
     <ItemGroup>

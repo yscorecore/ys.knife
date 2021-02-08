@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup>
-    <TargetFrameworks>net5</TargetFrameworks>
-    <OutputType>Library</OutputType>
-    <IsPackable>true</IsPackable>
-    <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFrameworks>net5</TargetFrameworks>
+        <OutputType>Library</OutputType>
+        <IsPackable>true</IsPackable>
+        <OpenApiGenerateDocuments>false</OpenApiGenerateDocuments>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
-      <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\YS.Knife.Grpc.AspNetCore\YS.Knife.Grpc.AspNetCore.csproj" />
+        <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    </ItemGroup>
 
 
 </Project>
