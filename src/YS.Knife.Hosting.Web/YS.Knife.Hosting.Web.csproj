@@ -10,6 +10,7 @@
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.Grpc.AspNetCore\YS.Knife.Grpc.AspNetCore.csproj" />
         <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
+        <ProjectReference Include="..\YS.Knife.Rest.AspNetCore\YS.Knife.Rest.AspNetCore.csproj" />
         <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     </ItemGroup>
 

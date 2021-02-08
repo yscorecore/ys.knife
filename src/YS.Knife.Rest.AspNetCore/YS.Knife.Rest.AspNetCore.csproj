@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+    <PropertyGroup>
+        <TargetFrameworks>net5</TargetFrameworks>
+        <OutputType>Library</OutputType>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+
+
+    <ItemGroup>
+        <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+    </ItemGroup>
+</Project>

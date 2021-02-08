@@ -37,7 +37,7 @@ namespace YS.Knife.Grpc.TestServer
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapAllGrpcKnifeServices();
+                endpoints.MapAllGrpcServices();
             });
         }
     }

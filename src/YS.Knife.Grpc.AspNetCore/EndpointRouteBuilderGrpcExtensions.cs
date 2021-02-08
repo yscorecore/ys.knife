@@ -14,7 +14,7 @@ namespace Microsoft.AspNetCore.Builder
 {
     public static class EndpointRouteBuilderGrpcExtensions
     {
-        public static void MapAllGrpcKnifeServices(this IEndpointRouteBuilder endpoints)
+        public static void MapAllGrpcServices(this IEndpointRouteBuilder endpoints)
         {
             var grpcTypes = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<GrpcServiceAttribute>();
             var genMethod = typeof(EndpointRouteBuilderGrpcExtensions)

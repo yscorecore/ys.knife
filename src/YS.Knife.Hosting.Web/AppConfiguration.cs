@@ -30,8 +30,6 @@ namespace YS.Knife.Hosting.Web
 
             app.UseHttpsRedirection();
 
-            //app.UseCorrelationId();
-
             app.UseRouting();
 
             app.UseAuthorization();
@@ -40,7 +38,8 @@ namespace YS.Knife.Hosting.Web
             {
                 endpoints.MapControllers();
                 endpoints.MapKnifeHealthCheckWhenProvided();
-                endpoints.MapAllGrpcKnifeServices();
+                endpoints.MapAllGrpcServices();
+                endpoints.MapAllHubServices();
             });
         }
 
