@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using YS.Knife;
 using YS.Knife.Grpc;
-using YS.Knife.Grpc.AspNetCore.Server;
+using YS.Knife.Grpc.AspNetCore;
 
 namespace Microsoft.AspNetCore.Builder
 {
@@ -24,7 +24,7 @@ namespace Microsoft.AspNetCore.Builder
                 var method = genMethod.MakeGenericMethod(grpcType);
                 method.Invoke(null, new object[] { endpoints });
             }
-            var options = endpoints.ServiceProvider.GetService<GrpcOptions>();
+            var options = endpoints.ServiceProvider.GetService<GrpcServiceOptions>();
             if (options.EnableReflection)
             {
                 endpoints.MapGrpcReflectionService();

@@ -93,7 +93,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grpc", "Grpc", "{3F3962DC-A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Rest", "Rest", "{095D0DF2-347D-4F73-9DFD-C60F7A9A0985}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.AspNetCore.Server", "src\YS.Knife.Grpc.AspNetCore.Server\YS.Knife.Grpc.AspNetCore.Server.csproj", "{56307A95-1645-44B8-97ED-E7CF5C516697}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.AspNetCore", "src\YS.Knife.Grpc.AspNetCore.Server\YS.Knife.Grpc.AspNetCore.csproj", "{56307A95-1645-44B8-97ED-E7CF5C516697}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Grpc.TestServer", "test\YS.Knife.Grpc.TestServer\YS.Knife.Grpc.TestServer.csproj", "{E311297F-05B6-4040-9003-3DF9F0F9E18E}"
 EndProject

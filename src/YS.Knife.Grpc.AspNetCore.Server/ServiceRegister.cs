@@ -4,13 +4,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace YS.Knife.Grpc.AspNetCore.Server
+namespace YS.Knife.Grpc.AspNetCore
 {
     class ServiceRegister : YS.Knife.IServiceRegister
     {
         public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {
-            var options = context.Configuration.GetConfigOrNew<GrpcOptions>();
+            var options = context.Configuration.GetConfigOrNew<GrpcServiceOptions>();
             services.AddGrpc(op =>
             {
                 CopyProperties(options, op);
