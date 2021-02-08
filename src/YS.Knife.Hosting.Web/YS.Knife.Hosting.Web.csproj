@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\YS.Knife.Grpc.AspNetCore.Server\YS.Knife.Grpc.AspNetCore.csproj" />
     <ProjectReference Include="..\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
       <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
