@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Aop
 {
-   public  class DynamicServiceRegister : IServiceRegister
+    public class DynamicServiceRegister : IServiceRegister
     {
         public void RegisterServices(IServiceCollection services, IRegisterContext context)
         {

@@ -19,7 +19,7 @@ namespace YS.Knife.Aop
             this.Message = message;
         }
 
-        public override  Task Invoke(AspectContext context, AspectDelegate next)
+        public override Task Invoke(AspectContext context, AspectDelegate next)
         {
             if (context.ProxyMethod.ReturnType == typeof(Exception))
             {
@@ -27,15 +27,16 @@ namespace YS.Knife.Aop
                 context.ReturnValue = exception;
                 return context.Break();
             }
-            else {
-               return next.Invoke(context);
+            else
+            {
+                return next.Invoke(context);
             }
-          
+
         }
     }
     public class CodeErrorProviderAttribute : DynamicProxyAttribute
     {
-        public CodeErrorProviderAttribute(ushort baseErrorCode=0):base(ServiceLifetime.Singleton)
+        public CodeErrorProviderAttribute(ushort baseErrorCode = 0) : base(ServiceLifetime.Singleton)
         {
             BaseErrorCode = baseErrorCode;
         }

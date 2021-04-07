@@ -11,7 +11,7 @@ using YS.Knife.Hosting;
 namespace YS.Knife.Aop
 {
     [TestClass]
-    public  class CodeErrorTest: KnifeHost
+    public class CodeErrorTest : KnifeHost
     {
         [TestMethod]
         public void TestBaseCase()
@@ -20,9 +20,9 @@ namespace YS.Knife.Aop
             var exception = all.NewError();
             Assert.IsNotNull(exception);
         }
-       
+
     }
-    
+
     [CodeErrorProvider]
     public interface IAllErrors
     {
@@ -30,6 +30,6 @@ namespace YS.Knife.Aop
         Exception NewError();
     }
 
-   
-   
+
+
 }

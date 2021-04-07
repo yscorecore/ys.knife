@@ -15,6 +15,6 @@ namespace YS.Knife.Aop
             });
         }
 
-        
+
     }
 }
