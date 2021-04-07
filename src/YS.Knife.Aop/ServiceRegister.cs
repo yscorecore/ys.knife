@@ -1,4 +1,6 @@
-﻿using AspectCore.Extensions.DependencyInjection;
+﻿using System;
+using System.Reflection;
+using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace YS.Knife.Aop
@@ -12,5 +14,7 @@ namespace YS.Knife.Aop
                 config.ThrowAspectException = false;
             });
         }
+
+        
     }
 }

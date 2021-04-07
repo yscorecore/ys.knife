@@ -28,6 +28,27 @@ namespace YS.Knife
             }
         }
 
+        public static IEnumerable<Type> FindInterfaceTypesByAttribute<T>(this AppDomain appDomain,
+            Func<Type, bool> filter = null)
+            where T : Attribute
+        {
+            _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
+            var customFilter = filter ?? (type => true);
+
+            foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
+            {
+                foreach (var type in assembly.GetTypes())
+                {
+                    if (type.IsInterface
+                        && Attribute.IsDefined(type, typeof(T), false)
+                        && customFilter(type))
+                    {
+                        yield return type;
+                    }
+                }
+            }
+        }
+
         public static IEnumerable<Type> FindInstanceTypesByBaseType<TBase>(this AppDomain appDomain,
             Func<Type, bool> filter = null)
         {
