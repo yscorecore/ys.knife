@@ -21,7 +21,7 @@ jobs:
     - name: 03 Set Dotnet Tools Path
       run: echo PATH=${PATH}:${HOME}/.dotnet/tools >> $GITHUB_ENV
     - name: 04 Check Code Format
-      run: dotnet tool install -g dotnet-format && dotnet format --check
+      run: dotnet tool restore && dotnet format --check 
     - name: 05 Build with dotnet
       run: dotnet build
     - name: 06 Count Test Projects
@@ -31,7 +31,7 @@ jobs:
       run: dotnet test --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura /p:Exclude="[*Test]*"
     - name: 08 Combin All Test Report
       if: env.TEST_PROJ_COUNT>0
-      run: dotnet tool install -g dotnet-reportgenerator-globaltool && reportgenerator  -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
+      run: dotnet reportgenerator -reports:test/*/coverage.cobertura.xml -reporttype:cobertura -targetdir:.
     - name: 09 Save Artifact
       if: env.TEST_PROJ_COUNT>0  
       uses: actions/upload-artifact@v1

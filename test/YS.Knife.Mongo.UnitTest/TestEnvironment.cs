@@ -5,7 +5,7 @@ using YS.Knife.Testing;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    [TestClass]
+    //[TestClass]
     public class TestEnvironment
     {
         public static string MongoPassword { get; private set; } = "example";

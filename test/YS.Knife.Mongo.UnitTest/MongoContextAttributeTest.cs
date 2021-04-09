@@ -7,7 +7,7 @@ using YS.Knife.Hosting;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    [TestClass]
+    //[TestClass]
     public class MongoContextAttributeTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:book_db")]
