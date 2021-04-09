@@ -7,7 +7,7 @@ using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    [TestClass]
+    //[TestClass]
     public class MongoEntityStoreTest : Knife.Hosting.KnifeHost
     {
         [InjectConfiguration("connectionstrings:cms")]
