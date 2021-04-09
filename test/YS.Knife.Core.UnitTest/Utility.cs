@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -14,6 +15,7 @@ namespace YS.Knife
         {
             return BuildProvider(new Dictionary<string, string>(), config);
         }
+
         public static IServiceProvider BuildProvider(IDictionary<string, string> configurationValues, Action<IServiceCollection, IConfiguration> config = null)
         {
             var services = new ServiceCollection();
