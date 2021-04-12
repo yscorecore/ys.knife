@@ -8,19 +8,11 @@ namespace YS.Knife.Localization
     public class StringResourcesTest
     {
         [TestMethod]
-        public void ShouldGetPropertyValueFromDefaultTemplate()
-        {
-            var provider = Utility.BuildProvider();
-            var sr = provider.GetRequiredService<I18n>();
-            Assert.AreEqual("This is the Title.", sr.Title);
-        }
-
-        [TestMethod]
         public void ShouldGetMethodValueFromDefaultTemplate()
         {
             var provider = Utility.BuildProvider();
             var sr = provider.GetRequiredService<I18n>();
-            Assert.AreEqual("Hello, World.", sr.Hello());
+            Assert.AreEqual("Hello,World", sr.Hello());
         }
 
         [TestMethod]

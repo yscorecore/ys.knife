@@ -24,7 +24,7 @@ namespace YS.Knife
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
-            return services.RegisterKnifeServices(configuration).BuildServiceProvider();
+            return services.RegisterKnifeServices(configuration).BuildDynamicProxyProvider();
         }
 
         public static IHost BuildHost()
