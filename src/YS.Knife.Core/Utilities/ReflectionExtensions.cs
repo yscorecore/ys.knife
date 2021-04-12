@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Reflection;
+using System.Runtime.InteropServices.ComTypes;
+using AspectCore.Extensions.Reflection;
 
 namespace YS.Knife
 {
@@ -109,6 +112,26 @@ namespace YS.Knife
             }
 
             yield return entryAssembly;
+        }
+
+        private static LocalCache<Type, object> defaultValueCache = new LocalCache<Type, object>();
+        public static object DefaultValue(this Type type)
+        {
+            return defaultValueCache.Get(type,
+                 (type) => (Activator.CreateInstance(typeof(DevaultValueProxy<>).MakeGenericType(type)) as IDefaultValueProxy).GetDefault());
+        }
+
+        interface IDefaultValueProxy
+        {
+            object GetDefault();
+        }
+
+        class DevaultValueProxy<T> : IDefaultValueProxy
+        {
+            public object GetDefault()
+            {
+                return default(T);
+            }
         }
     }
 }

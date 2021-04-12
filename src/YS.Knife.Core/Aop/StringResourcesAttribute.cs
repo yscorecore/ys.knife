@@ -69,10 +69,13 @@ namespace YS.Knife.Aop
     [Service(typeof(ValuesFormatterFactory), Lifetime = ServiceLifetime.Singleton)]
     public class ValuesFormatterFactory
     {
+        private LocalCache<string, ValuesFormatter> _localCache = new LocalCache<string, ValuesFormatter>();
         public ValuesFormatter GetFromTemplete(string template)
         {
-            return new ValuesFormatter(template);
+            return _localCache.Get(template, t => new ValuesFormatter(t));
         }
+
+        public static readonly ValuesFormatterFactory Default = new ValuesFormatterFactory();
     }
 
     public class ValuesFormatter
@@ -172,6 +175,12 @@ namespace YS.Knife.Aop
         {
             int findIndex = format.IndexOfAny(chars, startIndex, endIndex - startIndex);
             return findIndex == -1 ? endIndex : findIndex;
+        }
+
+        public string FormatValues(IDictionary<string, object> kwargs, object[] args)
+        {
+            // _valueNames.Select(p=> )；
+            return "";
         }
 
         public string Format(object[] values)

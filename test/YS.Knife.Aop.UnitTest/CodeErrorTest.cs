@@ -23,10 +23,10 @@ namespace YS.Knife.Aop
 
     }
 
-    [CodeErrorProvider]
+    [CodeExceptions]
     public interface IAllErrors
     {
-        [CodeError(100, "some error.")]
+        [Ce(100, "some error.")]
         Exception NewError();
     }
 
