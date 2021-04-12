@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
@@ -18,29 +18,29 @@ namespace YS.Knife.Aop
         }
     }
 
-    [AttributeUsage(AttributeTargets.Method, AllowMultiple=false, Inherited=false)]
+    [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class SrAttribute : BaseAopAttribute
     {
-        public SrAttribute(string key,string defaultValue)
+        public SrAttribute(string key, string defaultValue)
         {
-            this.Key=key;
-            this.Value=defaultValue;
+            this.Key = key;
+            this.Value = defaultValue;
         }
         public string Key { get; }
-        
-        public string Value {get;}
+
+        public string Value { get; }
 
         public override Task Invoke(AspectContext context, AspectDelegate next)
         {
             var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
-            var localizer =  context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
-            var resourceKey = string.IsNullOrEmpty(Key)? context.ServiceMethod.Name:Key;
+            var localizer = context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
+            var resourceKey = string.IsNullOrEmpty(Key) ? context.ServiceMethod.Name : Key;
             var localizedString = localizer.GetString(resourceKey);
-            var template = localizedString.ResourceNotFound? this.Value: localizedString.Value;
+            var template = localizedString.ResourceNotFound ? this.Value : localizedString.Value;
             context.ReturnValue = FormatTemplate(template, context);
             return context.Break();
         }
-    
+
 
         private string FormatTemplate(string template, AspectContext context)
         {
@@ -66,7 +66,7 @@ namespace YS.Knife.Aop
     }
 
 
-    [Service(typeof(ValuesFormatterFactory), Lifetime =  ServiceLifetime.Singleton)]
+    [Service(typeof(ValuesFormatterFactory), Lifetime = ServiceLifetime.Singleton)]
     public class ValuesFormatterFactory
     {
         public ValuesFormatter GetFromTemplete(string template)
@@ -74,7 +74,7 @@ namespace YS.Knife.Aop
             return new ValuesFormatter(template);
         }
     }
-    
+
     public class ValuesFormatter
     {
         private const string NullValue = "(null)";

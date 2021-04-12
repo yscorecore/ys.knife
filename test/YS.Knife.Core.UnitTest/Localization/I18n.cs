@@ -1,4 +1,4 @@
-using Microsoft.Extensions.Localization;
+﻿using Microsoft.Extensions.Localization;
 using YS.Knife.Aop;
 namespace YS.Knife.Localization
 {
@@ -10,7 +10,7 @@ namespace YS.Knife.Localization
 
         [Sr(nameof(SayHelloWithIndex), "Hello, I'm {0}, I'm {1:d3} years old.")]
         string SayHelloWithIndex(string name, int age);
-        
+
         [Sr(nameof(SayHelloWithName), "Hello, I'm {name}, I'm {age:d3} years old.")]
         string SayHelloWithName(int age, string name);
 
