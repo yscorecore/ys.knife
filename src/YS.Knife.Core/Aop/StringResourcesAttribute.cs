@@ -45,23 +45,14 @@ namespace YS.Knife.Aop
         private string FormatTemplate(string template, AspectContext context)
         {
             var factory = context.ServiceProvider.GetRequiredService<ValuesFormatterFactory>();
-            var formatter = factory.GetFromTemplete(template);
-            var argsValueMap = BuildArgumentMap(context);
-            var args = formatter.ValueNames.Select(name => argsValueMap.GetValueOrDefault(name, null));
-            return formatter.Format(args.ToArray());
+            var formatter = factory.GetFromTemplate(template);
+            var kwArgs = context.ServiceMethod.GetParameters()
+                .Zip(context.Parameters, (pInfo, val) => new KeyValuePair<string, object>(pInfo.Name, val))
+                .ToDictionary(a => a.Key, a => a.Value);
+            return formatter.Format(context.Parameters, kwArgs);
         }
 
-        private Dictionary<string, object> BuildArgumentMap(AspectContext context)
-        {
-            var dic = new Dictionary<string, object>();
-            var allParameters = context.ProxyMethod.GetParameters();
-            for (int i = 0; i < allParameters.Length; i++)
-            {
-                dic.Add(i.ToString(), context.Parameters[i]);
-                dic.Add(allParameters[i].Name, context.Parameters[i]);
-            }
-            return dic;
-        }
+
 
     }
 
@@ -70,7 +61,7 @@ namespace YS.Knife.Aop
     public class ValuesFormatterFactory
     {
         private LocalCache<string, ValuesFormatter> _localCache = new LocalCache<string, ValuesFormatter>();
-        public ValuesFormatter GetFromTemplete(string template)
+        public ValuesFormatter GetFromTemplate(string template)
         {
             return _localCache.Get(template, t => new ValuesFormatter(t));
         }
@@ -80,7 +71,7 @@ namespace YS.Knife.Aop
 
     public class ValuesFormatter
     {
-        private const string NullValue = "(null)";
+        private const string NullValue = "[null]";
         private static readonly char[] FormatDelimiters = { ',', ':' };
         private readonly string _format;
         private readonly List<string> _valueNames = new List<string>();
@@ -177,13 +168,35 @@ namespace YS.Knife.Aop
             return findIndex == -1 ? endIndex : findIndex;
         }
 
-        public string FormatValues(IDictionary<string, object> kwargs, object[] args)
+        public string Format(object[] args, IDictionary<string, object> kwargs)
         {
             // _valueNames.Select(p=> )；
-            return "";
+            if (args == null || args.Length == 0)
+            {
+                return Format(kwargs);
+            }
+            var dic = kwargs != null ? new Dictionary<string, object>(kwargs) : new Dictionary<string, object>();
+            for (int i = 0; i < args.Length; i++)
+            {
+                dic[i.ToString()] = args[i];
+            }
+            return Format(dic);
         }
 
-        public string Format(object[] values)
+        private string Format(IDictionary<string, object> kwargs)
+        {
+            var values = this.ValueNames.Select(p =>
+             {
+                 if (kwargs != null && kwargs.TryGetValue(p, out var value))
+                 {
+                     return value;
+                 }
+                 return null;
+             }).ToArray();
+            return Format(values);
+        }
+
+        private string Format(object[] values)
         {
             object[] formatedValues = new object[values == null ? 0 : values.Length];
             if (values != null)
