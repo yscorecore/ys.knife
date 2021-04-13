@@ -21,7 +21,16 @@ namespace YS.Knife.Localization
             var provider = Utility.BuildProvider();
             var sr = provider.GetRequiredService<I18n>();
             var actual = sr.SayHelloWithIndex("zhangsan", 12);
-            Assert.AreEqual("Hello, I'm zhangsan, I'm 012 years old.", sr.SayHelloWithIndex("zhangsan", 12));
+            Assert.AreEqual("Hello, I'm zhangsan, I'm 012 years old.", actual);
+        }
+
+        [TestMethod]
+        public void ShouldGetMethodValueFormatIndexValueWithDefaultValueFromDefaultTemplate()
+        {
+            var provider = Utility.BuildProvider();
+            var sr = provider.GetRequiredService<I18n>();
+            var actual = sr.SayHelloWithIndexAndDefaultValue("zhangsan");
+            Assert.AreEqual("Hello, I'm zhangsan, I'm 010 years old.", actual);
         }
 
         [TestMethod]
