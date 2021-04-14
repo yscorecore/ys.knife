@@ -49,7 +49,7 @@ namespace YS.Knife.Aop
 
         private Exception BuildException(int code, string message, IDictionary<string, object> data)
         {
-            var exception = new CodeException(code, MessageTemplate);
+            var exception = new CodeException(code, message);
             return data.Count > 0 ? exception.WithData(data) : exception;
         }
 
@@ -95,10 +95,10 @@ namespace YS.Knife.Aop
 
         private void AssertReturnType(AspectContext context)
         {
-            if (context.ServiceMethod.ReturnType.IsAssignableFrom(typeof(CodeException)))
+            if (!context.ServiceMethod.ReturnType.IsAssignableFrom(typeof(CodeException)))
             {
                 throw new InvalidOperationException(
-                    $"The return type of the method '{context.ServiceMethod.Name}' in interface {context.ServiceMethod.DeclaringType?.FullName} should assignable from '{typeof(CodeException).FullName}'.");
+                    $"The return type of the method '{context.ServiceMethod.Name}' in interface '{context.ServiceMethod.DeclaringType?.FullName}' should assignable from '{typeof(CodeException).FullName}'.");
             }
         }
     }

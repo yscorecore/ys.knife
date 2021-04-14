@@ -1,0 +1,151 @@
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Localization;
+using FluentAssertions;
+namespace YS.Knife.Aop
+{
+    [TestClass]
+    public class CodeExceptionsTest
+    {
+        private IAllErrors _allErrors;
+        [TestInitialize]
+        public void Setup()
+        {
+            var provider = Utility.BuildProvider();
+            _allErrors = provider.GetRequiredService<IAllErrors>();
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenNoArgumentAndReturnException()
+        {
+            var actual = _allErrors.NoArgumentReturnException();
+            var expected = new CodeException(100001, "no argument return exception.");
+            
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenNoArgumentAndReturnApplicationException()
+        {
+            var actual = _allErrors.NoArgumentReturnApplicationException();
+            var expected = new CodeException(100002, "no argument return application exception.");
+            
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenNoArgumentAndReturnCodeException()
+        {
+            var actual = _allErrors.NoArgumentReturnCodeException();
+            var expected = new CodeException(100003, "no argument return code exception.");
+            
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        
+        [TestMethod]
+    
+        public void ShouldThrowInvalidOperationExceptionWhenReturnTypeIsArgumentException()
+        {
+            Action act = () => _allErrors.ReturnArgumentException();
+            act.Should().Throw<InvalidOperationException>()
+                .WithMessage($"The return type of the method '{nameof(_allErrors.ReturnArgumentException)}' in interface '{typeof(IAllErrors).FullName}' should assignable from '{typeof(CodeException).FullName}'.");
+        }
+        
+
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithNameArgument()
+        {
+            var actual = _allErrors.WithNameArgument("abc");
+            var expected = new CodeException(100005, "the argument value is abc.");
+            expected.Data["arg"] = "abc";
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithIndexArgument()
+        {
+            var actual = _allErrors.WithIndexArgument("abc");
+            var expected = new CodeException(100006, "the argument value is abc.");
+            expected.Data["arg"] = "abc";
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasDefaultValue()
+        {
+            var actual = _allErrors.WithNameArgumentAndHasDefaultValue();
+            var expected = new CodeException(100007, "the argument value is abc.");
+            expected.Data["arg"] = "abc";
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormat()
+        {
+            var actual = _allErrors.WithNameArgumentAndHasFormat(12);
+            var expected = new CodeException(100008, "the argument value is 012.");
+            expected.Data["arg"] = 12;
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormatAndHasWidth()
+        {
+            var actual = _allErrors.WithNameArgumentAndHasFormatAndWidth(12);
+            var expected = new CodeException(100009, "the argument value is   012.");
+            expected.Data["arg"] = 12;
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormatAndHasNegativeWidth()
+        {
+            var actual = _allErrors.WithNameArgumentAndHasFormatAndNegativeWidth(12);
+            var expected = new CodeException(100010, "the argument value is 012  .");
+            expected.Data["arg"] = 12;
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenMixedNameArgumentAndIndexArgument()
+        {
+            var actual = _allErrors.MixedNameArgumentAndIndexArgument(12,13);
+            var expected = new CodeException(100011, "first value is 012, second value is 013.");
+            expected.Data["arg1"] = 12;
+            expected.Data["arg2"] = 13;
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenMissingNameArgument()
+        {
+            var actual = _allErrors.MissingNameArgument();
+            var expected = new CodeException(100012, "value is [null].");
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+        
+        [TestMethod]
+        public void ShouldGetCodeExceptionWhenMissingIndexArgument()
+        {
+            var actual = _allErrors.MissingIndexArgument();
+            var expected = new CodeException(100013, "value is [null].");
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+    }
+}
