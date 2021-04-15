@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace YS.Knife.Aop
+namespace YS.Knife.Aop.CodeExceptions
 {
     [TestClass]
     public class CodeExceptionsWithI18NTest

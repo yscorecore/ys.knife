@@ -1,6 +1,6 @@
 ﻿using YS.Knife.Aop;
 
-namespace YS.Knife.Localization
+namespace YS.Knife.Aop.StringResources
 {
     [StringResources]
     public interface I18NWithResx

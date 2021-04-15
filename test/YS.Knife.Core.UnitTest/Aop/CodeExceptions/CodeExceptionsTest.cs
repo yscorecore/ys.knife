@@ -4,7 +4,7 @@ using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Localization;
-namespace YS.Knife.Aop
+namespace YS.Knife.Aop.CodeExceptions
 {
     [TestClass]
     public class CodeExceptionsTest

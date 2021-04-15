@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,6 +14,8 @@ namespace YS.Knife.Aop
         public StringResourcesAttribute() : base(ServiceLifetime.Singleton)
         {
         }
+
+        //public string ResxFilePath { get; set; }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
@@ -30,8 +33,7 @@ namespace YS.Knife.Aop
 
         public override Task Invoke(AspectContext context, AspectDelegate next)
         {
-            var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
-            var localizer = context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
+            var localizer = GetLocalizerInstance(context);
             var resourceKey = string.IsNullOrEmpty(Key) ? context.ServiceMethod.Name : Key;
             var localizedString = localizer?.GetString(resourceKey);
             var template = localizedString.ResourceNotFound ? this.Value : localizedString.Value;
@@ -39,6 +41,26 @@ namespace YS.Knife.Aop
             return context.Break();
         }
 
+        //private static LocalCache<Type, string> resourceKeyCache = new LocalCache<Type, string>();
+        private IStringLocalizer GetLocalizerInstance(AspectContext context)
+        {
+            // var resxFilePath = resourceKeyCache.Get(context.ServiceMethod.DeclaringType,
+            //     type => type.GetCustomAttribute<StringResourcesAttribute>()?.ResxFilePath);
+            //if (string.IsNullOrEmpty(resxFilePath))
+            {
+                var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
+                return context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
+            }
+            // else
+            // {
+            //     var assemblyName = new AssemblyName(context.ServiceMethod.DeclaringType.GetTypeInfo().Assembly.FullName);
+            //     var name = assemblyName.Name;
+            //     var factory = context.ServiceProvider.GetRequiredService<IStringLocalizerFactory>();
+            //     return factory.Create(resxFilePath, assemblyName.Name);
+            // }
+
+            return null;
+        }
 
         private string FormatTemplate(string template, AspectContext context)
         {

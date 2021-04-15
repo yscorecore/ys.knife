@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace YS.Knife.Localization
+namespace YS.Knife.Aop.StringResources
 {
     [TestClass]
     public class StringResourcesWithI18NTest

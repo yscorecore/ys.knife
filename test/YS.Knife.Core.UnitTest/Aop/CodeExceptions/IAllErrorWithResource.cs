@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace YS.Knife.Aop
+namespace YS.Knife.Aop.CodeExceptions
 {
     [CodeExceptions(200000)]
     public interface IAllErrorWithResource
