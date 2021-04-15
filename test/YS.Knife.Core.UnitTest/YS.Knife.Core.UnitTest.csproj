@@ -18,6 +18,10 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IAllErrorWithResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Localization\I18NWithResx.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>I18NWithResx.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

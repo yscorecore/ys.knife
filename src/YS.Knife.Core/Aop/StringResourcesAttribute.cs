@@ -33,7 +33,7 @@ namespace YS.Knife.Aop
             var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
             var localizer = context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
             var resourceKey = string.IsNullOrEmpty(Key) ? context.ServiceMethod.Name : Key;
-            var localizedString = localizer.GetString(resourceKey);
+            var localizedString = localizer?.GetString(resourceKey);
             var template = localizedString.ResourceNotFound ? this.Value : localizedString.Value;
             context.ReturnValue = FormatTemplate(template, context);
             return context.Break();

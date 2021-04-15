@@ -4,7 +4,7 @@ using YS.Knife.Aop;
 namespace YS.Knife.Localization
 {
     [StringResources]
-    public interface I18n
+    public interface I18N
     {
         [Sr(nameof(Hello), "Hello,World")]
         string Hello();
