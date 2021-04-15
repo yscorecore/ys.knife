@@ -17,6 +17,7 @@ namespace YS.Knife.Aop
         {
             BaseErrorCode = baseErrorCode;
         }
+
         public string ErrorMessageKeyPrefix { get; set; } = "CE";
         public int BaseErrorCode { get; }
     }
@@ -43,14 +44,29 @@ namespace YS.Knife.Aop
             var errorCode = GetErrorCode(context);
             var message = GetErrorMessage(context);
             var data = GetExceptionData(context);
-            context.ReturnValue = BuildException(errorCode, message, data);
+            var innerException = GetInnerException(context);
+            context.ReturnValue = BuildException(errorCode, message, data, innerException);
             return context.Break();
         }
 
-        private Exception BuildException(int code, string message, IDictionary<string, object> data)
+        private Exception GetInnerException(AspectContext context)
         {
-            var exception = new CodeException(code, message);
-            return data.Count > 0 ? exception.WithData(data) : exception;
+            return context.Parameters.OfType<Exception>().FirstOrDefault();
+        }
+
+        private Exception BuildException(int code, string message, IDictionary<string, object> data,
+            Exception innerException)
+        {
+            var exception = new CodeException(code, message, innerException);
+            // data ignore inner exception
+            foreach (var (key, value) in data)
+            {
+                if (key != null && value != innerException)
+                {
+                    exception.Data[key] = value;
+                }
+            }
+            return exception;
         }
 
         private int GetErrorCode(AspectContext context)
@@ -102,6 +118,4 @@ namespace YS.Knife.Aop
             }
         }
     }
-
-
 }
