@@ -7,21 +7,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Core\YS.Knife.Core.csproj" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+    <ProjectReference Include="..\..\src\YS.Knife.Testing\YS.Knife.Testing.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="CodeException" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Update="Aop\IAllErrorWithResource.resx">
+    <EmbeddedResource Update="Aop\CodeExceptions\IAllErrorWithResource.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>IAllErrorWithResource.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Update="Localization\I18NWithResx.resx">
+    <EmbeddedResource Update="Aop\StringResources\I18NWithResx.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>I18NWithResx.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Localization" />
   </ItemGroup>
 
 </Project>

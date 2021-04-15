@@ -1,17 +1,24 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.Hosting;
 namespace YS.Knife.Aop
 {
     [TestClass]
-    public class ParameterValidationAttributeTest : KnifeHost
+    public class ParameterValidationAttributeTest
     {
+        private IServiceProvider provider;
+        [TestInitialize]
+        public void Setup()
+        {
+            provider = Utility.BuildProvider();
+        }
+
         [TestMethod]
         public void ShouldSuccessIfNotDefineParameterValidation()
         {
-            var service = this.GetService<INoDefineParameterValidation>();
+            var service = provider.GetService<INoDefineParameterValidation>();
             service.AnyString(null);
             service.AnyString("abc");
         }
@@ -19,7 +26,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfDefineParameterValidationInInterfaceMethod()
         {
-            var service = this.GetService<INoDefineParameterValidation>();
+            var service = provider.GetService<INoDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.MustBeUrlWillEffectiveBecauseDefineParameterValidationInInterface("abc");
@@ -32,7 +39,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfDefineParameterValidationInImplementationMethod()
         {
-            var service = this.GetService<INoDefineParameterValidation>();
+            var service = provider.GetService<INoDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.MustBeUrlWillEffectiveBecauseDefineParameterValidationInImplementation("abc");
@@ -45,7 +52,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfDefineParameterValidationInInterfaceType()
         {
-            var service = this.GetService<IDefineParameterValidation>();
+            var service = provider.GetService<IDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.MustbeEmailAddress("abc");
@@ -58,7 +65,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfImplementationMethodDefineRequiredAttribute()
         {
-            var service = this.GetService<IDefineParameterValidation>();
+            var service = provider.GetService<IDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.MustbeEmailAddress(null);
@@ -71,7 +78,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfImplementationMethodDefineRequiredAttributeAndGivenComplexType()
         {
-            var service = this.GetService<IDefineParameterValidation>();
+            var service = provider.GetService<IDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.ValidateComplexClass(null);
@@ -84,7 +91,7 @@ namespace YS.Knife.Aop
         [TestMethod]
         public void ShouldThrowIfComplexTypeValidateFail()
         {
-            var service = this.GetService<IDefineParameterValidation>();
+            var service = provider.GetService<IDefineParameterValidation>();
             var exception = Assert.ThrowsException<ValidationException>(() =>
             {
                 service.ValidateComplexClass(new ComplexClass { Value = -1 });

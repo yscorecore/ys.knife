@@ -20,10 +20,10 @@ namespace YS.Knife
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().AddInMemoryCollection(configurationValues).Build();
-            config?.Invoke(services, configuration);
             services.AddSingleton<IConfiguration>(configuration);
             services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
             services.AddSingleton(typeof(ILogger<>), typeof(NullLogger<>));
+            config?.Invoke(services, configuration);
             return services.RegisterKnifeServices(configuration).BuildDynamicProxyProvider();
         }
 

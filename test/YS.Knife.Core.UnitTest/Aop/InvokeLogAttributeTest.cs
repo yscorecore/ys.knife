@@ -1,25 +1,38 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.Hosting;
 using YS.Knife.Testing.Logging;
 
 namespace YS.Knife.Aop.UnitTest
 {
     [TestClass]
-    public class InvokeLogAttributeTest : KnifeHost
+    public class InvokeLogAttributeTest
     {
-        private readonly TestLoggerStore loggerStore = new TestLoggerStore();
-        protected override void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
+
+        private IServiceProvider provider;
+        [TestInitialize]
+        public void Setup()
         {
-            loggingBuilder.ClearProviders().AddProvider(new TestLoggerProvider(loggerStore));
+            provider = Utility.BuildProvider((sc, config) =>
+            {
+                sc.RemoveAll(typeof(ILoggerFactory));
+                sc.RemoveAll(typeof(ILogger<>));
+                sc.AddLogging(builder =>
+                {
+                    builder.ClearProviders().AddProvider(new TestLoggerProvider(loggerStore));
+                });
+            });
         }
+        private readonly TestLoggerStore loggerStore = new TestLoggerStore();
+
         [TestMethod]
         public void ShouldHasStartLoggerWhenInvokeMethod()
         {
-            var service = this.GetService<ILoggingTestService>();
+            var service = provider.GetService<ILoggingTestService>();
             service.Hello();
             var loggerEntry = loggerStore.First();
             Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
@@ -31,7 +44,7 @@ namespace YS.Knife.Aop.UnitTest
         [TestMethod]
         public void ShouldHasEndLoggerWhenInvokeMethod()
         {
-            var service = this.GetService<ILoggingTestService>();
+            var service = provider.GetService<ILoggingTestService>();
             service.Hello();
             var loggerEntry = loggerStore.Last();
             Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
@@ -43,7 +56,7 @@ namespace YS.Knife.Aop.UnitTest
         [TestMethod]
         public void ShouldHasStartLoggerWhenThrowException()
         {
-            var service = this.GetService<ILoggingTestService>();
+            var service = provider.GetService<ILoggingTestService>();
             Assert.ThrowsException<NotImplementedException>(() => { service.Wrong(); });
             var loggerEntry = loggerStore.First();
             Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
@@ -55,7 +68,7 @@ namespace YS.Knife.Aop.UnitTest
         [TestMethod]
         public void ShouldHasExceptionLoggerWhenThrowException()
         {
-            var service = this.GetService<ILoggingTestService>();
+            var service = provider.GetService<ILoggingTestService>();
             Assert.ThrowsException<NotImplementedException>(() => { service.Wrong(); });
             var loggerEntry = loggerStore.Last();
             Assert.AreEqual(LogLevel.Error, loggerEntry.LogLevel);
