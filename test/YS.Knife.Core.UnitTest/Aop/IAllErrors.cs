@@ -1,5 +1,4 @@
 ﻿using System;
-using YS.Knife.Aop;
 
 namespace YS.Knife.Aop
 {
@@ -11,10 +10,8 @@ namespace YS.Knife.Aop
 
         [Ce(2, "no argument return application exception.")]
         ApplicationException NoArgumentReturnApplicationException();
-
         [Ce(3, "no argument return code exception.")]
         CodeException NoArgumentReturnCodeException();
-
 
         [Ce(4, "argument exception not supported.")]
         ArgumentException ReturnArgumentException();
@@ -50,5 +47,10 @@ namespace YS.Knife.Aop
 
         [Ce(15, "Value '{1}' Error '{0}'.")]
         Exception WithInnerExceptionAndHasIndexArgument(Exception ex, string arg);
+
+
+        [Ce(16, null)]
+        Exception NullTemplate(string arg);
+        Exception NoDefineCeAttributeWillReturnNull();
     }
 }

@@ -13,4 +13,11 @@
     <Folder Include="CodeException" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Update="Aop\IAllErrorWithResource.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>IAllErrorWithResource.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+
 </Project>

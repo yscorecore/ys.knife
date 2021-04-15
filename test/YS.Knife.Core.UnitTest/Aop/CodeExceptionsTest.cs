@@ -169,5 +169,21 @@ namespace YS.Knife.Aop
             actual.Should().BeOfType<CodeException>()
                 .Which.Should().BeEquivalentTo(expected);
         }
+        [TestMethod]
+        public void ShouldGetCodeExceptionWithEmptyStringMessageWhenMessageTemplateIsNull()
+        {
+            var actual = _allErrors.NullTemplate("abc");
+            var expected = new CodeException(100016, string.Empty)
+                .WithData("arg", "abc");
+            actual.Should().BeOfType<CodeException>()
+                .Which.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void ShouldReturnNullWhenNoDefineCeAttribute()
+        {
+            var actual = _allErrors.NoDefineCeAttributeWillReturnNull();
+            actual.Should().BeNull();
+        }
     }
 }
