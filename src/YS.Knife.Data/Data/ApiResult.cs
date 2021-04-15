@@ -14,7 +14,7 @@ namespace YS.Knife.Data
         {
             if (Code != default)
             {
-                var exception = new KnifeException(Code, Message);
+                var exception = new CodeException(Code, Message);
                 if (ErrorData != null)
                 {
                     foreach (var kv in ErrorData)
@@ -22,10 +22,12 @@ namespace YS.Knife.Data
                         exception.Data[kv.Key] = kv.Value;
                     }
                 }
+
                 throw exception;
             }
         }
     }
+
     [Serializable]
     public class ApiResult<T> : ApiResult
     {
@@ -37,6 +39,4 @@ namespace YS.Knife.Data
             return this.Result;
         }
     }
-
-
 }
