@@ -14,23 +14,36 @@ namespace YS.Knife
             where T : Attribute
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-            var customFilter = filter ?? (type => true);
+
 
             foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in FindInstanceTypesByAttribute<T>(assembly, filter))
                 {
-                    if (type.IsClass
-                        && !type.IsAbstract
-                        && Attribute.IsDefined(type, typeof(T), false)
-                        && customFilter(type))
-                    {
-                        yield return type;
-                    }
+                    yield return type;
                 }
             }
         }
+        public static IEnumerable<Type> FindInstanceTypesByAttribute<T>(this Assembly assembly,
+         Func<Type, bool> filter = null)
+         where T : Attribute
+        {
+            _ = assembly ?? throw new ArgumentNullException(nameof(assembly));
+            var customFilter = filter ?? (type => true);
 
+
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsClass
+                    && !type.IsAbstract
+                    && Attribute.IsDefined(type, typeof(T), false)
+                    && customFilter(type))
+                {
+                    yield return type;
+                }
+            }
+
+        }
         public static IEnumerable<Type> FindInterfaceTypesByAttribute<T>(this AppDomain appDomain,
             Func<Type, bool> filter = null)
             where T : Attribute
@@ -56,18 +69,27 @@ namespace YS.Knife
             Func<Type, bool> filter = null)
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
-            var customFilter = filter ?? (type => true);
             foreach (var assembly in appDomain.GetAllAssembliesIgnoreSystem())
             {
-                foreach (var type in assembly.GetTypes())
+                foreach (var type in FindInstanceTypesByBaseType<TBase>(assembly, filter))
                 {
-                    if (type.IsClass
-                        && !type.IsAbstract
-                        && typeof(TBase).IsAssignableFrom(type)
-                        && customFilter(type))
-                    {
-                        yield return type;
-                    }
+                    yield return type;
+                }
+            }
+        }
+        public static IEnumerable<Type> FindInstanceTypesByBaseType<TBase>(this Assembly assembly,
+           Func<Type, bool> filter = null)
+        {
+            _ = assembly ?? throw new ArgumentNullException(nameof(assembly));
+            var customFilter = filter ?? (type => true);
+            foreach (var type in assembly.GetTypes())
+            {
+                if (type.IsClass
+                    && !type.IsAbstract
+                    && typeof(TBase).IsAssignableFrom(type)
+                    && customFilter(type))
+                {
+                    yield return type;
                 }
             }
         }

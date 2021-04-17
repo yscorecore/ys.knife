@@ -235,6 +235,13 @@ namespace YS.Knife.Entity
             var query = store.Query(conditions);
             return selector(query).First();
         }
+        public static TR FindFirst<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
+            where T : class
+        {
+            _ = store ?? throw new ArgumentNullException(nameof(store));
+            var query = store.Query(conditions);
+            return query.MapTo<TR>().First();
+        }
         public static T FindFirstOrDefault<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions)
                  where T : class
         {

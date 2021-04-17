@@ -34,7 +34,7 @@ namespace YS.Knife.Hosting
         {
             try
             {
-                Assembly.LoadFrom(dll);
+                var assembly = Assembly.LoadFrom(dll);
                 logger.LogDebug("Load plugin assembly \"{@dll}\"", dll);
             }
 #pragma warning disable CA1031 // 不捕获常规异常类型

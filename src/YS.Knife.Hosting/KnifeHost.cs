@@ -26,11 +26,24 @@ namespace YS.Knife.Hosting
 
         public KnifeHost(string[] args)
         {
+            AppDomain.CurrentDomain.AssemblyLoad += CurrentDomain_AssemblyLoad;
 #pragma warning disable CA2214
             this.host = CreateHostBuilder(args ?? Array.Empty<string>()).Build();
 #pragma warning restore CA2214
         }
 
+        private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
+        {
+
+            var handlers = args.LoadedAssembly.FindInstanceTypesByBaseType<IAssemblyLoadedHander>();
+            foreach (var assemblyLoadedHander in handlers)
+            {
+                var handler = Activator.CreateInstance(assemblyLoadedHander) as IAssemblyLoadedHander;
+                handler.AfterAssemblyLoaded();
+            }
+
+        }
+      
         private readonly IHost host;
 
         public object GetService(Type serviceType)
