@@ -78,6 +78,52 @@ namespace YS.Knife.Data.UnitTest
         }
 
 
+        [TestMethod]
+        public void ShouldSupportFilterTypeExists()
+        {
+            var datas = CreateUsersWithAddress();
+            var filter = FilterInfo.CreateItem("Addresses", FilterType.Exists, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            Assert.AreEqual("001,002,004", string.Join(",", ids));
+        }
+
+        [TestMethod]
+        public void ShouldSupportFilterTypeNotExists()
+        {
+            var datas = CreateUsersWithAddress();
+            var filter = FilterInfo.CreateItem("Addresses", FilterType.NotExists, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            Assert.AreEqual("003,005", string.Join(",", ids));
+        }
+
+        [TestMethod]
+        public void ShouldSupportFilterTypeAll()
+        {
+            var datas = CreateUsersWithAddress();
+            var filter = FilterInfo.CreateItem("Addresses", FilterType.All, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            Assert.AreEqual("001,004", string.Join(",", ids));
+        }
+        [TestMethod]
+        public void ShouldSupportFilterTypeNotAll()
+        {
+            var datas = CreateUsersWithAddress();
+            var filter = FilterInfo.CreateItem("Addresses", FilterType.NotAll, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            Assert.AreEqual("002,003,005", string.Join(",", ids));
+        }
+        public IQueryable<User> CreateUsersWithAddress()
+        {
+            return (new List<User>()
+            {
+                new User{ Id="001",Name="ZhangSan",Age=19,Score=61, Addresses = new List<Address>() {new Address(){City = "xian"}}},
+                new User{ Id="002",Name="LiSi",Age=20,Score=81,Addresses = new List<Address>() {new Address(){City = "beijing"},new Address(){City = "xian"}} },
+                new User{ Id="003",Name="WangWu",Age=20,Score=70,Addresses = new List<Address>() {new Address(){City = "beijing"}} },
+                new User{ Id="004",Name="WangMaZi",Age=19,Addresses = new List<Address>() {new Address(){City = "xian"},new Address(){City = "xian"}} },
+                new User{ Id="005",Name=null,Age=21, Addresses = new List<Address>() {new Address(){City = "beijing"},new Address(){City = "beijing"}} }
+            }).AsQueryable();
+        }
+
         public class User
         {
             public string Id { get; set; }
@@ -85,6 +131,12 @@ namespace YS.Knife.Data.UnitTest
             public int Age { get; set; }
 
             public int? Score { get; set; }
+
+            public List<Address> Addresses { get; set; } = new List<Address>();
+        }
+        public class Address
+        {
+            public string City { get; set; }
         }
     }
 }

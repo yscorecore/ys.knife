@@ -70,6 +70,12 @@ namespace YS.Knife.Data
         {
             return new FilterInfo() { OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value };
         }
+
+        public static FilterInfo CreateItem(string fieldName, FilterType filterType, params FilterInfo[] items)
+        {
+            return new FilterInfo() { OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Items = items.ToList() };
+        }
+
         public static FilterInfo CreateOr(params FilterInfo[] items)
         {
             return new FilterInfo(items, OpType.OrItems);

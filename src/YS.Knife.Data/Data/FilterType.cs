@@ -65,7 +65,24 @@
         /// <summary>
         /// not like
         /// </summary>
-        NotContains = ~Contains
+        NotContains = ~Contains,
+        /// <summary>
+        /// exists
+        /// </summary>
+        Exists = 8,
+        /// <summary>
+        /// not exists
+        /// </summary>
+        NotExists = ~Exists,
+        /// <summary>
+        /// all 
+        /// </summary>
+        All = 9,
+        /// <summary>
+        /// not all
+        /// </summary>
+        NotAll = ~All,
+
     }
 
 }

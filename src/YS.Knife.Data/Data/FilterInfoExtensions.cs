@@ -98,11 +98,27 @@ namespace YS.Knife.Data
             }
             pinfo = ty.GetProperty(paths.Last());
             if (pinfo == null) throw new ArgumentException(string.Format("在类型{0}中无法找到指定的属性{1}", ty.FullName, paths.Last()));
-            var val = singleItem.Value;
-            if (val == DBNull.Value) val = null;//忽略dbnull.value
+
             var converter = GetConvertByFilterType(singleItem.FilterType);
-            return converter.ConvertValue(exp, pinfo, val);
+            if (IsOpenFilterType(singleItem.FilterType))
+            {
+                // exists, not exists, all , not all
+                return converter.ConvertValue(exp, pinfo, singleItem.Items);
+            }
+            else
+            {
+                var val = singleItem.Value;
+                if (val == DBNull.Value) val = null;//忽略dbnull.value
+                return converter.ConvertValue(exp, pinfo, val);
+            }
         }
+
+        private static bool IsOpenFilterType(FilterType filterType)
+        {
+            return filterType == FilterType.All || filterType == FilterType.NotAll || filterType == FilterType.Exists ||
+                   filterType == FilterType.NotExists;
+        }
+
         private static Expression FromContidtionInternal(Type entityType, FilterInfo filterInfo, ParameterExpression p)
         {
             if (filterInfo.OpType == OpType.SingleItem)
@@ -164,6 +180,8 @@ namespace YS.Knife.Data
                     return new EndWidhExpressionConverter();
                 case FilterType.NotEndsWith:
                     return new NotEndWithExpressionConverter();
+                case FilterType.Exists:
+                    return new ExistsExpressionConverter();
                 default:
                     throw new ArgumentException(string.Format("无效的类型{0}", searchType));
             }
@@ -498,5 +516,65 @@ namespace YS.Knife.Data
                 return Expression.Not(base.ConvertValue(p, propInfo, value));
             }
         }
+
+        abstract class OpenExpressionConverter : ExpressionConverter
+        {
+            public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
+            {
+                var subFilters = value as List<FilterInfo>;
+
+
+
+                return ConvertValue(p, propInfo, subFilters);
+            }
+
+            public abstract Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos);
+
+        }
+        class ExistsExpressionConverter : OpenExpressionConverter
+        {
+            private static MethodInfo AnyMethod0 =
+                typeof(Enumerable).GetMethods(BindingFlags.Static).First(p => p.Name == "Any" && p.GetParameters().Count() == 1);
+            private static MethodInfo AnyMethod1 =
+                typeof(Enumerable).GetMethods(BindingFlags.Static).First(p => p.Name == "Any" && p.GetParameters().Count() == 2);
+            public override Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos)
+            {
+
+                if (filterInfos is null || filterInfos.Count == 0)
+                {
+                    return Expression.Call(null, AnyMethod0, Expression.Property(p, propInfo));
+                }
+                else if (filterInfos.Count == 1)
+                {
+                    var ptype = propInfo.PropertyType.IsNullableType() ? Nullable.GetUnderlyingType(propInfo.PropertyType) : propInfo.PropertyType;
+                    var subType = GetEnumableSubType(ptype);
+                    var p1 = Expression.Parameter(subType, "p1");
+                    return Expression.Call(null, AnyMethod1, FromItemConditionItemInternal(subType, filterInfos.First(), p1));
+                }
+                else
+                {
+
+                    // TODO ...
+                    return null;
+                    // Expression.Call(null, AnyMethod1, FromItemConditionItemInternal(su)
+                }
+            }
+
+        }
+
+        private static Type GetEnumableSubType(Type enumableType)
+        {
+            var subType = enumableType.GetInterfaces()
+                .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+            if (subType == null)
+            {
+                throw new InvalidOperationException($"Can not get subtype from type '{enumableType.FullName}'");
+            }
+
+            return subType;
+        }
     }
+
+
 }
