@@ -59,6 +59,15 @@ namespace YS.Knife.Data
             var res = FromContidtionInternal(typeof(T), filterInfo, p);
             return Expression.Lambda<Func<T, bool>>(res, p);
         }
+
+        public static LambdaExpression CreatePredicate(this FilterInfo filterInfo, Type type)
+        {
+            _ = filterInfo ?? throw new ArgumentNullException(nameof(filterInfo));
+            var p = Expression.Parameter(type, "p");
+            var res = FromContidtionInternal(type, filterInfo, p);
+            return Expression.Lambda(typeof(Func<,>).MakeGenericType(type, typeof(bool)), res, p);
+        }
+
         private static Expression FromOrConditionInternal(Type entityType, FilterInfo orCondition, ParameterExpression p)
         {
             if (orCondition == null) throw new ArgumentNullException(nameof(orCondition));
@@ -534,32 +543,41 @@ namespace YS.Knife.Data
         class ExistsExpressionConverter : OpenExpressionConverter
         {
             private static MethodInfo AnyMethod0 =
-                typeof(Enumerable).GetMethods(BindingFlags.Static).First(p => p.Name == "Any" && p.GetParameters().Count() == 1);
+                typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(p => p.Name == "Any" && p.GetParameters().Count() == 1);
             private static MethodInfo AnyMethod1 =
-                typeof(Enumerable).GetMethods(BindingFlags.Static).First(p => p.Name == "Any" && p.GetParameters().Count() == 2);
+                typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(p => p.Name == "Any" && p.GetParameters().Count() == 2);
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos)
             {
 
                 if (filterInfos is null || filterInfos.Count == 0)
                 {
-                    return Expression.Call(null, AnyMethod0, Expression.Property(p, propInfo));
+                    var ptype = propInfo.PropertyType.IsNullableType()
+                        ? Nullable.GetUnderlyingType(propInfo.PropertyType)
+                        : propInfo.PropertyType;
+                    var subType = GetEnumableSubType(ptype);
+                    return Expression.Call(AnyMethod0.MakeGenericMethod(subType), Expression.Property(p, propInfo));
                 }
                 else if (filterInfos.Count == 1)
                 {
-                    var ptype = propInfo.PropertyType.IsNullableType() ? Nullable.GetUnderlyingType(propInfo.PropertyType) : propInfo.PropertyType;
-                    var subType = GetEnumableSubType(ptype);
-                    var p1 = Expression.Parameter(subType, "p1");
-                    return Expression.Call(null, AnyMethod1, FromItemConditionItemInternal(subType, filterInfos.First(), p1));
+                    return CreateAnyMethod1Expression(p, propInfo, filterInfos.First());
                 }
                 else
                 {
 
-                    // TODO ...
-                    return null;
-                    // Expression.Call(null, AnyMethod1, FromItemConditionItemInternal(su)
+                    return CreateAnyMethod1Expression(p, propInfo, FilterInfo.CreateAnd(filterInfos.ToArray()));
                 }
             }
 
+            private static Expression CreateAnyMethod1Expression(Expression p, PropertyInfo propInfo, FilterInfo filterInfo)
+            {
+                var ptype = propInfo.PropertyType.IsNullableType()
+                    ? Nullable.GetUnderlyingType(propInfo.PropertyType)
+                    : propInfo.PropertyType;
+                var subType = GetEnumableSubType(ptype);
+                var innerExpression = filterInfo.CreatePredicate(subType);
+                var propExpression = Expression.Property(p, propInfo);
+                return Expression.Call(AnyMethod1.MakeGenericMethod(subType), propExpression, innerExpression);
+            }
         }
 
         private static Type GetEnumableSubType(Type enumableType)
