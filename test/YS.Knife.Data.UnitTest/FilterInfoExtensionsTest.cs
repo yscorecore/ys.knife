@@ -123,18 +123,8 @@ namespace YS.Knife.Data.UnitTest
                 new User{ Id="005",Name=null,Age=21, Addresses = new List<Address>() {new Address(){City = "beijing"},new Address(){City = "beijing"}} }
             }).AsQueryable();
         }
-        [TestMethod]
-        public void ShouldSupportFilterTypeNotAll_Temp()
-        {
-            var datas = CreateUsersWithAddress();
 
-            Bridge(datas, p => p.Addresses.Any(t => t.City == "xi'an"));
-        }
 
-        public void Bridge<TSource>(IQueryable<TSource> source, System.Linq.Expressions.Expression<System.Func<TSource, bool>> predicate)
-        {
-
-        }
 
         public class User
         {

@@ -191,6 +191,12 @@ namespace YS.Knife.Data
                     return new NotEndWithExpressionConverter();
                 case FilterType.Exists:
                     return new ExistsExpressionConverter();
+                case FilterType.NotExists:
+                    return new NotExistsExpressionConverter();
+                case FilterType.All:
+                    return new AllExpressionConverter();
+                case FilterType.NotAll:
+                    return new NotAllExpressionConverter();
                 default:
                     throw new ArgumentException(string.Format("无效的类型{0}", searchType));
             }
@@ -531,9 +537,6 @@ namespace YS.Knife.Data
             public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value)
             {
                 var subFilters = value as List<FilterInfo>;
-
-
-
                 return ConvertValue(p, propInfo, subFilters);
             }
 
@@ -580,6 +583,55 @@ namespace YS.Knife.Data
             }
         }
 
+        class NotExistsExpressionConverter : ExistsExpressionConverter
+        {
+            public override Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos)
+            {
+                return Expression.Not(base.ConvertValue(p, propInfo, filterInfos));
+            }
+        }
+
+        class AllExpressionConverter : OpenExpressionConverter
+        {
+            private static MethodInfo AllMethod1 =
+                typeof(Enumerable).GetMethods(BindingFlags.Static | BindingFlags.Public).First(p => p.Name == "All" && p.GetParameters().Count() == 2);
+
+            public override Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos)
+            {
+
+                if (filterInfos is null || filterInfos.Count == 0)
+                {
+                    return CreateAllMethod1Expression(p, propInfo, null);
+                }
+                else if (filterInfos.Count == 1)
+                {
+                    return CreateAllMethod1Expression(p, propInfo, filterInfos.First());
+                }
+                else
+                {
+
+                    return CreateAllMethod1Expression(p, propInfo, FilterInfo.CreateAnd(filterInfos.ToArray()));
+                }
+            }
+            private static Expression CreateAllMethod1Expression(Expression p, PropertyInfo propInfo, FilterInfo filterInfo)
+            {
+                var ptype = propInfo.PropertyType.IsNullableType()
+                    ? Nullable.GetUnderlyingType(propInfo.PropertyType)
+                    : propInfo.PropertyType;
+                var subType = GetEnumableSubType(ptype);
+                var innerExpression = filterInfo == null ? Expression.Constant(true) as Expression : filterInfo.CreatePredicate(subType);
+                var propExpression = Expression.Property(p, propInfo);
+                return Expression.Call(AllMethod1.MakeGenericMethod(subType), propExpression, innerExpression);
+            }
+        }
+
+        class NotAllExpressionConverter : AllExpressionConverter
+        {
+            public override Expression ConvertValue(Expression p, PropertyInfo propInfo, List<FilterInfo> filterInfos)
+            {
+                return Expression.Not(base.ConvertValue(p, propInfo, filterInfos));
+            }
+        }
         private static Type GetEnumableSubType(Type enumableType)
         {
             var subType = enumableType.GetInterfaces()
