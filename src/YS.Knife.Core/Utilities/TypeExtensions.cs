@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YS.Knife.Data
+namespace YS.Knife
 {
     public static class TypeExtensions
     {
@@ -10,6 +10,7 @@ namespace YS.Knife.Data
 
         public static bool IsGenericEnumerable(this Type enumableType)
         {
+            if (enumableType.IsGenericTypeDefinition) return false;
             return EnumerableLocalCache.Get(enumableType, type =>
                 type.GetInterfaces()
                     .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
