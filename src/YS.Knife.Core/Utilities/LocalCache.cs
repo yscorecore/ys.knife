@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-
 namespace YS.Knife
 {
     public class LocalCache<TKey, TValue>
@@ -16,8 +15,18 @@ namespace YS.Knife
                 {
                     return _cachedData[key];
                 }
+
                 return _cachedData[key] = createFunc(key);
             }
+        }
+
+        public TValue Get(TKey key)
+        {
+            if (_cachedData.TryGetValue(key, out var val))
+            {
+                return val;
+            }
+            return default;
         }
     }
 }

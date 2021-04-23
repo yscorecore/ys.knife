@@ -7,7 +7,7 @@ namespace YS.Knife.Data.FilterExpressions.Converters
 {
 
     [FilterConverter(FilterType.Equals)]
-    internal class EqualExpressionConverter : ExpressionConverter
+    internal class EqualsExpressionConverter : ExpressionConverter
     {
         private Expression ConvertNullValue(Expression p, PropertyInfo propInfo)
         {

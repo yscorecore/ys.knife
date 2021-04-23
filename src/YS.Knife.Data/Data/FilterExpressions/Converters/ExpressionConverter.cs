@@ -15,20 +15,13 @@ namespace YS.Knife.Data.FilterExpressions.Converters
             List<FilterInfo> subFilters);
         protected object ChangeType(object value, Type changeType)
         {
-            if (changeType.IsEnum)
-            {
-                return Enum.ToObject(changeType, value);
-            }
-            else
-            {
-                return Convert.ChangeType(value, changeType, CultureInfo.InvariantCulture);
-            }
+            return changeType.IsEnum ? Enum.ToObject(changeType, value) : Convert.ChangeType(value, changeType, CultureInfo.InvariantCulture);
         }
         protected string ChangeToString(object value)
         {
             return ChangeType(value, typeof(string)) as string;
         }
-        protected bool IsNull(object obj)
+        protected static bool IsNull(object obj)
         {
             return obj == null || obj == DBNull.Value;
         }

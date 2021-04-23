@@ -2,7 +2,7 @@
 {
 
     [FilterConverter(FilterType.EndsWith)]
-    internal class EndWidhExpressionConverter : StringExpressionConverter
+    internal class EndsWithExpressionConverter : StringExpressionConverter
     {
         protected override string MethodName => nameof(string.EndsWith);
     }

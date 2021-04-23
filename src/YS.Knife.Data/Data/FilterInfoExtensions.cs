@@ -8,34 +8,6 @@ using YS.Knife.Data.FilterExpressions.Converters;
 
 namespace YS.Knife.Data
 {
-    public static class TypeExtensions
-    {
-        public static Type GetEnumerableSubType(this Type enumableType)
-        {
-            var subType = enumableType.GetInterfaces()
-                .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
-            if (subType == null)
-            {
-                throw new InvalidOperationException($"Can not get subtype from type '{enumableType.FullName}'.");
-            }
-            return subType;
-        }
-
-        public static bool IsNullableType(this Type type)
-        {
-            return type != null && Nullable.GetUnderlyingType(type) != null;
-        }
-
-        public static (bool IsNullbale, Type UnderlyingType) GetUnderlyingTypeTypeInfo(this Type type)
-        {
-            return type.IsNullableType() ? (true, Nullable.GetUnderlyingType(type)) : (false, type);
-        }
-
-
-
-    }
-
     public static class FilterInfoExtensions
     {
 
@@ -86,7 +58,7 @@ namespace YS.Knife.Data
         {
             if (orCondition == null) throw new ArgumentNullException(nameof(orCondition));
             Expression current = Expression.Constant(false);
-            foreach (FilterInfo item in orCondition.Items)
+            foreach (FilterInfo item in orCondition.Items.TrimNotNull())
             {
                 var next = FromContidtionInternal(entityType, item, p);
                 current = Expression.OrElse(current, next);
@@ -95,22 +67,22 @@ namespace YS.Knife.Data
             return current;
         }
 
+
         private static Expression FromAndConditionInternal(Type entityType, FilterInfo andCondition,
             ParameterExpression p)
         {
             if (andCondition == null) throw new ArgumentNullException(nameof(andCondition));
             Expression current = Expression.Constant(true);
-            foreach (FilterInfo item in andCondition.Items)
+            foreach (FilterInfo item in andCondition.Items.TrimNotNull())
             {
                 var next = FromContidtionInternal(entityType, item, p);
                 current = Expression.AndAlso(current, next);
             }
-
             return current;
         }
 
-        private static Expression FromItemConditionItemInternal(Type entityType, FilterInfo singleItem,
-            ParameterExpression p)
+        private static Expression FromSingleItemFilterInfo(Type entityType, FilterInfo singleItem,
+            Expression p)
         {
             if (singleItem == null) throw new ArgumentNullException(nameof(singleItem));
             if (string.IsNullOrEmpty(singleItem.FieldName)) throw new ArgumentException("FieldName必须填充");
@@ -143,7 +115,7 @@ namespace YS.Knife.Data
             {
                 OpType.AndItems => FromAndConditionInternal(entityType, filterInfo, p),
                 OpType.OrItems => FromOrConditionInternal(entityType, filterInfo, p),
-                _ => FromItemConditionItemInternal(entityType, filterInfo, p)
+                _ => FromSingleItemFilterInfo(entityType, filterInfo, p)
             };
         }
 
