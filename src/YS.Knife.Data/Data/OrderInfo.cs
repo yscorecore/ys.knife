@@ -28,14 +28,21 @@ namespace YS.Knife.Data
         /// <param name="orderItem"></param>
         public static implicit operator OrderInfo(OrderItem orderItem)
         {
-            return FromOrderItem(orderItem);
+            return Create(orderItem);
         }
 
-        public static OrderInfo FromOrderItem(OrderItem orderItem)
+        public static OrderInfo Create(OrderItem orderItem)
         {
             return new OrderInfo(new OrderItem[] { orderItem });
         }
-
+        public static OrderInfo Create(string name, OrderType orderType= OrderType.Asc)
+        {
+            return Create(new OrderItem{ FieldName = name, OrderType = orderType});
+        }
+        public static OrderInfo Create(params OrderItem[] orderItems)
+        {
+            return new OrderInfo(orderItems);
+        }
         public static OrderInfo Parse(string orderText)
         {
             _ = orderText ?? throw new ArgumentNullException(nameof(orderText));

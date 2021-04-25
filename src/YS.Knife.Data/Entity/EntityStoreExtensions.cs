@@ -10,7 +10,7 @@ namespace YS.Knife.Entity
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1307:指定 StringComparison", Justification = "<挂起>")]
 
-    public static class EntityStoreExtentions
+    public static class EntityStoreExtensions
     {
 
         private static void ForEach<T>(this IEnumerable<T> sources, Action<T> action)
@@ -87,7 +87,7 @@ namespace YS.Knife.Entity
            where T : class
         {
             var res = store.Sum(conditions, fieldSelector);
-            return res.HasValue ? res.Value : default;
+            return res ?? default;
         }
         public static int? Sum<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, Func<T, int?> fieldSelector)
            where T : class
@@ -100,7 +100,7 @@ namespace YS.Knife.Entity
         {
             _ = store ?? throw new ArgumentNullException(nameof(store));
             var res = store.Sum(conditions, fieldSelector);
-            return res.HasValue ? res.Value : default;
+            return res ?? default;
         }
 
 
