@@ -21,7 +21,7 @@ namespace YS.Knife.Data.FilterExpressions.Converters
             {
                 if (propInfo.PropertyType.IsValueType)
                 {
-                    throw new FilterInfoExpressionException($"Can not convert null value to '{propInfo.PropertyType.FullName}' type");
+                    throw new FieldExpressionException($"Can not convert null value to '{propInfo.PropertyType.FullName}' type");
                 }
                 else
                 {

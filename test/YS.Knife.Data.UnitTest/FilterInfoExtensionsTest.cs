@@ -69,7 +69,7 @@ namespace YS.Knife.Data.UnitTest
             Assert.AreEqual(expectedIds, string.Join(",", ids));
         }
         [DataTestMethod]
-        [ExpectedException(typeof(FilterInfoExpressionException))]
+        [ExpectedException(typeof(FieldExpressionException))]
         [DataRow("Age", FilterType.Equals, null)]
         public void ShouldThrowFilterInfoExpressionExceptionWhenFilterSingleItemAndWithInvalidArguments(string fieldName, FilterType filterType, object value)
         {
