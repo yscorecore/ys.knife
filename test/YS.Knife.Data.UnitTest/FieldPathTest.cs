@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Translaters;
@@ -6,7 +7,7 @@ using YS.Knife.Data.Translaters;
 namespace YS.Knife.Data.UnitTest
 {
     [TestClass]
-    public class FieldSplitterTest
+    public class FieldPathTest
     {
         [DataTestMethod]
         [DataRow("abc")]
@@ -18,8 +19,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow(".abc.")]
         public void ShouldSplitSingleWord(string input)
         {
-            var split = new FieldSplitter();
-            var fieldPath = split.Split(input);
+            var fieldPath = FieldPath.ParsePaths(input);
             var expected = new FieldPath() { Field = "abc"};
             fieldPath.Should().BeEquivalentTo(expected );
         }
@@ -31,8 +31,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow(" abc  . \t bcd . \t cde . def ")]
         public void ShouldSplitMultiPaths(string input)
         {
-            var split = new FieldSplitter();
-            var fieldPath = split.Split(input);
+            var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
                 new() { Field = "abc"},
@@ -49,8 +48,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow(" .abc( .) ")]
         public void ShouldSplitWithFunction(string input)
         {
-            var split = new FieldSplitter();
-            var fieldPath = split.Split(input);
+            var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
                 new() { FuncName = "abc", SubPaths = new List<FieldPath>()}
@@ -64,8 +62,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("abc ( bcd . cde . def ) . efg")]
         public void ShouldSplitWithFunctionWithMultiSubPaths(string input)
         {
-            var split = new FieldSplitter();
-            var fieldPath = split.Split(input);
+            var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
                 new() { FuncName = "abc", SubPaths = new List<FieldPath>()
@@ -77,6 +74,21 @@ namespace YS.Knife.Data.UnitTest
                 new() { Field = "efg"}
             };
             fieldPath.Should().BeEquivalentTo(expected );
+        }
+        
+        [DataTestMethod]
+        [DataRow("abc bcd", 3)]
+        [DataRow("abc)", 3)]
+        [DataRow("abc((", 4)]
+        [DataRow("abc ( bcd cde . def ) . efg", 9)]
+        public void ShouldThrowFieldExpressionExceptionWhenParseInvalidPath(string input, int errorIndex)
+        {
+            Action action = () =>
+            {
+                 FieldPath.ParsePaths(input);
+            };
+            action.Should().Throw<FieldExpressionException>()
+                .WithMessage($"Invalid field path at index: {errorIndex}.");
         }
     }
 }
