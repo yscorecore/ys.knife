@@ -19,6 +19,28 @@ namespace YS.Knife.Data.Translaters
             return new FieldSplitter().Split(fieldNames);
         }
 
+        public static string JoinPaths(IEnumerable<FieldPath> paths)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var subPath in paths?? Enumerable.Empty<FieldPath>())
+            {
+                if (stringBuilder.Length > 0)
+                {
+                    stringBuilder.Append(".");
+                }
+
+                if (subPath.IsFunction)
+                {
+                    stringBuilder.Append($"{subPath.FuncName}({JoinPaths(subPath.SubPaths)})");
+                }
+                else
+                {
+                    stringBuilder.Append(subPath.Field);
+                }
+            }
+            return stringBuilder.ToString();
+        }
+
         internal class FieldSplitter
         {
             public List<FieldPath> Split(string filedName)

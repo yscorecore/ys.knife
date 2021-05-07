@@ -90,5 +90,22 @@ namespace YS.Knife.Data.UnitTest
             action.Should().Throw<FieldExpressionException>()
                 .WithMessage($"Invalid field path at index: {errorIndex}.");
         }
+        [DataTestMethod]
+        [DataRow("abc")]
+        [DataRow("abc.bcd")]
+        [DataRow("abc.bcd.cde")]
+        [DataRow("abc.bcd.cde.def")]
+        [DataRow("abc.bcd.cde.func1()")]
+        [DataRow("abc.bcd.cde.func1(a)")]
+        [DataRow("abc.bcd.cde.func1(a.b)")]
+        [DataRow("abc.bcd.cde.func1(a.b.c)")]
+        [DataRow("abc.bcd.cde.func1(a)")]
+        [DataRow("abc.bcd.cde.func1(a.b)")]
+        [DataRow("abc.bcd.cde.func1(a.b.c).def.func2().func3(a)")]
+        public void ShouldGetOriginPathWhenJoinPathWithNormalizePath(string normalizePath)
+        {
+            var paths = FieldPath.ParsePaths(normalizePath);
+            FieldPath.JoinPaths(paths).Should().Be(normalizePath);
+        }
     }
 }
