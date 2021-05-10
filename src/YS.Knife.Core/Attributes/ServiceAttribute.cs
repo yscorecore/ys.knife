@@ -35,14 +35,20 @@ namespace YS.Knife
                     break;
             }
         }
-        private Type DeduceInjectType(Type serviceType)
+        private static Type DeduceInjectType(Type serviceType)
         {
             var allInterfaces = serviceType.GetInterfaces();
-            if (allInterfaces.Length != 1)
+            if (allInterfaces.Length == 0)
             {
-                throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}'.");
+                return serviceType;
             }
-            return allInterfaces.First();
+
+            if (allInterfaces.Length == 1)
+            {
+                return allInterfaces.First();
+            }
+
+            throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}'.");
         }
 
 
