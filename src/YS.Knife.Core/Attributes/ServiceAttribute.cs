@@ -21,18 +21,10 @@ namespace YS.Knife
             _ = context ?? throw new ArgumentNullException(nameof(declareType));
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             var injectType = this.InjectType ?? DeduceInjectType(declareType);
-
-            switch (this.Lifetime)
+            services.Add(new ServiceDescriptor(injectType,declareType,this.Lifetime));
+            if (injectType != declareType)
             {
-                case ServiceLifetime.Singleton:
-                    services.AddSingleton(injectType, declareType);
-                    break;
-                case ServiceLifetime.Scoped:
-                    services.AddScoped(injectType, declareType);
-                    break;
-                case ServiceLifetime.Transient:
-                    services.AddTransient(injectType, declareType);
-                    break;
+                services.Add(new ServiceDescriptor(declareType,declareType,this.Lifetime));
             }
         }
         private static Type DeduceInjectType(Type serviceType)
@@ -48,7 +40,7 @@ namespace YS.Knife
                 return allInterfaces.First();
             }
 
-            throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}'.");
+            throw new InvalidOperationException($"Can not deduce the inject type from current type '{serviceType.FullName}', found too many interfaces, please set the InjectType manually.");
         }
 
 
