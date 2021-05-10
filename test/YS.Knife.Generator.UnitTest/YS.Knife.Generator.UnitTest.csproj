@@ -3,19 +3,19 @@
     <PropertyGroup>
         <TargetFramework>netstandard2.1</TargetFramework>
         <OutputType>Library</OutputType>
-        <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/generated</CompilerGeneratedFilesOutputPath>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+<!--        <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/generated</CompilerGeneratedFilesOutputPath>-->
+<!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\YS.Knife.Generator\YS.Knife.Generator.csproj"  OutputItemType="Analyzer" ReferenceOutputAssembly="true"  />
+      <ProjectReference Include="..\..\src\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
-    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">
-        <ItemGroup>
-            <Generated Include="generated/**/*.g.cs" />
-            <Compile Remove="@(Generated)" />
-        </ItemGroup>
-        <Delete Files="@(Generated)" />
-    </Target>
+<!--    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">-->
+<!--        <ItemGroup>-->
+<!--            <Generated Include="generated/**/*.g.cs" />-->
+<!--            <Compile Remove="@(Generated)" />-->
+<!--        </ItemGroup>-->
+<!--        <Delete Files="@(Generated)" />-->
+<!--    </Target>-->
 
 </Project>
