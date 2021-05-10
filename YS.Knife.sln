@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Generator", "src\Y
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Generator.UnitTest", "test\YS.Knife.Generator.UnitTest\YS.Knife.Generator.UnitTest.csproj", "{2EAA00E2-103C-47A3-9BA1-B398C6999E7E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Testing.XUnit.UnitTest", "test\YS.Knife.Testing.XUnit.UnitTest\YS.Knife.Testing.XUnit.UnitTest.csproj", "{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -253,6 +255,10 @@ Global
 		{2EAA00E2-103C-47A3-9BA1-B398C6999E7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2EAA00E2-103C-47A3-9BA1-B398C6999E7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2EAA00E2-103C-47A3-9BA1-B398C6999E7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -306,6 +312,7 @@ Global
 		{12A438FA-E679-464A-AA11-812ED13F9E52} = {BB691459-047F-48E3-86BD-D4F21E8C58D6}
 		{16FE4A2E-54F2-4B38-9306-F8AADDD16A83} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{2EAA00E2-103C-47A3-9BA1-B398C6999E7E} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
+		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}
