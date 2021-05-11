@@ -1,6 +1,6 @@
 ﻿namespace YS.Knife.Data
 {
-    public class FieldInfo
+    public class SelectInfo
     {
         public string[] Include { get; set; }
     }

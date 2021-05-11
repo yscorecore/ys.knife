@@ -15,13 +15,13 @@ namespace YS.Knife.Testing
 
         public static void Up(IDictionary<string, object> envs = null)
         {
-            envs = envs ?? new Dictionary<string, object>();
+            envs ??= new Dictionary<string, object>();
             Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
         }
 
         public static void Up(IDictionary<string, object> envs, uint reportStatusPort, int maxWaitStatusSeconds = 120)
         {
-            envs = envs ?? new Dictionary<string, object>();
+            envs ??= new Dictionary<string, object>();
 
 
 
