@@ -35,7 +35,7 @@ namespace YS.Knife.Data.Mapper
                         continue;
                     }
                     // add basicPropertyMapper
-                    objectMapper.AddProperty(fromProp.Name, toProp.Name);
+                   
                 }
             }
             return objectMapper;
