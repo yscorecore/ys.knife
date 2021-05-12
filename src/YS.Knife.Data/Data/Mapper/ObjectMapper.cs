@@ -16,20 +16,28 @@ namespace YS.Knife.Data.Mapper
     public class ObjectMapper<TFrom, TTo> : ObjectMapper
         where TTo : new()
     {
-        private readonly Dictionary<string, LambdaExpression> propMappers = new Dictionary<string, LambdaExpression>();
+        private readonly Dictionary<string, LambdaExpression> propMappers =
+            new Dictionary<string, LambdaExpression>(StringComparer.InvariantCultureIgnoreCase);
         private Expression<Func<TFrom, TTo>> cachedExpression = null;
         private Func<TFrom, TTo> cachedFunc = null;
+
 
         public ObjectMapper() : base(typeof(TFrom), typeof(TTo))
         {
         }
-
+        private ObjectMapper(IEnumerable <KeyValuePair<string, LambdaExpression>> props) : base(typeof(TFrom), typeof(TTo))
+        {
+            foreach (var kv in props)
+            {
+                this.propMappers[kv.Key] = kv.Value;
+            }
+        }
         public ObjectMapper<TFrom, TTo> LoadDefault()
         {
             return this;
         }
 
-        public ObjectMapper<TFrom, TTo> Append<TValue>(Expression<Func<TTo, TValue>> targetProperty,
+        public void Append<TValue>(Expression<Func<TTo, TValue>> targetProperty,
             Expression<Func<TFrom, TValue>> sourceExpression)
         {
             _ = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
@@ -43,22 +51,20 @@ namespace YS.Knife.Data.Mapper
             var memberName = memberAccess.Member.Name;
             this.propMappers[memberName] = sourceExpression;
             this.DirtyCache();
-            return this;
         }
 
-        public ObjectMapper<TFrom, TTo> Ignore(Expression<Func<TTo, object>> targetProperty)
+        public void Ignore(Expression<Func<TTo, object>> targetProperty)
         {
             _ = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
             if (targetProperty.Body.NodeType == ExpressionType.MemberAccess)
             {
                 var memberAccess = targetProperty.Body as MemberExpression;
                 var memberName = memberAccess!.Member.Name;
-                return Ignore(memberName);
+                Ignore(memberName);
             }
-            return this;
         }
 
-        public ObjectMapper<TFrom, TTo> Ignore(params string[] targetMembers)
+        public void Ignore(params string[] targetMembers)
         {
             Array.ForEach(targetMembers ?? new string[0], targetMember =>
             {
@@ -67,7 +73,18 @@ namespace YS.Knife.Data.Mapper
                     this.DirtyCache();
                 }
             });
-            return this;
+        }
+
+        public ObjectMapper<TFrom, TTo> PickSub(params string[] targetmembers)
+        {
+            //Dictionary<string>
+            var targets = targetmembers.ToHashSet();
+           
+            var subProps = propMappers.Where(p => targets.Contains(p.Key, propMappers.Comparer));
+              
+                
+                return new ObjectMapper<TFrom, TTo>(subProps);
+            
         }
 
         public Expression<Func<TFrom, TTo>> GetExpression()
