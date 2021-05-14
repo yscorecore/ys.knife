@@ -94,9 +94,9 @@ namespace YS.Knife
             }
         }
 
-        public static IEnumerable<Type> FindInstanceTypesByAttributeAndBaseType<TAttrbute, TBase>(
+        public static IEnumerable<Type> FindInstanceTypesByAttributeAndBaseType<TAttribute, TBase>(
             this AppDomain appDomain, Func<Type, bool> filter = null)
-            where TAttrbute : Attribute
+            where TAttribute : Attribute
         {
             _ = appDomain ?? throw new ArgumentNullException(nameof(appDomain));
             var customFilter = filter ?? (type => true);
@@ -106,7 +106,7 @@ namespace YS.Knife
                 {
                     if (type.IsClass
                         && !type.IsAbstract
-                        && Attribute.IsDefined(type, typeof(TAttrbute), false)
+                        && Attribute.IsDefined(type, typeof(TAttribute), false)
                         && typeof(TBase).IsAssignableFrom(type)
                         && customFilter(type))
                     {
@@ -136,11 +136,11 @@ namespace YS.Knife
             yield return entryAssembly;
         }
 
-        private static LocalCache<Type, object> defaultValueCache = new LocalCache<Type, object>();
+        private static readonly LocalCache<Type, object> DefaultValueCache = new LocalCache<Type, object>();
         public static object DefaultValue(this Type type)
         {
-            return defaultValueCache.Get(type,
-                 (type) => (Activator.CreateInstance(typeof(DevaultValueProxy<>).MakeGenericType(type)) as IDefaultValueProxy).GetDefault());
+            return DefaultValueCache.Get(type,
+                 innerType => (Activator.CreateInstance(typeof(DefaultValueProxy<>).MakeGenericType(innerType)) as IDefaultValueProxy)?.GetDefault());
         }
 
         interface IDefaultValueProxy
@@ -148,7 +148,7 @@ namespace YS.Knife
             object GetDefault();
         }
 
-        class DevaultValueProxy<T> : IDefaultValueProxy
+        class DefaultValueProxy<T> : IDefaultValueProxy
         {
             public object GetDefault()
             {

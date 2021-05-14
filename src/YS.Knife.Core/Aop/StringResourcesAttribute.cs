@@ -41,25 +41,10 @@ namespace YS.Knife.Aop
             return context.Break();
         }
 
-        //private static LocalCache<Type, string> resourceKeyCache = new LocalCache<Type, string>();
         private IStringLocalizer GetLocalizerInstance(AspectContext context)
         {
-            // var resxFilePath = resourceKeyCache.Get(context.ServiceMethod.DeclaringType,
-            //     type => type.GetCustomAttribute<StringResourcesAttribute>()?.ResxFilePath);
-            //if (string.IsNullOrEmpty(resxFilePath))
-            {
-                var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
-                return context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
-            }
-            // else
-            // {
-            //     var assemblyName = new AssemblyName(context.ServiceMethod.DeclaringType.GetTypeInfo().Assembly.FullName);
-            //     var name = assemblyName.Name;
-            //     var factory = context.ServiceProvider.GetRequiredService<IStringLocalizerFactory>();
-            //     return factory.Create(resxFilePath, assemblyName.Name);
-            // }
-
-            return null;
+            var type = typeof(IStringLocalizer<>).MakeGenericType(context.ServiceMethod.DeclaringType);
+            return context.ServiceProvider.GetRequiredService(type) as IStringLocalizer;
         }
 
         private string FormatTemplate(string template, AspectContext context)
@@ -71,6 +56,4 @@ namespace YS.Knife.Aop
             return formatter.Format(kwArgs);
         }
     }
-
-
 }

@@ -6,18 +6,18 @@ namespace YS.Knife.Rest.Client.Resolves
 {
     public static class EntityResolver
     {
-        private static readonly IEntityResolver _textResolver = new TextResolver();
-        private static readonly IEntityResolver _jsonResolver = new JsonResolver();
-        private static readonly IEntityResolver _xmlResolver = new XmlResolver();
+        private static readonly IEntityResolver TextResolver = new TextResolver();
+        private static readonly IEntityResolver JsonResolver = new JsonResolver();
+        private static readonly IEntityResolver XmlResolver = new XmlResolver();
 
         public static readonly IDictionary<string, IEntityResolver> Resolvers =
             new Dictionary<string, IEntityResolver>(StringComparer.InvariantCultureIgnoreCase)
             {
-                ["text/plain"] = _textResolver,
-                ["text/html"] = _textResolver,
-                ["text/xml"] = _xmlResolver,
-                ["application/xml"] = _xmlResolver,
-                ["application/json"] = _jsonResolver
+                ["text/plain"] = TextResolver,
+                ["text/html"] = TextResolver,
+                ["text/xml"] = XmlResolver,
+                ["application/xml"] = XmlResolver,
+                ["application/json"] = JsonResolver
             };
 
         private static IEntityResolver GetResolver(string contentType)

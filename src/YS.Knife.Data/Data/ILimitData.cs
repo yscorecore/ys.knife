@@ -2,7 +2,7 @@
 
 namespace YS.Knife.Data
 {
-    public interface ILimit
+    public interface ILimitData
     {
         int Offset { get; }
         int Limit { get; }
@@ -12,7 +12,8 @@ namespace YS.Knife.Data
         int PageSize => this.Limit;
         int PageIndex => this.Limit > 0 ? this.Offset / this.Limit + 1 : 1;
     }
-    public interface ILimitData<TData> : ILimit
+
+    public interface ILimitData<TData> : ILimitData
     {
         List<TData> ListData { get; }
     }

@@ -1,26 +1,25 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-
 
 namespace YS.Knife
 {
     public class LocalCache<TKey, TValue>
     {
-        readonly Dictionary<TKey, TValue> cachedData = new Dictionary<TKey, TValue>();
+        readonly ConcurrentDictionary<TKey, TValue> _cachedData = new ConcurrentDictionary<TKey, TValue>();
 
         public TValue Get(TKey key, Func<TKey, TValue> createFunc)
         {
-            lock (cachedData)
+            return _cachedData.GetOrAdd(key, createFunc);
+        }
+
+        public TValue Get(TKey key)
+        {
+            if (_cachedData.TryGetValue(key, out var val))
             {
-                if (cachedData.ContainsKey(key))
-                {
-                    return cachedData[key];
-                }
-                else
-                {
-                    return cachedData[key] = createFunc(key);
-                }
+                return val;
             }
+            return default;
         }
     }
 }

@@ -13,22 +13,26 @@ namespace YS.Knife.Data
     {
         static readonly Dictionary<FilterType, string> FilterTypeNameMapper = new Dictionary<FilterType, string>
         {
-            [Data.FilterType.Equals] = "==",
-            [Data.FilterType.NotEquals] = "!=",
-            [Data.FilterType.GreaterThan] = ">",
-            [Data.FilterType.LessThanOrEqual] = "<=",
-            [Data.FilterType.LessThan] = "<",
-            [Data.FilterType.GreaterThanOrEqual] = ">",
-            [Data.FilterType.Between] = "between",
-            [Data.FilterType.NotBetween] = "not between",
-            [Data.FilterType.In] = "in",
-            [Data.FilterType.NotIn] = "not in",
-            [Data.FilterType.StartsWith] = "starts",
-            [Data.FilterType.NotStartsWith] = "not starts",
-            [Data.FilterType.EndsWith] = "ends",
-            [Data.FilterType.NotEndsWith] = "not ends",
-            [Data.FilterType.Contains] = "contains",
-            [Data.FilterType.NotContains] = "not contains",
+            [FilterType.Equals] = "==",
+            [FilterType.NotEquals] = "!=",
+            [FilterType.GreaterThan] = ">",
+            [FilterType.LessThanOrEqual] = "<=",
+            [FilterType.LessThan] = "<",
+            [FilterType.GreaterThanOrEqual] = ">",
+            [FilterType.Between] = "between",
+            [FilterType.NotBetween] = "not between",
+            [FilterType.In] = "in",
+            [FilterType.NotIn] = "not in",
+            [FilterType.StartsWith] = "starts",
+            [FilterType.NotStartsWith] = "not starts",
+            [FilterType.EndsWith] = "ends",
+            [FilterType.NotEndsWith] = "not ends",
+            [FilterType.Contains] = "contains",
+            [FilterType.NotContains] = "not contains",
+            [FilterType.Exists] = "exists",
+            [FilterType.NotExists] = "not exists",
+            [FilterType.All] = "all",
+            [FilterType.NotAll] = "not all"
         };
 
         internal static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
@@ -70,6 +74,12 @@ namespace YS.Knife.Data
         {
             return new FilterInfo() { OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value };
         }
+
+        public static FilterInfo CreateItem(string fieldName, FilterType filterType, params FilterInfo[] items)
+        {
+            return new FilterInfo() { OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Items = items.ToList() };
+        }
+
         public static FilterInfo CreateOr(params FilterInfo[] items)
         {
             return new FilterInfo(items, OpType.OrItems);
