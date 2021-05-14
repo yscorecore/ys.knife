@@ -13,12 +13,20 @@
 
 
     <ItemGroup>
-      <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+      <Compile Remove="Mapper\**" />
+      <EmbeddedResource Remove="Mapper\**" />
+      <None Remove="Mapper\**" />
     </ItemGroup>
 
 
 
     <ItemGroup>
-      <Folder Include="Mapper\" />
+      <None Remove="Data\Mapper\ObjectMapper.cs~RF6923284.TMP" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
     </ItemGroup>
 </Project>

@@ -12,12 +12,56 @@ namespace YS.Knife.Data.Mapper
         {
         }
     }
+    public interface IMapperExpression
+    {
+        LambdaExpression GetLambdaExpression();
+    }
+    public class PropMapperExpression<TFrom, TValue> : IMapperExpression
+    {
+        private readonly Expression<Func<TFrom, TValue>> sourceExpression;
+
+        public PropMapperExpression(Expression<Func<TFrom, TValue>> sourceExpression)
+        {
+            _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
+            this.sourceExpression = sourceExpression;
+        }
+        public LambdaExpression GetLambdaExpression()
+        {
+            return this.sourceExpression;
+        }
+    }
+    public class ComplexObjectMapperExpression<TSource, TTarget>: IMapperExpression
+         where TSource : class, new()
+        where TTarget : class, new()
+    {
+        private readonly ObjectMapper<TSource, TTarget> objectMapper;
+        private readonly LambdaExpression sourceExpression;
+
+        public ComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper)
+        {
+            this.objectMapper = objectMapper;
+            this.sourceExpression = sourceExpression;
+        }
+
+        public LambdaExpression GetLambdaExpression()
+        {
+            var newObjectExpression = this.objectMapper.GetExpression();
+            var expression = newObjectExpression.ReplaceFirstParam(this.sourceExpression.Body);
+            // 需要处理source为null的情况
+            var resultExpression = Expression.Condition(
+                 Expression.Equal(this.sourceExpression.Body, Expression.Constant(null))
+                , Expression.Constant(null,typeof(TTarget)), expression);
+
+            return  Expression.Lambda(resultExpression, this.sourceExpression.Parameters.First());
+        }
+    }
+
 
     public class ObjectMapper<TFrom, TTo> : ObjectMapper
         where TTo : new()
     {
-        private readonly Dictionary<string, LambdaExpression> propMappers =
-            new Dictionary<string, LambdaExpression>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly Dictionary<string, IMapperExpression> propMappers =
+            new Dictionary<string, IMapperExpression>(StringComparer.InvariantCultureIgnoreCase);
         private Expression<Func<TFrom, TTo>> cachedExpression = null;
         private Func<TFrom, TTo> cachedFunc = null;
 
@@ -25,7 +69,7 @@ namespace YS.Knife.Data.Mapper
         public ObjectMapper() : base(typeof(TFrom), typeof(TTo))
         {
         }
-        private ObjectMapper(IEnumerable <KeyValuePair<string, LambdaExpression>> props) : base(typeof(TFrom), typeof(TTo))
+        private ObjectMapper(IEnumerable<KeyValuePair<string, IMapperExpression>> props) : base(typeof(TFrom), typeof(TTo))
         {
             foreach (var kv in props)
             {
@@ -37,20 +81,40 @@ namespace YS.Knife.Data.Mapper
             return this;
         }
 
-        public void Append<TValue>(Expression<Func<TTo, TValue>> targetProperty,
+        public void AppendProperty<TValue>(Expression<Func<TTo, TValue>> targetProperty,
             Expression<Func<TFrom, TValue>> sourceExpression)
         {
-            _ = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
             _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
+            var memberName = PickTargetMemberName(targetProperty);
+            this.propMappers[memberName] = new PropMapperExpression<TFrom, TValue>(sourceExpression);
+            this.DirtyCache();
+        }
+
+        private static string PickTargetMemberName<TValue>(Expression<Func<TTo, TValue>> targetProperty)
+        {
+            _ = targetProperty ?? throw new ArgumentNullException(nameof(targetProperty));
             if (targetProperty.Body.NodeType != ExpressionType.MemberAccess)
             {
-                throw new InvalidOperationException("source member only supported.");
+                throw new InvalidOperationException($"can not resolve target member name from expression '{targetProperty}'.");
             }
-
             var memberAccess = targetProperty.Body as MemberExpression;
             var memberName = memberAccess.Member.Name;
-            this.propMappers[memberName] = sourceExpression;
+            return memberName;
+        }
+
+        public void AppendObject<TToValue, TFromValue>(Expression<Func<TTo, TToValue>> targetProperty, Expression<Func<TFrom, TFromValue>> sourceExpression, ObjectMapper<TFromValue, TToValue> mapper)
+            where TToValue : class, new()
+            where TFromValue :class, new()
+        {
+            var memberName = PickTargetMemberName(targetProperty);
+            this.propMappers[memberName] = new ComplexObjectMapperExpression<TFromValue, TToValue>(sourceExpression, mapper);
             this.DirtyCache();
+        }
+        public void AppendCollection<TToValue, TFromValue>(Expression<Func<TTo, IEnumerable<TToValue>>> targetProperty, Expression<Func<TFrom, IEnumerable<TFromValue>>> sourceExpression, ObjectMapper<TFromValue, TToValue> mapper)
+             where TToValue : new()
+            where TFromValue : new()
+        {
+
         }
 
         public void Ignore(Expression<Func<TTo, object>> targetProperty)
@@ -79,33 +143,38 @@ namespace YS.Knife.Data.Mapper
         {
             //Dictionary<string>
             var targets = targetmembers.ToHashSet();
-           
+
             var subProps = propMappers.Where(p => targets.Contains(p.Key, propMappers.Comparer));
-              
-                
-                return new ObjectMapper<TFrom, TTo>(subProps);
-            
+
+
+            return new ObjectMapper<TFrom, TTo>(subProps);
+
         }
 
         public Expression<Func<TFrom, TTo>> GetExpression()
         {
             if (cachedExpression == null)
             {
-                var p = Expression.Parameter(typeof(TFrom), "p");
-                var memberBindings = this.propMappers.Select(kv => CreateMemberBinding(kv.Key, kv.Value, p)).ToArray();
-                var expressions = Expression.MemberInit(Expression.New(typeof(TTo).GetConstructor(Type.EmptyTypes)!),
-                    memberBindings);
-                cachedExpression = Expression.Lambda<Func<TFrom, TTo>>(expressions, p);
+                cachedExpression = GetExpressionInternal();
             }
             return cachedExpression;
         }
 
-        private MemberBinding CreateMemberBinding(string targetName, LambdaExpression sourceExpression,
+        private Expression<Func<TFrom, TTo>> GetExpressionInternal()
+        {
+            var p = Expression.Parameter(typeof(TFrom), "p");
+            var memberBindings = this.propMappers.Select(kv => CreateMemberBinding(kv.Key, kv.Value, p)).ToArray();
+            var expressions = Expression.MemberInit(Expression.New(typeof(TTo).GetConstructor(Type.EmptyTypes)!),
+                memberBindings);
+            return Expression.Lambda<Func<TFrom, TTo>>(expressions, p);
+        }
+
+        private MemberBinding CreateMemberBinding(string targetName, IMapperExpression sourceExpression,
             ParameterExpression p)
         {
             var memberInfo = typeof(TTo).GetProperty(targetName) as MemberInfo ??
                              typeof(TTo).GetField(targetName);
-            return Expression.Bind(memberInfo!, ReplaceFirstParam(sourceExpression, p));
+            return Expression.Bind(memberInfo!, sourceExpression.GetLambdaExpression().ReplaceFirstParam(p));
         }
 
         public Func<TFrom, TTo> GetFunc()
@@ -123,30 +192,6 @@ namespace YS.Knife.Data.Mapper
             this.cachedFunc = null;
         }
 
-        class ParameterReplacer : ExpressionVisitor
-        {
-            private readonly ParameterExpression m_parameter;
-            private readonly Expression m_replacement;
-
-            public ParameterReplacer(ParameterExpression parameter, Expression replacement)
-            {
-                this.m_parameter = parameter;
-                this.m_replacement = replacement;
-            }
-
-            protected override Expression VisitParameter(ParameterExpression node)
-            {
-                if (ReferenceEquals(node, m_parameter))
-                    return m_replacement;
-                return node;
-            }
-        }
-
-        static Expression ReplaceFirstParam(LambdaExpression expression, ParameterExpression newParameter)
-        {
-            var parameterToRemove = expression.Parameters.ElementAt(0);
-            var replacer = new ParameterReplacer(parameterToRemove, newParameter);
-            return replacer.Visit(expression.Body);
-        }
+      
     }
 }
