@@ -21,7 +21,7 @@
 
 
     <ItemGroup>
-      <None Remove="Data\Mapper\ObjectMapper.cs~RF6923284.TMP" />
+      <None Remove="Data\Mappers\ObjectMapper.cs~RF6923284.TMP" />
     </ItemGroup>
 
 
