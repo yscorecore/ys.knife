@@ -8,11 +8,11 @@ namespace YS.Knife.Data.Mappers
 {
 
     public class ObjectMapper<TSource, TTarget>
-        where TSource: class
-        where TTarget :class, new()
+        where TSource : class
+        where TTarget : class
 
     {
-        public static ObjectMapper<TSource, TTarget> Default { get; } = new ObjectMapper<TSource, TTarget>();
+        public static ObjectMapper<TSource, TTarget> Default { get; } = new ObjectMapper<TSource, TTarget>(true);
 
         public virtual IDictionary<string, IMapperExpression> PropMappers
         {
@@ -23,10 +23,9 @@ namespace YS.Knife.Data.Mappers
             new Dictionary<string, IMapperExpression>();
         private Expression<Func<TSource, TTarget>> cachedExpression = null;
         private Func<TSource, TTarget> cachedFunc = null;
-
-        public ObjectMapper(bool loadDefaultMapperExpressions=false)
+        public ObjectMapper(bool loadDefaultMapperExpressions = false)
         {
-            if (loadDefaultMapperExpressions) 
+            if (loadDefaultMapperExpressions)
             {
                 this.LoadDefaultMapperExpressions();
             }
@@ -51,61 +50,80 @@ namespace YS.Knife.Data.Mappers
         #endregion
 
         #region Append Methods
-        public void AppendProperty<TValue>(Expression<Func<TTarget, TValue>> targetMember,
+        public void AppendProperty<TValue>(Expression<Func<TTarget, TValue?>> targetMember,
             Expression<Func<TSource, TValue>> sourceExpression)
+            where TValue : struct
         {
             _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
-            AssertSimpleMemberType(typeof(TValue));
-            var memberName = PickTargetMemberName(targetMember);
-            this.PropMappers[memberName] = new PropertyMapperExpression(sourceExpression);
+            var (memberName, memberType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] = new ToNullablePropertyMapperExpression<TSource,TValue>(sourceExpression);
             this.DirtyCache();
+
+        }
+
+
+        public void AppendProperty<TTargetValue, TSourceValue>(Expression<Func<TTarget, TTargetValue>> targetMember,
+            Expression<Func<TSource, TSourceValue>> sourceExpression)
+            where TSourceValue : TTargetValue
+        {
+            _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
+
+            var (memberName, memberType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] = new ToPropertyMapperExpression(sourceExpression, typeof(TSourceValue));
+            this.DirtyCache();
+
         }
         public void AppendObject<TTargetObject, TSourceObject>(Expression<Func<TTarget, TTargetObject>> targetMember, Expression<Func<TSource, TSourceObject>> sourceExpression, ObjectMapper<TSourceObject, TTargetObject> mapper)
             where TTargetObject : class, new()
             where TSourceObject : class
         {
             var memberName = PickTargetMemberName(targetMember);
-            this.PropMappers[memberName] = new ComplexObjectMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper);
+            this.PropMappers[memberName] = new ToNewComplexObjectMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper);
             this.DirtyCache();
         }
-        public void AppendObject<TObject>(Expression<Func<TTarget, TObject>> targetMember, Expression<Func<TSource, TObject>> sourceExpression)
-           where TObject : class, new()
-        {
-            // clone new object
-            AppendObject(targetMember, sourceExpression, ObjectMapper<TObject, TObject>.Default);
-        }
+
         public void AppendCollection<TTargetObject, TSourceObject>(Expression<Func<TTarget, IEnumerable<TTargetObject>>> targetMember, Expression<Func<TSource, IQueryable<TSourceObject>>> sourceExpression, ObjectMapper<TSourceObject, TTargetObject> mapper)
              where TTargetObject : class, new()
-            where TSourceObject : class, new()
+            where TSourceObject : class
         {
             var (memberName, type) = PickTargetMemberInfo(targetMember);
             this.PropMappers[memberName] = new CollectionMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper, type);
             this.DirtyCache();
         }
-        public void AppendCollection<TObject>(Expression<Func<TTarget, IEnumerable<TObject>>> targetMember, Expression<Func<TSource, IQueryable<TObject>>> sourceExpression)
-            where TObject : class, new()
+        public void AppendCollection<TTargetObject, TSourceObject>(Expression<Func<TTarget, IEnumerable<TTargetObject>>> targetMember, Expression<Func<TSource, IQueryable<TSourceObject>>> sourceExpression)
+              where TTargetObject : class
+            where TSourceObject : class, TTargetObject
         {
-            this.AppendCollection(targetMember, sourceExpression, ObjectMapper<TObject, TObject>.Default);
+            var (memberName, type) = PickTargetMemberInfo(targetMember);
+            var mapper = ObjectMapper<TSourceObject, TTargetObject>.Default;
+            this.PropMappers[memberName] = new CollectionMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper, type);
+            this.DirtyCache();
         }
+
+
         public void AppendCollection<TTargetObject, TSourceObject>(Expression<Func<TTarget, IEnumerable<TTargetObject>>> targetMember, Expression<Func<TSource, IEnumerable<TSourceObject>>> sourceExpression, ObjectMapper<TSourceObject, TTargetObject> mapper)
             where TTargetObject : class, new()
-           where TSourceObject : class, new()
+           where TSourceObject : class
         {
             var (memberName, type) = PickTargetMemberInfo(targetMember);
             this.PropMappers[memberName] = new CollectionMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper, type);
             this.DirtyCache();
         }
-        public void AppendCollection<TObject>(Expression<Func<TTarget, IEnumerable<TObject>>> targetMember, Expression<Func<TSource, IEnumerable<TObject>>> sourceExpression)
-            where TObject : class, new()
+        public void AppendCollection<TTargetObject, TSourceObject>(Expression<Func<TTarget, IEnumerable<TTargetObject>>> targetMember, Expression<Func<TSource, IEnumerable<TSourceObject>>> sourceExpression)
+                where TTargetObject : class
+              where TSourceObject : class, TTargetObject
         {
-            this.AppendCollection(targetMember, sourceExpression, ObjectMapper<TObject, TObject>.Default);
+            var (memberName, type) = PickTargetMemberInfo(targetMember);
+            var mapper = ObjectMapper<TSourceObject, TTargetObject>.Default;
+            this.PropMappers[memberName] = new CollectionMapperExpression<TSourceObject, TTargetObject>(sourceExpression, mapper, type);
+            this.DirtyCache();
         }
         #endregion
 
         #region LoadDefault
         private void LoadDefaultMapperExpressions()
         {
-            var targetPropertyMap = typeof(TTarget).GetProperties().Where(p=>p.CanWrite).ToDictionary(p=>p.Name,p=>p);
+            var targetPropertyMap = typeof(TTarget).GetProperties().Where(p => p.CanWrite).ToDictionary(p => p.Name, p => p);
             var sourcePropertyMap = typeof(TSource).GetProperties().Where(p => p.CanRead).ToDictionary(p => p.Name, p => p);
 
             foreach (var prop in targetPropertyMap)
@@ -118,27 +136,105 @@ namespace YS.Knife.Data.Mappers
         }
         private void LoadPropertyMapper(PropertyInfo targetProperty, PropertyInfo sourceProperty)
         {
-            if (IsSimpleType(targetProperty.PropertyType))
+            if (targetProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
             {
-                LoadSimplePropertyMapper(targetProperty, sourceProperty);
+                LoadAssignableFromTargetPropertyMapper(targetProperty, sourceProperty);
             }
-            else if (IsEnumerableType(targetProperty.PropertyType))
+            else if (CanConvertValueTypeToNullableType(targetProperty, sourceProperty))
             {
-                // TODO ..
+                LoadConvertToTargetPropertyMapper(targetProperty, sourceProperty);
             }
-            else
-            { 
-                // TODO ...
+            else if (CanMapEnumerableAssignableObject(targetProperty, sourceProperty))
+            {
+
             }
+            else if (CanMapEnumerablePropertyBindingObject(targetProperty, sourceProperty))
+            {
+
+            }
+
+            else if (CanMapComplexObject(targetProperty, sourceProperty))
+            {
+                LoadComplexObjectMapper(targetProperty, sourceProperty);
+            }
+
         }
 
-        private void LoadSimplePropertyMapper(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+
+        private void LoadAssignableFromTargetPropertyMapper(PropertyInfo targetProperty, PropertyInfo sourceProperty)
         {
-            if (targetProperty.PropertyType != sourceProperty.PropertyType) return;
             var paramExp = Expression.Parameter(typeof(TSource));
-            var propertyExp =  Expression.Property(paramExp, sourceProperty);
+            var propertyExp = Expression.Property(paramExp, sourceProperty);
             var lambda = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(TSource), sourceProperty.PropertyType), propertyExp, paramExp);
-            this.PropMappers[targetProperty.Name] = new PropertyMapperExpression(lambda);
+            this.PropMappers[targetProperty.Name] = new ToPropertyMapperExpression(lambda, sourceProperty.PropertyType);
+        }
+        private bool CanConvertValueTypeToNullableType(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+            return sourceProperty.PropertyType.IsValueType && targetProperty.PropertyType == typeof(Nullable<>).MakeGenericType(sourceProperty.PropertyType);
+        }
+        private void LoadConvertToTargetPropertyMapper(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+            var paramExp = Expression.Parameter(typeof(TSource));
+            var propertyExp = Expression.Property(paramExp, sourceProperty);
+            var convertExp = Expression.Convert(propertyExp, targetProperty.PropertyType);
+            var lambda = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(TSource), typeof(Nullable<>).MakeGenericType(sourceProperty.PropertyType)), convertExp, paramExp);
+            this.PropMappers[targetProperty.Name] = new ToPropertyMapperExpression(lambda, sourceProperty.PropertyType);
+        }
+        private bool CanMapComplexObject(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+            if (Type.GetTypeCode(targetProperty.PropertyType) != TypeCode.Object)
+            {
+                return false;
+            }
+            if (Type.GetTypeCode(sourceProperty.PropertyType) != TypeCode.Object)
+            {
+                return false;
+            }
+            // should have empty constructor
+            if (targetProperty.PropertyType.GetConstructor(Type.EmptyTypes) == null)
+            {
+                return false;
+            }
+            return true;
+        }
+        private void LoadComplexObjectMapper(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+
+            var paramExp = Expression.Parameter(typeof(TSource));
+            var propertyExp = Expression.Property(paramExp, sourceProperty);
+            var lambda = Expression.Lambda(typeof(Func<,>).MakeGenericType(typeof(TSource), sourceProperty.PropertyType), propertyExp, paramExp);
+            var mapperType = typeof(ToNewComplexObjectMapperExpression<,>).MakeGenericType(sourceProperty.PropertyType, targetProperty.PropertyType);
+
+            var innerMapperType = typeof(ObjectMapper<,>).MakeGenericType(sourceProperty.PropertyType, targetProperty.PropertyType);
+            var innerMapperInstance = Activator.CreateInstance(innerMapperType, new object[] { true });
+            var mapperInstance = Activator.CreateInstance(mapperType, lambda, innerMapperInstance);
+            this.PropMappers[targetProperty.Name] = mapperInstance as IMapperExpression;
+        }
+        private bool CanMapEnumerableAssignableObject(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+            var targetItemType = EnumerableTypeUtils.GetEnumerableItemType(targetProperty.PropertyType);
+            var sourceItemType = EnumerableTypeUtils.GetEnumerableItemType(sourceProperty.PropertyType);
+            if (targetItemType != null && sourceItemType != null
+                && Type.GetTypeCode(targetItemType) == TypeCode.Object
+                && Type.GetTypeCode(sourceItemType) == TypeCode.Object
+                && targetItemType.IsAssignableFrom(sourceItemType))
+            {
+                return true;
+            }
+            return false;
+        }
+        private bool CanMapEnumerablePropertyBindingObject(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+        {
+            var targetItemType = EnumerableTypeUtils.GetEnumerableItemType(targetProperty.PropertyType);
+            var sourceItemType = EnumerableTypeUtils.GetEnumerableItemType(sourceProperty.PropertyType);
+            if (targetItemType != null && sourceItemType != null
+                && Type.GetTypeCode(targetItemType) == TypeCode.Object
+                && Type.GetTypeCode(sourceItemType) == TypeCode.Object
+                && targetItemType.GetConstructor(Type.EmptyTypes) != null)
+            {
+                return true;
+            }
+            return false;
         }
         #endregion
 
@@ -151,11 +247,7 @@ namespace YS.Knife.Data.Mappers
             }
         }
 
-        private static bool IsSimpleType(Type type)
-        {
-            var mainType = type.IsNullableType() ? Nullable.GetUnderlyingType(type) : type;
-            return Type.GetTypeCode(mainType) != TypeCode.Object;
-        }
+
         private static bool IsEnumerableType(Type type)
         {
             return false;
@@ -203,6 +295,12 @@ namespace YS.Knife.Data.Mappers
         private Expression<Func<TSource, TTarget>> GetExpressionInternal()
         {
             var p = Expression.Parameter(typeof(TSource));
+            if (typeof(TTarget).IsAssignableFrom(typeof(TSource)))
+            {
+                // can assign to target type
+                return Expression.Lambda<Func<TSource, TTarget>>(p, p);
+            }
+
             var memberBindings = this.PropMappers.Select(kv => CreateMemberBinding(kv.Key, kv.Value, p)).ToArray();
             var expressions = Expression.MemberInit(Expression.New(typeof(TTarget).GetConstructor(Type.EmptyTypes)!),
                 memberBindings);

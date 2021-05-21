@@ -4,15 +4,17 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class CollectionMapperExpression<TSource, TTarget> : IMapperExpression
+    public class ToCollectionMapperExpression<TSource, TTarget> : IMapperExpression
         where TSource : class
-        where TTarget : class, new()
+        where TTarget : class
     {
         private readonly ObjectMapper<TSource, TTarget> objectMapper;
         private readonly LambdaExpression sourceExpression;
         private readonly Type resultType;
 
-        public CollectionMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper, Type resultType)
+        public Type SourceValueType => throw new NotImplementedException();
+
+        public ToCollectionMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper, Type resultType)
         {
             this.sourceExpression = sourceExpression;
             this.objectMapper = objectMapper;
@@ -28,7 +30,6 @@ namespace YS.Knife.Data.Mappers
         public LambdaExpression GetLambdaExpression()
         {
             var newObjectExpression = this.objectMapper.BuildExpression();
-
 
             var selectMethod = IsQueryableSource()? MethodFinder.GetQuerybleSelect<TSource, TTarget>(): MethodFinder.GetEnumerableSelect<TSource, TTarget>();
             var toResultMethod = resultType.IsArray ? MethodFinder.GetEnumerableToArray<TTarget>() : MethodFinder.GetEnumerableToList<TTarget>();

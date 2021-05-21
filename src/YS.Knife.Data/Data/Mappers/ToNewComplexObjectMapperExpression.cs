@@ -1,20 +1,23 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class ComplexObjectMapperExpression<TSource, TTarget>: IMapperExpression
-         where TSource : class
+    public class ToNewComplexObjectMapperExpression<TSource, TTarget>: IMapperExpression
+        where TSource : class
         where TTarget : class, new()
     {
         private readonly ObjectMapper<TSource, TTarget> objectMapper;
         private readonly LambdaExpression sourceExpression;
 
-        public ComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper)
+        public ToNewComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper)
         {
             this.objectMapper = objectMapper;
             this.sourceExpression = sourceExpression;
         }
+
+        public Type SourceValueType => typeof(TSource);
 
         public LambdaExpression GetLambdaExpression()
         {

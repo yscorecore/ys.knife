@@ -23,6 +23,19 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(new DtoModel { StrProp = "str" });
         }
         [TestMethod]
+        public void ShouldTheSameInstanceWhenSourceTypeIsTargetType()
+        {
+            var data = new Model
+            {
+                StrProp = "str"
+            };
+            var mapper = new ObjectMapper<Model, object>();
+        
+            var target = data.Map(mapper);
+            target.Should().Be(data);
+        }
+
+        [TestMethod]
         public void ShouldGetNullWhenSourceIsNull()
         {
             Model data = null;
@@ -248,6 +261,42 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
+        [TestMethod]
+        public void ShouldGetTargetInstanceWhenUseDefaultMapper()
+        {
+            var datetime = DateTime.Now;
+            var datetimeOffset = DateTimeOffset.Now;
+            Model data = new Model
+            {
+                StrProp = "strprop",
+                IntProp = 123,
+                NullIntProp = 456,
+                DateTimeProp = datetime,
+                DateTimeOffsetProp = datetimeOffset,
+                SubModel = new ModelSubModel
+                {
+                    IntProp = 234,
+                    SubStrProp = "substrprop"
+                }
+            };
+            var mapper = ObjectMapper<Model, DtoModel>.Default;
+            var target = data.Map(mapper);
+            var expected = new DtoModel
+            {
+                StrProp = "strprop",
+                IntProp = 123,
+                NullIntProp = 456,
+                DateTimeProp = datetime,
+                DateTimeOffsetProp = datetimeOffset,
+                SubModel = new DtoSubModel
+                {
+                    IntProp = 234,
+                    SubStrProp = "substrprop"
+                }
+            };
+            target.Should().BeEquivalentTo(expected);
+        }
+
         class DtoModel
         {
             public string StrProp { get; set; }
@@ -261,7 +310,9 @@ namespace YS.Knife.Data.UnitTest.Mapper
         class DtoSubModel
         {
             public string SubStrProp { get; set; }
+            public int IntProp { get; set; }
         }
+        
         class Model
         {
             public string StrProp { get; set; }
@@ -276,7 +327,11 @@ namespace YS.Knife.Data.UnitTest.Mapper
         public class ModelSubModel
         {
             public string SubStrProp { get; set; }
+            public int IntProp { get; set; }
         }
+
+
+
 
     }
 }
