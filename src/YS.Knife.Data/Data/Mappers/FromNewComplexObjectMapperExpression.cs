@@ -4,14 +4,14 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class ToNewComplexObjectMapperExpression<TSource, TTarget>: IMapperExpression
+    public class FromNewComplexObjectMapperExpression<TSource, TTarget>: IMapperExpression
         where TSource : class
         where TTarget : class, new()
     {
         private readonly ObjectMapper<TSource, TTarget> objectMapper;
         private readonly LambdaExpression sourceExpression;
 
-        public ToNewComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper)
+        public FromNewComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper)
         {
             this.objectMapper = objectMapper;
             this.sourceExpression = sourceExpression;

@@ -22,18 +22,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel { StrProp = "str" });
         }
-        [TestMethod]
-        public void ShouldTheSameInstanceWhenSourceTypeIsTargetType()
-        {
-            var data = new Model
-            {
-                StrProp = "str"
-            };
-            var mapper = new ObjectMapper<Model, object>();
-        
-            var target = data.Map(mapper);
-            target.Should().Be(data);
-        }
+
 
         [TestMethod]
         public void ShouldGetNullWhenSourceIsNull()
@@ -330,8 +319,75 @@ namespace YS.Knife.Data.UnitTest.Mapper
             public int IntProp { get; set; }
         }
 
+        class ModelSource
+        {
+            public string StrProp { get; set; }
+            public int IntProp { get; set; }
+            public long LongProp { get; set; }
+            public Guid GuidProp { get; set; }
+            public DateTime DateTimeProp { get; set; }
+            public DateTimeOffset DateTimeOffsetProp { get; set; }
+            public int? NullableIntProp { get; set; }
+            public Guid? NullableGuidProp { get; set; }
+            public DateTime? NullableDateTimeProp { get; set; }
+            public IA InterfaceObject { get; set; }
+            public A1 ComplexObjectProp { get; set; }
 
+            public string[] StrArray { get; set; }
 
+            public List<string> StrList { get; set; }
+
+            public IList<string> StrIList { get; set; }
+
+            public IQueryable<string> StrQueryable { get; set; }
+
+            public IEnumerable<string> StrEnumerable { get; set; }
+
+            public IA[] InterfaceArray { get; set; }
+
+            public List<IA> InterfaceList { get; set; }
+
+            public IList<IA> InterfaceIList { get; set; }
+
+            public IQueryable<IA> InterfaceQueryable { get; set; }
+
+            public IEnumerable<IA> InterfaceEnumerable { get; set; }
+
+            public A1[] ObjectArray { get; set; }
+
+            public List<A1> ObjectList { get; set; }
+
+            public IList<A1> ObjectIList { get; set; }
+
+            public IQueryable<A1> ObjectQueryable { get; set; }
+
+            public IEnumerable<A1> ObjectEnumerable { get; set; }
+
+        }
+        interface IA
+        {
+            public string SubProp { get; set; }
+        }
+        class A1 : IA
+        {
+            public string SubProp { get; set; }
+        }
+
+        class Dto
+        {
+            public class Basic
+            {
+                public string StrProp { get; set; }
+                public int IntProp { get; set; }
+                public long LongProp { get; set; }
+                public Guid GuidProp { get; set; }
+                public DateTime DateTimeProp { get; set; }
+                public DateTimeOffset DateTimeOffsetProp { get; set; }
+                public int? NullableIntProp { get; set; }
+                public Guid? NullableGuidProp { get; set; }
+                public DateTime? NullableDateTimeProp { get; set; }
+            }
+        }
 
     }
 }

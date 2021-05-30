@@ -4,35 +4,31 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class ToCollectionMapperExpression<TSource, TTarget> : IMapperExpression
-        where TSource : class
-        where TTarget : class
+    public class FromQueryableNewObjectMapperExpression<TSource, TSourceObjectValue, TTargetObjectValue> : IMapperExpression
+       where TSourceObjectValue : class
+       where TTargetObjectValue : class,new()
     {
-        private readonly ObjectMapper<TSource, TTarget> objectMapper;
-        private readonly LambdaExpression sourceExpression;
+        private readonly ObjectMapper<TSourceObjectValue, TTargetObjectValue> objectMapper;
+        private readonly Expression<Func<TSource,IQueryable<TSourceObjectValue>>> sourceExpression;
         private readonly Type resultType;
 
-        public Type SourceValueType => throw new NotImplementedException();
+        public Type SourceValueType => typeof(TSourceObjectValue);
 
-        public ToCollectionMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSource, TTarget> objectMapper, Type resultType)
+        public FromQueryableNewObjectMapperExpression(Expression<Func<TSource, IQueryable<TSourceObjectValue>>> sourceExpression, ObjectMapper<TSourceObjectValue, TTargetObjectValue> objectMapper, Type resultType)
         {
             this.sourceExpression = sourceExpression;
             this.objectMapper = objectMapper;
             this.resultType = resultType;
         }
 
-        private bool IsQueryableSource()
-        {
-            return typeof(IQueryable<TSource>).IsAssignableFrom(this.sourceExpression.ReturnType);
-          
-        }
-            
+
+
         public LambdaExpression GetLambdaExpression()
         {
             var newObjectExpression = this.objectMapper.BuildExpression();
 
-            var selectMethod = IsQueryableSource()? MethodFinder.GetQuerybleSelect<TSource, TTarget>(): MethodFinder.GetEnumerableSelect<TSource, TTarget>();
-            var toResultMethod = resultType.IsArray ? MethodFinder.GetEnumerableToArray<TTarget>() : MethodFinder.GetEnumerableToList<TTarget>();
+            var selectMethod = MethodFinder.GetQuerybleSelect<TSourceObjectValue, TTargetObjectValue>() ;
+            var toResultMethod = resultType.IsArray ? MethodFinder.GetEnumerableToArray<TTargetObjectValue>() : MethodFinder.GetEnumerableToList<TTargetObjectValue>();
             var callSelectExpression = Expression.Call(selectMethod, this.sourceExpression.Body, newObjectExpression);
             var toResultExpression = Expression.Call(toResultMethod, callSelectExpression);
             // 需要处理source为null的情况
@@ -42,6 +38,6 @@ namespace YS.Knife.Data.Mappers
             return Expression.Lambda(resultExpression, this.sourceExpression.Parameters.First());
 
         }
-        
+
     }
 }

@@ -3,13 +3,13 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class ToNullablePropertyMapperExpression<TSource,TValue> : IMapperExpression
+    public class FromNullablePropertyMapperExpression<TSource,TValue> : IMapperExpression
         where TValue:struct
     {
 
         private readonly Expression<Func<TSource,TValue>> sourceExpression;
 
-        public ToNullablePropertyMapperExpression(Expression<Func<TSource, TValue>> sourceExpression)
+        public FromNullablePropertyMapperExpression(Expression<Func<TSource, TValue>> sourceExpression)
         {
             this.sourceExpression = sourceExpression;
         }
