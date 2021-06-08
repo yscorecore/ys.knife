@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq.Expressions;
 using YS.Knife.Data;
+using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Translaters;
 
 namespace System.Linq
 {
     public static class QueryableExtensions
     {
-        public static IListSource AsListSource<T>(this ILimitData<T> limitData)
+        #region Other
+        public static IListSource ToListSource<T>(this ILimitData<T> limitData)
         {
             return new LimitDataListSource<T>(limitData);
         }
@@ -24,27 +28,42 @@ namespace System.Linq
             return new LimitData<T>(limitListData, offset, limit, totalCount);
         }
 
-        #region List
-        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo filterInfo, OrderInfo orderInfo)
-        {
-            return source.WhereCondition(filterInfo).Order(orderInfo).ToList();
-        }
-        public static List<T> ListAll<T>(this IQueryable<T> source, QueryInfo queryInfo)
-        {
-            // ignore limit info
-            return source.ListAll<T>(queryInfo?.Filter,queryInfo?.Order);
-        }
-        public static List<R> ListAll<T,R>(this IQueryable<T> source, FilterInfo filterInfoForTFrom, OrderInfo orderInfoForTFrom, Func<IQueryable<T>,IQueryable<R>> mapper=null)
-        {
-            return null;
-        }
-        public static List<R> ListAll<T,R>(this IQueryable<T> source, QueryInfo queryInfoForTFrom, Func<IQueryable<T>,IQueryable<R>> mapper=null)
-        {
-            // ignore limit info
-            return source.ListAll(queryInfoForTFrom?.Filter,queryInfoForTFrom?.Order,mapper);
-        }
         
 
+        #endregion
+
+        #region ListAll
+        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo filterInfoForResult, OrderInfo orderInfoForResult, SelectInfo selectInfoForResult)
+            where T:class,new()
+        {
+            return source.ListAll<T,T>(filterInfoForResult, orderInfoForResult, selectInfoForResult);
+        }
+        public static List<T> ListAll<T>(this IQueryable<T> source, QueryInfo queryInfo)
+            where T:class,new()
+        {
+            // ignore limit info
+            return source.ListAll(queryInfo?.Filter,queryInfo?.Order,queryInfo?.Select);
+        }
+        public static List<R> ListAll<T,R>(this IQueryable<T> source, FilterInfo filterInfoForResult, OrderInfo orderInfoForResult, SelectInfo selectInfoForResult, ObjectMapper<T,R> mapper)
+            where  T:class
+            where  R:class, new()
+        {
+            _ = source ?? throw new ArgumentNullException(nameof(source));
+            _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            var translatedFilterInfo = filterInfoForResult.Translate(mapper);
+            var translatedOrderInfo = orderInfoForResult.Translate(mapper);
+            return source
+                .WhereCondition(translatedFilterInfo)
+                .Order(translatedOrderInfo)
+                .Select(selectInfoForResult,mapper)
+                .ToList();
+        }
+        public static List<R> ListAll<T,R>(this IQueryable<T> source, FilterInfo filterInfoForResult, OrderInfo orderInfoForResult, SelectInfo selectInfoForResult)
+            where  T:class
+            where  R:class, new()
+        {
+            return source.ListAll(filterInfoForResult, orderInfoForResult, selectInfoForResult, ObjectMapper<T, R>.Default);
+        }
         #endregion
 
         

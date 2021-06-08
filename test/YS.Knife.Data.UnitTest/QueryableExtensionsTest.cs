@@ -20,7 +20,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListWhenListAllWithFilterInfoAndNoOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(FilterInfo.CreateItem("Name", FilterType.Contains, "a"), null);
+            var actual = users.ListAll(FilterInfo.CreateItem("Name", FilterType.Contains, "a"), null,null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a"))).ToList());
         }
 
@@ -28,7 +28,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetOriginListWhenListAllWithNoFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(null, OrderInfo.Create("Name", OrderType.Desc));
+            var actual = users.ListAll(null, OrderInfo.Create("Name", OrderType.Desc),null);
             actual.Should().BeEquivalentTo(users.OrderByDescending(p => p.Name).ToList());
         }
 
@@ -37,72 +37,72 @@ namespace YS.Knife.Data.UnitTest
         {
             var users = CreateUsersWithAddress();
             var actual = users.ListAll(FilterInfo.CreateItem("Name", FilterType.Contains, "a"),
-                OrderInfo.Create("Name", OrderType.Desc));
+                OrderInfo.Create("Name", OrderType.Desc),null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a")))
                 .OrderByDescending(p => p.Name).ToList());
         }
 
         
-        [TestMethod, TestCategory("ListAll2")]
-        public void ShouldGetOriginListWhenListAll2WithOutQueryInfo()
-        {
-            var users = CreateUsersWithAddress();
-            var actual = users.ListAll(null,null, UserMapper);
-            actual.Should().BeEquivalentTo( UserMapper(users).ToList());
-        }
+        // [TestMethod, TestCategory("ListAll2")]
+        // public void ShouldGetOriginListWhenListAll2WithOutQueryInfo()
+        // {
+        //     var users = CreateUsersWithAddress();
+        //     var actual = users.ListAll(null,null, UserMapper);
+        //     actual.Should().BeEquivalentTo( UserMapper(users).ToList());
+        // }
 
-        private IQueryable<User2> UserMapper(IQueryable<User> users)
-        {
-            return users.Select(p => new User2()
-            {
-                 Id = p.Id,
-                 Name = p.Name,
-                 Age = p.Age,
-                 FirstAddressCity = p.Addresses.Select(c=>c.City).FirstOrDefault()
-            });
-        }
+        // private IQueryable<User2> UserMapper(IQueryable<User> users)
+        // {
+        //     return users.Select(p => new User2()
+        //     {
+        //          Id = p.Id,
+        //          Name = p.Name,
+        //          Age = p.Age,
+        //          FirstAddressCity = p.Addresses.Select(c=>c.City).FirstOrDefault()
+        //     });
+        // }
 
         private IQueryable<User> CreateUsersWithAddress()
         {
             return (new List<User>()
             {
-                new()
+                new User()
                 {
                     Id = "001",
                     Name = "ZhangSan",
                     Age = 19,
                     Score = 61,
-                    Addresses = new List<Address>() {new() {City = "xian"}}
+                    Addresses = new List<Address>() {new Address() {City = "xian"}}
                 },
-                new()
+                new User()
                 {
                     Id = "002",
                     Name = "LiSi",
                     Age = 20,
                     Score = 81,
-                    Addresses = new List<Address>() {new() {City = "beijing"}, new() {City = "xian"}}
+                    Addresses = new List<Address>() {new Address() {City = "beijing"}, new Address() {City = "xian"}}
                 },
-                new()
+                new User()
                 {
                     Id = "003",
                     Name = "WangWu",
                     Age = 20,
                     Score = 70,
-                    Addresses = new List<Address>() {new() {City = "beijing"}}
+                    Addresses = new List<Address>() {new Address() {City = "beijing"}}
                 },
-                new()
+                new User()
                 {
                     Id = "004",
                     Name = "WangMaZi",
                     Age = 19,
-                    Addresses = new List<Address>() {new() {City = "xian"}, new() {City = "xian"}}
+                    Addresses = new List<Address>() {new Address() {City = "xian"}, new Address() {City = "xian"}}
                 },
-                new()
+                new User()
                 {
                     Id = "005",
                     Name = null,
                     Age = 21,
-                    Addresses = new List<Address>() {new() {City = "beijing"}, new() {City = "beijing"}}
+                    Addresses = new List<Address>() {new Address() {City = "beijing"}, new Address() {City = "beijing"}}
                 }
             }).AsQueryable();
         }

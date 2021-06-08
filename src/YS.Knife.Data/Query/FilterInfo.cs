@@ -242,12 +242,7 @@ namespace YS.Knife.Data
 
     }
 
-    public enum OpType
-    {
-        AndItems,
-        OrItems,
-        SingleItem,
-    }
+
 
 
 }

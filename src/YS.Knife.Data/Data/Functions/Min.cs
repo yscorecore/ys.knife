@@ -1,6 +1,6 @@
 ﻿namespace YS.Knife.Data.Functions
 {
-    public class Min
+    public class Min:FunctionExpression
     {
         
     }

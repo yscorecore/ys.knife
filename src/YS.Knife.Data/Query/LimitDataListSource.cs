@@ -5,17 +5,17 @@ namespace YS.Knife.Data
 {
     public class LimitDataListSource<T> : IListSource
     {
-        private readonly ILimitData<T> limitData;
+        private readonly ILimitData<T> _limitData;
         public LimitDataListSource(ILimitData<T> limitData)
         {
             _ = limitData ?? throw new System.ArgumentNullException(nameof(limitData));
-            this.limitData = limitData;
+            this._limitData = limitData;
         }
         public bool ContainsListCollection => true;
 
         public IList GetList()
         {
-            return limitData.ListData;
+            return _limitData.ListData;
         }
     }
 }

@@ -34,10 +34,10 @@ namespace YS.Knife.Data.UnitTest
             var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
-                new() { Field = "abc"},
-                new() { Field = "bcd"},
-                new() { Field = "cde"},
-                new() { Field = "def"}
+                new FieldPath() { Field = "abc"},
+                new FieldPath() { Field = "bcd"},
+                new FieldPath() { Field = "cde"},
+                new FieldPath() { Field = "def"}
             };
             fieldPath.Should().BeEquivalentTo(expected );
         }
@@ -51,7 +51,7 @@ namespace YS.Knife.Data.UnitTest
             var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
-                new() { FuncName = "abc", SubPaths = new List<FieldPath>()}
+                new FieldPath() { FuncName = "abc", SubPaths = new List<FieldPath>()}
             };
             fieldPath.Should().BeEquivalentTo(expected );
         }
@@ -65,13 +65,13 @@ namespace YS.Knife.Data.UnitTest
             var fieldPath = FieldPath.ParsePaths(input);
             var expected = new List<FieldPath>
             {
-                new() { FuncName = "abc", SubPaths = new List<FieldPath>()
+                new FieldPath() { FuncName = "abc", SubPaths = new List<FieldPath>()
                 {
-                    new() { Field = "bcd"},
-                    new() { Field = "cde"},
-                    new() { Field = "def"}
+                    new FieldPath() { Field = "bcd"},
+                    new FieldPath() { Field = "cde"},
+                    new FieldPath() { Field = "def"}
                 }},
-                new() { Field = "efg"}
+                new FieldPath() { Field = "efg"}
             };
             fieldPath.Should().BeEquivalentTo(expected );
         }

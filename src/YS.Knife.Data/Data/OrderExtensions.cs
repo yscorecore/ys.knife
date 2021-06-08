@@ -12,12 +12,12 @@ namespace System.Linq
             _ = source ?? throw new ArgumentNullException(nameof(source));
             return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
         }
-        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderitems)
+        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             HashSet<string> used = new HashSet<string>();
             IOrderedQueryable<T> result = null;
-            foreach (var v in orderitems ?? Enumerable.Empty<OrderItem>())
+            foreach (var v in orderItems ?? Enumerable.Empty<OrderItem>())
             {
                 if (!used.Contains(v.FieldName))
                 {

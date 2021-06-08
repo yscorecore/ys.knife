@@ -3,24 +3,30 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public class FromNullablePropertyMapperExpression<TSource,TValue> : IMapperExpression
+    class FromNullablePropertyMapperExpression<TValue> : MapperExpression<TValue,TValue>
         where TValue:struct
     {
 
-        private readonly Expression<Func<TSource,TValue>> sourceExpression;
+        private readonly LambdaExpression sourceExpression;
 
-        public FromNullablePropertyMapperExpression(Expression<Func<TSource, TValue>> sourceExpression)
+        public FromNullablePropertyMapperExpression(LambdaExpression sourceExpression)
         {
             this.sourceExpression = sourceExpression;
         }
 
-        public Type SourceValueType => typeof(TValue);
+        public override bool IsCollection { get=>false; }
 
-        public LambdaExpression GetLambdaExpression()
+        public override LambdaExpression GetLambdaExpression()
         {
             var body = this.sourceExpression.Body;
             var expression = Expression.Convert(body, typeof(Nullable<>).MakeGenericType(typeof(TValue)));
             return Expression.Lambda(expression, this.sourceExpression.Parameters);
+        }
+
+        public static FromNullablePropertyMapperExpression<TValue> Create<TSource>(Expression<Func<TSource, TValue>> sourceExpression)
+            where TSource:class
+        {
+            return new FromNullablePropertyMapperExpression<TValue>(sourceExpression);
         }
     }
 

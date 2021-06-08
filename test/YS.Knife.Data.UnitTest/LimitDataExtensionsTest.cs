@@ -9,7 +9,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListSourceWhenAsListSource()
         {
             var listSource = Enumerable.Range(1, 100).AsQueryable()
-                .ToLimitData(50, 15).AsListSource();
+                .ToLimitData(50, 15).ToListSource();
             Assert.AreEqual(true, listSource.ContainsListCollection);
             Assert.AreEqual(15, listSource.GetList().Count);
         }

@@ -30,5 +30,8 @@ namespace YS.Knife.Data.Mappers
             );
         }
 
+        public static bool IsEnumerable(Type type) => GetEnumerableItemType(type) != null;
+        public static bool IsQueryable(Type type) => GetQueryableItemType(type) != null;
+
     }
 }

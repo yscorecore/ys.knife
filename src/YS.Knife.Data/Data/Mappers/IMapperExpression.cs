@@ -5,7 +5,19 @@ namespace YS.Knife.Data.Mappers
 {
     public interface IMapperExpression
     {
-        public Type SourceValueType { get; }
+        bool IsCollection { get; }
+        Type SourceValueType { get; }
+        Type TargetValueType { get; }
         LambdaExpression GetLambdaExpression();
+        IObjectMapper SubMapper { get; }
+    }
+
+    abstract class MapperExpression<TSourceValue, TTargetValue>:IMapperExpression
+    {
+        public abstract bool IsCollection { get; }
+        public Type SourceValueType => typeof(TSourceValue);
+        public Type TargetValueType => typeof(TTargetValue);
+        public abstract LambdaExpression GetLambdaExpression();
+        public virtual IObjectMapper SubMapper { get; set; }
     }
 }

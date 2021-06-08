@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data
 {
-    [System.AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public sealed class EntityKeyAttribute : System.Attribute
     {
         public string[] Keys { get; set; }

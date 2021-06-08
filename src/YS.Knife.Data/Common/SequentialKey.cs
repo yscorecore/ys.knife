@@ -4,9 +4,9 @@ namespace YS.Knife.Data
 {
     public static class SequentialKey
     {
-        private static readonly Random _random = new Random(unchecked((int)DateTime.Now.Ticks));
-        private static int sequenceValue = 0;
-        private static long lastTicks = 0;
+        private static readonly Random Random = new Random(unchecked((int)DateTime.Now.Ticks));
+        private static int _sequenceValue = 0;
+        private static long _lastTicks = 0;
         /// <summary>
         /// Create a new string key of length 24.
         /// </summary>
@@ -14,19 +14,19 @@ namespace YS.Knife.Data
         public static string NewString()
         {
             // 15+3+6 
-            lock (_random)
+            lock (Random)
             {
                 long timestamp = DateTimeOffset.UtcNow.Ticks;
-                if (timestamp != lastTicks)
+                if (timestamp != _lastTicks)
                 {
-                    lastTicks = timestamp;
-                    sequenceValue = 0;
+                    _lastTicks = timestamp;
+                    _sequenceValue = 0;
                 }
                 else
                 {
-                    sequenceValue++;
+                    _sequenceValue++;
                 }
-                return $"{timestamp:x15}{(sequenceValue & 0x00000fff):x3}{_random.Next(0xffffff):x6}";
+                return $"{timestamp:x15}{(_sequenceValue & 0x00000fff):x3}{Random.Next(0xffffff):x6}";
             }
         }
 

@@ -1,4 +1,6 @@
-﻿namespace YS.Knife.Data
+﻿using System;
+
+namespace YS.Knife.Data
 {
     public class QueryInfo
     {
@@ -7,4 +9,6 @@
         public LimitInfo Limit { get; set; }
         public SelectInfo Select { get; set; }
     }
+
+
 }

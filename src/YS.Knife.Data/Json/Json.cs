@@ -20,7 +20,7 @@ namespace YS.Knife.Data
 
         public static T DeSerialize<T>(string content)
         {
-            return JsonSerializer.Deserialize<T>(content);
+            return JsonSerializer.Deserialize<T>(content,JsonOptionsWithIndented);
         }
         public static string ToJsonString(this object obj, bool withIndented = false)
         {

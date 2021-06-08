@@ -31,8 +31,8 @@
             {
                 if (typeof(string) == typeof(T))
                 {
-                    return (T)(object)(MaskLength > 0 ? new string(MaskChar, MaskLength) : string.Empty);
-                }
+                    return (T)(object)reader.GetString();
+                }             
                 return default;
             }
 
