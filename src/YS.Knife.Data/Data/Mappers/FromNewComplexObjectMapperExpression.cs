@@ -24,7 +24,7 @@ namespace YS.Knife.Data.Mappers
 
         public override LambdaExpression GetLambdaExpression()
         {
-            var newObjectExpression = this.SubMapper.BuildLambdaExpression();
+            var newObjectExpression = this.SubMapper.BuildExpression();
             var expression = newObjectExpression.ReplaceFirstParam(this.sourceExpression.Body);
             // 需要处理source为null的情况
             var resultExpression = Expression.Condition(

@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    public interface IMapperExpression
+    interface IMapperExpression
     {
         bool IsCollection { get; }
         Type SourceValueType { get; }
@@ -11,7 +11,13 @@ namespace YS.Knife.Data.Mappers
         LambdaExpression GetLambdaExpression();
         IObjectMapper SubMapper { get; }
     }
+    interface IObjectMapper
+    {
+        IMapperExpression GetFieldExpression(string targetField,
+            StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase);
 
+        LambdaExpression BuildExpression();
+    }
     abstract class MapperExpression<TSourceValue, TTargetValue>:IMapperExpression
     {
         public abstract bool IsCollection { get; }

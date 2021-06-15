@@ -25,7 +25,7 @@ namespace YS.Knife.Data.Mappers
 
         public override LambdaExpression GetLambdaExpression()
         {
-            var newObjectExpression = this.SubMapper.BuildLambdaExpression();
+            var newObjectExpression = this.SubMapper.BuildExpression();
 
             var selectMethod = EnumerableTypeUtils.IsQueryable(SourceValueType)? MethodFinder.GetQuerybleSelect<TSourceValueItem, TTargetValueItem>():MethodFinder.GetEnumerableSelect<TSourceValueItem, TTargetValueItem>();
             var toResultMethod = this.TargetValueType.IsArray ? MethodFinder.GetEnumerableToArray<TTargetValueItem>() : MethodFinder.GetEnumerableToList<TTargetValueItem>();

@@ -18,7 +18,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 StrProp = "str"
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => p.StrProp);
+            mapper.Append(p => p.StrProp, p => p.StrProp);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel { StrProp = "str" });
         }
@@ -29,7 +29,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
         {
             Model data = null;
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => p.StrProp);
+            mapper.Append(p => p.StrProp, p => p.StrProp);
             var target = data.Map(mapper);
             target.Should().BeNull();
         }
@@ -53,7 +53,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 StrProp = "str"
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => "const");
+            mapper.Append(p => p.StrProp, p => "const");
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "const" });
         }
@@ -65,7 +65,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 StrProp = "str"
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => "const" + p.StrProp);
+            mapper.Append(p => p.StrProp, p => "const" + p.StrProp);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "conststr" });
         }
@@ -78,7 +78,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 StrProp = "str"
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => "const" + p.IntProp);
+            mapper.Append(p => p.StrProp, p => "const" + p.IntProp);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "const0" });
         }
@@ -90,7 +90,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 NullIntProp = 1
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.IntProp, p => p.NullIntProp ?? 0);
+            mapper.Append(p => p.IntProp, p => p.NullIntProp ??0);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { IntProp = 1 });
         }
@@ -102,7 +102,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 IntProp = 1
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.NullIntProp, p => p.IntProp);
+            mapper.Append(p => p.NullIntProp, p => p.IntProp);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { NullIntProp = 1 });
         }
@@ -114,7 +114,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 SubModel = new ModelSubModel() { SubStrProp = "str" }
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendProperty(p => p.StrProp, p => p.SubModel != null ? p.SubModel.SubStrProp : null);
+            mapper.Append(p => p.StrProp, p => p.SubModel != null ? p.SubModel.SubStrProp : null);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "str" });
         }
@@ -126,9 +126,9 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 SubModel = new ModelSubModel() { SubStrProp = "str" }
             };
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendObject(p => p.SubModel, p => p.SubModel, subMapper);
+            mapper.Append(p => p.SubModel, p => p.SubModel, subMapper);
             var target = data.Map(mapper);
 
             var expected = new DtoModel
@@ -147,9 +147,9 @@ namespace YS.Knife.Data.UnitTest.Mapper
             };
 
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.AppendObject(p => p.SubModel, p => p.SubModel, subMapper);
+            mapper.Append(p => p.SubModel, p => p.SubModel, subMapper);
             var target = data.Map(mapper);
 
             var expected = new DtoModel
@@ -171,7 +171,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 }.AsQueryable()
             };
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
             mapper.AppendCollection(p => p.SubModelArray, p => p.QueryableSubModels, subMapper);
             var target = data.Map(mapper);
@@ -193,7 +193,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 QueryableSubModels = null
             };
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
             mapper.AppendCollection(p => p.SubModelArray, p => p.QueryableSubModels, subMapper);
             var target = data.Map(mapper);
@@ -216,7 +216,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 }
             };
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
             mapper.AppendCollection(p => p.SubModelArray, p => p.EnumerableSubModels, subMapper);
             var target = data.Map(mapper);
@@ -238,7 +238,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 QueryableSubModels = null
             };
             var subMapper = new ObjectMapper<ModelSubModel, DtoSubModel>();
-            subMapper.AppendProperty(p => p.SubStrProp, p => p.SubStrProp);
+            subMapper.Append(p => p.SubStrProp, p => p.SubStrProp);
             var mapper = new ObjectMapper<Model, DtoModel>();
             mapper.AppendCollection(p => p.SubModelArray, p => p.EnumerableSubModels, subMapper);
             var target = data.Map(mapper);

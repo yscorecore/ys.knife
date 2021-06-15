@@ -15,10 +15,12 @@ namespace YS.Knife.Data.Mappers
         }
 
 
-        public override bool IsCollection { get => EnumerableTypeUtils.GetEnumerableItemType(SourceValueType)!=null; }
+        public override bool IsCollection { get => EnumerableTypeUtils.GetEnumerableItemType(SourceValueType)!=null && EnumerableTypeUtils.GetEnumerableItemType(TargetValueType)!=null; }
 
         public override LambdaExpression GetLambdaExpression()
         {
+            
+            
             return this.sourceExpression;
         }
         
