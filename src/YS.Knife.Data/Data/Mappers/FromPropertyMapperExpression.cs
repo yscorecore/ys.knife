@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    class FromPropertyMapperExpression<TSourceValue,TTargetValue> : MapperExpression<TSourceValue,TTargetValue>
+    class FromPropertyMapperExpression<TSourceValue, TTargetValue> : MapperExpression<TSourceValue, TTargetValue>
         where TSourceValue : TTargetValue
     {
         private readonly LambdaExpression sourceExpression;
@@ -15,20 +15,23 @@ namespace YS.Knife.Data.Mappers
         }
 
 
-        public override bool IsCollection { get => EnumerableTypeUtils.GetEnumerableItemType(SourceValueType)!=null && EnumerableTypeUtils.GetEnumerableItemType(TargetValueType)!=null; }
+        public override bool IsCollection
+        {
+            get => SourceValueType != typeof(string) && TargetValueType != typeof(string) &&
+                   EnumerableTypeUtils.IsEnumerable(SourceValueType) &&
+                   EnumerableTypeUtils.IsEnumerable(TargetValueType);
+        }
 
         public override LambdaExpression GetLambdaExpression()
         {
-            
-            
             return this.sourceExpression;
         }
-        
-        public static FromPropertyMapperExpression<TSourceValue,TTargetValue> Create<TSource>(Expression<Func<TSource, TSourceValue>> sourceExpression)
-            where TSource:class
+
+        public static FromPropertyMapperExpression<TSourceValue, TTargetValue> Create<TSource>(
+            Expression<Func<TSource, TSourceValue>> sourceExpression)
+            where TSource : class
         {
-            return new FromPropertyMapperExpression<TSourceValue,TTargetValue>(sourceExpression);
+            return new FromPropertyMapperExpression<TSourceValue, TTargetValue>(sourceExpression);
         }
     }
-
 }

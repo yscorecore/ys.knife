@@ -146,5 +146,85 @@ namespace YS.Knife.Data.UnitTest.Mapper
         }
 
         #endregion
+
+        #region ShouldMapNullableValueList
+
+        [TestMethod]
+        public void ShouldMapNullableValueList()
+        {
+            var data = new Model5
+            {
+                InnerList = new List<int>{1,2,3}
+            };
+
+
+            var target = data.Map(ObjectMapper<Model5, Dto5>.Default);
+            target.Should().BeEquivalentTo(new Dto5()
+            {
+                InnerList = new int?[]{1,2,3}
+            });
+        }
+
+
+        class Dto5
+        {
+            public int?[] InnerList { get; set; }
+        }
+
+      
+
+        class Model5
+        {
+            public List<int> InnerList { get; set; }
+        }
+
+        #endregion
+        
+        #region ShouldMapAssignList
+        [TestMethod]
+        public void ShouldMapAssignList()
+        {
+            var data = new Model6()
+            {
+                DataList = new List<Data6>
+                {
+                    new Data6("abc"),
+                    null,
+                    new Data6("bcd")
+                }
+            };
+
+
+            var target = data.Map(ObjectMapper<Model6, Dto6>.Default);
+            target.DataList.Should().BeEquivalentTo(data.DataList);
+        }
+
+
+        class Dto6
+        {
+            public List<IData6> DataList { get; set; }
+        }
+
+        interface IData6
+        {
+            public string StrProp { get; set; }
+        }
+        class Data6:IData6
+        {
+            public Data6(string val)
+            {
+                this.StrProp = val;
+            }
+            public string StrProp { get; set; }
+        }
+
+      
+
+        class Model6
+        {
+            public List<Data6> DataList { get; set; }
+        }
+        
+        #endregion
     }
 }

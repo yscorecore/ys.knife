@@ -7,33 +7,28 @@ using System.Reflection;
 
 namespace YS.Knife.Data.Mappers
 {
-
-
-
     public sealed class ObjectMapper<TSource, TTarget>:IObjectMapper
         where TSource : class
         where TTarget : class, new()
-
     {
-
         public static ObjectMapper<TSource, TTarget> Default { get; } =
             DefaultObjectMapperFactory.CreateDefault<TSource, TTarget>();
         
 
         private  IDictionary<string, IMapperExpression> PropMappers
         {
-            get { return this.propMappers; }
+            get { return this._propMappers; }
         }
 
-        private readonly Dictionary<string, IMapperExpression> propMappers =
+        private readonly Dictionary<string, IMapperExpression> _propMappers =
             new Dictionary<string, IMapperExpression>();
-        private Expression<Func<TSource, TTarget>> cachedExpression = null;
-        private Func<TSource, TTarget> cachedFunc = null;
+        private Expression<Func<TSource, TTarget>> _cachedExpression = null;
+        private Func<TSource, TTarget> _cachedFunc = null;
 
         LambdaExpression IObjectMapper.BuildExpression() => this.BuildExpression();
         IMapperExpression IObjectMapper.GetFieldExpression(string targetField, StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase)
         {
-            foreach (var kv in this.propMappers)
+            foreach (var kv in this._propMappers)
             {
                 if (string.Equals(kv.Key, targetField, stringComparison))
                 {
@@ -49,11 +44,11 @@ namespace YS.Knife.Data.Mappers
         {
             // cache result
             var mapper = new ObjectMapper<TSource, TTarget>();
-            var allKeys = this.propMappers.Keys.Where(p =>
+            var allKeys = this._propMappers.Keys.Where(p =>
                 (targetFields??Array.Empty<string>()).Contains(p, stringComparer)).ToArray();
             foreach (var targetField in allKeys)
             {
-                mapper.propMappers[targetField] = this.propMappers[targetField];
+                mapper._propMappers[targetField] = this._propMappers[targetField];
             }
             return mapper;
         }
@@ -62,20 +57,20 @@ namespace YS.Knife.Data.Mappers
         #region Core Methods
         public Expression<Func<TSource, TTarget>> BuildExpression()
         {
-            if (cachedExpression == null)
+            if (_cachedExpression == null)
             {
-                cachedExpression = GetExpressionInternal();
+                _cachedExpression = GetExpressionInternal();
             }
-            return cachedExpression;
+            return _cachedExpression;
         }
 
         public Func<TSource, TTarget> BuildConvertFunc()
         {
-            if (cachedFunc == null)
+            if (_cachedFunc == null)
             {
-                cachedFunc = this.BuildExpression().Compile();
+                _cachedFunc = this.BuildExpression().Compile();
             }
-            return cachedFunc;
+            return _cachedFunc;
         }
         #endregion
 
@@ -102,7 +97,7 @@ namespace YS.Knife.Data.Mappers
             this.PropMappers[memberName] = FromPropertyMapperExpression<TSourceValue,TTargetValue>.Create(sourceExpression);
             this.DirtyCache();
         }
-        [Description("append_complex_object")]
+        [Description("append_new_object")]
         public void Append<TTargetObject, TSourceObject>(Expression<Func<TTarget, TTargetObject>> targetMember, Expression<Func<TSource, TSourceObject>> sourceExpression, ObjectMapper<TSourceObject, TTargetObject> mapper)
             where TTargetObject : class, new()
             where TSourceObject : class
@@ -122,7 +117,7 @@ namespace YS.Knife.Data.Mappers
             this.PropMappers[memberName] =  FromQueryableNewObjectMapperExpression<TSourceValueCollection,TSourceValueItem,TTargetValueCollection,TTargetValueItem>.Create(sourceExpression,mapper);
             this.DirtyCache();
         }
-        [Description("append_enumerable_assgin")]
+        [Description("append_enumerable_assign")]
         public void AppendCollection<TTargetValueCollection,TTargetValueItem, TSourceValueCollection,TSourceValueItem>(Expression<Func<TTarget, TTargetValueCollection>> targetMember, Expression<Func<TSource, TSourceValueCollection>> sourceExpression)
             
             where TTargetValueCollection:IEnumerable<TTargetValueItem>
@@ -131,6 +126,17 @@ namespace YS.Knife.Data.Mappers
         {
             var (memberName, type) = PickTargetMemberInfo(targetMember);
             this.PropMappers[memberName] = FromQueryableAssignMapperExpression<TSourceValueCollection,TSourceValueItem,TTargetValueCollection,TTargetValueItem>.Create(sourceExpression);
+            this.DirtyCache();
+        }
+        [Description("append_enumerable_nullable_assign")]
+        public void AppendCollection<TTargetValueCollection,TSourceValueCollection,TValueItem>(Expression<Func<TTarget, TTargetValueCollection>> targetMember, Expression<Func<TSource, TSourceValueCollection>> sourceExpression)
+            
+            where TTargetValueCollection:IEnumerable<TValueItem?>
+            where TSourceValueCollection:IEnumerable <TValueItem>
+            where TValueItem : struct
+        {
+            var (memberName, type) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] = FromEnumerableNullableAssignExpression<TSourceValueCollection,TTargetValueCollection,TValueItem>.Create(sourceExpression);
             this.DirtyCache();
         }
         
@@ -196,8 +202,8 @@ namespace YS.Knife.Data.Mappers
 
         private void DirtyCache()
         {
-            this.cachedExpression = null;
-            this.cachedFunc = null;
+            this._cachedExpression = null;
+            this._cachedFunc = null;
         }
     }
 }
