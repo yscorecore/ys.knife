@@ -26,6 +26,8 @@ namespace YS.Knife.Data.Mappers
         private Func<TSource, TTarget> _cachedFunc = null;
 
         LambdaExpression IObjectMapper.BuildExpression() => this.BuildExpression();
+        Delegate IObjectMapper.BuildConvertFunc() => this.BuildConvertFunc();
+
         IMapperExpression IObjectMapper.GetFieldExpression(string targetField, StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase)
         {
             foreach (var kv in this._propMappers)

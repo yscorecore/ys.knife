@@ -17,6 +17,7 @@ namespace YS.Knife.Data.Mappers
             StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase);
 
         LambdaExpression BuildExpression();
+        Delegate BuildConvertFunc();
     }
     abstract class MapperExpression<TSourceValue, TTargetValue>:IMapperExpression
     {
