@@ -11,19 +11,19 @@ namespace YS.Knife.Data.Mappers
         private static readonly ConcurrentDictionary<Type,Type> EnumerableLocalCache = new ConcurrentDictionary<Type, Type>();
 
         private static readonly ConcurrentDictionary<Type, Type> QueryableLocalCache = new ConcurrentDictionary<Type, Type>();
-        public static Type GetEnumerableItemType(Type enumableType)
+        public static Type GetEnumerableItemType(Type enumerableType)
         {
-            if (enumableType.IsGenericTypeDefinition) return null;
-            return EnumerableLocalCache.GetOrAdd(enumableType, type =>
+            if (enumerableType.IsGenericTypeDefinition) return null;
+            return EnumerableLocalCache.GetOrAdd(enumerableType, type =>
                 type.GetInterfaces()
                     .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                     .Select(p => p.GetGenericArguments().First()).FirstOrDefault()
             ) ;
         }
-        public static Type GetQueryableItemType(Type enumableType)
+        public static Type GetQueryableItemType(Type enumerableType)
         {
-            if (enumableType.IsGenericTypeDefinition) return null;
-            return QueryableLocalCache.GetOrAdd(enumableType, type =>
+            if (enumerableType.IsGenericTypeDefinition) return null;
+            return QueryableLocalCache.GetOrAdd(enumerableType, type =>
                 type.GetInterfaces()
                     .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IQueryable<>))
                     .Select(p => p.GetGenericArguments().First()).FirstOrDefault()

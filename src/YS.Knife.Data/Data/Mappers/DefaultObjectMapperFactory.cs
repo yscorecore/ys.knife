@@ -61,7 +61,7 @@ namespace YS.Knife.Data.Mappers
                 }
             }
 
-            private bool IsCollectionMap(PropertyInfo targetProperty, PropertyInfo sourceProperty)
+            private static bool IsCollectionMap(PropertyInfo targetProperty, PropertyInfo sourceProperty)
             {
                 if (targetProperty.PropertyType == typeof(string)|| sourceProperty.PropertyType==typeof(string))
                 {
