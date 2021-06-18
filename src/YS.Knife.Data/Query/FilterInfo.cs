@@ -29,10 +29,10 @@ namespace YS.Knife.Data
             [FilterType.NotEndsWith] = "not ends",
             [FilterType.Contains] = "contains",
             [FilterType.NotContains] = "not contains",
-            [FilterType.Exists] = "exists",
-            [FilterType.NotExists] = "not exists",
-            [FilterType.All] = "all",
-            [FilterType.NotAll] = "not all"
+            // [FilterType.Exists] = "exists",
+            // [FilterType.NotExists] = "not exists",
+            // [FilterType.All] = "all",
+            // [FilterType.NotAll] = "not all"
         };
 
         internal static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
@@ -69,6 +69,8 @@ namespace YS.Knife.Data
         public object Value { get; set; }
 
         public List<FilterInfo> Items { get; set; }
+
+        public CollectionFunctionInfo Function { get; set; }
 
         public static FilterInfo CreateItem(string fieldName, FilterType filterType, object value)
         {
@@ -205,6 +207,13 @@ namespace YS.Knife.Data
         }
     }
 
+
+    public class CollectionFunctionInfo
+    {
+        public string FuncName { get; set; }
+        public FilterInfo SubFilter { get; set; }
+        public string FieldName { get; set; }
+    }
 
     public class FilterInfoTypeConverter : TypeConverter
     {

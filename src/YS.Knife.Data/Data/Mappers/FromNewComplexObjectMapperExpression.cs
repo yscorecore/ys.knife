@@ -10,29 +10,26 @@ namespace YS.Knife.Data.Mappers
         where TSourceValue : class
         where TTargetValue : class, new()
     {
-        private readonly LambdaExpression sourceExpression;
 
         public FromNewComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSourceValue, TTargetValue> objectMapper)
+            :base(sourceExpression)
         {
             
             this.SubMapper = objectMapper??throw new ArgumentNullException(nameof(objectMapper));
-            this.sourceExpression = sourceExpression;
         }
 
         public override bool IsCollection { get=>false; }
 
 
-        public override LambdaExpression GetLambdaExpression()
+        public override LambdaExpression GetBindExpression()
         {
             var newObjectExpression = this.SubMapper.BuildExpression();
-            var expression = newObjectExpression.ReplaceFirstParam(this.sourceExpression.Body);
-            // 需要处理source为null的情况
-            var resultExpression = Expression.Condition(
-                 Expression.Equal(this.sourceExpression.Body, Expression.Constant(null))
-                ,Expression.Constant(null,typeof(TTargetValue)), expression);
-
-            return Expression.Lambda(resultExpression, this.sourceExpression.Parameters.First());
+            var expression = newObjectExpression.ReplaceFirstParam(this.SourceExpression.Body);
+            // 不需要处理source为null的情况，submapper 已经处理
+            return Expression.Lambda(expression, this.SourceExpression.Parameters.First());
         }
+
+
 
         public static FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue> Create<TSource>(Expression<Func<TSource, TSourceValue>> sourceExpression,ObjectMapper<TSourceValue, TTargetValue> objectMapper)
             where TSource:class

@@ -199,7 +199,7 @@ namespace YS.Knife.Data.Mappers
         {
             var memberInfo = typeof(TTarget).GetProperty(targetName) as MemberInfo ??
                              typeof(TTarget).GetField(targetName);
-            return Expression.Bind(memberInfo!, sourceExpression.GetLambdaExpression().ReplaceFirstParam(p));
+            return Expression.Bind(memberInfo!, sourceExpression.GetBindExpression().ReplaceFirstParam(p));
         }
 
         private void DirtyCache()

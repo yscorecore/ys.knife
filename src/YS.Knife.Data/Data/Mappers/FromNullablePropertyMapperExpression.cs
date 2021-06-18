@@ -7,21 +7,22 @@ namespace YS.Knife.Data.Mappers
         where TValue:struct
     {
 
-        private readonly LambdaExpression sourceExpression;
 
         public FromNullablePropertyMapperExpression(LambdaExpression sourceExpression)
+        :base(sourceExpression)
         {
-            this.sourceExpression = sourceExpression;
         }
 
         public override bool IsCollection { get=>false; }
 
-        public override LambdaExpression GetLambdaExpression()
+        public override LambdaExpression GetBindExpression()
         {
-            var body = this.sourceExpression.Body;
+            var body = this.SourceExpression.Body;
             var expression = Expression.Convert(body, typeof(Nullable<>).MakeGenericType(typeof(TValue)));
-            return Expression.Lambda(expression, this.sourceExpression.Parameters);
+            return Expression.Lambda(expression, this.SourceExpression.Parameters);
         }
+
+       
 
         public static FromNullablePropertyMapperExpression<TValue> Create<TSource>(Expression<Func<TSource, TValue>> sourceExpression)
             where TSource:class

@@ -8,8 +8,10 @@ namespace YS.Knife.Data.Mappers
         bool IsCollection { get; }
         Type SourceValueType { get; }
         Type TargetValueType { get; }
-        LambdaExpression GetLambdaExpression();
+        LambdaExpression GetBindExpression();
         IObjectMapper SubMapper { get; }
+        
+        LambdaExpression SourceExpression { get; }
     }
     interface IObjectMapper
     {
@@ -21,10 +23,15 @@ namespace YS.Knife.Data.Mappers
     }
     abstract class MapperExpression<TSourceValue, TTargetValue>:IMapperExpression
     {
+        public MapperExpression(LambdaExpression sourceExpression)
+        {
+            this.SourceExpression = sourceExpression;
+        }
         public abstract bool IsCollection { get; }
         public Type SourceValueType => typeof(TSourceValue);
         public Type TargetValueType => typeof(TTargetValue);
-        public abstract LambdaExpression GetLambdaExpression();
+        public abstract LambdaExpression GetBindExpression();
+        public virtual LambdaExpression SourceExpression { get; }
         public virtual IObjectMapper SubMapper { get; set; }
     }
 }

@@ -6,12 +6,10 @@ namespace YS.Knife.Data.Mappers
     class FromPropertyMapperExpression<TSourceValue, TTargetValue> : MapperExpression<TSourceValue, TTargetValue>
         where TSourceValue : TTargetValue
     {
-        private readonly LambdaExpression sourceExpression;
 
-        public FromPropertyMapperExpression(LambdaExpression sourceExpression)
+        public FromPropertyMapperExpression(LambdaExpression sourceExpression):base(sourceExpression)
         {
-            _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
-            this.sourceExpression = sourceExpression;
+
         }
 
 
@@ -22,11 +20,12 @@ namespace YS.Knife.Data.Mappers
                    EnumerableTypeUtils.IsEnumerable(TargetValueType);
         }
 
-        public override LambdaExpression GetLambdaExpression()
+        public override LambdaExpression GetBindExpression()
         {
-            return this.sourceExpression;
+            return this.SourceExpression;
         }
 
+       
         public static FromPropertyMapperExpression<TSourceValue, TTargetValue> Create<TSource>(
             Expression<Func<TSource, TSourceValue>> sourceExpression)
             where TSource : class

@@ -3,63 +3,63 @@
     public enum FilterType : int
     {
         /// <summary>
-        /// ==
+        /// == eq
         /// </summary>
         Equals = 0,
         /// <summary>
-        /// !=
+        /// != neq
         /// </summary>
         NotEquals = ~Equals,
         /// <summary>
-        /// 大于
+        /// 大于 gt
         /// </summary>
         GreaterThan = 1,
         /// <summary>
-        /// 小于或等于
+        /// 小于或等于 ngt
         /// </summary>
         LessThanOrEqual = ~GreaterThan,
         /// <summary>
-        /// 小于
+        /// 小于 lt
         /// </summary>
-        LessThan = 2,
+        LessThan = 2, 
         /// <summary>
-        /// 大于或等于
+        /// 大于或等于 nlt
         /// </summary>
         GreaterThanOrEqual = ~LessThan,
         /// <summary>
-        /// Between
+        /// Between bt
         /// </summary>
         Between = 3,
         /// <summary>
-        /// Not Between
+        /// Not Between nbt
         /// </summary>
         NotBetween = ~Between,
         /// <summary>
-        /// In
+        /// In    in
         /// </summary>
         In = 4,
         /// <summary>
-        /// Not In
+        /// Not In nin
         /// </summary>
         NotIn = ~In,
         /// <summary>
-        /// Like
+        /// Like sw
         /// </summary>
         StartsWith = 5,
         /// <summary>
-        /// not like
+        /// not like nsw
         /// </summary>
         NotStartsWith = ~StartsWith,
         /// <summary>
-        /// like
+        /// like ew
         /// </summary>
         EndsWith = 6,
         /// <summary>
-        /// not like
+        /// not like new
         /// </summary>
         NotEndsWith = ~EndsWith,
         /// <summary>
-        /// like
+        /// like 
         /// </summary>
         Contains = 7,
         /// <summary>

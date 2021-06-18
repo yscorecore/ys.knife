@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Mappers;
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
 
@@ -30,7 +32,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
             service.AddTwoBlog();
             var all = service.AllBlogs();
             Assert.AreEqual(2, all.Count);
-
         }
+
     }
 }

@@ -13,29 +13,27 @@ namespace YS.Knife.Data.Mappers
         where TSourceValueItem : class
   
     {
-        private readonly LambdaExpression sourceExpression;
 
         public override bool IsCollection { get => true; }
 
-        public FromQueryableNewObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> objectMapper)
+        public FromQueryableNewObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> objectMapper):base(sourceExpression)
         {
-            this.sourceExpression = sourceExpression;
             this.SubMapper = objectMapper;
         }
 
-        public override LambdaExpression GetLambdaExpression()
+        public override LambdaExpression GetBindExpression()
         {
             var newObjectExpression = this.SubMapper.BuildExpression();
 
             var selectMethod = EnumerableTypeUtils.IsQueryable(SourceValueType)? MethodFinder.GetQuerybleSelect<TSourceValueItem, TTargetValueItem>():MethodFinder.GetEnumerableSelect<TSourceValueItem, TTargetValueItem>();
             var toResultMethod = this.TargetValueType.IsArray ? MethodFinder.GetEnumerableToArray<TTargetValueItem>() : MethodFinder.GetEnumerableToList<TTargetValueItem>();
-            var callSelectExpression = Expression.Call(selectMethod, this.sourceExpression.Body, newObjectExpression);
+            var callSelectExpression = Expression.Call(selectMethod, this.SourceExpression.Body, newObjectExpression);
             var toResultExpression = Expression.Call(toResultMethod, callSelectExpression);
             // 需要处理source为null的情况
             var resultExpression = Expression.Condition(
-                 Expression.Equal(this.sourceExpression.Body, Expression.Constant(null))
+                 Expression.Equal(this.SourceExpression.Body, Expression.Constant(null))
                 , Expression.Constant(null, this.TargetValueType), toResultExpression);
-            return Expression.Lambda(resultExpression, this.sourceExpression.Parameters.First());
+            return Expression.Lambda(resultExpression, this.SourceExpression.Parameters.First());
 
         }
         

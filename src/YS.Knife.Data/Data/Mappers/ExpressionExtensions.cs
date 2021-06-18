@@ -33,5 +33,10 @@ namespace YS.Knife.Data.Mappers
             var replacer = new ParameterReplacer(parameterToRemove, newParameter);
             return replacer.Visit(expression.Body);
         }
+
+       public static Expression Connect(this Expression parent, LambdaExpression child)
+       {
+           return child.ReplaceFirstParam(parent);
+       }
     }
 }
