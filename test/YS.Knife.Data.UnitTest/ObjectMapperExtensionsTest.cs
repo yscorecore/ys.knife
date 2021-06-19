@@ -11,79 +11,132 @@ namespace YS.Knife.Data.UnitTest
     [TestClass]
     public class ObjectMapperExtensionsTest
     {
-        private List<Source> datas = new List<Source> {
-            new Source {Name = "zhangsan"}, 
-            new Source {Name = "zhangsi",Sub = new SubSource(){ Value = "b",Int = 123}}};
+
+        private static readonly Exam[] Exams = 
+        {
+            new Exam {ExamName = "mid term", ExamDate = DateTimeOffset.Parse("2021-01-01")},
+            new Exam {ExamName = "final exam", ExamDate = DateTimeOffset.Parse("2021-07-01")}
+        };
+        private static readonly List<Student> Students = new List<Student>
+        {
+            new Student{ Id="001", Name = "zhang san",Age = 15,Scores = new []
+            {
+                new ScoreRecord{ ClassName = "Mathematics", Score = 98, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 89, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "English", Score = 100, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Mathematics", Score = 99, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 95, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "English", Score = 98, Exam = Exams[0]}
+            }},
+            new Student{ Id="002", Name = "li si",Age = 13,Scores = new []
+            {
+                new ScoreRecord{ ClassName = "Mathematics", Score = 78, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 80, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "English", Score = 49, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Mathematics", Score = 32, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 69, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "English", Score = 56, Exam = Exams[0]}
+            }},
+            new Student{ Id="003", Name = null, Age = 17, Scores = new []
+            {
+                new ScoreRecord{ ClassName = "Mathematics", Score = 18, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 60, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "English", Score = 9, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Mathematics", Score = 40, Exam = Exams[0]},
+                new ScoreRecord{ ClassName = "Chinese", Score = 59, Exam = null},
+                new ScoreRecord{ ClassName = "English", Score = 30, Exam = null}
+            }},
+            new Student{ Id="004", Name = "wang wu", Age = 16, Scores = null}
+        };
+        
+        
+
 
         [TestMethod]
-        public void ShouldFilterWithNameEquals()
+        public void ShouldGetAllWhenFilterIsNull()
         {
-            FilterInfo targetFilter = FilterInfo.CreateItem("TName", FilterType.Equals, "zhangsan");
-            var result = FilterSourceData(targetFilter);
-            result.Should().BeEquivalentTo(new List<Source> { new Source(){Name = "zhangsan"} });
+            var result = FilterStudentData(null);
+            result.Should().Be("001,002,003,004");
         }
-        [TestMethod]
-        public void ShouldFilterWithSubObjectNameEquals()
+        [DataTestMethod]
+       // [DataRow("001","Name",FilterType.Equals,"zhang san")]
+       // [DataRow("003","Name",FilterType.Equals, null)]
+        [DataRow("003","Address.City",FilterType.Equals, null)]
+        public void ShouldFilterWithBasicSingleItem(string expectedId, string field, FilterType filterType,
+            object value)
         {
-            FilterInfo targetFilter = FilterInfo.CreateItem("TChildren.Max(TInt)", FilterType.Equals, "b");
-            var result = FilterSourceData(targetFilter);
-            datas.AsQueryable().Where(p => p.Sub != null && p.Sub.Value == "b");
-            result.Should().BeEquivalentTo(new List<Source> { new Source(){Name = "zhangsan"} });
-        }
-
-        [TestMethod]
-        public void Test()
-        {
-            
-          var method=  typeof(Enumerable).GetMethod("Select", BindingFlags.Public | BindingFlags.Static|BindingFlags.FlattenHierarchy, null, 
-              new Type[]{typeof(IEnumerable<>),typeof(Func<,>)}, null);
-          var genMethod = method.MakeGenericMethod(typeof(string), typeof(string));
+            var filter = FilterInfo.CreateItem(field, filterType, value);
+            FilterStudentData(filter).Should().Be(expectedId);
         }
 
-        private List<Source> FilterSourceData(FilterInfo targetFilter)
+    
+        private string FilterStudentData(FilterInfo studentDtoFilter)
         {
-            var mapper = CreateMapper();
-            var exp = mapper.CreateSourceFilterExpression(targetFilter);
-            return datas.AsQueryable().Where(exp).ToList();
+            var exp = ObjectMapper<Student, StudentDto>.Default.CreateSourceFilterExpression(studentDtoFilter);
+            var query = Students.AsQueryable().Where(exp);
+            return string.Join(",", query.Select(p => p.Id));
         }
 
-        private ObjectMapper<Source, Target> CreateMapper()
+        
+        public struct Address
         {
-            var subMapper = new ObjectMapper<SubSource,SubTarget>();
-            subMapper.Append(p=>p.TValue,p=>p.Value);
-            subMapper.Append(p=>p.TInt,p=>p.Int);
-            var mapper = new ObjectMapper<Source, Target>();
-            
-            mapper.Append(p => p.TName, p => p.Name);
-            mapper.Append(p=>p.TSub,p=>p.Sub, subMapper);
-            mapper.AppendCollection(p=>p.TChildren,p=>p.Children,subMapper);
-            return mapper;
+            public string City { get; set; }
+            public string ZipCode { get; set; }
         }
 
-        public class Source
+        public enum Sex
         {
+            Female,
+            Male,
+        }
+
+
+
+        public class StudentDto
+        {
+            public string Id { get; set; }
             public string Name { get; set; }
-            public SubSource Sub { get; set; }
-            
-            public List<SubSource> Children { get; set; }
-        }
-        public class SubSource
-        {
-            public string Value { get; set; }
-            public int Int { get; set; }
+            public int Age{get;set;}
+            public int? Height { get; set; }
+            public List<ScoreDto> Scores { get; set; }
+            public Address Address { get; set; }
         }
 
-        public class Target
+        public class ScoreDto
         {
-            public string TName { get; set; }
-            public SubTarget TSub { get; set; }
-            
-            public List<SubTarget> TChildren { get; set; }
+            public string ClassName { get; set; }
+            public decimal Score { get; set; }
+            public IExam Exam { get; set; }
         }
-        public class SubTarget
+
+        public interface IExam
         {
-            public string TValue { get; set; }
-            public int TInt { get; set; }
+            string ExamName { get; set; }
+            DateTimeOffset ExamDate { get; set; }
+        }
+
+        public class Exam
+        {
+            public string ExamName { get; set; }
+            public DateTimeOffset ExamDate { get; set; }
+        }
+
+        public class Student
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public int Age{get;set;}
+            public IEnumerable<ScoreRecord> Scores { get; set; }
+            public Address Address { get; set; }
+        }
+    
+        public class ScoreRecord
+        {
+            public string ClassName { get; set; }
+            public decimal Score { get; set; }
+            public Exam Exam { get; set; }
         }
     }
+
+   
 }
