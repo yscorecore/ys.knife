@@ -1,4 +1,6 @@
-﻿namespace YS.Knife.Data
+﻿using System;
+
+namespace YS.Knife.Data
 {
     public enum FilterType : int
     {
@@ -69,18 +71,22 @@
         /// <summary>
         /// exists
         /// </summary>
+        [Obsolete]
         Exists = 8,
         /// <summary>
         /// not exists
         /// </summary>
+        [Obsolete]
         NotExists = ~Exists,
         /// <summary>
         /// all 
         /// </summary>
+        [Obsolete]
         All = 9,
         /// <summary>
         /// not all
         /// </summary>
+        [Obsolete]
         NotAll = ~All,
 
     }
