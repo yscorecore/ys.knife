@@ -21,17 +21,28 @@ namespace YS.Knife.Data.Mappers
         LambdaExpression BuildExpression();
         Delegate BuildConvertFunc();
     }
-    abstract class MapperExpression<TSourceValue, TTargetValue>:IMapperExpression
+
+    abstract class MapperExpression : IMapperExpression
     {
-        public MapperExpression(LambdaExpression sourceExpression)
+        public MapperExpression(LambdaExpression sourceExpression,Type sourceValueType,Type targetValueType)
         {
-            this.SourceExpression = sourceExpression;
+            this.SourceExpression = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
+            this.SourceValueType = sourceValueType ?? throw new ArgumentNullException(nameof(sourceValueType));
+            this.TargetValueType = targetValueType ?? throw new ArgumentNullException(nameof(targetValueType));
         }
         public abstract bool IsCollection { get; }
-        public Type SourceValueType => typeof(TSourceValue);
-        public Type TargetValueType => typeof(TTargetValue);
+        public Type SourceValueType { get; }
+        public Type TargetValueType { get; }
         public abstract LambdaExpression GetBindExpression();
-        public virtual LambdaExpression SourceExpression { get; }
-        public virtual IObjectMapper SubMapper { get; set; }
+        public LambdaExpression SourceExpression { get; }
+        public IObjectMapper SubMapper { get; set; }
+    }
+
+    abstract class MapperExpression<TSourceValue, TTargetValue>:MapperExpression
+    {
+        public MapperExpression(LambdaExpression sourceExpression):base(sourceExpression,typeof(TSourceValue),typeof(TTargetValue))
+        {
+        }
+       
     }
 }

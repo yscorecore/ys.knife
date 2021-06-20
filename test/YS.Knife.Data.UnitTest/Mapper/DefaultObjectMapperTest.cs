@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Mappers;
@@ -32,29 +33,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #endregion
 
-        #region ShouldMapIntPropToNullableInt
-
-        [TestMethod]
-        public void ShouldMapIntPropToNullableInt()
-        {
-            var data = new Model2 {IntProp = 123};
-
-
-            var target = data.Map(ObjectMapper<Model2, Dto2>.Default);
-            target.Should().BeEquivalentTo(new Dto2() {IntProp = 123});
-        }
-
-        class Dto2
-        {
-            public int? IntProp { get; set; }
-        }
-
-        class Model2
-        {
-            public int IntProp { get; set; }
-        }
-
-        #endregion
+   
 
         #region ShouldMapComplexObject
 
@@ -72,8 +51,6 @@ namespace YS.Knife.Data.UnitTest.Mapper
         public void ShouldMapComplexObjectWhenInnerPropHasValue()
         {
             var data = new Model3 {Inner = new InnerModel3() {InnerStrProp = "str"}};
-
-
             var target = data.Map(ObjectMapper<Model3, Dto3>.Default);
             target.Should().BeEquivalentTo(new Dto3() {Inner = new InnerDto3() {InnerStrProp = "str"}});
         }
@@ -156,9 +133,11 @@ namespace YS.Knife.Data.UnitTest.Mapper
             {
                 InnerList = new List<int>{1,2,3}
             };
+            var mapper = new ObjectMapper<Model5,Dto5>();
+           
+            mapper.AppendCollection(p=>p.InnerList,p=>p.InnerList.Select(item=>(int?)item).AsQueryable());
 
-
-            var target = data.Map(ObjectMapper<Model5, Dto5>.Default);
+            var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new Dto5()
             {
                 InnerList = new int?[]{1,2,3}

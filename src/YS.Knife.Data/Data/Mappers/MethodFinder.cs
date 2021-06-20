@@ -21,6 +21,10 @@ namespace YS.Knife.Data.Mappers
                 p.GetParameters().Last().ParameterType.GetGenericArguments().First().GetGenericTypeDefinition() ==
                 typeof(Func<,>));
 
+        private static readonly MethodInfo AsQueryableMethod = typeof(Queryable).GetMethods()
+            .Single(p => p.Name == nameof(Queryable.AsQueryable) && p.IsGenericMethodDefinition);
+            
+
         static readonly MethodInfo EnumerableToArrayMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
         static readonly MethodInfo EnumerableToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList));
 
@@ -37,7 +41,14 @@ namespace YS.Knife.Data.Mappers
         {
             return EnumerableSelectMethod.MakeGenericMethod(typeof(TSource), typeof(TResult));
         }
-
+        public static MethodInfo GetAsQueryable<TElement>()
+        {
+            return GetAsQueryable(typeof(TElement));
+        }
+        public static MethodInfo GetAsQueryable(Type elementType)
+        {
+            return AsQueryableMethod.MakeGenericMethod(elementType);
+        }
         public static MethodInfo GetQuerybleSelect<TSource, TResult>()
         {
             return QuerySelectMethod.MakeGenericMethod(typeof(TSource), typeof(TResult));

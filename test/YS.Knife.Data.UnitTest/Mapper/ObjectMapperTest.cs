@@ -102,7 +102,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 IntProp = 1
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.Append(p => p.NullIntProp, p => p.IntProp);
+            mapper.Append(p => p.NullIntProp, p => (int?)p.IntProp);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { NullIntProp = 1 });
         }
@@ -286,6 +286,31 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
+        
+        #region ShouldMapIntPropToNullableInt
+
+        [TestMethod]
+        public void ShouldMapIntPropToNullableInt()
+        {
+            var data = new Model2 {IntProp = 123};
+
+            var mapper = new ObjectMapper<Model2, Dto2>();
+            mapper.Append(p=>p.IntProp,p=>(int?)p.IntProp);
+            var target = data.Map(mapper);
+            target.Should().BeEquivalentTo(new Dto2() {IntProp = 123});
+        }
+
+        class Dto2
+        {
+            public int? IntProp { get; set; }
+        }
+
+        class Model2
+        {
+            public int IntProp { get; set; }
+        }
+
+        #endregion
         class DtoModel
         {
             public string StrProp { get; set; }

@@ -11,6 +11,8 @@ namespace YS.Knife.Data.Mappers
         where TSource : class
         where TTarget : class, new()
     {
+       
+
         public static ObjectMapper<TSource, TTarget> Default { get; } =
             DefaultObjectMapperFactory.CreateDefault<TSource, TTarget>();
         
@@ -77,18 +79,7 @@ namespace YS.Knife.Data.Mappers
         #endregion
 
         #region Append Methods
-        [Description("append_nullable_property")]
-        public void Append<TValue>(Expression<Func<TTarget, TValue?>> targetMember,
-            Expression<Func<TSource, TValue>> sourceExpression)
-            where TValue : struct
-        {
-            _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
-            var (memberName, memberType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = FromNullablePropertyMapperExpression<TValue>.Create(sourceExpression);
-            this.DirtyCache();
-        }
-
-        [Description("append_property")]
+        [Description(DefaultObjectMapperFactory.AppendProperty)]
         public void Append<TTargetValue, TSourceValue>(Expression<Func<TTarget, TTargetValue>> targetMember,
             Expression<Func<TSource, TSourceValue>> sourceExpression)
             where TSourceValue : TTargetValue
@@ -99,7 +90,7 @@ namespace YS.Knife.Data.Mappers
             this.PropMappers[memberName] = FromPropertyMapperExpression<TSourceValue,TTargetValue>.Create(sourceExpression);
             this.DirtyCache();
         }
-        [Description("append_new_object")]
+        [Description(DefaultObjectMapperFactory.AppendNewObject)]
         public void Append<TTargetObject, TSourceObject>(Expression<Func<TTarget, TTargetObject>> targetMember, Expression<Func<TSource, TSourceObject>> sourceExpression, ObjectMapper<TSourceObject, TTargetObject> mapper)
             where TTargetObject : class, new()
             where TSourceObject : class
@@ -108,40 +99,41 @@ namespace YS.Knife.Data.Mappers
             this.PropMappers[memberName] =  FromNewComplexObjectMapperExpression<TSourceObject, TTargetObject>.Create(sourceExpression, mapper);
             this.DirtyCache();
         }
-        [Description("append_enumerable_new_object")]
-        public void AppendCollection<TTargetValueCollection,TTargetValueItem, TSourceValueCollection,TSourceValueItem>(Expression<Func<TTarget, TTargetValueCollection>> targetMember, Expression<Func<TSource, TSourceValueCollection>> sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> mapper)
-            where TTargetValueCollection:IEnumerable<TTargetValueItem>
-            where TSourceValueCollection:IEnumerable <TSourceValueItem>
+        [Description(DefaultObjectMapperFactory.AppendEnumerableNewObject)]
+        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IEnumerable <TSourceValueItem>>> sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> mapper)
             where TTargetValueItem : class, new()
             where TSourceValueItem : class
         {
-            var (memberName, type) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] =  FromQueryableNewObjectMapperExpression<TSourceValueCollection,TSourceValueItem,TTargetValueCollection,TTargetValueItem>.Create(sourceExpression,mapper);
+            var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] = new  FromEnumerableNewObjectMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType, mapper);
             this.DirtyCache();
         }
-        [Description("append_enumerable_assign")]
-        public void AppendCollection<TTargetValueCollection,TTargetValueItem, TSourceValueCollection,TSourceValueItem>(Expression<Func<TTarget, TTargetValueCollection>> targetMember, Expression<Func<TSource, TSourceValueCollection>> sourceExpression)
-            
-            where TTargetValueCollection:IEnumerable<TTargetValueItem>
-            where TSourceValueCollection:IEnumerable <TSourceValueItem>
-            where TSourceValueItem : TTargetValueItem
+        [Description(DefaultObjectMapperFactory.AppendQueryableNewObject)]
+        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IQueryable<TSourceValueItem>>> sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> mapper)
+            where TTargetValueItem : class, new()
+            where TSourceValueItem : class
         {
-            var (memberName, type) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = FromQueryableAssignMapperExpression<TSourceValueCollection,TSourceValueItem,TTargetValueCollection,TTargetValueItem>.Create(sourceExpression);
-            this.DirtyCache();
-        }
-        [Description("append_enumerable_nullable_assign")]
-        public void AppendCollection<TTargetValueCollection,TSourceValueCollection,TValueItem>(Expression<Func<TTarget, TTargetValueCollection>> targetMember, Expression<Func<TSource, TSourceValueCollection>> sourceExpression)
-            
-            where TTargetValueCollection:IEnumerable<TValueItem?>
-            where TSourceValueCollection:IEnumerable <TValueItem>
-            where TValueItem : struct
-        {
-            var (memberName, type) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = FromEnumerableNullableAssignExpression<TSourceValueCollection,TTargetValueCollection,TValueItem>.Create(sourceExpression);
+            var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] =  new FromEnumerableNewObjectMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType, mapper);
             this.DirtyCache();
         }
         
+        [Description(DefaultObjectMapperFactory.AppendEnumerablePropertyAssign)]
+        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IEnumerable<TSourceValueItem>>> sourceExpression)
+            where TSourceValueItem : TTargetValueItem
+        {
+            var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] =new FromEnumerableAssignMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType);
+            this.DirtyCache();
+        }
+        [Description(DefaultObjectMapperFactory.AppendQueryablePropertyAssign)]
+        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IQueryable<TSourceValueItem>>> sourceExpression)
+            where TSourceValueItem : TTargetValueItem
+        {
+            var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
+            this.PropMappers[memberName] = new FromEnumerableAssignMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType);
+            this.DirtyCache();
+        }
         #endregion
 
 
