@@ -70,7 +70,7 @@ namespace YS.Knife.Data
 
         public List<FilterInfo> Items { get; set; }
 
-        public CollectionFunctionInfo Function { get; set; }
+        public FunctionInfo Function { get; set; }
 
         public static FilterInfo CreateItem(string fieldName, FilterType filterType, object value)
         {
@@ -208,9 +208,9 @@ namespace YS.Knife.Data
     }
 
 
-    public class CollectionFunctionInfo
+    public class FunctionInfo
     {
-        public string FuncName { get; set; }
+        public string Name { get; set; }
         public FilterInfo SubFilter { get; set; }
         public string FieldName { get; set; }
     }

@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -17,10 +13,6 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("")]
         [DataRow(" ")]
         [DataRow(" \t ")]
-        [DataRow("()")]
-        [DataRow("(  )")]
-        [DataRow("( ( ) )")]
-        [DataRow("( ( ((()))) )")]
         public void ShouldNullWhenTextIsEmpty(string text)
         {
             Parse(text).Should().BeNull();
@@ -33,13 +25,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("User. Name.\tLength=null", "User.Name.Length", FilterType.Equals, null)]
         public void ShouldParseFieldName(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
         {
-            var filter = Parse(text);
-            filter.OpType.Should().Be(OpType.SingleItem);
-            filter.Items.Should().BeNull();
-            filter.Function.Should().BeNull();
-            filter.FieldName.Should().Be(expectedFieldName);
-            filter.FilterType.Should().Be(expectedFilterType);
-            filter.Value.Should().Be(expectedValue);
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
 
 
@@ -64,13 +50,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a nct null", "a", FilterType.NotContains, null)]
         public void ShouldParseFilterType(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
         {
-            var filter = Parse(text);
-            filter.OpType.Should().Be(OpType.SingleItem);
-            filter.Items.Should().BeNull();
-            filter.Function.Should().BeNull();
-            filter.FieldName.Should().Be(expectedFieldName);
-            filter.FilterType.Should().Be(expectedFilterType);
-            filter.Value.Should().Be(expectedValue);
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
         [DataTestMethod]
         [DataRow("a=null", "a", FilterType.Equals, null)]
@@ -87,23 +67,68 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a=False", "a", FilterType.Equals, false)]
         public void ShouldParseKeywordValue(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
         {
-            var filter = Parse(text);
-            filter.OpType.Should().Be(OpType.SingleItem);
-            filter.Items.Should().BeNull();
-            filter.Function.Should().BeNull();
-            filter.FieldName.Should().Be(expectedFieldName);
-            filter.FilterType.Should().Be(expectedFilterType);
-            filter.Value.Should().Be(expectedValue);
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
         [DataTestMethod]
         [DataRow("a=\"\"", "a", FilterType.Equals, "")]
         [DataRow("a=\"b\"", "a", FilterType.Equals, "b")]
-        [DataRow("a=\"hello,this is a long word.\"", "a", FilterType.Equals, "hello,this is a long word.")]
-        //[DataRow("a=\" \"", "a", FilterType.Equals, " ")]
-        //[DataRow("a=\"\\t\"", "a", FilterType.Equals, "\t")]
-        //[DataRow("a=\"\\\\\"", "a", FilterType.Equals, "\\")]
+        [DataRow("a=\"hello\n,this is a long string.\"", "a", FilterType.Equals, "hello\n,this is a long string.")]
+        [DataRow("a=\"hello\\n,this is a long string.\"", "a", FilterType.Equals, "hello\n,this is a long string.")]
+        [DataRow("a=\" \"", "a", FilterType.Equals, " ")]
+        [DataRow("a=\"\\t\"", "a", FilterType.Equals, "\t")]
+        [DataRow("a=\"\\\\\"", "a", FilterType.Equals, "\\")]
         [DataRow("a=\"\\\"\"", "a", FilterType.Equals, "\"")]
         public void ShouldParseStringValue(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        {
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
+        }
+
+        [DataTestMethod]
+        [DataRow("a=null", "a", FilterType.Equals, null)]
+        [DataRow("(a=null)", "a", FilterType.Equals, null)]
+        [DataRow(" a =  null   ", "a", FilterType.Equals, null)]
+        [DataRow("( a =  null )  ", "a", FilterType.Equals, null)]
+        [DataRow("(( a =   null ))  ", "a", FilterType.Equals, null)]
+        [DataRow("((( a =   null )))  ", "a", FilterType.Equals, null)]
+        public void ShouldParseSingleItemFilter(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        {
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
+        }
+        [DataTestMethod]
+        [DataRow("a=1", "a", FilterType.Equals, 1.0)]
+        [DataRow("a=+1", "a", FilterType.Equals, 1.0)]
+        [DataRow("a=-1", "a", FilterType.Equals, -1.0)]
+        [DataRow("a=.1", "a", FilterType.Equals, 0.1)]
+        [DataRow("a=+.1", "a", FilterType.Equals, 0.1)]
+        [DataRow("a=-.1", "a", FilterType.Equals, -0.1)]
+        [DataRow("a=1.1", "a", FilterType.Equals, 1.1)]
+        [DataRow("a=+1.1", "a", FilterType.Equals, 1.1)]
+        [DataRow("a=-1.1", "a", FilterType.Equals, -1.1)]
+        [DataRow("a=123456789", "a", FilterType.Equals, 123456789)]
+        [DataRow("a=123_456_789", "a", FilterType.Equals, 123456789)]
+        [DataRow("a=123_456_789.123456", "a", FilterType.Equals, 123456789.123456)]
+        [DataRow("a=+123_456_789.123456", "a", FilterType.Equals, 123456789.123456)]
+        [DataRow("a=-123_456_789.123456", "a", FilterType.Equals, -123456789.123456)]
+        public void ShouldParseNumberValue(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        {
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
+        }
+        [DataTestMethod]
+        [DataRow("a=[]", "a", FilterType.Equals, new object[] { })]
+        [DataRow("a= [  ] ", "a", FilterType.Equals, new object[] { })]
+        [DataRow("a in []", "a", FilterType.In, new object[] { })]
+        [DataRow("a in [  \t ]", "a", FilterType.In, new object[] { })]
+        [DataRow("a in [-.1]", "a", FilterType.In, new object[] { -.1 })]
+        [DataRow("a in [true]", "a", FilterType.In, new object[] { true })]
+        [DataRow("a in [\"abc\"]", "a", FilterType.In, new object[] { "abc" })]
+        [DataRow("a in [true,null ]", "a", FilterType.In, new object[] { true, null })]
+        [DataRow("a in [false , 1_234 , \"abc\"]", "a", FilterType.In, new object[] { false, 1234, "abc" })]
+        public void ShouldParseArrayValue(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        {
+            TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
+        }
+
+        private void TestSimpleItem(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
         {
             var filter = Parse(text);
             filter.OpType.Should().Be(OpType.SingleItem);
@@ -111,7 +136,12 @@ namespace YS.Knife.Data.UnitTest
             filter.Function.Should().BeNull();
             filter.FieldName.Should().Be(expectedFieldName);
             filter.FilterType.Should().Be(expectedFilterType);
-            filter.Value.Should().Be(expectedValue);
+            filter.Value.Should().BeEquivalentTo(expectedValue);
+        }
+        private void TestComplexItem(string text, string expectedFilterText)
+        {
+            var filter = Parse(text);
+            filter.ToString().Should().Be(expectedFilterText);
         }
     }
 }

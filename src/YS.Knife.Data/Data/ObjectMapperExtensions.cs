@@ -112,7 +112,7 @@ namespace YS.Knife.Data
 
         private static Expression CompareWithValue(FilterExpressionContext context, FilterInfo singleItem)
         {
-            if (singleItem.Function != null && !string.IsNullOrEmpty(singleItem.Function.FuncName))
+            if (singleItem.Function != null && !string.IsNullOrEmpty(singleItem.Function.Name))
             {
                 // collection
                 if (!context.Current.IsCollection)
@@ -130,13 +130,13 @@ namespace YS.Knife.Data
         }
 
         private static Expression CompareFilterWithFunctionValue(FilterExpressionContext context,
-            CollectionFunctionInfo functionInfo, FilterType filterType,
+            FunctionInfo functionInfo, FilterType filterType,
             object value)
         {
-            var function = FunctionExpression.GetFunctionByName(functionInfo.FuncName);
+            var function = FunctionExpression.GetFunctionByName(functionInfo.Name);
             if (function == null)
             {
-                throw Errors.NotSupportFunction(functionInfo.FuncName);
+                throw Errors.NotSupportFunction(functionInfo.Name);
             }
 
             return null;

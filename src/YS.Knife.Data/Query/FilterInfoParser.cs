@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -7,11 +9,12 @@ namespace YS.Knife.Data
 {
     public class FilterInfoParser
     {
-        Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
-        Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
-        Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
-        Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
-        Func<char, bool> IsEscapeChar = ch => ch == '\\';
+        static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
+        static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
+        static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
+        static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
+        static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
+
         internal static readonly Dictionary<string, FilterType> FilterTypeCodes = new Dictionary<string, FilterType>
         {
             ["="] = FilterType.Equals,
@@ -44,22 +47,120 @@ namespace YS.Knife.Data
             ["null"] = null,
             ["undefined"] = null,
         };
+        internal static readonly Dictionary<string, OpType> OpTypeCodes = new Dictionary<string, OpType>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            ["and"] = OpType.AndItems,
+            ["or"] = OpType.OrItems
+        };
 
+        private readonly char _numberDecimal; // 小数点
+        private readonly char _numberNegativeSign;// 负号
+        private readonly char _numberPositiveSign; // 正号
+        private readonly char _numberGroupSeparator;// 分组符号
+        private readonly CultureInfo _currentCulture;
+        public FilterInfoParser() : this(CultureInfo.CurrentCulture) { }
+        public FilterInfoParser(CultureInfo cultureInfo)
+        {
+            this._currentCulture = cultureInfo??throw new ArgumentNullException(nameof(cultureInfo));
+            this._numberDecimal = cultureInfo.NumberFormat.NumberDecimalSeparator[0];
+            this._numberNegativeSign = cultureInfo.NumberFormat.NegativeSign[0];
+            this._numberPositiveSign = cultureInfo.NumberFormat.PositiveSign[0];
+            // this._numberGroupSeparator = cultureInfo.NumberFormat.NumberGroupSeparator[0];
+            // default number group separator will conflict with array separator
+            // eg. [1,234], so use '_' instead of default number group separator
+            this._numberGroupSeparator = '_';
+        }
         public FilterInfo Parse(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) { return null; }
             var context = new ParseContext(text);
-            var filterInfo = DoParse(context);
+            var filterInfo = ParseFilterExpression(context);
+            SkipWhiteSpace(context);
+            if (context.NotEnd())
+            {
+                throw ParseErrors.InvalidText(context);
+            }
             return filterInfo;
         }
-        private FilterInfo DoParse(ParseContext context)
+        private FilterInfo ParseFilterExpression(ParseContext context)
         {
             SkipWhiteSpace(context);
-
-
-
-            return ParseSingleItemOne(context);
+            if (context.Current() == '(')
+            {
+                return ParseCombinFilter(context);
+            }
+            else
+            {
+                return ParseSingleItemOne(context);
+            }
         }
+        private FilterInfo ParseCombinFilter(ParseContext context)
+        {
+            List<FilterInfo> orItems = new List<FilterInfo>();
+            OpType lastOpType = OpType.OrItems;
+            while (context.NotEnd())
+            {
+                // skip start bracket
+                SkipWhiteSpace(context);
+                if (context.Current() != '(')
+                {
+                    throw ParseErrors.MissOpenBracket(context);
+                }
+                context.Index++;
+                SkipWhiteSpace(context);
+                var inner = ParseFilterExpression(context);
+                SkipWhiteSpace(context);
+                if (context.Current() != ')')
+                {
+                    throw ParseErrors.MissCloseBracket(context);
+                }
+                context.Index++;
+
+                if (lastOpType == OpType.OrItems || orItems.Count == 0)
+                {
+                    orItems.Add(inner);
+                }
+                else
+                {
+                    orItems[^1].AndAlso(inner);
+                }
+
+                OpType? opType = TryParseOpType(context);
+
+                if (opType == null)
+                {
+                    break;
+                }
+                else
+                {
+                    lastOpType = opType.Value;
+                }
+            }
+            return orItems.Count > 1 ? new FilterInfo(orItems, OpType.OrItems) : orItems.FirstOrDefault();
+        }
+        private OpType? TryParseOpType(ParseContext context)
+        {
+            var originIndex = context.Index;
+
+            SkipWhiteSpace(context);
+            var wordStartIndex = context.Index;
+            while (context.NotEnd() && IsValidNameChar(context.Current()))
+            {
+                context.Index++;
+            }
+            var word = context.Text.Substring(wordStartIndex, context.Index - wordStartIndex);
+            if (OpTypeCodes.TryGetValue(word, out var opType))
+            {
+                return opType;
+            }
+            else
+            {
+                // reset index
+                context.Index = originIndex;
+                return null;
+            }
+        }
+
         private FilterInfo ParseSingleItemOne(ParseContext context)
         {
             var (field, func) = ParseFieldPath(context);
@@ -92,7 +193,20 @@ namespace YS.Knife.Data
                 }
             }
         }
-        private (string Field, CollectionFunctionInfo Function) ParseFieldPath(ParseContext context)
+
+        private void SkipCloseBracket(ParseContext context)
+        {
+            SkipWhiteSpace(context);
+            if (context.Current() != ')')
+            {
+                throw ParseErrors.MissCloseBracket(context);
+            }
+            else
+            {
+                context.Index++;
+            }
+        }
+        private (string Field, FunctionInfo Function) ParseFieldPath(ParseContext context)
         {
             SkipWhiteSpace(context);
             List<string> names = new List<string>();
@@ -107,14 +221,8 @@ namespace YS.Knife.Data
                 }
                 else if (context.Current() == '(')
                 {
-
-
-                    CollectionFunctionInfo functionInfo = new CollectionFunctionInfo();
-                    functionInfo.FuncName = name;
-                    functionInfo.SubFilter = DoParse(context);
-
-                    // TODO ..
-
+                    FunctionInfo functionInfo = ParseFunctionBody(context);
+                    functionInfo.Name = name;
                     return (JoinNames(names), functionInfo);
                 }
                 else
@@ -127,6 +235,79 @@ namespace YS.Knife.Data
             throw ParseErrors.InvalidText(context);
 
         }
+
+        private string ParseNameChain(ParseContext context)
+        {
+            List<string> names = new List<string>();
+            while (context.NotEnd())
+            {
+                names.Add( ParseFieldName(context));
+                if (context.Current() == '.')
+                {
+                    context.Index++;
+
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return JoinNames(names);
+        }
+        private FunctionInfo ParseFunctionBody(ParseContext context)
+        {   
+            FunctionInfo functionInfo = new FunctionInfo();
+            // skip start (
+            context.Index++;
+            SkipWhiteSpace(context);
+            var current = context.Current();
+            if (current == ')')
+            {
+                // eg. count();
+                context.Index++;
+            }
+            else if (IsValidNameFirstChar(current))
+            {
+                var originStartIndex = context.Index;
+               
+                var nameChain = ParseNameChain(context);
+                SkipWhiteSpace(context);
+                if (context.Current() == ')')
+                {
+                    // eg. avg(user.age)
+                    functionInfo.FieldName = nameChain;
+                    context.Index++;
+                }
+                else if (context.Current() == ',')
+                {
+                    // eg. avg(user.age,user.sex="male")
+                    functionInfo.FieldName = nameChain;
+                    context.Index++;
+                    functionInfo.SubFilter = ParseFilterExpression(context);
+                    SkipCloseBracket(context);
+                }
+                else
+                {
+                    // eg. count(user.sex="male")
+                    // reset index
+                    context.Index = originStartIndex;
+                    functionInfo.SubFilter = ParseFilterExpression(context);
+                    SkipCloseBracket(context);
+                }
+            }
+            else if (current == '(')
+            {
+                // count((user.age>3) and (user.age<10))
+                // in this case ,no field name
+                functionInfo.SubFilter = ParseFilterExpression(context);
+                SkipCloseBracket(context);
+            }
+            else {
+                throw ParseErrors.InvalidText(context);
+            }
+            return functionInfo;
+        }
+
         private string JoinNames(IEnumerable<string> names)
         {
             return string.Join('.', names);
@@ -190,7 +371,7 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidFilterType(context);
             }
         }
-        private object ParseValue(ParseContext context)
+        private object ParseValue(ParseContext context,bool parseArray=true)
         {
             SkipWhiteSpace(context);
             var current = context.Current();
@@ -204,10 +385,15 @@ namespace YS.Knife.Data
                 //keyword
                 return ParseKeywordValue(context);
             }
-            else if (char.IsDigit(current) || current == '.')
+            else if (char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign)
             {
                 //number
                 return ParseNumberValue(context);
+            }
+            else if (parseArray && current=='[')
+            {
+                return ParseArrayValue(context);
+                //array
             }
             else
             {
@@ -255,8 +441,51 @@ namespace YS.Knife.Data
         }
         private object ParseNumberValue(ParseContext context)
         {
-            // TODO ...
-            return null;
+            int startIndex = context.Index;
+            bool hasDecimsl = context.Current() == _numberDecimal;
+            // skip first char
+            context.Index++;
+            while (context.NotEnd())
+            {
+                var current = context.Current();
+                if (char.IsDigit(current))
+                {
+                    context.Index++;
+                }
+                else if (current == _numberGroupSeparator)
+                {
+                    if (hasDecimsl)
+                    {
+                        throw ParseErrors.InvalidValue(context);
+                    }
+                    context.Index++;
+                }
+                else if (current == _numberDecimal)
+                {
+                    if (hasDecimsl)
+                    {
+                        throw ParseErrors.InvalidValue(context);
+                    }
+                    else
+                    {
+                        hasDecimsl = true;
+                    }
+                    context.Index++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            var numString = context.Text.Substring(startIndex, context.Index - startIndex);
+            try
+            {
+                return double.Parse(numString.Replace(_numberGroupSeparator.ToString(), string.Empty), NumberStyles.Any, _currentCulture);
+            }
+            catch (Exception ex)
+            {
+                throw ParseErrors.InvalidNumberValue(context, numString, ex);
+            }
         }
         private object ParseKeywordValue(ParseContext context)
         {
@@ -275,12 +504,30 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidKeywordValue(context, keyWord);
             }
         }
-
-        private void ThrowIfEnd(ParseContext context)
+        private object ParseArrayValue(ParseContext context)
         {
-            throw ParseErrors.InvalidText(context);
-        }
+            // skip start [
+            List<object> datas = new List<object>();
+            context.Index++;
+            while (context.NotEnd())
+            {
+                SkipWhiteSpace(context);
+                var current = context.Current();
+                if (current == ']')
+                {
+                    context.Index++;
+                    break;
+                }
+                datas.Add(ParseValue(context, false));
+                SkipWhiteSpace(context);
+                if (context.Current() == ',')
+                {
+                    context.Index++;
+                }
 
+            }
+            return datas.ToArray();
+        }
         class ParseContext
         {
             public ParseContext(string text)
@@ -333,6 +580,19 @@ namespace YS.Knife.Data
             public static Exception InvalidStringValue(ParseContext context, string str, Exception inner)
             {
                 throw new Exception($"Invalid string '{str}' near index {context.Index}.", inner);
+            }
+            public static Exception InvalidNumberValue(ParseContext context, string str, Exception inner)
+            {
+                throw new Exception($"Invalid number '{str}' near index {context.Index}.", inner);
+            }
+
+            public static Exception MissOpenBracket(ParseContext context)
+            {
+                throw new Exception($"Invalid expression, missing open bracket near index {context.Index}.");
+            }
+            public static Exception MissCloseBracket(ParseContext context)
+            {
+                throw new Exception($"Invalid expression, missing close bracket near index {context.Index}.");
             }
         }
     }
