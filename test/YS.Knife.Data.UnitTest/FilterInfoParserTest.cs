@@ -54,15 +54,12 @@ namespace YS.Knife.Data.UnitTest
         }
         [DataTestMethod]
         [DataRow("a=null", "a", FilterType.Equals, null)]
-        [DataRow("a=undefined", "a", FilterType.Equals, null)]
         [DataRow("a=true", "a", FilterType.Equals, true)]
         [DataRow("a=false", "a", FilterType.Equals, false)]
         [DataRow("a=NULL", "a", FilterType.Equals, null)]
-        [DataRow("a=UNDEFINED", "a", FilterType.Equals, null)]
         [DataRow("a=TRUE", "a", FilterType.Equals, true)]
         [DataRow("a=FALSE", "a", FilterType.Equals, false)]
         [DataRow("a=Null", "a", FilterType.Equals, null)]
-        [DataRow("a=Undefined", "a", FilterType.Equals, null)]
         [DataRow("a=True", "a", FilterType.Equals, true)]
         [DataRow("a=False", "a", FilterType.Equals, false)]
         public void ShouldParseKeywordValue(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
@@ -95,7 +92,7 @@ namespace YS.Knife.Data.UnitTest
             TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
         [DataTestMethod]
-        [DataRow("a=1", "a", FilterType.Equals, 1.0)]
+        [DataRow("a==1", "a", FilterType.Equals, 1.0)]
         [DataRow("a=+1", "a", FilterType.Equals, 1.0)]
         [DataRow("a=-1", "a", FilterType.Equals, -1.0)]
         [DataRow("a=.1", "a", FilterType.Equals, 0.1)]
@@ -127,10 +124,36 @@ namespace YS.Knife.Data.UnitTest
         {
             TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
-
-        private void TestSimpleItem(string text, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        [DataTestMethod]
+        [DataRow("a.func()=null", "a.func() == null")]
+        [DataRow("a.b.c.d.func()=null", "a.b.c.d.func() == null")]
+        [DataRow("a.func(b)=null", "a.func(b) == null")]
+        [DataRow("a.func(b.c.d)=null", "a.func(b.c.d) == null")]
+        [DataRow("a.func(b.c.d!=\"e\")=null", "a.func(b.c.d != \"e\") == null")]
+        [DataRow("a.func(b.c,d!=\"e\")=null", "a.func(b.c, d != \"e\") == null")]
+        [DataRow("a.func((((b.c!=\"e\")or(c.e in [1 ,2]))))=null", "a.func((b.c != \"e\") or (c.e in [1,2])) == null")]
+        [DataRow("a.func(b.c,d.count(e,f=true)>1) = null","a.func(b.c, d.count(e, f == true) > 1) == null")]
+        public void ShouldParseFunction(string expression, string expectedExpression)
         {
-            var filter = Parse(text);
+            TestComplexItem(expression, expectedExpression);
+        }
+        [DataTestMethod]
+        [DataRow("(((a>1)))", "a > 1")]
+        [DataRow("(a>1) or (b<5) ", "(a > 1) or (b < 5)")]
+        [DataRow("((a>1)) or ((b<5)) ", "(a > 1) or (b < 5)")]
+        [DataRow("(((a>1)) or ((b<5))) ", "(a > 1) or (b < 5)")]
+        [DataRow("(((a>1)) and ((b<5))) ", "(a > 1) and (b < 5)")]
+        [DataRow("(a>1) or (b<2) and (c=3) or (d<>4) ", "(a > 1) or ((b < 2) and (c == 3)) or (d != 4)")]
+        [DataRow("(a>1) and (b<2) or (c=3) and (d<>4) ", "((a > 1) and (b < 2)) or ((c == 3) and (d != 4))")]
+        [DataRow("(a>1) and ((b<2) or (c=3)) and (d<>4) ", "(a > 1) and ((b < 2) or (c == 3)) and (d != 4)")]
+        [DataRow("(((a>1) and ((b<2) or (c=3)) and (d<>4) )) ", "(a > 1) and ((b < 2) or (c == 3)) and (d != 4)")]
+        public void ShouldParseCombinExpression(string expression, string expectedExpression)
+        {
+            TestComplexItem(expression, expectedExpression);
+        }
+        private void TestSimpleItem(string expression, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
+        {
+            var filter = Parse(expression);
             filter.OpType.Should().Be(OpType.SingleItem);
             filter.Items.Should().BeNull();
             filter.Function.Should().BeNull();
@@ -138,10 +161,12 @@ namespace YS.Knife.Data.UnitTest
             filter.FilterType.Should().Be(expectedFilterType);
             filter.Value.Should().BeEquivalentTo(expectedValue);
         }
-        private void TestComplexItem(string text, string expectedFilterText)
+        private void TestComplexItem(string expression, string expectedFilterText)
         {
-            var filter = Parse(text);
+            var filter = Parse(expression);
             filter.ToString().Should().Be(expectedFilterText);
         }
     }
+
+    
 }

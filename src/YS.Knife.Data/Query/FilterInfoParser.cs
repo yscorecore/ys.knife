@@ -15,42 +15,23 @@ namespace YS.Knife.Data
         static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
         static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
 
-        internal static readonly Dictionary<string, FilterType> FilterTypeCodes = new Dictionary<string, FilterType>
-        {
-            ["="] = FilterType.Equals,
-            ["=="] = FilterType.Equals,
-            ["!="] = FilterType.NotEquals,
-            ["<>"] = FilterType.NotEquals,
-            [">"] = FilterType.GreaterThan,
-            [">="] = FilterType.GreaterThanOrEqual,
-            ["<"] = FilterType.LessThan,
-            ["<="] = FilterType.LessThanOrEqual,
-            ["<="] = FilterType.LessThanOrEqual,
-            ["in"] = FilterType.In,
-            ["nin"] = FilterType.NotIn,
-            ["bt"] = FilterType.Between,
-            ["nbt"] = FilterType.NotBetween,
-
-            ["ct"] = FilterType.Contains,
-            ["nct"] = FilterType.NotContains,
-
-            ["sw"] = FilterType.StartsWith,
-            ["nsw"] = FilterType.NotStartsWith,
-
-            ["ew"] = FilterType.EndsWith,
-            ["new"] = FilterType.NotEndsWith,
-        };
+        internal static readonly Dictionary<string, FilterType> FilterTypeCodes =
+            FilterInfo.FilterTypeNameMapper.Select(p => Tuple.Create(p.Value, p.Key))
+            .Concat(new[] {
+                Tuple.Create("=",FilterType.Equals),
+                Tuple.Create("<>",FilterType.NotEquals)
+            
+            }).ToDictionary(p => p.Item1, p => p.Item2);
         internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
         {
             ["true"] = true,
             ["false"] = false,
-            ["null"] = null,
-            ["undefined"] = null,
+            ["null"] = null
         };
         internal static readonly Dictionary<string, OpType> OpTypeCodes = new Dictionary<string, OpType>(StringComparer.InvariantCultureIgnoreCase)
         {
-            ["and"] = OpType.AndItems,
-            ["or"] = OpType.OrItems
+            [FilterInfo.Operator_And] = OpType.AndItems,
+            [FilterInfo.Operator_Or] = OpType.OrItems
         };
 
         private readonly char _numberDecimal; // 小数点
@@ -61,7 +42,7 @@ namespace YS.Knife.Data
         public FilterInfoParser() : this(CultureInfo.CurrentCulture) { }
         public FilterInfoParser(CultureInfo cultureInfo)
         {
-            this._currentCulture = cultureInfo??throw new ArgumentNullException(nameof(cultureInfo));
+            this._currentCulture = cultureInfo ?? throw new ArgumentNullException(nameof(cultureInfo));
             this._numberDecimal = cultureInfo.NumberFormat.NumberDecimalSeparator[0];
             this._numberNegativeSign = cultureInfo.NumberFormat.NegativeSign[0];
             this._numberPositiveSign = cultureInfo.NumberFormat.PositiveSign[0];
@@ -122,7 +103,7 @@ namespace YS.Knife.Data
                 }
                 else
                 {
-                    orItems[^1].AndAlso(inner);
+                    orItems[^1] = orItems[^1].AndAlso(inner);
                 }
 
                 OpType? opType = TryParseOpType(context);
@@ -241,7 +222,7 @@ namespace YS.Knife.Data
             List<string> names = new List<string>();
             while (context.NotEnd())
             {
-                names.Add( ParseFieldName(context));
+                names.Add(ParseFieldName(context));
                 if (context.Current() == '.')
                 {
                     context.Index++;
@@ -255,7 +236,7 @@ namespace YS.Knife.Data
             return JoinNames(names);
         }
         private FunctionInfo ParseFunctionBody(ParseContext context)
-        {   
+        {
             FunctionInfo functionInfo = new FunctionInfo();
             // skip start (
             context.Index++;
@@ -269,7 +250,7 @@ namespace YS.Knife.Data
             else if (IsValidNameFirstChar(current))
             {
                 var originStartIndex = context.Index;
-               
+
                 var nameChain = ParseNameChain(context);
                 SkipWhiteSpace(context);
                 if (context.Current() == ')')
@@ -302,7 +283,8 @@ namespace YS.Knife.Data
                 functionInfo.SubFilter = ParseFilterExpression(context);
                 SkipCloseBracket(context);
             }
-            else {
+            else
+            {
                 throw ParseErrors.InvalidText(context);
             }
             return functionInfo;
@@ -371,7 +353,7 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidFilterType(context);
             }
         }
-        private object ParseValue(ParseContext context,bool parseArray=true)
+        private object ParseValue(ParseContext context, bool parseArray = true)
         {
             SkipWhiteSpace(context);
             var current = context.Current();
@@ -390,7 +372,7 @@ namespace YS.Knife.Data
                 //number
                 return ParseNumberValue(context);
             }
-            else if (parseArray && current=='[')
+            else if (parseArray && current == '[')
             {
                 return ParseArrayValue(context);
                 //array

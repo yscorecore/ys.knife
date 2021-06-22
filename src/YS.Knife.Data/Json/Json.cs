@@ -1,16 +1,23 @@
-﻿using System.Text.Json;
+﻿using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace YS.Knife.Data
 {
     public static class Json
     {
-        private static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
+        static Json()
+        {
+            JsonOptions.Converters.Add(new JsonStringEnumConverter());
+            JsonOptionsWithIndented.Converters.Add(new JsonStringEnumConverter());
+        }
+        public readonly static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
+            IgnoreNullValues = true
         };
 
-        private static JsonSerializerOptions JsonOptionsWithIndented =
+        public readonly static JsonSerializerOptions JsonOptionsWithIndented =
             new JsonSerializerOptions(JsonOptions) { WriteIndented = true };
 
         public static string Serialize(object obj, bool withIndented = false)
@@ -20,7 +27,7 @@ namespace YS.Knife.Data
 
         public static T DeSerialize<T>(string content)
         {
-            return JsonSerializer.Deserialize<T>(content,JsonOptionsWithIndented);
+            return JsonSerializer.Deserialize<T>(content, JsonOptionsWithIndented);
         }
         public static string ToJsonString(this object obj, bool withIndented = false)
         {
@@ -35,7 +42,7 @@ namespace YS.Knife.Data
 
         public static void DumpToFile(this object obj, string filePath, bool withIndented = true)
         {
-            System.IO.File.WriteAllText(filePath, obj.Dump(withIndented));
+           File.WriteAllText(filePath, obj.Dump(withIndented));
         }
 
     }

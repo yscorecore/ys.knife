@@ -179,8 +179,24 @@ namespace YS.Knife.Data.UnitTest
                         new FilterInfo("Id", FilterType.In, new[] { 1, 3, 4 }),
                         new FilterInfo("Tel", FilterType.Contains, "135")));
 
-            Assert.AreEqual("((Age > 1) and (Name starts \"Zhang\")) or ((Id in [1,3,4]) and (Tel contains \"135\"))", filter.ToString());
-            Assert.AreEqual("((Age <= 1) or (Name not starts \"Zhang\")) and ((Id not in [1,3,4]) or (Tel not contains \"135\"))", filter.Not().ToString());
+            Assert.AreEqual("((Age > 1) and (Name sw \"Zhang\")) or ((Id in [1,3,4]) and (Tel ct \"135\"))", filter.ToString());
+            Assert.AreEqual("((Age <= 1) or (Name nsw \"Zhang\")) and ((Id nin [1,3,4]) or (Tel nct \"135\"))", filter.Not().ToString());
+
+        }
+        [DataTestMethod]
+        [DataRow("a", FilterType.Equals, null, "a == null")]
+        [DataRow("a", FilterType.Equals, true, "a == true")]
+        [DataRow("a", FilterType.Equals, false, "a == false")]
+        [DataRow("a", FilterType.Equals, 1, "a == 1")]
+        [DataRow("a", FilterType.Equals, .1, "a == 0.1")]
+        [DataRow("a", FilterType.Equals, -.1, "a == -0.1")]
+        [DataRow("a", FilterType.Equals, "zhangsan", @"a == ""zhangsan""")]
+        [DataRow("a", FilterType.Equals, "\\\"", "a == \"\\\\\\\"\"")]
+        public void ShouldReprValueWhenToString(string field, FilterType filterType, object value, string expectedString)
+        {
+            var filter = FilterInfo.CreateItem(field, FilterType.Equals, value);
+
+            Assert.AreEqual(expectedString, filter.ToString());
 
         }
 

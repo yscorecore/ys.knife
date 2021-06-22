@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace YS.Knife.Data
 {
@@ -11,40 +14,30 @@ namespace YS.Knife.Data
     [Serializable]
     public class FilterInfo
     {
-       internal static readonly Dictionary<FilterType, string> FilterTypeNameMapper = new Dictionary<FilterType, string>
+        internal const string Operator_And = "and";
+        internal const string Operator_Or = "or";
+
+        internal static readonly Dictionary<FilterType, string> FilterTypeNameMapper = new Dictionary<FilterType, string>
         {
             [FilterType.Equals] = "==",
             [FilterType.NotEquals] = "!=",
             [FilterType.GreaterThan] = ">",
             [FilterType.LessThanOrEqual] = "<=",
             [FilterType.LessThan] = "<",
-            [FilterType.GreaterThanOrEqual] = ">",
-            [FilterType.Between] = "between",
-            [FilterType.NotBetween] = "not between",
+            [FilterType.GreaterThanOrEqual] = ">=",
+            [FilterType.Between] = "bt",
+            [FilterType.NotBetween] = "nbt",
             [FilterType.In] = "in",
-            [FilterType.NotIn] = "not in",
-            [FilterType.StartsWith] = "starts",
-            [FilterType.NotStartsWith] = "not starts",
-            [FilterType.EndsWith] = "ends",
-            [FilterType.NotEndsWith] = "not ends",
-            [FilterType.Contains] = "contains",
-            [FilterType.NotContains] = "not contains",
-            // [FilterType.Exists] = "exists",
-            // [FilterType.NotExists] = "not exists",
-            // [FilterType.All] = "all",
-            // [FilterType.NotAll] = "not all"
+            [FilterType.NotIn] = "nin",
+            [FilterType.StartsWith] = "sw",
+            [FilterType.NotStartsWith] = "nsw",
+            [FilterType.EndsWith] = "ew",
+            [FilterType.NotEndsWith] = "new",
+            [FilterType.Contains] = "ct",
+            [FilterType.NotContains] = "nct",
         };
 
-        internal static JsonSerializerOptions JsonOptions = new JsonSerializerOptions
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            IgnoreNullValues = true,
 
-        };
-        static FilterInfo()
-        {
-            JsonOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
-        }
         public FilterInfo()
         {
         }
@@ -180,31 +173,86 @@ namespace YS.Knife.Data
             return ToStringInternal(this);
         }
 
+
         private string ToStringInternal(FilterInfo filterInfo)
         {
             switch (filterInfo.OpType)
             {
                 case OpType.AndItems:
-                    return string.Join(" and ", filterInfo.Items.Select(p => $"({ToStringInternal(p)})"));
+                    return string.Join($" {Operator_And} ", filterInfo.Items.TrimNotNull().Select(p => $"({ToStringInternal(p)})"));
                 case OpType.OrItems:
-                    return string.Join(" or ", filterInfo.Items.Select(p => $"({ToStringInternal(p)})"));
+                    return string.Join($" {Operator_Or} ", filterInfo.Items.Select(p => $"({ToStringInternal(p)})"));
                 case OpType.SingleItem:
                 default:
-                    return $"{filterInfo.FieldName} {FilterTypeToString(filterInfo.FilterType)} {ValueToString(filterInfo.Value)}";
+                    return $"{FileNameToString(filterInfo)} {FilterTypeToString(filterInfo.FilterType)} {ValueToString(filterInfo.Value)}";
             }
-        }
-        private string FilterTypeToString(FilterType? filterType)
-        {
-            if (filterType.HasValue && FilterTypeNameMapper.TryGetValue(filterType.Value, out var res))
+            string FileNameToString(FilterInfo filter)
             {
-                return res;
+                if (filter.Function != null)
+                {
+                    var function = filter.Function;
+                    var functionBody = new StringBuilder();
+                    if (!string.IsNullOrWhiteSpace(function.FieldName))
+                    {
+                        functionBody.Append(function.FieldName);
+                    }
+                    if (function.SubFilter != null)
+                    {
+                        if (functionBody.Length > 0)
+                        {
+                            functionBody.Append(", ");
+                        }
+                        functionBody.Append(ToStringInternal(function.SubFilter));
+                    }
+
+                    return $"{filter.FieldName}.{function.Name}({functionBody})";
+                }
+                else
+                {
+                    return filter.FieldName;
+                }
             }
-            throw new InvalidOperationException();
+
+            string ValueToString(object value,bool convertCollection = true)
+            {
+                if (value == null || value == DBNull.Value)
+                {
+                    return "null";
+                }
+                else if (value is string str)
+                {
+                    return Repr(str);
+                }
+                else if (value is bool)
+                {
+                    return value.ToString().ToLowerInvariant();
+                }
+                else if (value is int || value is short || value is long || value is float || value is double || value is decimal
+                     || value is uint || value is ushort || value is ulong || value is sbyte || value is byte)
+                {
+                    return value.ToString();
+                }
+                else if (convertCollection && value is IEnumerable items)
+                {
+                    var body =string.Join(',', items.OfType<object>().Select(p => ValueToString(p, false)));
+                    return string.Format($"[{body}]");
+                }
+                else
+                {
+                    return Repr(value.ToString());
+                }
+            }
+            string FilterTypeToString(FilterType filterType)
+            {
+                return FilterTypeNameMapper[filterType];
+            }
+            string Repr(string str)
+            {
+                return $"\"{Regex.Escape(str).Replace("\"","\\\"")}\"";
+            }
         }
-        private string ValueToString(object value)
-        {
-            return JsonSerializer.Serialize(value);
-        }
+
+
     }
 
 
@@ -234,7 +282,7 @@ namespace YS.Knife.Data
             {
                 var bytes = Convert.FromBase64String(base64String);
                 ReadOnlySpan<byte> byteSpan = new ReadOnlySpan<byte>(bytes);
-                return JsonSerializer.Deserialize(byteSpan, typeof(FilterInfo), FilterInfo.JsonOptions);
+                return JsonSerializer.Deserialize(byteSpan, typeof(FilterInfo), Json.JsonOptions);
             }
             return base.ConvertFrom(context, culture, value);
         }
@@ -243,7 +291,7 @@ namespace YS.Knife.Data
         {
             if (destinationType == typeof(string) && value is FilterInfo)
             {
-                var bytes = JsonSerializer.SerializeToUtf8Bytes(value, FilterInfo.JsonOptions);
+                var bytes = JsonSerializer.SerializeToUtf8Bytes(value, Json.JsonOptions);
                 return Convert.ToBase64String(bytes);
             }
             return base.ConvertTo(context, culture, value, destinationType);
