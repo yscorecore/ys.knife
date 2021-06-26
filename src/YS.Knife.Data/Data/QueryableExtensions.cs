@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Linq.Expressions;
 using YS.Knife.Data;
 using YS.Knife.Data.Mappers;
-using YS.Knife.Data.Translaters;
 
 namespace System.Linq
 {
@@ -50,13 +49,14 @@ namespace System.Linq
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            var translatedFilterInfo = filterInfoForResult.Translate(mapper);
-            var translatedOrderInfo = orderInfoForResult.Translate(mapper);
-            return source
-                .WhereCondition(translatedFilterInfo)
-                .Order(translatedOrderInfo)
-                .Select(selectInfoForResult,mapper)
-                .ToList();
+
+            return null;
+
+            //return source
+            //    .Where(null)
+            //    .Order(null)
+            //    .Select(selectInfoForResult,mapper)
+            //    .ToList();
         }
         public static List<R> ListAll<T,R>(this IQueryable<T> source, FilterInfo filterInfoForResult, OrderInfo orderInfoForResult, SelectInfo selectInfoForResult)
             where  T:class

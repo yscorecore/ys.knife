@@ -68,20 +68,6 @@ namespace YS.Knife.Data.UnitTest
             var filter = FilterInfo.CreateItem(field, filterType, value);
             FilterStudentData(filter).Should().Be(expectedId);
         }
-
-        [TestMethod]
-        public void Test()
-        {
-            typeof(int).IsAssignableFrom(typeof(long)).Should().Be(false);
-            typeof(long).IsAssignableFrom(typeof(int)).Should().Be(false);
-            typeof(Sex).IsAssignableFrom(typeof(int)).Should().Be(false);
-            typeof(int).IsAssignableFrom(typeof(Sex)).Should().Be(false);
-            typeof(int).IsAssignableFrom(typeof(int?)).Should().Be(false);
-            //typeof(int?).IsAssignableFrom(typeof(int)).Should().Be(false);
-            Type.GetTypeCode(typeof(int)).Should().NotBe(TypeCode.Object);
-            Type.GetTypeCode(typeof(int?)).Should().NotBe(TypeCode.Object);
-           
-        }
     
         private string FilterStudentData(FilterInfo studentDtoFilter)
         {

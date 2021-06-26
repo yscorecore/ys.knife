@@ -151,7 +151,7 @@ namespace YS.Knife.Data.UnitTest
         {
             TestComplexItem(expression, expectedExpression);
         }
-        [ExpectedException(typeof(FilterParseException))]
+        [ExpectedException(typeof(FilterInfoParseException))]
         [DataTestMethod]
         [DataRow("a=1 a")]
         [DataRow("a=b")]

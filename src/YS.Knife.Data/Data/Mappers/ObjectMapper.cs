@@ -22,6 +22,10 @@ namespace YS.Knife.Data.Mappers
             get { return this._propMappers; }
         }
 
+        public Type SourceType => typeof(TSource);
+
+        public Type TargetType => typeof(TTarget);
+
         private readonly Dictionary<string, IMapperExpression> _propMappers =
             new Dictionary<string, IMapperExpression>();
         private Expression<Func<TSource, TTarget>> _cachedExpression = null;

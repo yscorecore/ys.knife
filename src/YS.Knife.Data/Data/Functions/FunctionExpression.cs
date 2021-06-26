@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using YS.Knife.Data.Mappers;
-using YS.Knife.Data.Translaters;
 
 namespace YS.Knife.Data.Functions
 {
@@ -43,7 +42,7 @@ namespace YS.Knife.Data.Functions
 
     internal class FunctionContext
     {
-        public List<FieldPath> SubPaths { get; set; }
+        
         public Type SourceType { get; set; }
         public Type TargetType { get; set; }
         public IObjectMapper SubTypeMapper { get; set; }

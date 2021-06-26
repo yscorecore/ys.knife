@@ -31,7 +31,7 @@ namespace YS.Knife.Data.FilterExpressions.Converters
         public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value,
             List<FilterInfo> subFilters)
         {
-            if (IsNull(value)) throw new FieldExpressionException($"Can not handle null value for {this.FilterType}.");
+            if (IsNull(value)) throw new FieldInfo2ExpressionException($"Can not handle null value for {this.FilterType}.");
             var (isNullable, underlyingType) = propInfo.PropertyType.GetUnderlyingTypeTypeInfo();
             object constValue = this.ChangeType(value, underlyingType);
             if (SupportOpTypes.Contains(underlyingType))

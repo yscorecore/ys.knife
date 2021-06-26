@@ -5,12 +5,25 @@ using System.Linq.Expressions;
 using System.Runtime.InteropServices.ComTypes;
 using YS.Knife.Data.Functions;
 using YS.Knife.Data.Mappers;
-using YS.Knife.Data.Translaters;
 
 namespace YS.Knife.Data
 {
     public static class ObjectMapperExtensions
     {
+
+        public static Expression<Func<TFilterType, bool>> CreateSourceFilterExpression<TFilterType>(
+             FilterInfo targetFilter)
+        {
+          
+
+            var p = Expression.Parameter(typeof(TFilterType), "p");
+            if (targetFilter == null)
+            {
+                return Expression.Lambda<Func<TFilterType, bool>>(Expression.Constant(true), p);
+            }
+            return Expression.Lambda<Func<TFilterType, bool>>(Expression.Constant(true), p);
+           
+        }
         public static Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
             this ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
             where TSource : class
@@ -180,6 +193,26 @@ namespace YS.Knife.Data
             public bool IsCollection { get; set; }
 
             public Expression SourceExpression { get; set; }
+        }
+
+        interface IFilterMemberInfo
+        {
+
+            public Type ExpressionValueType { get; set; }
+
+            public Expression SelectExpression { get; set; }
+
+            public IFilterMemberInfo GetSubMemberInfo(string memberName);
+        }
+        class ObjectFilterMemberInfo : IFilterMemberInfo
+        {
+            public Type ExpressionValueType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+            public Expression SelectExpression { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
+            public IFilterMemberInfo GetSubMemberInfo(string memberName)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }
