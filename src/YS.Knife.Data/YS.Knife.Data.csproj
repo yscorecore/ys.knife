@@ -12,18 +12,6 @@
 
 
 
-    <ItemGroup>
-      <Compile Remove="Mapper\**" />
-      <EmbeddedResource Remove="Mapper\**" />
-      <None Remove="Mapper\**" />
-    </ItemGroup>
-
-
-
-    <ItemGroup>
-      <None Remove="Data\Mappers\ObjectMapper.cs~RF6923284.TMP" />
-    </ItemGroup>
-
 
 
     <ItemGroup>

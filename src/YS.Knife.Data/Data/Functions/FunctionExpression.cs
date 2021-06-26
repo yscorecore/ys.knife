@@ -33,7 +33,7 @@ namespace YS.Knife.Data.Functions
 
        internal FunctionResult Execute(FunctionContext functionContext)
        {
-           var param = Expression.Parameter(functionContext.SourceType, "p");
+          // var param = Expression.Parameter(functionContext.SourceType, "p");
           // typeof(IQueryable).IsAssignableFrom(sourceType)?MethodFinder.get
            return null;
        }
@@ -43,18 +43,12 @@ namespace YS.Knife.Data.Functions
     internal class FunctionContext
     {
         
-        public Type SourceType { get; set; }
-        public Type TargetType { get; set; }
-        public IObjectMapper SubTypeMapper { get; set; }
+     
     }
 
     internal class FunctionResult
     {
-        public Expression Expression { get; set; }
-        public Type TargetValueType { get; set; }
-        public Type SourceValueType { get; set; }
-        
-        public IObjectMapper ObjectMapper { get; set; }
+
         
     }
 }

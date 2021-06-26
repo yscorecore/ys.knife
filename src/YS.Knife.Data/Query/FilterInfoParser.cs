@@ -192,12 +192,27 @@ namespace YS.Knife.Data
             List<string> names = new List<string>();
             while (context.NotEnd())
             {
-                var name = ParseFieldName(context);
+                var name = ParseName(context);
                 if (context.Current() == '.')
                 {
+                    // a.b
                     names.Add(name);
                     context.Index++;
 
+                }
+                else if (context.Current() == '?')
+                {
+                    // a?.b
+                    context.Index++;
+                    if (context.Current() == '.')
+                    {
+                        names.Add(name+'?');
+                        context.Index++;
+                    }
+                    else 
+                    {
+                        throw ParseErrors.InvalidFieldNameText(context);
+                    }
                 }
                 else if (context.Current() == '(')
                 {
@@ -218,14 +233,15 @@ namespace YS.Knife.Data
 
         private string ParseNameChain(ParseContext context)
         {
+            // name chain not contains '?', only contains '.'
+            // eg.  "a.b" is valid ,"a?.b" is not valid 
             List<string> names = new List<string>();
             while (context.NotEnd())
             {
-                names.Add(ParseFieldName(context));
+                names.Add(ParseName(context));
                 if (context.Current() == '.')
                 {
                     context.Index++;
-
                 }
                 else
                 {
@@ -293,7 +309,7 @@ namespace YS.Knife.Data
         {
             return string.Join('.', names);
         }
-        private string ParseFieldName(ParseContext context)
+        private string ParseName(ParseContext context)
         {
             SkipWhiteSpace(context);
             int startIndex = context.Index;

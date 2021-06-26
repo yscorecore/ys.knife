@@ -9,7 +9,7 @@ using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.UnitTest
 {
-
+    [TestClass]
     public class FilterInfoExpressionBuilderTest
     {
         private static readonly Exam[] Exams =
@@ -19,7 +19,9 @@ namespace YS.Knife.Data.UnitTest
         };
         private static readonly List<Student> Students = new List<Student>
         {
-            new Student{ Id="001", Name = "zhang san",Age = 15,Scores = new []
+            new Student{ Id="001", Name = "zhang san",Age = 15,
+                Address = new Address{ City="bei jing", ZipCode="00001"},
+                Scores = new []
             {
                 new ScoreRecord{ ClassName = "Mathematics", Score = 98, Exam = Exams[0]},
                 new ScoreRecord{ ClassName = "Chinese", Score = 89, Exam = Exams[0]},
@@ -28,7 +30,9 @@ namespace YS.Knife.Data.UnitTest
                 new ScoreRecord{ ClassName = "Chinese", Score = 95, Exam = Exams[0]},
                 new ScoreRecord{ ClassName = "English", Score = 98, Exam = Exams[0]}
             }},
-            new Student{ Id="002", Name = "li si",Age = 13,Scores = new []
+            new Student{ Id="002", Name = "li si",Age = 13,
+                 Address = new Address{ City="bei jing", ZipCode="00001"},
+                Scores = new []
             {
                 new ScoreRecord{ ClassName = "Mathematics", Score = 78, Exam = Exams[0]},
                 new ScoreRecord{ ClassName = "Chinese", Score = 80, Exam = Exams[0]},
@@ -37,7 +41,9 @@ namespace YS.Knife.Data.UnitTest
                 new ScoreRecord{ ClassName = "Chinese", Score = 69, Exam = Exams[0]},
                 new ScoreRecord{ ClassName = "English", Score = 56, Exam = Exams[0]}
             }},
-            new Student{ Id="003", Name = null, Age = 17, Scores = new []
+            new Student{ Id="003", Name = null, Age = 17,
+                 Address = new Address{ City="xi'an", ZipCode="00002"},
+                Scores = new []
             {
                 new ScoreRecord{ ClassName = "Mathematics", Score = 18, Exam = Exams[0]},
                 new ScoreRecord{ ClassName = "Chinese", Score = 60, Exam = Exams[0]},
@@ -46,7 +52,9 @@ namespace YS.Knife.Data.UnitTest
                 new ScoreRecord{ ClassName = "Chinese", Score = 59, Exam = null},
                 new ScoreRecord{ ClassName = "English", Score = 30, Exam = null}
             }},
-            new Student{ Id="004", Name = "wang wu", Age = 16, Scores = null}
+            new Student{ Id="004", Name = "zhao si", Age = 17, Address = new Address()},
+            new Student{ Id="005", Name = "qian wu", Age = 20, Scores = new ScoreRecord[0]},
+            new Student{ Id="006", Name = "feng wu", Age = 14}
         };
 
         #region For Model
@@ -97,19 +105,31 @@ namespace YS.Knife.Data.UnitTest
         {
 
             [DataTestMethod]
-            [DataRow("", "001,002,003,004")]
-            [DataRow("TName=\"li si\"", "002")]
-            [DataRow("TName=null", "003")]
-            [DataRow("TAddress.City=null", "001,002,003,004")]
-
+            [DataRow("", "001,002,003,004,005,006")]
+            [DataRow("tName=\"li si\"", "002")]
+            [DataRow("tName=null", "003")]
+            [DataRow("tAddress.city=null", "004")]
             public void ShouldFilterSingleItem(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
 
+
             [DataTestMethod]
-       
-            [DataRow("TName.Count()=9", "001")]
+            [DataRow("tAddress=null", "005,006")]
+            [DataRow("tAddress.city=null", "004")]
+            [DataRow("tAddress?.city=null", "004,005,006")]
+            [DataRow("tAddress?.city.Length=5", "003,005,006")]
+            [DataRow("tAddress?.city?.Length=5", "003,004,005,006")]
+            [DataRow("tAddress.city.Length=5", "003")]
+            [DataRow("tAddress.city?.Length=5", "003,004")]
+            public void ShouldFilterWithOptionalField(string filterExpressionForDto, string expectedIds)
+            {
+                FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
+            }
+            [DataTestMethod]
+
+            //[DataRow("TName.Count()=9", "001")]
 
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
@@ -140,9 +160,19 @@ namespace YS.Knife.Data.UnitTest
 
         }
 
+        [TestMethod]
+        public void MyTestMethod()
+        {
+            
+            var exp = Students.AsQueryable()
+                     .Where(p => p.Scores != null
+                     &&
+                     p.Scores.Where(p => p.ClassName != null).Average(p => (int?)p.ClassName.Length) > 0);
 
+        }
         public class Address
         {
+          
             public string City { get; set; }
             public string ZipCode { get; set; }
         }

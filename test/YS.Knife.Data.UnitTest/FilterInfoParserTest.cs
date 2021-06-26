@@ -28,6 +28,7 @@ namespace YS.Knife.Data.UnitTest
             TestSimpleItem(text, expectedFieldName, expectedFilterType, expectedValue);
         }
 
+     
 
         [DataTestMethod]
         [DataRow("a=null", "a", FilterType.Equals, null)]
@@ -151,6 +152,19 @@ namespace YS.Knife.Data.UnitTest
         {
             TestComplexItem(expression, expectedExpression);
         }
+        [DataTestMethod]
+        [DataRow("a?.b>1", "a?.b > 1")]
+        [DataRow("a?.b>1", "a?.b > 1")]
+        [DataRow("a?.b?.c>1", "a?.b?.c > 1")]
+        [DataRow("a?.b?.c(e.b.c,d=1)>1", "a?.b?.c(e.b.c, d == 1) > 1")]
+        [DataRow("a?.b?.c(e.b.c,d?.e=1)>1", "a?.b?.c(e.b.c, d?.e == 1) > 1")]
+        [DataRow("a?.b?.c(e?.b?.c=1)>1", "a?.b?.c(e?.b?.c == 1) > 1")]
+        public void ShouldParseOptionalFieldName(string expression, string expectedExpression)
+        {
+            TestComplexItem(expression, expectedExpression);
+        }
+
+
         [ExpectedException(typeof(FilterInfoParseException))]
         [DataTestMethod]
         [DataRow("a=1 a")]
@@ -175,6 +189,10 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a.b(cde,f=3")]
         [DataRow("a=\"\\uklkl\"")]
         [DataRow("a=-")]
+        [DataRow("a?.b?.c?()>1")]
+        [DataRow("a?.b?.c(e?.b.c)>1")]
+        [DataRow("a?.b?.c(e.b?.c)>1")]
+        [DataRow("a?.b?.c(e.b?.c?,d=1)>1")]
         public void ShouldThrowFilterException(string expression)
         {
             Parse(expression);

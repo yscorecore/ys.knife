@@ -15,7 +15,7 @@ namespace YS.Knife.Data
 {
     public class FilterInfoExpressionBuilder
     {
-        public static Regex ValidFieldNameRegex = new Regex("^\\w+(\\.\\w+)*$");
+        public static Regex ValidFieldNameRegex = new Regex("^\\w+(\\??\\.\\w+)*$");
 
         public Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
            ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
@@ -69,19 +69,24 @@ namespace YS.Knife.Data
                 ExpressionValueType = memberProvider.CurrentType,
                 CurrentMemberProvider = memberProvider
             };
-            foreach (var field in FieldNameParser.Parse(singleItem.FieldName))
+            foreach (var field in ParseFilterNames(singleItem.FieldName))
             {
-                var memberInfo = context.CurrentMemberProvider.GetSubMemberInfo(field);
+                var memberInfo = context.CurrentMemberProvider.GetSubMemberInfo(field.MemberName);
 
                 if (memberInfo == null)
                 {
-                    throw Errors.InvalidMemberNameInFieldName(field, singleItem.FieldName);
+                    throw Errors.InvalidMemberNameInFieldName(field.MemberName, singleItem.FieldName);
                 }
                 var currentExpression = context.CurrentExpression.Connect(memberInfo.SelectExpression);
                 context.CurrentExpression = currentExpression;
                 context.ExpressionValueType = memberInfo.ExpressionValueType;
                 context.CurrentMemberProvider = memberInfo.SubProvider;
-                context.Add(new FilerExpressionSegment() { MemberInfo = memberInfo, Expression = currentExpression });
+                context.Add(new FilerExpressionSegment
+                {
+                    MemberInfo = memberInfo,
+                    Expression = currentExpression,
+                    Optional = field.Optional
+                });
             }
             if (singleItem.Function != null)
             {
@@ -100,11 +105,61 @@ namespace YS.Knife.Data
 
             return CompareFilterWithValue(context, singleItem.FilterType, singleItem.Value);
         }
-
+        private IEnumerable<(string MemberName, bool Optional)> ParseFilterNames(string filterFieldName)
+        {
+            return filterFieldName.Split('.')
+                 .Select(p => (p.TrimEnd('?'), p.EndsWith('?')));
+        }
         private Expression CompareFilterWithValue(FilterExpressionContext context, FilterType filterType,
            object value)
         {
-            return Expression.Equal(context.CurrentExpression, Expression.Constant(value));
+            // a>3         a > 3
+            // a?b > 3     a == null || a.b > 3
+            // a.b > 3     a != null && a.b >3   
+            // a?.b?.c >3  a == null || (a.b == null || a.b.c >3) 
+            // a.b?.c > 3  a != null && (a.b == null or a.b.c >3)
+            // a.b.c  >3   a != null && (a.b != null && a.b.c >3)
+            // a?.b.c > 3  a == null || (a.b != null && a.b.c >3)
+
+            
+            var compareExpression = Expression.Equal(context.CurrentExpression, Expression.Constant(Convert.ChangeType(value,context.ExpressionValueType)));
+
+            return CombinNullCheckExpression(context, 0, compareExpression);
+        }
+        private Expression CombinNullCheckExpression(List<FilerExpressionSegment> segments, int index, Expression valueCompareExpression)
+        {
+            if (index == segments.Count - 1)
+            {// last one 
+                return valueCompareExpression;
+            }
+            var segment = segments[index];
+            if (segment.Optional)
+            {// or
+                if (IsValueType(segment.MemberInfo.ExpressionValueType))
+                {
+                    return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
+                }
+                else
+                {
+                    return Expression.OrElse(
+                           Expression.Equal(segment.Expression,Expression.Constant(null) )
+                        , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
+                }
+            }
+            else
+            { // and
+                if (IsValueType(segment.MemberInfo.ExpressionValueType))
+                {
+                    return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
+                }
+                else
+                {
+                    return Expression.AndAlso(
+                           Expression.NotEqual(segment.Expression, Expression.Constant(null))
+                        , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
+                }
+            }
+            bool IsValueType(Type type) => type.IsValueType && Nullable.GetUnderlyingType(type) != null;
         }
 
         class FilterExpressionContext : List<FilerExpressionSegment>
@@ -120,6 +175,7 @@ namespace YS.Knife.Data
         {
             public IFilterMemberInfo MemberInfo { get; set; }
             public Expression Expression { get; set; }
+            public bool Optional { get; set; }
         }
 
         interface IFilterMemberInfo
@@ -262,7 +318,7 @@ namespace YS.Knife.Data
 
                 public IFilterMemberInfoProvider SubProvider
                 {
-                    get 
+                    get
                     {
                         if (mapperExpression.SubMapper != null)
                         {
@@ -272,7 +328,7 @@ namespace YS.Knife.Data
                         {
                             return IFilterMemberInfoProvider.GetObjectProvider(ExpressionValueType);
                         }
-                    
+
                     }
                 }
             }
