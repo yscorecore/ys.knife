@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using YS.Knife;
 using YS.Knife.EntityFrameworkCore;
 
@@ -95,8 +96,9 @@ namespace Microsoft.EntityFrameworkCore
         {
 
             var interceptors = (interceptorTypes ?? Type.EmptyTypes).Distinct().Select(p => Activator.CreateInstance(p)).OfType<IInterceptor>();
-            services.AddDbContextPool<InjectType, ImplType>((build) =>
+            services.AddDbContextPool<InjectType, ImplType>((serviceProvider, build) =>
             {
+                build.UseLoggerFactory(serviceProvider.GetRequiredService<ILoggerFactory>());
                 build.AddInterceptors(interceptors);
                 this.BuildOptions(build, connectionString);
             });
