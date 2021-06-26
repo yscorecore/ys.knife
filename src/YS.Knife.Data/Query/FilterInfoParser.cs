@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace YS.Knife.Data
 {
-    public class FilterInfoParser
+    internal class FilterInfoParser
     {
         static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
         static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
@@ -39,7 +39,6 @@ namespace YS.Knife.Data
         private readonly char _numberPositiveSign; // 正号
         private readonly char _numberGroupSeparator;// 分组符号
         private readonly CultureInfo _currentCulture;
-        public FilterInfoParser() : this(CultureInfo.CurrentCulture) { }
         public FilterInfoParser(CultureInfo cultureInfo)
         {
             this._currentCulture = cultureInfo ?? throw new ArgumentNullException(nameof(cultureInfo));
@@ -537,44 +536,44 @@ namespace YS.Knife.Data
         {
             public static Exception InvalidText(ParseContext context)
             {
-                throw new Exception($"Invalid text near index {context.Index}.");
+                throw new FilterParseException($"Invalid text near index {context.Index}.");
             }
             public static Exception InvalidFieldNameText(ParseContext context)
             {
-                throw new Exception($"Invalid field name near index {context.Index}.");
+                throw new FilterParseException($"Invalid field name near index {context.Index}.");
             }
             public static Exception InvalidFilterType(ParseContext context)
             {
-                throw new Exception($"Invalid filter type near index {context.Index}.");
+                throw new FilterParseException($"Invalid filter type near index {context.Index}.");
             }
             public static Exception InvalidFilterType(ParseContext context, string code)
             {
-                throw new Exception($"Invalid filter type '{code}' near index {context.Index}.");
+                throw new FilterParseException($"Invalid filter type '{code}' near index {context.Index}.");
             }
             public static Exception InvalidValue(ParseContext context)
             {
-                throw new Exception($"Invalid value near index {context.Index}.");
+                throw new FilterParseException($"Invalid value near index {context.Index}.");
             }
             public static Exception InvalidKeywordValue(ParseContext context, string keyword)
             {
-                throw new Exception($"Invalid keyword '{keyword}' near index {context.Index}.");
+                throw new FilterParseException($"Invalid keyword '{keyword}' near index {context.Index}.");
             }
             public static Exception InvalidStringValue(ParseContext context, string str, Exception inner)
             {
-                throw new Exception($"Invalid string '{str}' near index {context.Index}.", inner);
+                throw new FilterParseException($"Invalid string '{str}' near index {context.Index}.", inner);
             }
             public static Exception InvalidNumberValue(ParseContext context, string str, Exception inner)
             {
-                throw new Exception($"Invalid number '{str}' near index {context.Index}.", inner);
+                throw new FilterParseException($"Invalid number '{str}' near index {context.Index}.", inner);
             }
 
             public static Exception MissOpenBracket(ParseContext context)
             {
-                throw new Exception($"Invalid expression, missing open bracket near index {context.Index}.");
+                throw new FilterParseException($"Invalid expression, missing open bracket near index {context.Index}.");
             }
             public static Exception MissCloseBracket(ParseContext context)
             {
-                throw new Exception($"Invalid expression, missing close bracket near index {context.Index}.");
+                throw new FilterParseException($"Invalid expression, missing close bracket near index {context.Index}.");
             }
         }
     }

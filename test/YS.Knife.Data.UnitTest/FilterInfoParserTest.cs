@@ -7,7 +7,7 @@ namespace YS.Knife.Data.UnitTest
     [TestClass]
     public class FilterInfoParserTest
     {
-        private Func<string, FilterInfo> Parse => (text) => new FilterInfoParser().Parse(text);
+        private Func<string, FilterInfo> Parse => (text) => FilterInfo.Parse(text);
         [DataTestMethod]
         [DataRow(null)]
         [DataRow("")]
@@ -151,6 +151,35 @@ namespace YS.Knife.Data.UnitTest
         {
             TestComplexItem(expression, expectedExpression);
         }
+        [ExpectedException(typeof(FilterParseException))]
+        [DataTestMethod]
+        [DataRow("a=1 a")]
+        [DataRow("a=b")]
+        [DataRow("a===b")]
+        [DataRow("a op b")]
+        [DataRow("a=[[]]")]
+        [DataRow("a=1234567.8_9")]
+        [DataRow("a=1234567.8.9")]
+        [DataRow("(a=123")]
+        [DataRow("(a=123) and (b=456")]
+        [DataRow("(a=123) and b=456")]
+        [DataRow("(a=123) and (b=456 a")]
+        [DataRow("((a=123) and (b=456)")]
+        [DataRow("a.b(cde")]
+        [DataRow("a.b(cde=")]
+        [DataRow("a.b(cde=0")]
+        [DataRow("a.b([])")]
+        [DataRow("1ab=1")]
+        [DataRow("(1a.b=1)")]
+        [DataRow("a.b ( b")]
+        [DataRow("a.b(cde,f=3")]
+        [DataRow("a=\"\\uklkl\"")]
+        [DataRow("a=-")]
+        public void ShouldThrowFilterException(string expression)
+        {
+            Parse(expression);
+        }
+
         private void TestSimpleItem(string expression, string expectedFieldName, FilterType expectedFilterType, object expectedValue)
         {
             var filter = Parse(expression);

@@ -252,7 +252,12 @@ namespace YS.Knife.Data
             }
         }
 
-
+        public static FilterInfo Parse(string filterExpression) => Parse(filterExpression, CultureInfo.CurrentCulture);
+        
+        public static FilterInfo Parse(string filterExpression, CultureInfo cultureInfo)
+        {
+            return new FilterInfoParser(cultureInfo).Parse(filterExpression);
+        }
     }
 
 
@@ -263,38 +268,23 @@ namespace YS.Knife.Data
         public string FieldName { get; set; }
     }
 
-    public class FilterInfoTypeConverter : TypeConverter
+    public class FilterInfoTypeConverter : StringConverter
     {
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
-        }
-
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string base64String)
+            if (value is string base64StringOrFilterExpression)
             {
-                var bytes = Convert.FromBase64String(base64String);
-                ReadOnlySpan<byte> byteSpan = new ReadOnlySpan<byte>(bytes);
-                return JsonSerializer.Deserialize(byteSpan, typeof(FilterInfo), Json.JsonOptions);
+                if (Base64.IsBase64String(base64StringOrFilterExpression))
+                {
+                    var bytes = Convert.FromBase64String(base64StringOrFilterExpression);
+                    return Json.DeSerialize<FilterInfo>(bytes);
+                }
+                else 
+                {
+                    return FilterInfo.Parse(base64StringOrFilterExpression, culture);
+                }
             }
             return base.ConvertFrom(context, culture, value);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-        {
-            if (destinationType == typeof(string) && value is FilterInfo)
-            {
-                var bytes = JsonSerializer.SerializeToUtf8Bytes(value, Json.JsonOptions);
-                return Convert.ToBase64String(bytes);
-            }
-            return base.ConvertTo(context, culture, value, destinationType);
         }
 
     }
