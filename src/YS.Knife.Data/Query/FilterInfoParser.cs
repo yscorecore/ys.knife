@@ -20,7 +20,7 @@ namespace YS.Knife.Data
             .Concat(new[] {
                 Tuple.Create("=",FilterType.Equals),
                 Tuple.Create("<>",FilterType.NotEquals)
-            
+
             }).ToDictionary(p => p.Item1, p => p.Item2);
         internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
         {
@@ -206,10 +206,10 @@ namespace YS.Knife.Data
                     context.Index++;
                     if (context.Current() == '.')
                     {
-                        names.Add(name+'?');
+                        names.Add(name + '?');
                         context.Index++;
                     }
-                    else 
+                    else
                     {
                         throw ParseErrors.InvalidFieldNameText(context);
                     }
@@ -252,57 +252,145 @@ namespace YS.Knife.Data
         }
         private FunctionInfo ParseFunctionBody(ParseContext context)
         {
-            FunctionInfo functionInfo = new FunctionInfo();
             // skip start (
             context.Index++;
-            SkipWhiteSpace(context);
-            var current = context.Current();
-            if (current == ')')
-            {
-                // eg. count();
-                context.Index++;
-            }
-            else if (IsValidNameFirstChar(current))
-            {
-                var originStartIndex = context.Index;
 
-                var nameChain = ParseNameChain(context);
+
+            //else if (IsValidNameFirstChar(current))
+            //{
+            //    var originStartIndex = context.Index;
+
+            //    var nameChain = ParseNameChain(context);
+            //    SkipWhiteSpace(context);
+            //    if (context.Current() == ')')
+            //    {
+            //        // eg. avg(user.age)
+            //        functionInfo.FieldNames = new List<string> { nameChain};
+            //        context.Index++;
+            //    }
+            //    else if (context.Current() == ',')
+            //    {
+            //        // eg. avg(user.age,user.sex="male")
+            //        functionInfo.FieldNames =new List<string> { nameChain };
+            //        context.Index++;
+            //        functionInfo.SubFilter = ParseFilterExpression(context);
+            //        SkipCloseBracket(context);
+            //    }
+            //    else
+            //    {
+            //        // eg. count(user.sex="male")
+            //        // reset index
+            //        context.Index = originStartIndex;
+            //        functionInfo.SubFilter = ParseFilterExpression(context);
+            //        SkipCloseBracket(context);
+            //    }
+            //}
+            //else if (current == '(')
+            //{
+            //    // count((user.age>3) and (user.age<10))
+            //    // in this case ,no field name
+            //    functionInfo.SubFilter = ParseFilterExpression(context);
+            //    SkipCloseBracket(context);
+            //}
+
+
+
+            List<object> args = ParseFunctionArguments(context);
+            List<string> fields = ParseFunctionFields(context);
+            FilterInfo filterInfo = ParseFunctionFilter(context);
+
+            SkipCloseBracket(context);
+            return new FunctionInfo
+            {
+                Args = args,
+                FieldNames = fields,
+                SubFilter = filterInfo,
+            };
+
+            List<object> ParseFunctionArguments(ParseContext context)
+            {
+                List<object> datas = new List<object>();
+                while (context.NotEnd())
+                {
+                    SkipWhiteSpace(context);
+                    if (IsNumberStartChar(context.Current()))
+                    {
+                        //number
+                        datas.Add(ParseNumberValue(context));
+                    }
+                    else if (context.Current() == '\"')
+                    {
+                        //string
+                        datas.Add(ParseStringValue(context));
+                    }
+                    SkipWhiteSpace(context);
+
+                    if (context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+                return datas.Any() ? datas : null;
+            }
+            List<string> ParseFunctionFields(ParseContext context)
+            {
+                List<string> fields = new List<string>();
+
+                while (context.NotEnd())
+                {
+                    SkipWhiteSpace(context);
+                    if (context.Current() == ')')
+                    {
+                        break;
+                    }
+
+                    else if (IsValidNameFirstChar(context.Current()))
+                    {
+                        var originStartIndex = context.Index;
+                        var nameChain = ParseNameChain(context);
+                        SkipWhiteSpace(context);
+                        if (context.Current() == ',')
+                        {
+                            fields.Add(nameChain);
+                            context.Index++;
+                        }
+                        else if (context.Current() == ')')
+                        {
+                            fields.Add(nameChain);
+                            break;
+                        }
+                        else
+                        {
+                            context.Index = originStartIndex;
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+
+                return fields.Any() ? fields : null;
+            }
+            FilterInfo ParseFunctionFilter(ParseContext context)
+            {
                 SkipWhiteSpace(context);
                 if (context.Current() == ')')
                 {
-                    // eg. avg(user.age)
-                    functionInfo.FieldName = nameChain;
-                    context.Index++;
+                    return null;
                 }
-                else if (context.Current() == ',')
-                {
-                    // eg. avg(user.age,user.sex="male")
-                    functionInfo.FieldName = nameChain;
-                    context.Index++;
-                    functionInfo.SubFilter = ParseFilterExpression(context);
-                    SkipCloseBracket(context);
-                }
-                else
-                {
-                    // eg. count(user.sex="male")
-                    // reset index
-                    context.Index = originStartIndex;
-                    functionInfo.SubFilter = ParseFilterExpression(context);
-                    SkipCloseBracket(context);
-                }
+                return ParseFilterExpression(context); ;
             }
-            else if (current == '(')
-            {
-                // count((user.age>3) and (user.age<10))
-                // in this case ,no field name
-                functionInfo.SubFilter = ParseFilterExpression(context);
-                SkipCloseBracket(context);
-            }
-            else
-            {
-                throw ParseErrors.InvalidText(context);
-            }
-            return functionInfo;
+
         }
 
         private string JoinNames(IEnumerable<string> names)
@@ -382,7 +470,7 @@ namespace YS.Knife.Data
                 //keyword
                 return ParseKeywordValue(context);
             }
-            else if (char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign)
+            else if (IsNumberStartChar(current))
             {
                 //number
                 return ParseNumberValue(context);
@@ -397,6 +485,9 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidValue(context);
             }
         }
+
+        private bool IsNumberStartChar(char current) => char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign;
+
         private string ParseStringValue(ParseContext context)
         {
             // skip start

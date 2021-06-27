@@ -192,9 +192,18 @@ namespace YS.Knife.Data
                 {
                     var function = filter.Function;
                     var functionBody = new StringBuilder();
-                    if (!string.IsNullOrWhiteSpace(function.FieldName))
+                    if (function.Args != null && function.Args.Any())
                     {
-                        functionBody.Append(function.FieldName);
+                        functionBody.Append(string.Join(", ", function.Args.Select(p=>ValueToString(p))));
+                    }
+
+                    if (function.FieldNames != null && function.FieldNames.Any())
+                    {
+                        if (functionBody.Length > 0)
+                        {
+                            functionBody.Append(", ");
+                        }
+                        functionBody.Append(string.Join(", ", function.FieldNames.Where(p => !string.IsNullOrWhiteSpace(p))));
                     }
                     if (function.SubFilter != null)
                     {
@@ -265,7 +274,8 @@ namespace YS.Knife.Data
     {
         public string Name { get; set; }
         public FilterInfo SubFilter { get; set; }
-        public string FieldName { get; set; }
+        public List<string> FieldNames { get; set; }
+        public List<object> Args { get; set; }
     }
 
     public class FilterInfoTypeConverter : StringConverter

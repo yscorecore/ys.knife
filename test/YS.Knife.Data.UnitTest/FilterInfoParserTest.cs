@@ -128,12 +128,19 @@ namespace YS.Knife.Data.UnitTest
         [DataTestMethod]
         [DataRow("a.func()=null", "a.func() == null")]
         [DataRow("a.b.c.d.func()=null", "a.b.c.d.func() == null")]
+        [DataRow("a.func(1)=null", "a.func(1) == null")]
+        [DataRow("a.func(-.1,+.2,3)=null", "a.func(-0.1, 0.2, 3) == null")]
+        [DataRow("a.func(\"abc\",+.2,\"bcd\")=null", "a.func(\"abc\", 0.2, \"bcd\") == null")]
+        [DataRow("a.func(-.1,+.2,b)=null", "a.func(-0.1, 0.2, b) == null")]
+        [DataRow("a.func(-.1,+.2,b,c,d)=null", "a.func(-0.1, 0.2, b, c, d) == null")]
+        [DataRow("a.func(-.1,+.2,b=3)=null", "a.func(-0.1, 0.2, b == 3) == null")]
+        [DataRow("a.func(-.1,+.2,b,c,d,e=3)=null", "a.func(-0.1, 0.2, b, c, d, e == 3) == null")]
         [DataRow("a.func(b)=null", "a.func(b) == null")]
         [DataRow("a.func(b.c.d)=null", "a.func(b.c.d) == null")]
         [DataRow("a.func(b.c.d!=\"e\")=null", "a.func(b.c.d != \"e\") == null")]
         [DataRow("a.func(b.c,d!=\"e\")=null", "a.func(b.c, d != \"e\") == null")]
         [DataRow("a.func((((b.c!=\"e\")or(c.e in [1 ,2]))))=null", "a.func((b.c != \"e\") or (c.e in [1,2])) == null")]
-        [DataRow("a.func(b.c,d.count(e,f=true)>1) = null","a.func(b.c, d.count(e, f == true) > 1) == null")]
+        [DataRow("a.func(b.c,d.count(e,f=true)>1) = null", "a.func(b.c, d.count(e, f == true) > 1) == null")]
         public void ShouldParseFunction(string expression, string expectedExpression)
         {
             TestComplexItem(expression, expectedExpression);
@@ -193,6 +200,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a?.b?.c(e?.b.c)>1")]
         [DataRow("a?.b?.c(e.b?.c)>1")]
         [DataRow("a?.b?.c(e.b?.c?,d=1)>1")]
+        [DataRow("a.func(b=3,e=3)=null")]
         public void ShouldThrowFilterException(string expression)
         {
             Parse(expression);
