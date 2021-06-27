@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -7,6 +8,7 @@ namespace YS.Knife.Data
 {
     [Serializable]
     [TypeConverter(typeof(SelectInfoConverter))]
+    [DebuggerDisplay("{ToString()}")]
     public class SelectInfo
     {
         public SelectInfo()

@@ -96,7 +96,7 @@ namespace YS.Knife.Data
             {
                 if (other.OpType == OpType.AndItems)
                 {
-                    this.Items.AddRange(other.Items);
+                    this.Items.AddRange(other.Items??Enumerable.Empty<FilterInfo>());
                     return this;
                 }
                 else

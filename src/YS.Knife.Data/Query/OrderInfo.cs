@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
@@ -8,6 +9,7 @@ namespace YS.Knife.Data
 {
     [TypeConverter(typeof(OrderInfoConverter))]
     [Serializable]
+    [DebuggerDisplay("{ToString()}")]
     public class OrderInfo
     {
         public OrderInfo()

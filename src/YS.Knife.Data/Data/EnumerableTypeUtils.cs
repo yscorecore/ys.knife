@@ -15,9 +15,15 @@ namespace YS.Knife.Data
         {
             if (enumerableType.IsGenericTypeDefinition) return null;
             return EnumerableLocalCache.GetOrAdd(enumerableType, type =>
-                type.GetInterfaces()
-                    .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault()
+            {
+                if (type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    return type.GetGenericArguments().First();
+                }
+                return type.GetInterfaces()
+                      .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                      .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+                    }
             ) ;
         }
         public static Type GetQueryableItemType(Type enumerableType)

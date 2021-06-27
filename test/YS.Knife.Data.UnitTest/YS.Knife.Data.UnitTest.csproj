@@ -2,6 +2,11 @@
 
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.7" />
+  </ItemGroup>
+
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Data\YS.Knife.Data.csproj" />
   </ItemGroup>
 

@@ -33,8 +33,6 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #endregion
 
-   
-
         #region ShouldMapComplexObject
 
         [TestMethod]
