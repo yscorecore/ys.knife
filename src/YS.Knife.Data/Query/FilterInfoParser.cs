@@ -200,18 +200,21 @@ namespace YS.Knife.Data
                     context.Index++;
 
                 }
-                else if (context.Current() == '?')
+                else if (context.Current() == '?' || context.Current() == '!')
                 {
-                    // a?.b
+                    // a?.b or a!.b
+                    var fieldTail = context.Current();
                     context.Index++;
                     if (context.Current() == '.')
                     {
-                        names.Add(name + '?');
+                        names.Add(name + fieldTail);
                         context.Index++;
                     }
                     else
                     {
-                        throw ParseErrors.InvalidFieldNameText(context);
+                        names.Add(name);
+                        context.Index--;
+                        break;
                     }
                 }
                 else if (context.Current() == '(')
@@ -223,11 +226,11 @@ namespace YS.Knife.Data
                 else
                 {
                     names.Add(name);
-                    return (JoinNames(names), null);
+                    break;
                 }
 
             }
-            throw ParseErrors.InvalidText(context);
+            return (JoinNames(names), null);
 
         }
 
@@ -254,47 +257,6 @@ namespace YS.Knife.Data
         {
             // skip start (
             context.Index++;
-
-
-            //else if (IsValidNameFirstChar(current))
-            //{
-            //    var originStartIndex = context.Index;
-
-            //    var nameChain = ParseNameChain(context);
-            //    SkipWhiteSpace(context);
-            //    if (context.Current() == ')')
-            //    {
-            //        // eg. avg(user.age)
-            //        functionInfo.FieldNames = new List<string> { nameChain};
-            //        context.Index++;
-            //    }
-            //    else if (context.Current() == ',')
-            //    {
-            //        // eg. avg(user.age,user.sex="male")
-            //        functionInfo.FieldNames =new List<string> { nameChain };
-            //        context.Index++;
-            //        functionInfo.SubFilter = ParseFilterExpression(context);
-            //        SkipCloseBracket(context);
-            //    }
-            //    else
-            //    {
-            //        // eg. count(user.sex="male")
-            //        // reset index
-            //        context.Index = originStartIndex;
-            //        functionInfo.SubFilter = ParseFilterExpression(context);
-            //        SkipCloseBracket(context);
-            //    }
-            //}
-            //else if (current == '(')
-            //{
-            //    // count((user.age>3) and (user.age<10))
-            //    // in this case ,no field name
-            //    functionInfo.SubFilter = ParseFilterExpression(context);
-            //    SkipCloseBracket(context);
-            //}
-
-
-
             List<object> args = ParseFunctionArguments(context);
             List<string> fields = ParseFunctionFields(context);
             FilterInfo filterInfo = ParseFunctionFilter(context);

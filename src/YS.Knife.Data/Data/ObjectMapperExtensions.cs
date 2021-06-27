@@ -146,7 +146,7 @@ namespace YS.Knife.Data
             FunctionInfo functionInfo, FilterType filterType,
             object value)
         {
-            var function = FunctionExpression.GetFunctionByName(functionInfo.Name);
+            var function = FilterFunction.GetFunctionByName(functionInfo.Name);
             if (function == null)
             {
                 throw Errors.NotSupportFunction(functionInfo.Name);

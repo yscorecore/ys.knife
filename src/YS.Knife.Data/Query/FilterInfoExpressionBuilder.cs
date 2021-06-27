@@ -15,7 +15,7 @@ namespace YS.Knife.Data
 {
     public class FilterInfoExpressionBuilder
     {
-        public static Regex ValidFieldNameRegex = new Regex("^\\w+(\\??\\.\\w+)*$");
+        public static Regex ValidFieldNameRegex = new Regex("^\\w+[!\\?]?(\\.\\w+[!\\?]?)*$");
 
         public Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
            ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
@@ -56,19 +56,26 @@ namespace YS.Knife.Data
         }
 
         private Expression FromSingleItemFilterInfo(FilterInfo singleItem,
-            Expression p, IFilterMemberInfoProvider memberProvider)
+            ParameterExpression p, IFilterMemberInfoProvider memberProvider)
         {
             if (!IsValidFieldName(singleItem.FieldName))
             {
                 throw Errors.InvalidFieldName(singleItem.FieldName);
             }
 
-            var context = new FilterExpressionContext
+            var context = new FilterExpressionContext();
+            context.Add(new FilerExpressionSegment
             {
-                CurrentExpression = p,
-                ExpressionValueType = memberProvider.CurrentType,
-                CurrentMemberProvider = memberProvider
-            };
+                MemberInfo = new FilterMemberInfo()
+                {
+                    ExpressionValueType = memberProvider.CurrentType,
+                    SelectExpression = Expression.Lambda(p, p),
+                    SubProvider = memberProvider
+                },
+                Expression = p,
+                RequiredKind = FieldRequiredKind.None
+
+            }); ;
             foreach (var field in ParseFilterNames(singleItem.FieldName))
             {
                 var memberInfo = context.CurrentMemberProvider.GetSubMemberInfo(field.MemberName);
@@ -78,14 +85,11 @@ namespace YS.Knife.Data
                     throw Errors.InvalidMemberNameInFieldName(field.MemberName, singleItem.FieldName);
                 }
                 var currentExpression = context.CurrentExpression.Connect(memberInfo.SelectExpression);
-                context.CurrentExpression = currentExpression;
-                context.ExpressionValueType = memberInfo.ExpressionValueType;
-                context.CurrentMemberProvider = memberInfo.SubProvider;
                 context.Add(new FilerExpressionSegment
                 {
                     MemberInfo = memberInfo,
                     Expression = currentExpression,
-                    Optional = field.Optional
+                    RequiredKind = field.RequiredKind
                 });
             }
             if (singleItem.Function != null)
@@ -95,34 +99,56 @@ namespace YS.Knife.Data
                 {
                     throw Errors.OnlyCanUseFunctionInCollectionType(singleItem.FieldName);
                 }
-                var function = FunctionExpression.GetFunctionByName(singleItem.Function.Name);
+                var function = FilterFunction.GetFunctionByName(singleItem.Function.Name);
                 if (function == null)
                 {
                     throw Errors.NotSupportFunction(singleItem.Function.Name, singleItem.FieldName);
                 }
                 //TODO apply function
+                var functionResult = function.Execute(new FunctionContext
+                {
+                     FromType = context.ExpressionValueType
+                });
+
+                var currentExpression = context.CurrentExpression.Connect(functionResult.LambdaExpression);
+                context.Add(new FilerExpressionSegment
+                {
+                    MemberInfo = new FilterMemberInfo()
+                    {
+                        SelectExpression = functionResult.LambdaExpression,
+                        ExpressionValueType = functionResult.LambdaValueType,
+                        SubProvider = IFilterMemberInfoProvider.GetObjectProvider(functionResult.LambdaValueType),
+                    },
+                    Expression = currentExpression,
+                    RequiredKind = FieldRequiredKind.None
+                });
+
             }
 
             return CompareFilterWithValue(context, singleItem.FilterType, singleItem.Value);
         }
-        private IEnumerable<(string MemberName, bool Optional)> ParseFilterNames(string filterFieldName)
+        private IEnumerable<(string MemberName, FieldRequiredKind RequiredKind)> ParseFilterNames(string filterFieldName)
         {
             return filterFieldName.Split('.')
-                 .Select(p => (p.TrimEnd('?'), p.EndsWith('?')));
+                 .Select(p =>
+                 {
+                     var requiredKind = p.EndsWith('?') ? FieldRequiredKind.Optional : (p.EndsWith('!') ? FieldRequiredKind.Must : FieldRequiredKind.None);
+                     return (p.Trim(new char[] { '!', '?' }), requiredKind);
+                 });
         }
         private Expression CompareFilterWithValue(FilterExpressionContext context, FilterType filterType,
            object value)
         {
             // a>3         a > 3
             // a?b > 3     a == null || a.b > 3
-            // a.b > 3     a != null && a.b >3   
+            // a!.b > 3     a != null && a.b >3   
             // a?.b?.c >3  a == null || (a.b == null || a.b.c >3) 
-            // a.b?.c > 3  a != null && (a.b == null or a.b.c >3)
-            // a.b.c  >3   a != null && (a.b != null && a.b.c >3)
-            // a?.b.c > 3  a == null || (a.b != null && a.b.c >3)
+            // a!.b?.c > 3  a != null && (a.b == null or a.b.c >3)
+            // a!.b!.c  >3   a != null && (a.b != null && a.b.c >3)
+            // a?.b!.c > 3  a == null || (a.b != null && a.b.c >3)
 
-            
-            var compareExpression = Expression.Equal(context.CurrentExpression, Expression.Constant(Convert.ChangeType(value,context.ExpressionValueType)));
+
+            var compareExpression = Expression.Equal(context.CurrentExpression, Expression.Constant(Convert.ChangeType(value, context.ExpressionValueType)));
 
             return CombinNullCheckExpression(context, 0, compareExpression);
         }
@@ -133,7 +159,7 @@ namespace YS.Knife.Data
                 return valueCompareExpression;
             }
             var segment = segments[index];
-            if (segment.Optional)
+            if (segment.RequiredKind == FieldRequiredKind.Optional)
             {// or
                 if (IsValueType(segment.MemberInfo.ExpressionValueType))
                 {
@@ -142,11 +168,11 @@ namespace YS.Knife.Data
                 else
                 {
                     return Expression.OrElse(
-                           Expression.Equal(segment.Expression,Expression.Constant(null) )
+                           Expression.Equal(segment.Expression, Expression.Constant(null))
                         , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
                 }
             }
-            else
+            else if (segment.RequiredKind == FieldRequiredKind.Must)
             { // and
                 if (IsValueType(segment.MemberInfo.ExpressionValueType))
                 {
@@ -159,23 +185,29 @@ namespace YS.Knife.Data
                         , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
                 }
             }
+            else
+            {
+                return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
+            }
             bool IsValueType(Type type) => type.IsValueType && Nullable.GetUnderlyingType(type) != null;
         }
 
         class FilterExpressionContext : List<FilerExpressionSegment>
         {
 
-            public Type ExpressionValueType { get; set; }
+            public FilerExpressionSegment Current { get => this.Last(); }
 
-            public Expression CurrentExpression { get; set; }
+            public Type ExpressionValueType { get => Current.MemberInfo.ExpressionValueType; }
 
-            public IFilterMemberInfoProvider CurrentMemberProvider { get; set; }
+            public Expression CurrentExpression { get => Current.Expression; }
+
+            public IFilterMemberInfoProvider CurrentMemberProvider { get => Current.MemberInfo.SubProvider; }
         }
         struct FilerExpressionSegment
         {
             public IFilterMemberInfo MemberInfo { get; set; }
             public Expression Expression { get; set; }
-            public bool Optional { get; set; }
+            public FieldRequiredKind RequiredKind { get; set; }
         }
 
         interface IFilterMemberInfo
@@ -188,6 +220,14 @@ namespace YS.Knife.Data
             public IFilterMemberInfoProvider SubProvider { get; }
 
 
+        }
+        class FilterMemberInfo : IFilterMemberInfo
+        {
+            public Type ExpressionValueType { get; set; }
+
+            public LambdaExpression SelectExpression { get; set; }
+
+            public IFilterMemberInfoProvider SubProvider { get; set; }
         }
         interface IFilterMemberInfoProvider
         {
@@ -208,11 +248,6 @@ namespace YS.Knife.Data
             public static IFilterMemberInfoProvider GetMapperProvider(IObjectMapper objectMapper)
             {
                 return new ObjectMapperProvider(objectMapper);
-                //return ObjectMemberProviderCache.GetOrAdd(type, (ty) =>
-                //{
-                //    var objectProviderType = typeof(ObjectMemberProvider<>).MakeGenericType(ty);
-                //    return Activator.CreateInstance(objectProviderType) as IFilterMemberInfoProvider;
-                //});
             }
         }
 
@@ -333,7 +368,12 @@ namespace YS.Knife.Data
                 }
             }
         }
-
+        enum FieldRequiredKind
+        {
+            None,
+            Must,
+            Optional,
+        }
 
 
         class Errors
@@ -353,11 +393,11 @@ namespace YS.Knife.Data
             }
             public static Exception NotSupportFunction(string functionName, string fullField)
             {
-                return new Exception($"Not support function '{functionName}' in filter field {fullField}."); ;
+                return new FieldInfo2ExpressionException($"Not support function '{functionName}' in filter field {fullField}."); ;
             }
-            public static Exception OnlyCanUseFunctionInCollectionType(string fullField)
+            public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string fullField)
             {
-                return new Exception("Only can use function in collection type");
+                return new FieldInfo2ExpressionException("Only can use function in collection type");
             }
         }
     }

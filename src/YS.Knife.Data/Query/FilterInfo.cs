@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace YS.Knife.Data
 {
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
+    [DebuggerDisplay("{ToString()}")]
     public class FilterInfo
     {
         internal const string Operator_And = "and";

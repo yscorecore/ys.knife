@@ -166,6 +166,13 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a?.b?.c(e.b.c,d=1)>1", "a?.b?.c(e.b.c, d == 1) > 1")]
         [DataRow("a?.b?.c(e.b.c,d?.e=1)>1", "a?.b?.c(e.b.c, d?.e == 1) > 1")]
         [DataRow("a?.b?.c(e?.b?.c=1)>1", "a?.b?.c(e?.b?.c == 1) > 1")]
+
+        [DataRow("a!.b!=1", "a!.b != 1")]
+        [DataRow("a!.b!=1", "a!.b != 1")]
+        [DataRow("a!.b!.c!=1", "a!.b!.c != 1")]
+        [DataRow("a!.b!.c(e.b.c,d!=1)!=1", "a!.b!.c(e.b.c, d != 1) != 1")]
+        [DataRow("a!.b!.c(e.b.c,d!.e!=1)!=1", "a!.b!.c(e.b.c, d!.e != 1) != 1")]
+        [DataRow("a!.b!.c(e!.b!.c!=1)!=1", "a!.b!.c(e!.b!.c != 1) != 1")]
         public void ShouldParseOptionalFieldName(string expression, string expectedExpression)
         {
             TestComplexItem(expression, expectedExpression);
@@ -197,6 +204,7 @@ namespace YS.Knife.Data.UnitTest
         [DataRow("a=\"\\uklkl\"")]
         [DataRow("a=-")]
         [DataRow("a?.b?.c?()>1")]
+        [DataRow("a?.b?.c?>1")]
         [DataRow("a?.b?.c(e?.b.c)>1")]
         [DataRow("a?.b?.c(e.b?.c)>1")]
         [DataRow("a?.b?.c(e.b?.c?,d=1)>1")]

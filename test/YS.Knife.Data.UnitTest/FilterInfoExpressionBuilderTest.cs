@@ -108,7 +108,7 @@ namespace YS.Knife.Data.UnitTest
             [DataRow("", "001,002,003,004,005,006")]
             [DataRow("tName=\"li si\"", "002")]
             [DataRow("tName=null", "003")]
-            [DataRow("tAddress.city=null", "004")]
+            [DataRow("tAddress!.city=null", "004")]
             public void ShouldFilterSingleItem(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
@@ -117,19 +117,19 @@ namespace YS.Knife.Data.UnitTest
 
             [DataTestMethod]
             [DataRow("tAddress=null", "005,006")]
-            [DataRow("tAddress.city=null", "004")]
+            [DataRow("tAddress!.city=null", "004")]
             [DataRow("tAddress?.city=null", "004,005,006")]
-            [DataRow("tAddress?.city.Length=5", "003,005,006")]
+            [DataRow("tAddress?.city!.Length=5", "003,005,006")]
             [DataRow("tAddress?.city?.Length=5", "003,004,005,006")]
-            [DataRow("tAddress.city.Length=5", "003")]
-            [DataRow("tAddress.city?.Length=5", "003,004")]
+            [DataRow("tAddress!.city!.Length=5", "003")]
+            [DataRow("tAddress!.city?.Length=5", "003,004")]
             public void ShouldFilterWithOptionalField(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
             [DataTestMethod]
 
-            //[DataRow("TName.Count()=9", "001")]
+            [DataRow("TName!.Count()=5", "002")]
 
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
@@ -165,9 +165,7 @@ namespace YS.Knife.Data.UnitTest
         {
             
             var exp = Students.AsQueryable()
-                     .Where(p => p.Scores != null
-                     &&
-                     p.Scores.Where(p => p.ClassName != null).Average(p => (int?)p.ClassName.Length) > 0);
+                     .Where(p => p.Name.LongCount()==5);
 
         }
         public class Address
