@@ -9,10 +9,7 @@ namespace YS.Knife.Data
             return new Exception("Miss field name in filter info.");
         }
 
-        public static Exception MissingOrderByFieldName()
-        {
-            return new Exception("Miss order by field name");
-        }
+    
 
         public static Exception InvalidFieldName(string fieldName)
         {

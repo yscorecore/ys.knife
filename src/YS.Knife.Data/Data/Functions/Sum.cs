@@ -1,7 +1,17 @@
-﻿namespace YS.Knife.Data.Functions
+﻿using System;
+
+namespace YS.Knife.Data.Functions
 {
-    public class Sum:FunctionExpression
+    class Sum : CollectionFunction
     {
-        
+        protected override FunctionResult ExecuteEnumable(FunctionContext functionContext, Type itemType)
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override FunctionResult ExecuteQueryable(FunctionContext functionContext, Type itemType)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

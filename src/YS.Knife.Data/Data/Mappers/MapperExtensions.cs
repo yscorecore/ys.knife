@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
+using YS.Knife.Data;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife

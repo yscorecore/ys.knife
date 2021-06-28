@@ -15,6 +15,8 @@ namespace YS.Knife.Data.Mappers
     }
     interface IObjectMapper
     {
+        Type SourceType { get; }
+        Type TargetType { get; }
         IMapperExpression GetFieldExpression(string targetField,
             StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase);
 

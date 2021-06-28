@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Collections.Concurrent;
 
-namespace YS.Knife.Data.Mappers
+namespace YS.Knife.Data
 {
     static class EnumerableTypeUtils
     {
@@ -15,9 +15,15 @@ namespace YS.Knife.Data.Mappers
         {
             if (enumerableType.IsGenericTypeDefinition) return null;
             return EnumerableLocalCache.GetOrAdd(enumerableType, type =>
-                type.GetInterfaces()
-                    .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault()
+            {
+                if (type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    return type.GetGenericArguments().First();
+                }
+                return type.GetInterfaces()
+                      .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                      .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+                    }
             ) ;
         }
         public static Type GetQueryableItemType(Type enumerableType)

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <RootNamespace>YS.Knife</RootNamespace>
+        <RootNamespace>YS.Knife.Data</RootNamespace>
     </PropertyGroup>
 
 
@@ -11,18 +11,6 @@
     </ItemGroup>
 
 
-
-    <ItemGroup>
-      <Compile Remove="Mapper\**" />
-      <EmbeddedResource Remove="Mapper\**" />
-      <None Remove="Mapper\**" />
-    </ItemGroup>
-
-
-
-    <ItemGroup>
-      <None Remove="Data\Mappers\ObjectMapper.cs~RF6923284.TMP" />
-    </ItemGroup>
 
 
 

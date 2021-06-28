@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -28,6 +29,11 @@ namespace YS.Knife.Data
         public static T DeSerialize<T>(string content)
         {
             return JsonSerializer.Deserialize<T>(content, JsonOptionsWithIndented);
+        }
+        public static T DeSerialize<T>(byte[] bytes)
+        {
+            _ = bytes ?? throw new ArgumentNullException(nameof(bytes));
+            return JsonSerializer.Deserialize<T>(bytes, JsonOptionsWithIndented);
         }
         public static string ToJsonString(this object obj, bool withIndented = false)
         {

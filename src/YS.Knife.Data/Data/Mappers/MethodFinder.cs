@@ -28,15 +28,8 @@ namespace YS.Knife.Data.Mappers
         static readonly MethodInfo EnumerableToArrayMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
         static readonly MethodInfo EnumerableToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList));
 
-         static readonly MethodInfo QueryableCountMethod1 = typeof(Queryable).GetMethods()
-            .Single(p => p.Name == nameof(Queryable.Count) && p.GetParameters().Length == 1);
-         static readonly MethodInfo QueryableCountMethod2 = typeof(Queryable).GetMethods()
-             .Single(p => p.Name == nameof(Queryable.Count) && p.GetParameters().Length == 2);
-         
-         static readonly MethodInfo EnumerableCountMethod1 = typeof(Enumerable).GetMethods()
-             .Single(p => p.Name == nameof(Enumerable.Count) && p.GetParameters().Length == 1);
-         static readonly MethodInfo EnumerableCountMethod2 = typeof(Enumerable).GetMethods()
-             .Single(p => p.Name == nameof(Enumerable.Count) && p.GetParameters().Length == 2);
+        
+
         public static MethodInfo GetEnumerableSelect<TSource, TResult>()
         {
             return EnumerableSelectMethod.MakeGenericMethod(typeof(TSource), typeof(TResult));
@@ -64,6 +57,8 @@ namespace YS.Knife.Data.Mappers
             return EnumerableToListMethod.MakeGenericMethod(typeof(TResult));
         }
 
-       
+      
+
+
     }
 }

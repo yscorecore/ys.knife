@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -12,6 +13,7 @@ namespace YS.Knife.Data
 {
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
+    [DebuggerDisplay("{ToString()}")]
     public class FilterInfo
     {
         internal const string Operator_And = "and";
@@ -94,7 +96,7 @@ namespace YS.Knife.Data
             {
                 if (other.OpType == OpType.AndItems)
                 {
-                    this.Items.AddRange(other.Items);
+                    this.Items.AddRange(other.Items??Enumerable.Empty<FilterInfo>());
                     return this;
                 }
                 else
@@ -192,9 +194,18 @@ namespace YS.Knife.Data
                 {
                     var function = filter.Function;
                     var functionBody = new StringBuilder();
-                    if (!string.IsNullOrWhiteSpace(function.FieldName))
+                    if (function.Args != null && function.Args.Any())
                     {
-                        functionBody.Append(function.FieldName);
+                        functionBody.Append(string.Join(", ", function.Args.Select(p=>ValueToString(p))));
+                    }
+
+                    if (function.FieldNames != null && function.FieldNames.Any())
+                    {
+                        if (functionBody.Length > 0)
+                        {
+                            functionBody.Append(", ");
+                        }
+                        functionBody.Append(string.Join(", ", function.FieldNames.Where(p => !string.IsNullOrWhiteSpace(p))));
                     }
                     if (function.SubFilter != null)
                     {
@@ -252,7 +263,12 @@ namespace YS.Knife.Data
             }
         }
 
-
+        public static FilterInfo Parse(string filterExpression) => Parse(filterExpression, CultureInfo.CurrentCulture);
+        
+        public static FilterInfo Parse(string filterExpression, CultureInfo cultureInfo)
+        {
+            return new FilterInfoParser(cultureInfo).Parse(filterExpression);
+        }
     }
 
 
@@ -260,41 +276,27 @@ namespace YS.Knife.Data
     {
         public string Name { get; set; }
         public FilterInfo SubFilter { get; set; }
-        public string FieldName { get; set; }
+        public List<string> FieldNames { get; set; }
+        public List<object> Args { get; set; }
     }
 
-    public class FilterInfoTypeConverter : TypeConverter
+    public class FilterInfoTypeConverter : StringConverter
     {
-
-        public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
-        {
-            return sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-        }
-
-        public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-        {
-            return destinationType == typeof(string) || base.CanConvertTo(context, destinationType);
-        }
-
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            if (value is string base64String)
+            if (value is string base64StringOrFilterExpression)
             {
-                var bytes = Convert.FromBase64String(base64String);
-                ReadOnlySpan<byte> byteSpan = new ReadOnlySpan<byte>(bytes);
-                return JsonSerializer.Deserialize(byteSpan, typeof(FilterInfo), Json.JsonOptions);
+                if (Base64.IsBase64String(base64StringOrFilterExpression))
+                {
+                    var bytes = Convert.FromBase64String(base64StringOrFilterExpression);
+                    return Json.DeSerialize<FilterInfo>(bytes);
+                }
+                else 
+                {
+                    return FilterInfo.Parse(base64StringOrFilterExpression, culture);
+                }
             }
             return base.ConvertFrom(context, culture, value);
-        }
-
-        public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
-        {
-            if (destinationType == typeof(string) && value is FilterInfo)
-            {
-                var bytes = JsonSerializer.SerializeToUtf8Bytes(value, Json.JsonOptions);
-                return Convert.ToBase64String(bytes);
-            }
-            return base.ConvertTo(context, culture, value, destinationType);
         }
 
     }

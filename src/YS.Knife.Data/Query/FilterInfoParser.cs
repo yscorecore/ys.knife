@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace YS.Knife.Data
 {
-    public class FilterInfoParser
+    internal class FilterInfoParser
     {
         static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
         static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
@@ -20,7 +20,7 @@ namespace YS.Knife.Data
             .Concat(new[] {
                 Tuple.Create("=",FilterType.Equals),
                 Tuple.Create("<>",FilterType.NotEquals)
-            
+
             }).ToDictionary(p => p.Item1, p => p.Item2);
         internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
         {
@@ -39,7 +39,6 @@ namespace YS.Knife.Data
         private readonly char _numberPositiveSign; // 正号
         private readonly char _numberGroupSeparator;// 分组符号
         private readonly CultureInfo _currentCulture;
-        public FilterInfoParser() : this(CultureInfo.CurrentCulture) { }
         public FilterInfoParser(CultureInfo cultureInfo)
         {
             this._currentCulture = cultureInfo ?? throw new ArgumentNullException(nameof(cultureInfo));
@@ -193,12 +192,30 @@ namespace YS.Knife.Data
             List<string> names = new List<string>();
             while (context.NotEnd())
             {
-                var name = ParseFieldName(context);
+                var name = ParseName(context);
                 if (context.Current() == '.')
                 {
+                    // a.b
                     names.Add(name);
                     context.Index++;
 
+                }
+                else if (context.Current() == '?' || context.Current() == '!')
+                {
+                    // a?.b or a!.b
+                    var fieldTail = context.Current();
+                    context.Index++;
+                    if (context.Current() == '.')
+                    {
+                        names.Add(name + fieldTail);
+                        context.Index++;
+                    }
+                    else
+                    {
+                        names.Add(name);
+                        context.Index--;
+                        break;
+                    }
                 }
                 else if (context.Current() == '(')
                 {
@@ -209,24 +226,25 @@ namespace YS.Knife.Data
                 else
                 {
                     names.Add(name);
-                    return (JoinNames(names), null);
+                    break;
                 }
 
             }
-            throw ParseErrors.InvalidText(context);
+            return (JoinNames(names), null);
 
         }
 
         private string ParseNameChain(ParseContext context)
         {
+            // name chain not contains '?', only contains '.'
+            // eg.  "a.b" is valid ,"a?.b" is not valid 
             List<string> names = new List<string>();
             while (context.NotEnd())
             {
-                names.Add(ParseFieldName(context));
+                names.Add(ParseName(context));
                 if (context.Current() == '.')
                 {
                     context.Index++;
-
                 }
                 else
                 {
@@ -237,64 +255,111 @@ namespace YS.Knife.Data
         }
         private FunctionInfo ParseFunctionBody(ParseContext context)
         {
-            FunctionInfo functionInfo = new FunctionInfo();
             // skip start (
             context.Index++;
-            SkipWhiteSpace(context);
-            var current = context.Current();
-            if (current == ')')
-            {
-                // eg. count();
-                context.Index++;
-            }
-            else if (IsValidNameFirstChar(current))
-            {
-                var originStartIndex = context.Index;
+            List<object> args = ParseFunctionArguments(context);
+            List<string> fields = ParseFunctionFields(context);
+            FilterInfo filterInfo = ParseFunctionFilter(context);
 
-                var nameChain = ParseNameChain(context);
+            SkipCloseBracket(context);
+            return new FunctionInfo
+            {
+                Args = args,
+                FieldNames = fields,
+                SubFilter = filterInfo,
+            };
+
+            List<object> ParseFunctionArguments(ParseContext context)
+            {
+                List<object> datas = new List<object>();
+                while (context.NotEnd())
+                {
+                    SkipWhiteSpace(context);
+                    if (IsNumberStartChar(context.Current()))
+                    {
+                        //number
+                        datas.Add(ParseNumberValue(context));
+                    }
+                    else if (context.Current() == '\"')
+                    {
+                        //string
+                        datas.Add(ParseStringValue(context));
+                    }
+                    SkipWhiteSpace(context);
+
+                    if (context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+                return datas.Any() ? datas : null;
+            }
+            List<string> ParseFunctionFields(ParseContext context)
+            {
+                List<string> fields = new List<string>();
+
+                while (context.NotEnd())
+                {
+                    SkipWhiteSpace(context);
+                    if (context.Current() == ')')
+                    {
+                        break;
+                    }
+
+                    else if (IsValidNameFirstChar(context.Current()))
+                    {
+                        var originStartIndex = context.Index;
+                        var nameChain = ParseNameChain(context);
+                        SkipWhiteSpace(context);
+                        if (context.Current() == ',')
+                        {
+                            fields.Add(nameChain);
+                            context.Index++;
+                        }
+                        else if (context.Current() == ')')
+                        {
+                            fields.Add(nameChain);
+                            break;
+                        }
+                        else
+                        {
+                            context.Index = originStartIndex;
+                            break;
+                        }
+
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+
+
+                return fields.Any() ? fields : null;
+            }
+            FilterInfo ParseFunctionFilter(ParseContext context)
+            {
                 SkipWhiteSpace(context);
                 if (context.Current() == ')')
                 {
-                    // eg. avg(user.age)
-                    functionInfo.FieldName = nameChain;
-                    context.Index++;
+                    return null;
                 }
-                else if (context.Current() == ',')
-                {
-                    // eg. avg(user.age,user.sex="male")
-                    functionInfo.FieldName = nameChain;
-                    context.Index++;
-                    functionInfo.SubFilter = ParseFilterExpression(context);
-                    SkipCloseBracket(context);
-                }
-                else
-                {
-                    // eg. count(user.sex="male")
-                    // reset index
-                    context.Index = originStartIndex;
-                    functionInfo.SubFilter = ParseFilterExpression(context);
-                    SkipCloseBracket(context);
-                }
+                return ParseFilterExpression(context); ;
             }
-            else if (current == '(')
-            {
-                // count((user.age>3) and (user.age<10))
-                // in this case ,no field name
-                functionInfo.SubFilter = ParseFilterExpression(context);
-                SkipCloseBracket(context);
-            }
-            else
-            {
-                throw ParseErrors.InvalidText(context);
-            }
-            return functionInfo;
+
         }
 
         private string JoinNames(IEnumerable<string> names)
         {
             return string.Join('.', names);
         }
-        private string ParseFieldName(ParseContext context)
+        private string ParseName(ParseContext context)
         {
             SkipWhiteSpace(context);
             int startIndex = context.Index;
@@ -367,7 +432,7 @@ namespace YS.Knife.Data
                 //keyword
                 return ParseKeywordValue(context);
             }
-            else if (char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign)
+            else if (IsNumberStartChar(current))
             {
                 //number
                 return ParseNumberValue(context);
@@ -382,6 +447,9 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidValue(context);
             }
         }
+
+        private bool IsNumberStartChar(char current) => char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign;
+
         private string ParseStringValue(ParseContext context)
         {
             // skip start
@@ -537,44 +605,44 @@ namespace YS.Knife.Data
         {
             public static Exception InvalidText(ParseContext context)
             {
-                throw new Exception($"Invalid text near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid text near index {context.Index}.");
             }
             public static Exception InvalidFieldNameText(ParseContext context)
             {
-                throw new Exception($"Invalid field name near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid field name near index {context.Index}.");
             }
             public static Exception InvalidFilterType(ParseContext context)
             {
-                throw new Exception($"Invalid filter type near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid filter type near index {context.Index}.");
             }
             public static Exception InvalidFilterType(ParseContext context, string code)
             {
-                throw new Exception($"Invalid filter type '{code}' near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid filter type '{code}' near index {context.Index}.");
             }
             public static Exception InvalidValue(ParseContext context)
             {
-                throw new Exception($"Invalid value near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid value near index {context.Index}.");
             }
             public static Exception InvalidKeywordValue(ParseContext context, string keyword)
             {
-                throw new Exception($"Invalid keyword '{keyword}' near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid keyword '{keyword}' near index {context.Index}.");
             }
             public static Exception InvalidStringValue(ParseContext context, string str, Exception inner)
             {
-                throw new Exception($"Invalid string '{str}' near index {context.Index}.", inner);
+                throw new FilterInfoParseException($"Invalid string '{str}' near index {context.Index}.", inner);
             }
             public static Exception InvalidNumberValue(ParseContext context, string str, Exception inner)
             {
-                throw new Exception($"Invalid number '{str}' near index {context.Index}.", inner);
+                throw new FilterInfoParseException($"Invalid number '{str}' near index {context.Index}.", inner);
             }
 
             public static Exception MissOpenBracket(ParseContext context)
             {
-                throw new Exception($"Invalid expression, missing open bracket near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid expression, missing open bracket near index {context.Index}.");
             }
             public static Exception MissCloseBracket(ParseContext context)
             {
-                throw new Exception($"Invalid expression, missing close bracket near index {context.Index}.");
+                throw new FilterInfoParseException($"Invalid expression, missing close bracket near index {context.Index}.");
             }
         }
     }
