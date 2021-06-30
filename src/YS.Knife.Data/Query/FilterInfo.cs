@@ -335,6 +335,57 @@ namespace YS.Knife.Data
         public FilterType FilterType { get; set; }
         public OpType OpType { get; set; }
         public List<FilterInfo2> Items { get; set; }
+        
+        public FilterInfo2 AndAlso(FilterInfo2 other)
+        {
+            if (other == null)
+            {
+                return this;
+            }
+
+            if (this.OpType == OpType.AndItems)
+            {
+                if (other.OpType == OpType.AndItems)
+                {
+                    this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo2>());
+                    return this;
+                }
+                else
+                {
+                    this.Items.Add(other);
+                    return this;
+                }
+            }
+            else
+            {
+                return new FilterInfo2() {OpType = OpType.AndItems, Items = new List<FilterInfo2>() {this, other}};
+            }
+        }
+        public FilterInfo2 OrElse(FilterInfo2 other)
+        {
+            if (other == null)
+            {
+                return this;
+            }
+
+            if (this.OpType == OpType.OrItems)
+            {
+                if (other.OpType == OpType.OrItems)
+                {
+                    this.Items.AddRange(other.Items);
+                }
+                else
+                {
+                    this.Items.Add(other);
+                }
+
+                return this;
+            }
+            else
+            {
+                return new FilterInfo2() {OpType = OpType.OrItems, Items = new List<FilterInfo2>() {this, other}};
+            }
+        }
         public override string ToString()
         {
             switch (OpType)

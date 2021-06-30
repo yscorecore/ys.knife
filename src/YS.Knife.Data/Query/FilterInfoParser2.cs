@@ -50,7 +50,7 @@ namespace YS.Knife.Data
             // eg. [1,234], so use '_' instead of default number group separator
             this._numberGroupSeparator = '_';
         }
-        public FilterInfo Parse(string text)
+        public FilterInfo2 Parse(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) { return null; }
             var context = new ParseContext(text);
@@ -62,7 +62,7 @@ namespace YS.Knife.Data
             }
             return filterInfo;
         }
-        private FilterInfo ParseFilterExpression(ParseContext context)
+        private FilterInfo2 ParseFilterExpression(ParseContext context)
         {
             SkipWhiteSpace(context);
             if (context.Current() == '(')
@@ -74,9 +74,9 @@ namespace YS.Knife.Data
                 return ParseSingleItemOne(context);
             }
         }
-        private FilterInfo ParseCombinFilter(ParseContext context)
+        private FilterInfo2 ParseCombinFilter(ParseContext context)
         {
-            List<FilterInfo> orItems = new List<FilterInfo>();
+            List<FilterInfo2> orItems = new List<FilterInfo2>();
             OpType lastOpType = OpType.OrItems;
             while (context.NotEnd())
             {
@@ -116,7 +116,7 @@ namespace YS.Knife.Data
                     lastOpType = opType.Value;
                 }
             }
-            return orItems.Count > 1 ? new FilterInfo(orItems, OpType.OrItems) : orItems.FirstOrDefault();
+            return orItems.Count > 1 ? new FilterInfo2{ OpType =  OpType.OrItems, Items = orItems} : orItems.FirstOrDefault();
         }
         private OpType? TryParseOpType(ParseContext context)
         {
@@ -141,7 +141,7 @@ namespace YS.Knife.Data
             }
         }
 
-        private FilterInfo ParseSingleItemOne(ParseContext context)
+        private FilterInfo2 ParseSingleItemOne(ParseContext context)
         {
             var (field, func) = ParseFieldPath(context);
 
@@ -149,13 +149,13 @@ namespace YS.Knife.Data
 
             var value = ParseValue(context);
 
-            return new FilterInfo()
+            return new FilterInfo2()
             {
                 OpType = OpType.SingleItem,
-                FieldName = field,
+                //FieldName = field,
                 FilterType = type,
-                Function = func,
-                Value = value
+                //Function = func,
+                //Value = value
             };
 
         }
@@ -186,6 +186,12 @@ namespace YS.Knife.Data
                 context.Index++;
             }
         }
+
+        private ValueInfo ParseValueInfo(ParseContext context)
+        {
+            return null;
+        }
+
         private (string Field, FunctionInfo Function) ParseFieldPath(ParseContext context)
         {
             SkipWhiteSpace(context);
@@ -343,7 +349,7 @@ namespace YS.Knife.Data
 
                 return fields.Any() ? fields : null;
             }
-            FilterInfo ParseFunctionFilter(ParseContext context)
+            FilterInfo2 ParseFunctionFilter(ParseContext context)
             {
                 SkipWhiteSpace(context);
                 if (context.Current() == ')')
