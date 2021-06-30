@@ -17,4 +17,10 @@
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
     </ItemGroup>
+
+
+
+    <ItemGroup>
+      <Folder Include="Data\Mapper" />
+    </ItemGroup>
 </Project>
