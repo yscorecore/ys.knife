@@ -17,6 +17,8 @@ namespace YS.Knife.Data
     {
         public static Regex ValidFieldNameRegex = new Regex("^\\w+[!\\?]?(\\.\\w+[!\\?]?)*$");
 
+        public static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
+
         public Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
            ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
            where TSource : class
@@ -34,6 +36,22 @@ namespace YS.Knife.Data
             var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
             return Expression.Lambda<Func<TSource, bool>>(exp, p);
         }
+        internal LambdaExpression CreateSourceFilterExpression(
+           IObjectMapper mapper, FilterInfo targetFilter)
+        {
+            _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            var p = Expression.Parameter(mapper.SourceType, "p");
+
+            if (targetFilter == null)
+            {
+                return Expression.Lambda(typeof(Func<,>).MakeGenericType(mapper.SourceType, typeof(bool)), Expression.Constant(true), p);
+            }
+           
+
+            var memberProvider = IFilterMemberInfoProvider.GetMapperProvider(mapper);
+            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
+            return Expression.Lambda(typeof(Func<,>).MakeGenericType(mapper.SourceType, typeof(bool)), exp, p);
+        }
 
         public Expression<Func<TTarget, bool>> CreateFilterExpression<TTarget>(
             FilterInfo targetFilter)
@@ -49,7 +67,20 @@ namespace YS.Knife.Data
             return Expression.Lambda<Func<TTarget, bool>>(exp, p);
 
         }
+        public LambdaExpression CreateFilterExpression(Type targetType,
+            FilterInfo targetFilter)
+        {
+            var p = Expression.Parameter(targetType, "p");
 
+            if (targetFilter == null)
+            {
+                return Expression.Lambda(typeof(Func<,>).MakeGenericType(targetType, typeof(bool)), Expression.Constant(true), p);
+            }
+            var memberProvider = IFilterMemberInfoProvider.GetObjectProvider(targetType);
+            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
+            return Expression.Lambda(typeof(Func<,>).MakeGenericType(targetType, typeof(bool)), exp, p);
+
+        }
         private bool IsValidFieldName(string fieldName)
         {
             return !string.IsNullOrEmpty(fieldName) && ValidFieldNameRegex.IsMatch(fieldName);
@@ -107,7 +138,10 @@ namespace YS.Knife.Data
                 //TODO apply function
                 var functionResult = function.Execute(new FunctionContext
                 {
-                     FromType = context.ExpressionValueType
+                    FromType = context.ExpressionValueType,
+                    Args = singleItem.Function.Args,
+                    FieldNames = singleItem.Function.FieldNames,
+                    SubFilter = singleItem.Function.SubFilter
                 });
 
                 var currentExpression = context.CurrentExpression.Connect(functionResult.LambdaExpression);

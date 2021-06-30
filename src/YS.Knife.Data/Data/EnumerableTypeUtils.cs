@@ -8,7 +8,7 @@ namespace YS.Knife.Data
 {
     static class EnumerableTypeUtils
     {
-        private static readonly ConcurrentDictionary<Type,Type> EnumerableLocalCache = new ConcurrentDictionary<Type, Type>();
+        private static readonly ConcurrentDictionary<Type, Type> EnumerableLocalCache = new ConcurrentDictionary<Type, Type>();
 
         private static readonly ConcurrentDictionary<Type, Type> QueryableLocalCache = new ConcurrentDictionary<Type, Type>();
         public static Type GetEnumerableItemType(Type enumerableType)
@@ -23,16 +23,22 @@ namespace YS.Knife.Data
                 return type.GetInterfaces()
                       .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                       .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
-                    }
-            ) ;
+            }
+            );
         }
         public static Type GetQueryableItemType(Type enumerableType)
         {
             if (enumerableType.IsGenericTypeDefinition) return null;
             return QueryableLocalCache.GetOrAdd(enumerableType, type =>
-                type.GetInterfaces()
+            {
+                if (type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                {
+                    return type.GetGenericArguments().First();
+                }
+                return type.GetInterfaces()
                     .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IQueryable<>))
-                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault()
+                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+            }
             );
         }
 

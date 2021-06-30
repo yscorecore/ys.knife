@@ -242,12 +242,27 @@ namespace YS.Knife.Data.UnitTest
 
             [DataTestMethod]
 
-            [DataRow("TScores!.Count()=6", "002")]
-
+            //[DataRow("TScores?.Count()=6", "001,002,003")]
+            [DataRow("TScores?.Count(TScore=60)=6", "001,002,003")]
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
+            [TestMethod]
+            public void TestSelect()
+            {
+                var query = dataContext1.Students
+                    .Select(p => new StudentDto
+                    {
+                        TAge = p.Age,
+                        TScores = p.Scores.AsQueryable().Where(t => t.Score > 80).Skip(2).Select(t => new ScoreDto { TClassName = t.ClassName, TScore = t.Score }).ToList()
+                    });
+                var data = query.ToList();
+                Console.WriteLine(query.ToQueryString());
+                    
+            }
+
+            
             private string FilterDtoStudents(string filterExpressionForDto)
             {
                 var filter = FilterInfo.Parse(filterExpressionForDto);

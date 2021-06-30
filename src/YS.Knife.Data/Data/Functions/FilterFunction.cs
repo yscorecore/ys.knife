@@ -46,6 +46,11 @@ namespace YS.Knife.Data.Functions
     public class FunctionContext
     {
         public Type FromType { get; set; }
+        // subfilter and sub mapper only for collection type
+        public FilterInfo SubFilter { get; set; }
+        public IObjectMapper SubMapper { get; set; }
+        public List<string> FieldNames { get; set; }
+        public List<object> Args { get; set; }
     }
 
     public class FunctionResult
