@@ -143,19 +143,18 @@ namespace YS.Knife.Data
 
         private FilterInfo2 ParseSingleItemOne(ParseContext context)
         {
-            var (field, func) = ParseFieldPath(context);
+            var leftValue = ParseValueInfo(context);
 
             var type = ParseType(context);
 
-            var value = ParseValue(context);
+            var rightValue = ParseValueInfo(context);
 
             return new FilterInfo2()
             {
                 OpType = OpType.SingleItem,
-                //FieldName = field,
+                Left = leftValue,
                 FilterType = type,
-                //Function = func,
-                //Value = value
+                Right = rightValue,
             };
 
         }
@@ -189,56 +188,184 @@ namespace YS.Knife.Data
 
         private ValueInfo ParseValueInfo(ParseContext context)
         {
-            return null;
+            SkipWhiteSpace(context);
+
+            var (isValue, value) = TryParseValue(context);
+            if (isValue)
+            {
+                return new ValueInfo() { IsValue = true, Value = value };
+            }
+
+            var propertyPaths = ParsePropertyPaths(context);
+
+            return new ValueInfo { IsValue = false, Segments = propertyPaths };
         }
 
-        private (string Field, FunctionInfo Function) ParseFieldPath(ParseContext context)
+        private List<NameInfo> ParsePropertyPaths(ParseContext context)
         {
-            SkipWhiteSpace(context);
-            List<string> names = new List<string>();
+            List<NameInfo> names = new List<NameInfo>();
             while (context.NotEnd())
             {
                 var name = ParseName(context);
-                if (context.Current() == '.')
+                SkipWhiteSpace(context);
+                if (context.End())
+                {
+                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
+                    break;
+                }
+                else if (context.Current() == '.')
                 {
                     // a.b
-                    names.Add(name);
+                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
                     context.Index++;
 
                 }
                 else if (context.Current() == '?' || context.Current() == '!')
                 {
                     // a?.b or a!.b
-                    var fieldTail = context.Current();
+                    var requiredKind = context.Current()=='?'?FieldRequiredKind.Optional:FieldRequiredKind.Must;
                     context.Index++;
-                    if (context.Current() == '.')
+                    if (context.NotEnd() && context.Current() == '.')
                     {
-                        names.Add(name + fieldTail);
+                        names.Add(new NameInfo { Name = name, RequiredKind = requiredKind });
                         context.Index++;
                     }
                     else
                     {
-                        names.Add(name);
+                        names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
                         context.Index--;
                         break;
                     }
                 }
                 else if (context.Current() == '(')
                 {
-                    FunctionInfo functionInfo = ParseFunctionBody(context);
-                    functionInfo.Name = name;
-                    return (JoinNames(names), functionInfo);
+                    var (args,subFilter) = ParseFunctionBody2(context);
+                    var nameInfo = new NameInfo { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
+                    SkipWhiteSpace(context);
+                    names.Add(nameInfo);
+                    if (context.NotEnd())
+                    {
+                        if (context.Current() == '?' || context.Current() == '!')
+                        {
+                            var requiredKind = context.Current() == '?' ? FieldRequiredKind.Optional : FieldRequiredKind.Must;
+                            context.Index++;
+                            if (context.NotEnd() && context.Current() == '.')
+                            {
+                                nameInfo.RequiredKind = requiredKind;
+                                context.Index++;
+                            }
+                            else
+                            {
+                                context.Index--;
+                                break;
+                            }
+                        }
+
+                        else if (context.Current() == '.')
+                        {
+                            context.Index++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                   
+
+
+                      
+
                 }
                 else
                 {
-                    names.Add(name);
+                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
                     break;
                 }
 
             }
-            return (JoinNames(names), null);
-
+            return names;
         }
+        private (List<ValueInfo> Args,FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
+        {
+            context.Index++;
+            List<ValueInfo> args = ParseFunctionArguments(context);
+            FilterInfo2 filterInfo = ParseFunctionFilter(context);
+
+            SkipCloseBracket(context);
+            return (args, filterInfo);
+            ValueInfo NameChainToValue(string nameChain)
+            {
+                var items = nameChain.Split('.');
+                if (items.Length == 1 && KeyWordValues.ContainsKey(items[0]))
+                {
+                    return new ValueInfo { IsValue = true, Value = KeyWordValues[items[0]] };
+                }
+                else
+                {
+                    return new ValueInfo { IsValue = false, Segments = items.Select(p => new NameInfo { Name = p }).ToList() };
+                }
+            }
+            List<ValueInfo> ParseFunctionArguments(ParseContext context)
+            {
+                List<ValueInfo> datas = new List<ValueInfo>();
+                while (context.NotEnd())
+                {
+                    SkipWhiteSpace(context);
+                    if (IsNumberStartChar(context.Current()))
+                    {
+                        //number
+                        datas.Add(new ValueInfo { IsValue = true, Value = ParseNumberValue(context) });
+                    }
+                    else if (context.Current() == '\"')
+                    {
+                        //string
+                        datas.Add(new ValueInfo { IsValue = true, Value = ParseStringValue(context) });
+                    }
+                    else if (IsValidNameFirstChar(context.Current()))
+                    {
+                        var originStartIndex = context.Index;
+                        var nameChain = ParseNameChain(context);
+                        SkipWhiteSpace(context);
+                        if (context.Current() == ',')
+                        {
+                            datas.Add(NameChainToValue(nameChain));
+                        }
+                        else if (context.Current() == ')')
+                        {
+                            datas.Add(NameChainToValue(nameChain));
+                            break;
+                        }
+                        else
+                        {
+                            context.Index = originStartIndex;
+                            break;
+                        }
+                    }
+                    SkipWhiteSpace(context);
+
+                    if (context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                }
+                return datas.Any() ? datas : null;
+            }
+            FilterInfo2 ParseFunctionFilter(ParseContext context)
+            {
+                SkipWhiteSpace(context);
+                if (context.Current() == ')')
+                {
+                    return null;
+                }
+                return ParseFilterExpression(context); ;
+            }
+        }
+       
 
         private string ParseNameChain(ParseContext context)
         {
@@ -259,108 +386,7 @@ namespace YS.Knife.Data
             }
             return JoinNames(names);
         }
-        private FunctionInfo ParseFunctionBody(ParseContext context)
-        {
-            // skip start (
-            context.Index++;
-            List<object> args = ParseFunctionArguments(context);
-            List<string> fields = ParseFunctionFields(context);
-            FilterInfo filterInfo = ParseFunctionFilter(context);
-
-            SkipCloseBracket(context);
-            return new FunctionInfo
-            {
-                Args = args,
-                FieldNames = fields,
-                SubFilter = filterInfo,
-            };
-
-            List<object> ParseFunctionArguments(ParseContext context)
-            {
-                List<object> datas = new List<object>();
-                while (context.NotEnd())
-                {
-                    SkipWhiteSpace(context);
-                    if (IsNumberStartChar(context.Current()))
-                    {
-                        //number
-                        datas.Add(ParseNumberValue(context));
-                    }
-                    else if (context.Current() == '\"')
-                    {
-                        //string
-                        datas.Add(ParseStringValue(context));
-                    }
-                    SkipWhiteSpace(context);
-
-                    if (context.Current() == ',')
-                    {
-                        context.Index++;
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                }
-                return datas.Any() ? datas : null;
-            }
-            List<string> ParseFunctionFields(ParseContext context)
-            {
-                List<string> fields = new List<string>();
-
-                while (context.NotEnd())
-                {
-                    SkipWhiteSpace(context);
-                    if (context.Current() == ')')
-                    {
-                        break;
-                    }
-
-                    else if (IsValidNameFirstChar(context.Current()))
-                    {
-                        var originStartIndex = context.Index;
-                        var nameChain = ParseNameChain(context);
-                        SkipWhiteSpace(context);
-                        if (context.Current() == ',')
-                        {
-                            fields.Add(nameChain);
-                            context.Index++;
-                        }
-                        else if (context.Current() == ')')
-                        {
-                            fields.Add(nameChain);
-                            break;
-                        }
-                        else
-                        {
-                            context.Index = originStartIndex;
-                            break;
-                        }
-
-                    }
-                    else
-                    {
-                        break;
-                    }
-
-                }
-
-
-                return fields.Any() ? fields : null;
-            }
-            FilterInfo2 ParseFunctionFilter(ParseContext context)
-            {
-                SkipWhiteSpace(context);
-                if (context.Current() == ')')
-                {
-                    return null;
-                }
-                return ParseFilterExpression(context); ;
-            }
-
-        }
-
+    
         private string JoinNames(IEnumerable<string> names)
         {
             return string.Join('.', names);
@@ -424,6 +450,44 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidFilterType(context);
             }
         }
+        private (bool,object) TryParseValue(ParseContext context)
+        {
+            var originIndex = context.Index;
+            SkipWhiteSpace(context);
+            var current = context.Current();
+            if (current == '\"')
+            {
+                //string
+                return (true,ParseStringValue(context));
+            }
+            else if (char.IsLetter(current))
+            {
+                //keyword eg
+                string name = ParseName(context);
+                if (KeyWordValues.TryGetValue(name,out var val))
+                {
+                    return (true, val);
+                }
+                else
+                {
+                    context.Index = originIndex;
+                    return (false, null);
+                }
+            }
+            else if (IsNumberStartChar(current))
+            {
+                //number
+                return (true, ParseNumberValue(context));
+            }
+            else if ( current == '[')
+            {
+                return (true, ParseArrayValue(context));
+                //array
+            }
+            return (false, null);
+
+        }
+
         private object ParseValue(ParseContext context, bool parseArray = true)
         {
             SkipWhiteSpace(context);
@@ -602,6 +666,10 @@ namespace YS.Knife.Data
             public bool NotEnd()
             {
                 return Index < TotalLength;
+            }
+            public bool End()
+            {
+                return Index >= TotalLength;
             }
             public string Text;
             public int TotalLength;

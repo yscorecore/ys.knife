@@ -409,6 +409,13 @@ namespace YS.Knife.Data
             }
         }
 
+        public static FilterInfo2 Parse(string filterExpression) => Parse(filterExpression, CultureInfo.CurrentCulture);
+
+        public static FilterInfo2 Parse(string filterExpression, CultureInfo cultureInfo)
+        {
+            return new FilterInfoParser2(cultureInfo).Parse(filterExpression);
+        }
+
 
     }
 
@@ -478,7 +485,7 @@ namespace YS.Knife.Data
         
         public FieldRequiredKind RequiredKind { get; set; }
         public List<ValueInfo> FunctionArgs { get; set; }
-        public FilterInfo FunctionFilter { get; set; }
+        public FilterInfo2 FunctionFilter { get; set; }
         public override string ToString()
         {
             if (IsFunction)
