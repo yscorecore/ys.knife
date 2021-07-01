@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using YS.Knife.Data.Mappers;
+using static YS.Knife.Data.FilterInfoExpressionBuilder;
 
 namespace YS.Knife.Data.Functions
 {
@@ -47,16 +48,16 @@ namespace YS.Knife.Data.Functions
     {
         public Type FromType { get; set; }
         // subfilter and sub mapper only for collection type
-        public FilterInfo SubFilter { get; set; }
-        public IObjectMapper SubMapper { get; set; }
-        public List<string> FieldNames { get; set; }
-        public List<object> Args { get; set; }
+        public FilterInfo2 SubFilter { get; set; }
+        public List<ValueInfo> Args { get; set; }
     }
 
     public class FunctionResult
     {
         public LambdaExpression LambdaExpression { get; set; }
         public Type LambdaValueType { get; set; }
-        
+
+        public IFilterMemberInfoProvider MemberProvider{get;set;}
+
     }
 }

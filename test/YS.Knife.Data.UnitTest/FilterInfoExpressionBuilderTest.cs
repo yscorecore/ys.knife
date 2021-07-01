@@ -81,7 +81,7 @@ namespace YS.Knife.Data.UnitTest
                 TestSdudentForSingleItem(fieldName, filterType, value, expectedIds);
             }
 
-            private string FilterStudentIds(FilterInfo filter)
+            private string FilterStudentIds(FilterInfo2 filter)
             {
                 var exp = new FilterInfoExpressionBuilder().CreateFilterExpression<Student>(filter);
                 var ids = Students.AsQueryable().Where(exp)
@@ -91,7 +91,7 @@ namespace YS.Knife.Data.UnitTest
 
             private void TestSdudentForSingleItem(string fieldName, FilterType filterType, object value, string expectedIds)
             {
-                var filter = FilterInfo.CreateItem(fieldName, filterType, value);
+                var filter = FilterInfo2.CreateItem(fieldName, filterType, value);
                 var ids = FilterStudentIds(filter);
                 string.Join(",", ids).Should().Be(expectedIds);
             }
@@ -141,7 +141,7 @@ namespace YS.Knife.Data.UnitTest
 
             private string FilterDtoStudents(string filterExpressionForDto)
             {
-                var filter = FilterInfo.Parse(filterExpressionForDto);
+                var filter = FilterInfo2.Parse(filterExpressionForDto);
                 var studentMapper = new ObjectMapper<Student, StudentDto>();
                 studentMapper.Append(p => p.TName, p => p.Name);
                 studentMapper.Append(p => p.TAge, p => p.Age);
@@ -228,13 +228,9 @@ namespace YS.Knife.Data.UnitTest
 
             [DataTestMethod]
             [DataRow("tAddress=null", "005,006")]
-            [DataRow("tAddress!.city=null", "004")]
-            [DataRow("tAddress?.city=null", "004,005,006")]
-            [DataRow("tAddress?.city!.Length=5", "003,005,006")]
-            [DataRow("tAddress.city.Length=5", "003")]
-            [DataRow("tAddress?.city?.Length=5", "003,004,005,006")]
-            [DataRow("tAddress!.city!.Length=5", "003")]
-            [DataRow("tAddress!.city?.Length=5", "003,004")]
+            [DataRow("tAddress.city=null", "004,005,006")]
+            [DataRow("tAddress.city.length=5", "003")]
+            [DataRow("5=tAddress.city.Length", "003")]
             public void ShouldFilterWithNavigateField(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
@@ -265,7 +261,7 @@ namespace YS.Knife.Data.UnitTest
             
             private string FilterDtoStudents(string filterExpressionForDto)
             {
-                var filter = FilterInfo.Parse(filterExpressionForDto);
+                var filter = FilterInfo2.Parse(filterExpressionForDto);
                 var studentMapper = new ObjectMapper<Student, StudentDto>();
                 studentMapper.Append(p => p.TName, p => p.Name);
                 studentMapper.Append(p => p.TAge, p => p.Age);

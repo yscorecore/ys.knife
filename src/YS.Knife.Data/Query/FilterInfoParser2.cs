@@ -62,6 +62,20 @@ namespace YS.Knife.Data
             }
             return filterInfo;
         }
+
+        public List<NameInfo> ParsePaths(string text)
+        {
+            var context = new ParseContext(text);
+            SkipWhiteSpace(context);
+            var paths = ParsePropertyPaths(context);
+            if (context.NotEnd())
+            {
+                throw ParseErrors.InvalidText(context);
+            }
+            return paths;
+        }
+
+
         private FilterInfo2 ParseFilterExpression(ParseContext context)
         {
             SkipWhiteSpace(context);
@@ -325,15 +339,33 @@ namespace YS.Knife.Data
                     {
                         var originStartIndex = context.Index;
                         var nameChain = ParseNameChain(context);
+                        var values = NameChainToValue(nameChain);
                         SkipWhiteSpace(context);
                         if (context.Current() == ',')
                         {
-                            datas.Add(NameChainToValue(nameChain));
+                            datas.Add(values);
                         }
                         else if (context.Current() == ')')
                         {
-                            datas.Add(NameChainToValue(nameChain));
+                            datas.Add(values);
                             break;
+                        }
+                        else if (context.Current() == '(')
+                        {
+                            //nested function
+                            if (values.IsValue)
+                            {
+                                throw ParseErrors.InvalidText(context);
+                            }
+                            else
+                            {
+                                var nestedFunction = values.Segments.Last();
+                                nestedFunction.IsFunction = true;
+                                nestedFunction.FunctionArgs= ParseFunctionArguments(context);
+                                nestedFunction.FunctionFilter = ParseFunctionFilter(context);
+                                SkipCloseBracket(context);
+                            }
+
                         }
                         else
                         {

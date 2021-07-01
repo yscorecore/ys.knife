@@ -27,31 +27,31 @@ namespace YS.Knife.Data.Functions
         
         protected override FunctionResult ExecuteQueryable(FunctionContext functionContext, Type itemType)
         {
-            var paramExpression = Expression.Parameter(functionContext.FromType);
+            //var paramExpression = Expression.Parameter(functionContext.FromType);
 
-            if (functionContext.SubFilter != null)
-            {
-                if (functionContext.SubMapper != null)
-                {
-                   var lambdaExp = FilterInfoExpressionBuilder.Default.CreateSourceFilterExpression(functionContext.SubMapper, functionContext.SubFilter);
-                }
-                else 
-                {
-                  var lambdaExp = FilterInfoExpressionBuilder.Default.CreateFilterExpression(itemType, functionContext.SubFilter);
-                }
-                
-                return null;
-            }
-            else
-            {
-                var methodCall = Expression.Call(paramExpression, GetQueryableLongCount(itemType, false), Expression.Constant(null));
-                return new FunctionResult
-                {
-                    LambdaValueType = typeof(long),
-                    LambdaExpression = Expression.Lambda(methodCall, paramExpression),
-                };
-            }
+            //if (functionContext.SubFilter != null)
+            //{
+            //    if (functionContext.SubMapper != null)
+            //    {
+            //       var lambdaExp = FilterInfoExpressionBuilder.Default.CreateSourceFilterExpression(functionContext.SubMapper, functionContext.SubFilter);
+            //    }
+            //    else 
+            //    {
+            //      var lambdaExp = FilterInfoExpressionBuilder.Default.CreateFilterExpression(itemType, functionContext.SubFilter);
+            //    }
 
+            //    return null;
+            //}
+            //else
+            //{
+            //    var methodCall = Expression.Call(paramExpression, GetQueryableLongCount(itemType, false), Expression.Constant(null));
+            //    return new FunctionResult
+            //    {
+            //        LambdaValueType = typeof(long),
+            //        LambdaExpression = Expression.Lambda(methodCall, paramExpression),
+            //    };
+            //}
+            return null;
 
         }
         protected override FunctionResult ExecuteEnumable(FunctionContext functionContext, Type itemType)

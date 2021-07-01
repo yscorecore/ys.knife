@@ -415,7 +415,27 @@ namespace YS.Knife.Data
         {
             return new FilterInfoParser2(cultureInfo).Parse(filterExpression);
         }
+        public static FilterInfo2 CreateItem(string fieldPaths, FilterType filterType, object value)
+        {
+            var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
+            return new FilterInfo2()
+            {
+                OpType = OpType.SingleItem,
+                Left = new ValueInfo { IsValue = false, Segments = parser.ParsePaths(fieldPaths) },
+                Right = new ValueInfo { IsValue = true, Value =value }
+                
+            };
+        }
 
+        public static FilterInfo2 CreateOr(params FilterInfo2[] items)
+        {
+            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = OpType.OrItems };
+        }
+
+        public static FilterInfo2 CreateAnd(params FilterInfo2[] items)
+        {
+            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = OpType.AndItems };
+        }
 
     }
 

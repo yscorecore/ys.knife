@@ -20,7 +20,7 @@ namespace YS.Knife.Data
         public static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
 
         public Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
-           ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
+           ObjectMapper<TSource, TTarget> mapper, FilterInfo2 targetFilter)
            where TSource : class
            where TTarget : class, new()
         {
@@ -37,7 +37,7 @@ namespace YS.Knife.Data
             return Expression.Lambda<Func<TSource, bool>>(exp, p);
         }
         internal LambdaExpression CreateSourceFilterExpression(
-           IObjectMapper mapper, FilterInfo targetFilter)
+           IObjectMapper mapper, FilterInfo2 targetFilter)
         {
             _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
             var p = Expression.Parameter(mapper.SourceType, "p");
@@ -54,7 +54,7 @@ namespace YS.Knife.Data
         }
 
         public Expression<Func<TTarget, bool>> CreateFilterExpression<TTarget>(
-            FilterInfo targetFilter)
+            FilterInfo2 targetFilter)
         {
             var p = Expression.Parameter(typeof(TTarget), "p");
 
@@ -68,7 +68,7 @@ namespace YS.Knife.Data
 
         }
         public LambdaExpression CreateFilterExpression(Type targetType,
-            FilterInfo targetFilter)
+            FilterInfo2 targetFilter)
         {
             var p = Expression.Parameter(targetType, "p");
 
@@ -81,152 +81,113 @@ namespace YS.Knife.Data
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(targetType, typeof(bool)), exp, p);
 
         }
-        private bool IsValidFieldName(string fieldName)
-        {
-            return !string.IsNullOrEmpty(fieldName) && ValidFieldNameRegex.IsMatch(fieldName);
-        }
 
-        private Expression FromSingleItemFilterInfo(FilterInfo singleItem,
-            ParameterExpression p, IFilterMemberInfoProvider memberProvider)
+
+        private IFilterValueContext CreateValueExpression(ParameterExpression p, IFilterMemberInfoProvider memberProvider, ValueInfo valueInfo)
         {
-            if (!IsValidFieldName(singleItem.FieldName))
+            if (valueInfo == null || valueInfo.IsValue)
             {
-                throw Errors.InvalidFieldName(singleItem.FieldName);
-            }
-
-            var context = new FilterExpressionContext();
-            context.Add(new FilerExpressionSegment
-            {
-                MemberInfo = new FilterMemberInfo()
-                {
-                    ExpressionValueType = memberProvider.CurrentType,
-                    SelectExpression = Expression.Lambda(p, p),
-                    SubProvider = memberProvider
-                },
-                Expression = p,
-                RequiredKind = FieldRequiredKind.None
-
-            }); ;
-            foreach (var field in ParseFilterNames(singleItem.FieldName))
-            {
-                var memberInfo = context.CurrentMemberProvider.GetSubMemberInfo(field.MemberName);
-
-                if (memberInfo == null)
-                {
-                    throw Errors.InvalidMemberNameInFieldName(field.MemberName, singleItem.FieldName);
-                }
-                var currentExpression = context.CurrentExpression.Connect(memberInfo.SelectExpression);
-                context.Add(new FilerExpressionSegment
-                {
-                    MemberInfo = memberInfo,
-                    Expression = currentExpression,
-                    RequiredKind = field.RequiredKind
-                });
-            }
-            if (singleItem.Function != null)
-            {
-                //function
-                if (!typeof(IEnumerable).IsAssignableFrom(context.ExpressionValueType))
-                {
-                    throw Errors.OnlyCanUseFunctionInCollectionType(singleItem.FieldName);
-                }
-                var function = FilterFunction.GetFunctionByName(singleItem.Function.Name);
-                if (function == null)
-                {
-                    throw Errors.NotSupportFunction(singleItem.Function.Name, singleItem.FieldName);
-                }
-                //TODO apply function
-                var functionResult = function.Execute(new FunctionContext
-                {
-                    FromType = context.ExpressionValueType,
-                    Args = singleItem.Function.Args,
-                    FieldNames = singleItem.Function.FieldNames,
-                    SubFilter = singleItem.Function.SubFilter
-                });
-
-                var currentExpression = context.CurrentExpression.Connect(functionResult.LambdaExpression);
-                context.Add(new FilerExpressionSegment
-                {
-                    MemberInfo = new FilterMemberInfo()
-                    {
-                        SelectExpression = functionResult.LambdaExpression,
-                        ExpressionValueType = functionResult.LambdaValueType,
-                        SubProvider = IFilterMemberInfoProvider.GetObjectProvider(functionResult.LambdaValueType),
-                    },
-                    Expression = currentExpression,
-                    RequiredKind = FieldRequiredKind.None
-                });
-
-            }
-
-            return CompareFilterWithValue(context, singleItem.FilterType, singleItem.Value);
-        }
-        private IEnumerable<(string MemberName, FieldRequiredKind RequiredKind)> ParseFilterNames(string filterFieldName)
-        {
-            return filterFieldName.Split('.')
-                 .Select(p =>
-                 {
-                     var requiredKind = p.EndsWith('?') ? FieldRequiredKind.Optional : (p.EndsWith('!') ? FieldRequiredKind.Must : FieldRequiredKind.None);
-                     return (p.Trim(new char[] { '!', '?' }), requiredKind);
-                 });
-        }
-        private Expression CompareFilterWithValue(FilterExpressionContext context, FilterType filterType,
-           object value)
-        {
-            // a>3         a > 3
-            // a?b > 3     a == null || a.b > 3
-            // a!.b > 3     a != null && a.b >3   
-            // a?.b?.c >3  a == null || (a.b == null || a.b.c >3) 
-            // a!.b?.c > 3  a != null && (a.b == null or a.b.c >3)
-            // a!.b!.c  >3   a != null && (a.b != null && a.b.c >3)
-            // a?.b!.c > 3  a == null || (a.b != null && a.b.c >3)
-
-
-            var compareExpression = Expression.Equal(context.CurrentExpression, Expression.Constant(Convert.ChangeType(value, context.ExpressionValueType)));
-
-            return CombinNullCheckExpression(context, 0, compareExpression);
-        }
-        private Expression CombinNullCheckExpression(List<FilerExpressionSegment> segments, int index, Expression valueCompareExpression)
-        {
-            if (index == segments.Count - 1)
-            {// last one 
-                return valueCompareExpression;
-            }
-            var segment = segments[index];
-            if (segment.RequiredKind == FieldRequiredKind.Optional)
-            {// or
-                if (IsValueType(segment.MemberInfo.ExpressionValueType))
-                {
-                    return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
-                }
-                else
-                {
-                    return Expression.OrElse(
-                           Expression.Equal(segment.Expression, Expression.Constant(null))
-                        , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
-                }
-            }
-            else if (segment.RequiredKind == FieldRequiredKind.Must)
-            { // and
-                if (IsValueType(segment.MemberInfo.ExpressionValueType))
-                {
-                    return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
-                }
-                else
-                {
-                    return Expression.AndAlso(
-                           Expression.NotEqual(segment.Expression, Expression.Constant(null))
-                        , CombinNullCheckExpression(segments, index + 1, valueCompareExpression));
-                }
+                // const value
+                return CreateConstValueExpression(valueInfo?.Value);
             }
             else
             {
-                return CombinNullCheckExpression(segments, index + 1, valueCompareExpression);
+                return CreateExpressionValueExression(valueInfo.Segments);
             }
-            bool IsValueType(Type type) => type.IsValueType && Nullable.GetUnderlyingType(type) != null;
+            IFilterValueContext CreateConstValueExpression(object value)
+            {
+                return new ConstFilterValueContext
+                {
+                    ExpressionValueType = value?.GetType(),
+                    CurrentExpression = Expression.Constant(value),
+                };
+            }
+            IFilterValueContext CreateExpressionValueExression(List<NameInfo> pathInfos)
+            {
+
+                IFilterMemberInfoProvider currentMemberProvider = memberProvider;
+                Type currentExpressionType = currentMemberProvider.CurrentType;
+                Expression currentExpression = p;
+                foreach (var pathInfo in pathInfos)
+                {
+                    if (pathInfo.IsFunction)
+                    {
+                        // TODO ..
+                        var functionContext = new FunctionContext();
+
+                        var function = FilterFunction.GetFunctionByName(pathInfo.Name);
+                        if (function == null)
+                        {
+                            throw Errors.NotSupportFunction(pathInfo.Name);
+                        }
+                        //TODO apply function
+                        var functionResult = function.Execute(new FunctionContext
+                        {
+                            //FromType = context.ExpressionValueType,
+                            //Args = singleItem.Function.Args,
+                            //FieldNames = singleItem.Function.FieldNames,
+                            //SubFilter = singleItem.Function.SubFilter
+                        });
+                        currentExpressionType = functionResult.LambdaValueType;
+                        currentExpression = currentExpression.Connect(functionResult.LambdaExpression);
+                        currentMemberProvider = functionResult.MemberProvider;
+                    }
+                    else
+                    {
+                        var memberInfo = currentMemberProvider.GetSubMemberInfo(pathInfo.Name);
+
+                        if (memberInfo == null)
+                        {
+                            throw Errors.InvalidMemberNameInFieldName(pathInfo.Name);
+                        }
+                        else
+                        {
+                            currentExpressionType = memberInfo.ExpressionValueType;
+                            currentExpression = currentExpression.Connect(memberInfo.SelectExpression);
+                            currentMemberProvider = memberInfo.SubProvider;
+                        }
+                    }
+                }
+                return new ConstFilterValueContext
+                {
+                    ExpressionValueType = currentExpressionType,
+                    CurrentExpression = currentExpression
+                };
+            }
+        }
+        
+        private Expression FromSingleItemFilterInfo(FilterInfo2 singleItem,
+            ParameterExpression p, IFilterMemberInfoProvider memberProvider)
+        {
+            var left = CreateValueExpression(p, memberProvider, singleItem.Left);
+            var right = CreateValueExpression(p, memberProvider, singleItem.Right);
+            return CompareFilterValue(left, singleItem.FilterType, right);
+        }
+        private Expression CompareFilterValue(IFilterValueContext left , FilterType filterType,
+         IFilterValueContext right)
+        {
+            if (right.ExpressionValueType != left.ExpressionValueType)
+            {
+                return Expression.Equal(left.CurrentExpression, Expression.Convert( right.CurrentExpression, left.ExpressionValueType));
+            }
+            return Expression.Equal(left.CurrentExpression, right.CurrentExpression);
         }
 
-        class FilterExpressionContext : List<FilerExpressionSegment>
+
+        interface IFilterValueContext
+        {
+            public Type ExpressionValueType { get; }
+
+            public Expression CurrentExpression { get; }
+        }
+        class ConstFilterValueContext : IFilterValueContext
+        {
+            public Type ExpressionValueType { get; set; }
+
+            public Expression CurrentExpression { get; set; }
+        }
+
+        class FilterExpressionContext : List<FilerExpressionSegment>, IFilterValueContext
         {
 
             public FilerExpressionSegment Current { get => this.Last(); }
@@ -237,6 +198,7 @@ namespace YS.Knife.Data
 
             public IFilterMemberInfoProvider CurrentMemberProvider { get => Current.MemberInfo.SubProvider; }
         }
+
         struct FilerExpressionSegment
         {
             public IFilterMemberInfo MemberInfo { get; set; }
@@ -244,7 +206,7 @@ namespace YS.Knife.Data
             public FieldRequiredKind RequiredKind { get; set; }
         }
 
-        interface IFilterMemberInfo
+        public interface IFilterMemberInfo
         {
 
             public Type ExpressionValueType { get; }
@@ -263,7 +225,7 @@ namespace YS.Knife.Data
 
             public IFilterMemberInfoProvider SubProvider { get; set; }
         }
-        interface IFilterMemberInfoProvider
+       public  interface IFilterMemberInfoProvider
         {
             static ConcurrentDictionary<Type, IFilterMemberInfoProvider> ObjectMemberProviderCache =
                new ConcurrentDictionary<Type, IFilterMemberInfoProvider>();
@@ -417,17 +379,17 @@ namespace YS.Knife.Data
             {
                 return new FieldInfo2ExpressionException($"Invalid field name '{name}' in filter info.");
             }
-            public static Exception InvalidMemberNameInFieldName(string memberName, string fullField)
+            public static Exception InvalidMemberNameInFieldName(string memberName)
             {
-                return new FieldInfo2ExpressionException($"Invalid member name '{memberName}' in filter field '{fullField}'.");
+                return new FieldInfo2ExpressionException($"Invalid member name '{memberName}'.");
             }
             public static Exception NotSupportedFieldName(string name)
             {
                 return new FieldInfo2ExpressionException($"Not supported field name '{name}' in filter info.");
             }
-            public static Exception NotSupportFunction(string functionName, string fullField)
+            public static Exception NotSupportFunction(string functionName)
             {
-                return new FieldInfo2ExpressionException($"Not support function '{functionName}' in filter field {fullField}."); ;
+                return new FieldInfo2ExpressionException($"Not support function '{functionName}'."); ;
             }
             public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string fullField)
             {
