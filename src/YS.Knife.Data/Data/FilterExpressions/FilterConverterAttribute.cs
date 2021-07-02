@@ -4,8 +4,8 @@ namespace YS.Knife.Data.FilterExpressions
 {
     internal class FilterConverterAttribute : Attribute
     {
-        public FilterType FilterType { get; }
-        public FilterConverterAttribute(FilterType filterType)
+        public Operator FilterType { get; }
+        public FilterConverterAttribute(Operator filterType)
         {
             FilterType = filterType;
         }

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.NotBetween)]
+    [FilterConverter(Operator.NotBetween)]
 
     internal class NotBetweenExpressionConverter : BetweenExpressionConverter
     {

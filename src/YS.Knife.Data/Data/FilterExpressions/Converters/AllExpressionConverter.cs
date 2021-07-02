@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.All)]
+    [FilterConverter(Operator.All)]
     internal class AllExpressionConverter : OpenExpressionConverter
     {
         private static readonly MethodInfo AllMethod1 =

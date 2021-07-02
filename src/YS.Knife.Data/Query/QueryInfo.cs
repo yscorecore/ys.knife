@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace YS.Knife.Data
 {
+    [Serializable]
+    [DebuggerDisplay("{ToString()}")]
     public class QueryInfo
     {
         public FilterInfo Filter { get; set; }

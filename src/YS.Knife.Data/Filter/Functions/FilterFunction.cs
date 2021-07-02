@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using YS.Knife.Data.Mappers;
-using static YS.Knife.Data.FilterInfoExpressionBuilder;
+using static YS.Knife.Data.Filter.FilterInfoExpressionBuilder;
 
-namespace YS.Knife.Data.Functions
+namespace YS.Knife.Data.Filter.Functions
 {
     public abstract class FilterFunction
     {
@@ -42,22 +42,5 @@ namespace YS.Knife.Data.Functions
             }
         }
         
-    }
-
-    public class FunctionContext
-    {
-        public Type FromType { get; set; }
-        // subfilter and sub mapper only for collection type
-        public FilterInfo2 SubFilter { get; set; }
-        public List<ValueInfo> Args { get; set; }
-    }
-
-    public class FunctionResult
-    {
-        public LambdaExpression LambdaExpression { get; set; }
-        public Type LambdaValueType { get; set; }
-
-        public IFilterMemberInfoProvider MemberProvider{get;set;}
-
     }
 }

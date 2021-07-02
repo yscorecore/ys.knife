@@ -19,25 +19,25 @@ namespace YS.Knife.Data
         internal const string Operator_And = "and";
         internal const string Operator_Or = "or";
 
-        internal static readonly Dictionary<FilterType, string> FilterTypeNameMapper =
-            new Dictionary<FilterType, string>
+        internal static readonly Dictionary<Operator, string> FilterTypeNameMapper =
+            new Dictionary<Operator, string>
             {
-                [FilterType.Equals] = "==",
-                [FilterType.NotEquals] = "!=",
-                [FilterType.GreaterThan] = ">",
-                [FilterType.LessThanOrEqual] = "<=",
-                [FilterType.LessThan] = "<",
-                [FilterType.GreaterThanOrEqual] = ">=",
-                [FilterType.Between] = "bt",
-                [FilterType.NotBetween] = "nbt",
-                [FilterType.In] = "in",
-                [FilterType.NotIn] = "nin",
-                [FilterType.StartsWith] = "sw",
-                [FilterType.NotStartsWith] = "nsw",
-                [FilterType.EndsWith] = "ew",
-                [FilterType.NotEndsWith] = "new",
-                [FilterType.Contains] = "ct",
-                [FilterType.NotContains] = "nct",
+                [Operator.Equals] = "==",
+                [Operator.NotEquals] = "!=",
+                [Operator.GreaterThan] = ">",
+                [Operator.LessThanOrEqual] = "<=",
+                [Operator.LessThan] = "<",
+                [Operator.GreaterThanOrEqual] = ">=",
+                [Operator.Between] = "bt",
+                [Operator.NotBetween] = "nbt",
+                [Operator.In] = "in",
+                [Operator.NotIn] = "nin",
+                [Operator.StartsWith] = "sw",
+                [Operator.NotStartsWith] = "nsw",
+                [Operator.EndsWith] = "ew",
+                [Operator.NotEndsWith] = "new",
+                [Operator.Contains] = "ct",
+                [Operator.NotContains] = "nct",
             };
 
 
@@ -45,56 +45,56 @@ namespace YS.Knife.Data
         {
         }
 
-        public FilterInfo(string fieldName, FilterType filterType, object value) : this()
+        public FilterInfo(string fieldName, Operator filterType, object value) : this()
         {
-            this.OpType = OpType.SingleItem;
+            this.OpType = CombinSymbol.SingleItem;
             this.FieldName = fieldName;
             this.FilterType = filterType;
             this.Value = value;
         }
 
-        public FilterInfo(IEnumerable<FilterInfo> items, OpType opType = OpType.AndItems) : this()
+        public FilterInfo(IEnumerable<FilterInfo> items, CombinSymbol opType = CombinSymbol.AndItems) : this()
         {
             this.OpType = opType;
             this.Items = items.ToList();
         }
 
-        public OpType OpType { get; set; }
+        public CombinSymbol OpType { get; set; }
 
         public string FieldName { get; set; }
 
-        public FilterType FilterType { get; set; }
+        public Operator FilterType { get; set; }
 
         public object Value { get; set; }
 
         public List<FilterInfo> Items { get; set; }
 
-        public FunctionInfo Function { get; set; }
+        public FilterFunction Function { get; set; }
 
-        public static FilterInfo CreateItem(string fieldName, FilterType filterType, object value)
+        public static FilterInfo CreateItem(string fieldName, Operator filterType, object value)
         {
             return new FilterInfo()
             {
-                OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
             };
         }
 
-        public static FilterInfo CreateItem(string fieldName, FilterType filterType, params FilterInfo[] items)
+        public static FilterInfo CreateItem(string fieldName, Operator filterType, params FilterInfo[] items)
         {
             return new FilterInfo()
             {
-                OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Items = items.ToList()
+                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Items = items.ToList()
             };
         }
 
         public static FilterInfo CreateOr(params FilterInfo[] items)
         {
-            return new FilterInfo(items, OpType.OrItems);
+            return new FilterInfo(items, CombinSymbol.OrItems);
         }
 
         public static FilterInfo CreateAnd(params FilterInfo[] items)
         {
-            return new FilterInfo(items, OpType.AndItems);
+            return new FilterInfo(items, CombinSymbol.AndItems);
         }
 
         public FilterInfo AndAlso(FilterInfo other)
@@ -104,9 +104,9 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == OpType.AndItems)
+            if (this.OpType == CombinSymbol.AndItems)
             {
-                if (other.OpType == OpType.AndItems)
+                if (other.OpType == CombinSymbol.AndItems)
                 {
                     this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo>());
                     return this;
@@ -119,15 +119,15 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo() {OpType = OpType.AndItems, Items = new List<FilterInfo>() {this, other}};
+                return new FilterInfo() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() {this, other}};
             }
         }
 
-        public FilterInfo AndAlso(string fieldName, FilterType filterType, object value)
+        public FilterInfo AndAlso(string fieldName, Operator filterType, object value)
         {
             return AndAlso(new FilterInfo()
             {
-                OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
             });
         }
 
@@ -138,9 +138,9 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == OpType.OrItems)
+            if (this.OpType == CombinSymbol.OrItems)
             {
-                if (other.OpType == OpType.OrItems)
+                if (other.OpType == CombinSymbol.OrItems)
                 {
                     this.Items.AddRange(other.Items);
                 }
@@ -153,29 +153,29 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo() {OpType = OpType.OrItems, Items = new List<FilterInfo>() {this, other}};
+                return new FilterInfo() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() {this, other}};
             }
         }
 
-        public FilterInfo OrElse(string fieldName, FilterType filterType, object value)
+        public FilterInfo OrElse(string fieldName, Operator filterType, object value)
         {
             return OrElse(new FilterInfo()
             {
-                OpType = OpType.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
             });
         }
 
         public FilterInfo Not()
         {
-            if (this.OpType == OpType.SingleItem)
+            if (this.OpType == CombinSymbol.SingleItem)
             {
                 this.FilterType = ~(this).FilterType;
                 return this;
             }
-            else if (this.OpType == OpType.AndItems)
+            else if (this.OpType == CombinSymbol.AndItems)
             {
                 // AndCondition current = this as AndCondition;
-                FilterInfo oc = new FilterInfo() {OpType = OpType.OrItems, Items = new List<FilterInfo>()};
+                FilterInfo oc = new FilterInfo() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>()};
                 foreach (var v in this.Items)
                 {
                     oc.Items.Add(v.Not());
@@ -185,7 +185,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                FilterInfo oc = new FilterInfo() {OpType = OpType.AndItems, Items = new List<FilterInfo>()};
+                FilterInfo oc = new FilterInfo() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>()};
                 foreach (var v in this.Items)
                 {
                     oc.Items.Add(v.Not());
@@ -205,12 +205,12 @@ namespace YS.Knife.Data
         {
             switch (filterInfo.OpType)
             {
-                case OpType.AndItems:
+                case CombinSymbol.AndItems:
                     return string.Join($" {Operator_And} ",
                         filterInfo.Items.TrimNotNull().Select(p => $"({ToStringInternal(p)})"));
-                case OpType.OrItems:
+                case CombinSymbol.OrItems:
                     return string.Join($" {Operator_Or} ", filterInfo.Items.Select(p => $"({ToStringInternal(p)})"));
-                case OpType.SingleItem:
+                case CombinSymbol.SingleItem:
                 default:
                     return
                         $"{FileNameToString(filterInfo)} {FilterTypeToString(filterInfo.FilterType)} {ValueToString(filterInfo.Value)}";
@@ -287,7 +287,7 @@ namespace YS.Knife.Data
                 }
             }
 
-            string FilterTypeToString(FilterType filterType)
+            string FilterTypeToString(Operator filterType)
             {
                 return FilterTypeNameMapper[filterType];
             }
@@ -309,31 +309,31 @@ namespace YS.Knife.Data
     {
         internal const string Operator_And = "and";
         internal const string Operator_Or = "or";
-        internal static readonly Dictionary<FilterType, string> FilterTypeNameMapper =
-            new Dictionary<FilterType, string>
+        internal static readonly Dictionary<Operator, string> OperatorTypeNameDictionary =
+            new Dictionary<Operator, string>
             {
-                [FilterType.Equals] = "==",
-                [FilterType.NotEquals] = "!=",
-                [FilterType.GreaterThan] = ">",
-                [FilterType.LessThanOrEqual] = "<=",
-                [FilterType.LessThan] = "<",
-                [FilterType.GreaterThanOrEqual] = ">=",
-                [FilterType.Between] = "bt",
-                [FilterType.NotBetween] = "nbt",
-                [FilterType.In] = "in",
-                [FilterType.NotIn] = "nin",
-                [FilterType.StartsWith] = "sw",
-                [FilterType.NotStartsWith] = "nsw",
-                [FilterType.EndsWith] = "ew",
-                [FilterType.NotEndsWith] = "new",
-                [FilterType.Contains] = "ct",
-                [FilterType.NotContains] = "nct",
+                [Operator.Equals] = "==",
+                [Operator.NotEquals] = "!=",
+                [Operator.GreaterThan] = ">",
+                [Operator.LessThanOrEqual] = "<=",
+                [Operator.LessThan] = "<",
+                [Operator.GreaterThanOrEqual] = ">=",
+                [Operator.Between] = "bt",
+                [Operator.NotBetween] = "nbt",
+                [Operator.In] = "in",
+                [Operator.NotIn] = "nin",
+                [Operator.StartsWith] = "sw",
+                [Operator.NotStartsWith] = "nsw",
+                [Operator.EndsWith] = "ew",
+                [Operator.NotEndsWith] = "new",
+                [Operator.Contains] = "ct",
+                [Operator.NotContains] = "nct",
             };
 
-        public ValueInfo Left { get; set; }
-        public ValueInfo Right { get; set; }
-        public FilterType FilterType { get; set; }
-        public OpType OpType { get; set; }
+        public FilterValue Left { get; set; }
+        public FilterValue Right { get; set; }
+        public Operator FilterType { get; set; }
+        public CombinSymbol OpType { get; set; }
         public List<FilterInfo2> Items { get; set; }
         
         public FilterInfo2 AndAlso(FilterInfo2 other)
@@ -343,9 +343,9 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == OpType.AndItems)
+            if (this.OpType == CombinSymbol.AndItems)
             {
-                if (other.OpType == OpType.AndItems)
+                if (other.OpType == CombinSymbol.AndItems)
                 {
                     this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo2>());
                     return this;
@@ -358,7 +358,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() {OpType = OpType.AndItems, Items = new List<FilterInfo2>() {this, other}};
+                return new FilterInfo2() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo2>() {this, other}};
             }
         }
         public FilterInfo2 OrElse(FilterInfo2 other)
@@ -368,9 +368,9 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == OpType.OrItems)
+            if (this.OpType == CombinSymbol.OrItems)
             {
-                if (other.OpType == OpType.OrItems)
+                if (other.OpType == CombinSymbol.OrItems)
                 {
                     this.Items.AddRange(other.Items);
                 }
@@ -383,29 +383,29 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() {OpType = OpType.OrItems, Items = new List<FilterInfo2>() {this, other}};
+                return new FilterInfo2() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo2>() {this, other}};
             }
         }
         public override string ToString()
         {
             switch (OpType)
             {
-                case OpType.AndItems:
+                case CombinSymbol.AndItems:
                     return string.Join($" {Operator_And} ",
                         Items.TrimNotNull().Select(p => $"({p})"));
-                case OpType.OrItems:
+                case CombinSymbol.OrItems:
                     return string.Join($" {Operator_Or} ", Items.TrimNotNull().Select(p => $"({p})"));
                 default:
                     return
                         $"{ValueToString(Left)} {FilterTypeToString(FilterType)} {ValueToString(Right)}";
             }
-            string ValueToString(ValueInfo p0)
+            string ValueToString(FilterValue p0)
             {
                 return p0?.ToString() ?? "null";
             }
-            string FilterTypeToString(FilterType filterType)
+            string FilterTypeToString(Operator filterType)
             {
-                return FilterTypeNameMapper[filterType];
+                return OperatorTypeNameDictionary[filterType];
             }
         }
 
@@ -415,48 +415,46 @@ namespace YS.Knife.Data
         {
             return new FilterInfoParser2(cultureInfo).Parse(filterExpression);
         }
-        public static FilterInfo2 CreateItem(string fieldPaths, FilterType filterType, object value)
+        public static FilterInfo2 CreateItem(string fieldPaths, Operator filterType, object value)
         {
             var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
             return new FilterInfo2()
             {
-                OpType = OpType.SingleItem,
-                Left = new ValueInfo { IsValue = false, Segments = parser.ParsePaths(fieldPaths) },
-                Right = new ValueInfo { IsValue = true, Value =value }
+                OpType = CombinSymbol.SingleItem,
+                Left = new FilterValue { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
+                Right = new FilterValue { IsConstant = true, ConstantValue =value }
                 
             };
         }
 
         public static FilterInfo2 CreateOr(params FilterInfo2[] items)
         {
-            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = OpType.OrItems };
+            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.OrItems };
         }
 
         public static FilterInfo2 CreateAnd(params FilterInfo2[] items)
         {
-            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = OpType.AndItems };
+            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.AndItems };
         }
 
     }
-
-    public class ValueInfo
+    [DebuggerDisplay("{ToString()}")]
+    public class FilterValue
     {
-        public object Value { get; set; }
-        public bool IsValue { get; set; }
-        public List<NameInfo> Segments { get; set; }
+        public object ConstantValue { get; set; }
+        public bool IsConstant { get; set; }
+        public List<ValuePath> NavigatePaths { get; set; }
         public override string ToString()
         {
-            if (IsValue)
+            if (IsConstant)
             {
-                return ValueToString(Value);
+                return ValueToString(ConstantValue);
             }
             else
             {
-                var names = (Segments ?? Enumerable.Empty<NameInfo>()).Where(p => p != null).Select(p => p.ToString());
+                var names = (NavigatePaths ?? Enumerable.Empty<ValuePath>()).Where(p => p != null).Select(p => p.ToString());
                 return string.Join(".", names);
             }
-
-            return base.ToString();
             
             string ValueToString(object value, bool convertCollection = true)
             {
@@ -498,13 +496,12 @@ namespace YS.Knife.Data
 
    
 
-    public class NameInfo
+    public class ValuePath
     {
         public string Name { get; set; }
         public bool IsFunction { get; set; }
-        
         public FieldRequiredKind RequiredKind { get; set; }
-        public List<ValueInfo> FunctionArgs { get; set; }
+        public List<FilterValue> FunctionArgs { get; set; }
         public FilterInfo2 FunctionFilter { get; set; }
         public override string ToString()
         {
@@ -545,7 +542,7 @@ namespace YS.Knife.Data
         Optional,
     }
 
-    public class FunctionInfo
+    public class FilterFunction
     {
         public string Name { get; set; }
         public FilterInfo SubFilter { get; set; }

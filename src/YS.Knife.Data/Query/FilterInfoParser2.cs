@@ -15,11 +15,11 @@ namespace YS.Knife.Data
         static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
         static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
 
-        internal static readonly Dictionary<string, FilterType> FilterTypeCodes =
+        internal static readonly Dictionary<string, Operator> FilterTypeCodes =
             FilterInfo.FilterTypeNameMapper.Select(p => Tuple.Create(p.Value, p.Key))
             .Concat(new[] {
-                Tuple.Create("=",FilterType.Equals),
-                Tuple.Create("<>",FilterType.NotEquals)
+                Tuple.Create("=",Operator.Equals),
+                Tuple.Create("<>",Operator.NotEquals)
 
             }).ToDictionary(p => p.Item1, p => p.Item2);
         internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
@@ -28,10 +28,10 @@ namespace YS.Knife.Data
             ["false"] = false,
             ["null"] = null
         };
-        internal static readonly Dictionary<string, OpType> OpTypeCodes = new Dictionary<string, OpType>(StringComparer.InvariantCultureIgnoreCase)
+        internal static readonly Dictionary<string, CombinSymbol> OpTypeCodes = new Dictionary<string, CombinSymbol>(StringComparer.InvariantCultureIgnoreCase)
         {
-            [FilterInfo.Operator_And] = OpType.AndItems,
-            [FilterInfo.Operator_Or] = OpType.OrItems
+            [FilterInfo.Operator_And] = CombinSymbol.AndItems,
+            [FilterInfo.Operator_Or] = CombinSymbol.OrItems
         };
 
         private readonly char _numberDecimal; // 小数点
@@ -63,7 +63,7 @@ namespace YS.Knife.Data
             return filterInfo;
         }
 
-        public List<NameInfo> ParsePaths(string text)
+        public List<ValuePath> ParsePaths(string text)
         {
             var context = new ParseContext(text);
             SkipWhiteSpace(context);
@@ -91,7 +91,7 @@ namespace YS.Knife.Data
         private FilterInfo2 ParseCombinFilter(ParseContext context)
         {
             List<FilterInfo2> orItems = new List<FilterInfo2>();
-            OpType lastOpType = OpType.OrItems;
+            CombinSymbol lastOpType = CombinSymbol.OrItems;
             while (context.NotEnd())
             {
                 // skip start bracket
@@ -110,7 +110,7 @@ namespace YS.Knife.Data
                 }
                 context.Index++;
 
-                if (lastOpType == OpType.OrItems || orItems.Count == 0)
+                if (lastOpType == CombinSymbol.OrItems || orItems.Count == 0)
                 {
                     orItems.Add(inner);
                 }
@@ -119,7 +119,7 @@ namespace YS.Knife.Data
                     orItems[^1] = orItems[^1].AndAlso(inner);
                 }
 
-                OpType? opType = TryParseOpType(context);
+                CombinSymbol? opType = TryParseOpType(context);
 
                 if (opType == null)
                 {
@@ -130,9 +130,9 @@ namespace YS.Knife.Data
                     lastOpType = opType.Value;
                 }
             }
-            return orItems.Count > 1 ? new FilterInfo2{ OpType =  OpType.OrItems, Items = orItems} : orItems.FirstOrDefault();
+            return orItems.Count > 1 ? new FilterInfo2{ OpType =  CombinSymbol.OrItems, Items = orItems} : orItems.FirstOrDefault();
         }
-        private OpType? TryParseOpType(ParseContext context)
+        private CombinSymbol? TryParseOpType(ParseContext context)
         {
             var originIndex = context.Index;
 
@@ -165,7 +165,7 @@ namespace YS.Knife.Data
 
             return new FilterInfo2()
             {
-                OpType = OpType.SingleItem,
+                OpType = CombinSymbol.SingleItem,
                 Left = leftValue,
                 FilterType = type,
                 Right = rightValue,
@@ -200,37 +200,37 @@ namespace YS.Knife.Data
             }
         }
 
-        private ValueInfo ParseValueInfo(ParseContext context)
+        private FilterValue ParseValueInfo(ParseContext context)
         {
             SkipWhiteSpace(context);
 
             var (isValue, value) = TryParseValue(context);
             if (isValue)
             {
-                return new ValueInfo() { IsValue = true, Value = value };
+                return new FilterValue() { IsConstant = true, ConstantValue = value };
             }
 
             var propertyPaths = ParsePropertyPaths(context);
 
-            return new ValueInfo { IsValue = false, Segments = propertyPaths };
+            return new FilterValue { IsConstant = false, NavigatePaths = propertyPaths };
         }
 
-        private List<NameInfo> ParsePropertyPaths(ParseContext context)
+        private List<ValuePath> ParsePropertyPaths(ParseContext context)
         {
-            List<NameInfo> names = new List<NameInfo>();
+            List<ValuePath> names = new List<ValuePath>();
             while (context.NotEnd())
             {
                 var name = ParseName(context);
                 SkipWhiteSpace(context);
                 if (context.End())
                 {
-                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
                     break;
                 }
                 else if (context.Current() == '.')
                 {
                     // a.b
-                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
                     context.Index++;
 
                 }
@@ -241,12 +241,12 @@ namespace YS.Knife.Data
                     context.Index++;
                     if (context.NotEnd() && context.Current() == '.')
                     {
-                        names.Add(new NameInfo { Name = name, RequiredKind = requiredKind });
+                        names.Add(new ValuePath { Name = name, RequiredKind = requiredKind });
                         context.Index++;
                     }
                     else
                     {
-                        names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
+                        names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
                         context.Index--;
                         break;
                     }
@@ -254,7 +254,7 @@ namespace YS.Knife.Data
                 else if (context.Current() == '(')
                 {
                     var (args,subFilter) = ParseFunctionBody2(context);
-                    var nameInfo = new NameInfo { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
+                    var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
                     SkipWhiteSpace(context);
                     names.Add(nameInfo);
                     if (context.NotEnd())
@@ -292,48 +292,48 @@ namespace YS.Knife.Data
                 }
                 else
                 {
-                    names.Add(new NameInfo { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
                     break;
                 }
 
             }
             return names;
         }
-        private (List<ValueInfo> Args,FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
+        private (List<FilterValue> Args,FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
         {
             context.Index++;
-            List<ValueInfo> args = ParseFunctionArguments(context);
+            List<FilterValue> args = ParseFunctionArguments(context);
             FilterInfo2 filterInfo = ParseFunctionFilter(context);
 
             SkipCloseBracket(context);
             return (args, filterInfo);
-            ValueInfo NameChainToValue(string nameChain)
+            FilterValue NameChainToValue(string nameChain)
             {
                 var items = nameChain.Split('.');
                 if (items.Length == 1 && KeyWordValues.ContainsKey(items[0]))
                 {
-                    return new ValueInfo { IsValue = true, Value = KeyWordValues[items[0]] };
+                    return new FilterValue { IsConstant = true, ConstantValue = KeyWordValues[items[0]] };
                 }
                 else
                 {
-                    return new ValueInfo { IsValue = false, Segments = items.Select(p => new NameInfo { Name = p }).ToList() };
+                    return new FilterValue { IsConstant = false, NavigatePaths = items.Select(p => new ValuePath { Name = p }).ToList() };
                 }
             }
-            List<ValueInfo> ParseFunctionArguments(ParseContext context)
+            List<FilterValue> ParseFunctionArguments(ParseContext context)
             {
-                List<ValueInfo> datas = new List<ValueInfo>();
+                List<FilterValue> datas = new List<FilterValue>();
                 while (context.NotEnd())
                 {
                     SkipWhiteSpace(context);
                     if (IsNumberStartChar(context.Current()))
                     {
                         //number
-                        datas.Add(new ValueInfo { IsValue = true, Value = ParseNumberValue(context) });
+                        datas.Add(new FilterValue { IsConstant = true, ConstantValue = ParseNumberValue(context) });
                     }
                     else if (context.Current() == '\"')
                     {
                         //string
-                        datas.Add(new ValueInfo { IsValue = true, Value = ParseStringValue(context) });
+                        datas.Add(new FilterValue { IsConstant = true, ConstantValue = ParseStringValue(context) });
                     }
                     else if (IsValidNameFirstChar(context.Current()))
                     {
@@ -353,13 +353,13 @@ namespace YS.Knife.Data
                         else if (context.Current() == '(')
                         {
                             //nested function
-                            if (values.IsValue)
+                            if (values.IsConstant)
                             {
                                 throw ParseErrors.InvalidText(context);
                             }
                             else
                             {
-                                var nestedFunction = values.Segments.Last();
+                                var nestedFunction = values.NavigatePaths.Last();
                                 nestedFunction.IsFunction = true;
                                 nestedFunction.FunctionArgs= ParseFunctionArguments(context);
                                 nestedFunction.FunctionFilter = ParseFunctionFilter(context);
@@ -441,7 +441,7 @@ namespace YS.Knife.Data
             return context.Text.Substring(startIndex, context.Index - startIndex);
         }
 
-        private FilterType ParseType(ParseContext context)
+        private Operator ParseType(ParseContext context)
         {
             SkipWhiteSpace(context);
             int startIndex = context.Index;
@@ -452,7 +452,7 @@ namespace YS.Knife.Data
                     context.Index++;
                 }
                 string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
-                if (FilterTypeCodes.TryGetValue(opCode.ToLowerInvariant(), out FilterType filterType))
+                if (FilterTypeCodes.TryGetValue(opCode.ToLowerInvariant(), out Operator filterType))
                 {
                     return filterType;
                 }
@@ -468,7 +468,7 @@ namespace YS.Knife.Data
                     context.Index++;
                 }
                 string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
-                if (FilterTypeCodes.TryGetValue(opCode, out FilterType filterType))
+                if (FilterTypeCodes.TryGetValue(opCode, out Operator filterType))
                 {
                     return filterType;
                 }

@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.NotEquals)]
+    [FilterConverter(Operator.NotEquals)]
     internal class NotEqualExpressionConverter : ExpressionConverter
     {
         private Expression ConvertNullValue(Expression p, PropertyInfo propInfo)

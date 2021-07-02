@@ -20,48 +20,48 @@ namespace YS.Knife.Data.UnitTest
             }.AsQueryable();
         }
         [DataTestMethod]
-        [DataRow("Name", FilterType.Equals, "LiSi", "002")]
-        [DataRow("Name", FilterType.Equals, null, "005")]
-        [DataRow("Score", FilterType.Equals, 81, "002")]
-        [DataRow("Score", FilterType.Equals, null, "004,005")]
-        [DataRow("Age", FilterType.Equals, 19, "001,004")]
-        [DataRow("Age", FilterType.Equals, "19", "001,004")]
-        [DataRow("Age", FilterType.Equals, 19.0, "001,004")]
+        [DataRow("Name", Operator.Equals, "LiSi", "002")]
+        [DataRow("Name", Operator.Equals, null, "005")]
+        [DataRow("Score", Operator.Equals, 81, "002")]
+        [DataRow("Score", Operator.Equals, null, "004,005")]
+        [DataRow("Age", Operator.Equals, 19, "001,004")]
+        [DataRow("Age", Operator.Equals, "19", "001,004")]
+        [DataRow("Age", Operator.Equals, 19.0, "001,004")]
 
-        [DataRow("Score", FilterType.NotEquals, 61, "002,003,004,005")]
-        [DataRow("Score", FilterType.NotEquals, null, "001,002,003")]
-        [DataRow("Age", FilterType.NotEquals, 19, "002,003,005")]
+        [DataRow("Score", Operator.NotEquals, 61, "002,003,004,005")]
+        [DataRow("Score", Operator.NotEquals, null, "001,002,003")]
+        [DataRow("Age", Operator.NotEquals, 19, "002,003,005")]
 
-        [DataRow("Score", FilterType.GreaterThan, 80, "002")]
-        [DataRow("Age", FilterType.GreaterThan, 20, "005")]
-        [DataRow("Name", FilterType.GreaterThan, "WangMaZi", "001,003")]
-        [DataRow("Score", FilterType.GreaterThanOrEqual, 80, "002")]
-        [DataRow("Age", FilterType.GreaterThanOrEqual, 20, "002,003,005")]
-        [DataRow("Name", FilterType.GreaterThanOrEqual, "WangMaZi", "001,003,004")]
-        [DataRow("Score", FilterType.LessThan, 70, "001")]
-        [DataRow("Age", FilterType.LessThan, 20, "001,004")]
-        [DataRow("Score", FilterType.LessThanOrEqual, 70, "001,003")]
-        [DataRow("Age", FilterType.LessThanOrEqual, 20, "001,002,003,004")]
+        [DataRow("Score", Operator.GreaterThan, 80, "002")]
+        [DataRow("Age", Operator.GreaterThan, 20, "005")]
+        [DataRow("Name", Operator.GreaterThan, "WangMaZi", "001,003")]
+        [DataRow("Score", Operator.GreaterThanOrEqual, 80, "002")]
+        [DataRow("Age", Operator.GreaterThanOrEqual, 20, "002,003,005")]
+        [DataRow("Name", Operator.GreaterThanOrEqual, "WangMaZi", "001,003,004")]
+        [DataRow("Score", Operator.LessThan, 70, "001")]
+        [DataRow("Age", Operator.LessThan, 20, "001,004")]
+        [DataRow("Score", Operator.LessThanOrEqual, 70, "001,003")]
+        [DataRow("Age", Operator.LessThanOrEqual, 20, "001,002,003,004")]
 
 
-        [DataRow("Name", FilterType.Contains, "a", "001,003,004")]
-        [DataRow("Name", FilterType.NotContains, "a", "002,005")]
+        [DataRow("Name", Operator.Contains, "a", "001,003,004")]
+        [DataRow("Name", Operator.NotContains, "a", "002,005")]
 
-        [DataRow("Name", FilterType.StartsWith, "W", "003,004")]
-        [DataRow("Name", FilterType.NotStartsWith, "W", "001,002,005")]
+        [DataRow("Name", Operator.StartsWith, "W", "003,004")]
+        [DataRow("Name", Operator.NotStartsWith, "W", "001,002,005")]
 
-        [DataRow("Name", FilterType.EndsWith, "i", "002,004")]
-        [DataRow("Name", FilterType.NotEndsWith, "i", "001,003,005")]
+        [DataRow("Name", Operator.EndsWith, "i", "002,004")]
+        [DataRow("Name", Operator.NotEndsWith, "i", "001,003,005")]
 
-        [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
-        [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
-        [DataRow("Age", FilterType.In, new object[] { }, "")]
-        [DataRow("Age", FilterType.In, new object[] { 19, "21" }, "001,004,005")]
-        [DataRow("Age", FilterType.NotIn, new object[] { 19, "21" }, "002,003")]
+        [DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        [DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
+        [DataRow("Age", Operator.In, new object[] { }, "")]
+        [DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        [DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
 
-        [DataRow("Age", FilterType.Between, new object[] { 19, 20 }, "001,002,003,004")]
-        [DataRow("Age", FilterType.NotBetween, new object[] { 19, 20 }, "005")]
-        public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, FilterType filterType, object value, string expectedIds)
+        [DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
+        [DataRow("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
+        public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
         {
             var filter = FilterInfo.CreateItem(fieldName, filterType, value);
             var ids = CreateTestUsers().WhereCondition(filter)
@@ -70,8 +70,8 @@ namespace YS.Knife.Data.UnitTest
         }
         [DataTestMethod]
         [ExpectedException(typeof(FieldInfo2ExpressionException))]
-        [DataRow("Age", FilterType.Equals, null)]
-        public void ShouldThrowFilterInfoExpressionExceptionWhenFilterSingleItemAndWithInvalidArguments(string fieldName, FilterType filterType, object value)
+        [DataRow("Age", Operator.Equals, null)]
+        public void ShouldThrowFilterInfoExpressionExceptionWhenFilterSingleItemAndWithInvalidArguments(string fieldName, Operator filterType, object value)
         {
             var filter = FilterInfo.CreateItem(fieldName, filterType, value);
             CreateTestUsers().WhereCondition(filter).ToList();
@@ -82,7 +82,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldSupportFilterTypeExists()
         {
             var datas = CreateUsersWithAddress();
-            var filter = FilterInfo.CreateItem("Addresses", FilterType.Exists, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var filter = FilterInfo.CreateItem("Addresses", Operator.Exists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             var ids = datas.WhereCondition(filter).Select(p => p.Id);
             Assert.AreEqual("001,002,004", string.Join(",", ids));
         }
@@ -91,7 +91,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldSupportFilterTypeNotExists()
         {
             var datas = CreateUsersWithAddress();
-            var filter = FilterInfo.CreateItem("Addresses", FilterType.NotExists, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var filter = FilterInfo.CreateItem("Addresses", Operator.NotExists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             var ids = datas.WhereCondition(filter).Select(p => p.Id);
             Assert.AreEqual("003,005", string.Join(",", ids));
         }
@@ -100,7 +100,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldSupportFilterTypeAll()
         {
             var datas = CreateUsersWithAddress();
-            var filter = FilterInfo.CreateItem("Addresses", FilterType.All, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var filter = FilterInfo.CreateItem("Addresses", Operator.All, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             var ids = datas.WhereCondition(filter).Select(p => p.Id);
             Assert.AreEqual("001,004", string.Join(",", ids));
         }
@@ -108,7 +108,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldSupportFilterTypeNotAll()
         {
             var datas = CreateUsersWithAddress();
-            var filter = FilterInfo.CreateItem("Addresses", FilterType.NotAll, FilterInfo.CreateItem("City", FilterType.Equals, "xian"));
+            var filter = FilterInfo.CreateItem("Addresses", Operator.NotAll, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             var ids = datas.WhereCondition(filter).Select(p => p.Id);
             Assert.AreEqual("002,003,005", string.Join(",", ids));
         }

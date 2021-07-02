@@ -10,7 +10,7 @@ namespace YS.Knife.Data.FilterExpressions.Converters
 
     internal abstract class ExpressionConverter
     {
-        public FilterType FilterType { get; set; }
+        public Operator FilterType { get; set; }
         public abstract Expression ConvertValue(Expression p, PropertyInfo propInfo, object value,
             List<FilterInfo> subFilters);
         protected object ChangeType(object value, Type changeType)

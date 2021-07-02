@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.NotIn)]
+    [FilterConverter(Operator.NotIn)]
     internal class NotInExpressionConverter : InExpressionConverter
     {
         public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value,

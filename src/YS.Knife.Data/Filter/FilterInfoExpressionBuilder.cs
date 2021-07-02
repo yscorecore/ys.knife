@@ -1,111 +1,119 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using YS.Knife.Data;
-using YS.Knife.Data.Functions;
+using YS.Knife.Data.Filter.Functions;
+using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Filter
 {
     public class FilterInfoExpressionBuilder
     {
-        public static Regex ValidFieldNameRegex = new Regex("^\\w+[!\\?]?(\\.\\w+[!\\?]?)*$");
+        internal static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
 
-        public static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
-
-        public Expression<Func<TSource, bool>> CreateSourceFilterExpression<TSource, TTarget>(
+        public Expression<Func<TSource, bool>> CreateFilterLambdaExpression<TSource, TTarget>(
            ObjectMapper<TSource, TTarget> mapper, FilterInfo2 targetFilter)
            where TSource : class
            where TTarget : class, new()
         {
-            var p = Expression.Parameter(typeof(TSource), "p");
-
-            if (targetFilter == null)
-            {
-                return Expression.Lambda<Func<TSource, bool>>(Expression.Constant(true), p);
-            }
             _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
-
-            var memberProvider = IFilterMemberInfoProvider.GetMapperProvider(mapper);
-            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
-            return Expression.Lambda<Func<TSource, bool>>(exp, p);
-        }
-        internal LambdaExpression CreateSourceFilterExpression(
-           IObjectMapper mapper, FilterInfo2 targetFilter)
-        {
-            _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            var p = Expression.Parameter(mapper.SourceType, "p");
-
-            if (targetFilter == null)
-            {
-                return Expression.Lambda(typeof(Func<,>).MakeGenericType(mapper.SourceType, typeof(bool)), Expression.Constant(true), p);
-            }
-           
-
-            var memberProvider = IFilterMemberInfoProvider.GetMapperProvider(mapper);
-            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
-            return Expression.Lambda(typeof(Func<,>).MakeGenericType(mapper.SourceType, typeof(bool)), exp, p);
+            var memberExpressionProvider = IMemberExpressionProvider.GetMapperProvider(mapper);
+            return CreateFilterLambdaExpression<TSource>(targetFilter, memberExpressionProvider);
         }
 
-        public Expression<Func<TTarget, bool>> CreateFilterExpression<TTarget>(
-            FilterInfo2 targetFilter)
+        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(
+            FilterInfo2 filter)
         {
-            var p = Expression.Parameter(typeof(TTarget), "p");
-
-            if (targetFilter == null)
-            {
-                return Expression.Lambda<Func<TTarget, bool>>(Expression.Constant(true), p);
-            }
-            var memberProvider = IFilterMemberInfoProvider.GetObjectProvider(typeof(TTarget));
-            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
-            return Expression.Lambda<Func<TTarget, bool>>(exp, p);
+            var memberExpressionProvider = IMemberExpressionProvider.GetObjectProvider(typeof(T));
+            return CreateFilterLambdaExpression<T>(filter, memberExpressionProvider);
 
         }
-        public LambdaExpression CreateFilterExpression(Type targetType,
-            FilterInfo2 targetFilter)
+        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
-            var p = Expression.Parameter(targetType, "p");
-
-            if (targetFilter == null)
-            {
-                return Expression.Lambda(typeof(Func<,>).MakeGenericType(targetType, typeof(bool)), Expression.Constant(true), p);
-            }
-            var memberProvider = IFilterMemberInfoProvider.GetObjectProvider(targetType);
-            var exp = FromSingleItemFilterInfo(targetFilter, p, memberProvider);
-            return Expression.Lambda(typeof(Func<,>).MakeGenericType(targetType, typeof(bool)), exp, p);
+            var p = Expression.Parameter(typeof(T), "p");
+            var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
+            return Expression.Lambda<Func<T, bool>>(expression, p);
+        }
+        public LambdaExpression CreateFilterLambdaExpression(Type objectType, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        {
+            var p = Expression.Parameter(objectType, "p");
+            var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
+            return Expression.Lambda(typeof(Func<,>).MakeGenericType(objectType, typeof(bool)), expression, p);
 
         }
-
-
-        private IFilterValueContext CreateValueExpression(ParameterExpression p, IFilterMemberInfoProvider memberProvider, ValueInfo valueInfo)
+        internal Expression CreateFilterExpression(ParameterExpression p, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
-            if (valueInfo == null || valueInfo.IsValue)
+            if (filterInfo == null)
             {
-                // const value
-                return CreateConstValueExpression(valueInfo?.Value);
+                return Expression.Constant(true);
             }
             else
             {
-                return CreateExpressionValueExression(valueInfo.Segments);
+                return CreateCombinGroupsFilterExpression(p, filterInfo, memberExpressionProvider);
             }
-            IFilterValueContext CreateConstValueExpression(object value)
+        }
+        private Expression CreateCombinGroupsFilterExpression(ParameterExpression p, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        {
+            return filterInfo.OpType switch
             {
-                return new ConstFilterValueContext
+                CombinSymbol.AndItems => CreateAndConditionFilterExpression(p, filterInfo, memberExpressionProvider),
+                CombinSymbol.OrItems => CreateOrConditionFilterExpression(p, filterInfo, memberExpressionProvider),
+                _ => CreateSingleItemFilterExpression(p, filterInfo, memberExpressionProvider)
+            };
+        }
+        private Expression CreateOrConditionFilterExpression(ParameterExpression p, FilterInfo2 orGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        {
+            Expression current = Expression.Constant(false);
+            foreach (FilterInfo2 item in orGroupFilterInfo.Items.TrimNotNull())
+            {
+                var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
+                current = Expression.OrElse(current, next);
+            }
+            return current;
+        }
+        private Expression CreateAndConditionFilterExpression(ParameterExpression p, FilterInfo2 andGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        {
+
+            Expression current = Expression.Constant(true);
+            foreach (FilterInfo2 item in andGroupFilterInfo.Items.TrimNotNull())
+            {
+                var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
+                current = Expression.AndAlso(current, next);
+            }
+            return current;
+        }
+        private Expression CreateSingleItemFilterExpression(ParameterExpression p, FilterInfo2 singleItemFilter
+          , IMemberExpressionProvider memberExpressionProvider)
+        {
+            var left = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Left);
+            var right = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Right);
+            return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.FilterType, right);
+        }
+
+        public FilterValueDesc CreateFilterValueDesc(ParameterExpression p, IMemberExpressionProvider memberProvider, FilterValue valueInfo)
+        {
+            if (valueInfo == null || valueInfo.IsConstant)
+            {
+                // const value
+                return CreateConstValueExpression(valueInfo?.ConstantValue);
+            }
+            else
+            {
+                return CreatePathValueExpression(valueInfo.NavigatePaths);
+            }
+            FilterValueDesc CreateConstValueExpression(object value)
+            {
+                return new FilterValueDesc
                 {
-                    ExpressionValueType = value?.GetType(),
-                    CurrentExpression = Expression.Constant(value),
+                    Value = value
                 };
             }
-            IFilterValueContext CreateExpressionValueExression(List<NameInfo> pathInfos)
+            FilterValueDesc CreatePathValueExpression(List<ValuePath> pathInfos)
             {
 
-                IFilterMemberInfoProvider currentMemberProvider = memberProvider;
+                IMemberExpressionProvider currentMemberProvider = memberProvider;
                 Type currentExpressionType = currentMemberProvider.CurrentType;
                 Expression currentExpression = p;
                 foreach (var pathInfo in pathInfos)
@@ -115,7 +123,7 @@ namespace YS.Knife.Data
                         // TODO ..
                         var functionContext = new FunctionContext();
 
-                        var function = FilterFunction.GetFunctionByName(pathInfo.Name);
+                        var function = Functions.FilterFunction.GetFunctionByName(pathInfo.Name);
                         if (function == null)
                         {
                             throw Errors.NotSupportFunction(pathInfo.Name);
@@ -148,63 +156,21 @@ namespace YS.Knife.Data
                         }
                     }
                 }
-                return new ConstFilterValueContext
+                return new FilterValueDesc
                 {
                     ExpressionValueType = currentExpressionType,
                     CurrentExpression = currentExpression
                 };
             }
         }
-        
-        private Expression FromSingleItemFilterInfo(FilterInfo2 singleItem,
-            ParameterExpression p, IFilterMemberInfoProvider memberProvider)
-        {
-            var left = CreateValueExpression(p, memberProvider, singleItem.Left);
-            var right = CreateValueExpression(p, memberProvider, singleItem.Right);
-            return CompareFilterValue(left, singleItem.FilterType, right);
-        }
-        private Expression CompareFilterValue(IFilterValueContext left , FilterType filterType,
-         IFilterValueContext right)
-        {
-            if (right.ExpressionValueType != left.ExpressionValueType)
-            {
-                return Expression.Equal(left.CurrentExpression, Expression.Convert( right.CurrentExpression, left.ExpressionValueType));
-            }
-            return Expression.Equal(left.CurrentExpression, right.CurrentExpression);
-        }
 
 
-        interface IFilterValueContext
-        {
-            public Type ExpressionValueType { get; }
 
-            public Expression CurrentExpression { get; }
-        }
-        class ConstFilterValueContext : IFilterValueContext
-        {
-            public Type ExpressionValueType { get; set; }
 
-            public Expression CurrentExpression { get; set; }
-        }
 
-        class FilterExpressionContext : List<FilerExpressionSegment>, IFilterValueContext
-        {
 
-            public FilerExpressionSegment Current { get => this.Last(); }
 
-            public Type ExpressionValueType { get => Current.MemberInfo.ExpressionValueType; }
 
-            public Expression CurrentExpression { get => Current.Expression; }
-
-            public IFilterMemberInfoProvider CurrentMemberProvider { get => Current.MemberInfo.SubProvider; }
-        }
-
-        struct FilerExpressionSegment
-        {
-            public IFilterMemberInfo MemberInfo { get; set; }
-            public Expression Expression { get; set; }
-            public FieldRequiredKind RequiredKind { get; set; }
-        }
 
         public interface IFilterMemberInfo
         {
@@ -213,7 +179,7 @@ namespace YS.Knife.Data
 
             public LambdaExpression SelectExpression { get; }
 
-            public IFilterMemberInfoProvider SubProvider { get; }
+            public IMemberExpressionProvider SubProvider { get; }
 
 
         }
@@ -223,31 +189,31 @@ namespace YS.Knife.Data
 
             public LambdaExpression SelectExpression { get; set; }
 
-            public IFilterMemberInfoProvider SubProvider { get; set; }
+            public IMemberExpressionProvider SubProvider { get; set; }
         }
-       public  interface IFilterMemberInfoProvider
+        public interface IMemberExpressionProvider
         {
-            static ConcurrentDictionary<Type, IFilterMemberInfoProvider> ObjectMemberProviderCache =
-               new ConcurrentDictionary<Type, IFilterMemberInfoProvider>();
+            static ConcurrentDictionary<Type, IMemberExpressionProvider> ObjectMemberProviderCache =
+               new ConcurrentDictionary<Type, IMemberExpressionProvider>();
             public Type CurrentType { get; }
             public IFilterMemberInfo GetSubMemberInfo(string memberName);
 
-            public static IFilterMemberInfoProvider GetObjectProvider(Type type)
+            public static IMemberExpressionProvider GetObjectProvider(Type type)
             {
                 return ObjectMemberProviderCache.GetOrAdd(type, (ty) =>
                 {
                     var objectProviderType = typeof(ObjectMemberProvider<>).MakeGenericType(ty);
-                    return Activator.CreateInstance(objectProviderType) as IFilterMemberInfoProvider;
+                    return Activator.CreateInstance(objectProviderType) as IMemberExpressionProvider;
                 });
             }
 
-            public static IFilterMemberInfoProvider GetMapperProvider(IObjectMapper objectMapper)
+            public static IMemberExpressionProvider GetMapperProvider(IObjectMapper objectMapper)
             {
                 return new ObjectMapperProvider(objectMapper);
             }
         }
 
-        class ObjectMemberProvider<T> : IFilterMemberInfoProvider
+        class ObjectMemberProvider<T> : IMemberExpressionProvider
         {
             static Dictionary<string, IFilterMemberInfo> AllMembers = new Dictionary<string, IFilterMemberInfo>(StringComparer.InvariantCultureIgnoreCase);
 
@@ -294,7 +260,7 @@ namespace YS.Knife.Data
 
                 public LambdaExpression SelectExpression { get; }
 
-                public IFilterMemberInfoProvider SubProvider { get => IFilterMemberInfoProvider.GetObjectProvider(ExpressionValueType); }
+                public IMemberExpressionProvider SubProvider { get => IMemberExpressionProvider.GetObjectProvider(ExpressionValueType); }
             }
             class ObjectFieldFilterMemberInfo : IFilterMemberInfo
             {
@@ -310,11 +276,11 @@ namespace YS.Knife.Data
 
                 public LambdaExpression SelectExpression { get; }
 
-                public IFilterMemberInfoProvider SubProvider { get => IFilterMemberInfoProvider.GetObjectProvider(ExpressionValueType); }
+                public IMemberExpressionProvider SubProvider { get => IMemberExpressionProvider.GetObjectProvider(ExpressionValueType); }
             }
         }
 
-        class ObjectMapperProvider : IFilterMemberInfoProvider
+        class ObjectMapperProvider : IMemberExpressionProvider
         {
             private readonly IObjectMapper objectMapper;
 
@@ -347,7 +313,7 @@ namespace YS.Knife.Data
 
                 public LambdaExpression SelectExpression => mapperExpression.SourceExpression;
 
-                public IFilterMemberInfoProvider SubProvider
+                public IMemberExpressionProvider SubProvider
                 {
                     get
                     {
@@ -357,7 +323,7 @@ namespace YS.Knife.Data
                         }
                         else
                         {
-                            return IFilterMemberInfoProvider.GetObjectProvider(ExpressionValueType);
+                            return IMemberExpressionProvider.GetObjectProvider(ExpressionValueType);
                         }
 
                     }

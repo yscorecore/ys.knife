@@ -7,7 +7,7 @@ using System.Reflection;
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
 
-    [FilterConverter(FilterType.Exists)]
+    [FilterConverter(Operator.Exists)]
     internal class ExistsExpressionConverter : OpenExpressionConverter
     {
         private static readonly MethodInfo AnyMethod0 =

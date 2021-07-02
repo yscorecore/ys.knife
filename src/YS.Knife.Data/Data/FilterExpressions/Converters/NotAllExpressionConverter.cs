@@ -5,7 +5,7 @@ using System.Reflection;
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
 
-    [FilterConverter(FilterType.NotAll)]
+    [FilterConverter(Operator.NotAll)]
     internal class NotAllExpressionConverter : AllExpressionConverter
     {
         public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value,

@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Reflection;
 using System.Linq.Expressions;
+using YS.Knife.Data.Filter.Functions;
 
-namespace YS.Knife.Data.Functions
+namespace YS.Knife.Data.Filter.Functions
 {
     class Count : CollectionFunction
     {

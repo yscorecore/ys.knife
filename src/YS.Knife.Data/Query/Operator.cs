@@ -2,7 +2,7 @@
 
 namespace YS.Knife.Data
 {
-    public enum FilterType : int
+    public enum Operator : int
     {
         /// <summary>
         /// == eq

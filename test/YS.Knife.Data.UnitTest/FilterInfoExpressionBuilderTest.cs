@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.UnitTest
@@ -72,24 +73,24 @@ namespace YS.Knife.Data.UnitTest
             }
 
             [DataTestMethod]
-            [DataRow("Name", FilterType.Equals, "li si", "002")]
-            [DataRow("Name", FilterType.Equals, null, "003")]
+            [DataRow("Name", Operator.Equals, "li si", "002")]
+            [DataRow("Name", Operator.Equals, null, "003")]
 
 
-            public void ShouldFilterSingleItem(string fieldName, FilterType filterType, object value, string expectedIds)
+            public void ShouldFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
             {
                 TestSdudentForSingleItem(fieldName, filterType, value, expectedIds);
             }
 
             private string FilterStudentIds(FilterInfo2 filter)
             {
-                var exp = new FilterInfoExpressionBuilder().CreateFilterExpression<Student>(filter);
+                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression<Student>(filter);
                 var ids = Students.AsQueryable().Where(exp)
                         .Select(p => p.Id);
                 return string.Join(",", ids);
             }
 
-            private void TestSdudentForSingleItem(string fieldName, FilterType filterType, object value, string expectedIds)
+            private void TestSdudentForSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
             {
                 var filter = FilterInfo2.CreateItem(fieldName, filterType, value);
                 var ids = FilterStudentIds(filter);
@@ -155,7 +156,7 @@ namespace YS.Knife.Data.UnitTest
                 scoreMapper.Append(p => p.TExam, p => p.Exam as IExam);
                 studentMapper.AppendCollection(p => p.TScores, p => p.Scores, scoreMapper);
 
-                var exp = new FilterInfoExpressionBuilder().CreateSourceFilterExpression(studentMapper, filter);
+                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression(studentMapper, filter);
                 var ids = Students.AsQueryable().Where(exp)
                         .Select(p => p.Id);
                 return string.Join(",", ids);
@@ -275,7 +276,7 @@ namespace YS.Knife.Data.UnitTest
                 scoreMapper.Append(p => p.TExam, p => p.Exam as IExam);
                 studentMapper.AppendCollection(p => p.TScores, p => p.Scores, scoreMapper);
 
-                var exp = new FilterInfoExpressionBuilder().CreateSourceFilterExpression(studentMapper, filter);
+                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression(studentMapper, filter);
                 var ids = dataContext1.Students.Where(exp).OrderBy(p=>p.Id)
                         .Select(p => p.Id);
                 Console.WriteLine(ids.ToQueryString());

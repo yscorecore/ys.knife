@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.LessThan)]
+    [FilterConverter(Operator.LessThan)]
     internal class LessThanExpressionConverter : OpExpressionConverter
     {
         protected override Func<Expression, Expression, BinaryExpression> CompareFunc => Expression.LessThan;

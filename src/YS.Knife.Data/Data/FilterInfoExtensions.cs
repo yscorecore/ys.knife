@@ -113,20 +113,20 @@ namespace YS.Knife.Data
         {
             return filterInfo.OpType switch
             {
-                OpType.AndItems => FromAndConditionInternal(entityType, filterInfo, p),
-                OpType.OrItems => FromOrConditionInternal(entityType, filterInfo, p),
+                CombinSymbol.AndItems => FromAndConditionInternal(entityType, filterInfo, p),
+                CombinSymbol.OrItems => FromOrConditionInternal(entityType, filterInfo, p),
                 _ => FromSingleItemFilterInfo(entityType, filterInfo, p)
             };
         }
 
-        private static ExpressionConverter GetConvertByFilterType(FilterType searchType)
+        private static ExpressionConverter GetConvertByFilterType(Operator searchType)
         {
             var instance = CreateConverterInstance(searchType);
             instance.FilterType = searchType;
             return instance;
         }
 
-        private static readonly Dictionary<FilterType, ExpressionConverter> AllConverters =
+        private static readonly Dictionary<Operator, ExpressionConverter> AllConverters =
             Assembly.GetExecutingAssembly().GetTypes().Where(type =>
                     !type.IsAbstract && typeof(ExpressionConverter).IsAssignableFrom(type) &&
                     Attribute.IsDefined(type, typeof(FilterConverterAttribute)))
@@ -140,13 +140,13 @@ namespace YS.Knife.Data
                         return converter;
                     });
 
-        private static ExpressionConverter CreateConverterInstance(FilterType filterType)
+        private static ExpressionConverter CreateConverterInstance(Operator filterType)
         {
             if (AllConverters.TryGetValue(filterType, out ExpressionConverter converter))
             {
                 return converter;
             }
-            throw new NotSupportedException($"FilterType {filterType} not supported.");
+            throw new NotSupportedException($"Operator {filterType} not supported.");
         }
     }
 }

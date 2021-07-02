@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace YS.Knife.Data.FilterExpressions.Converters
 {
-    [FilterConverter(FilterType.In)]
+    [FilterConverter(Operator.In)]
     internal class InExpressionConverter : ExpressionConverter
     {
         public override Expression ConvertValue(Expression p, PropertyInfo propInfo, object value,

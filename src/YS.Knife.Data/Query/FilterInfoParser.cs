@@ -15,11 +15,11 @@ namespace YS.Knife.Data
         static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
         static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
 
-        internal static readonly Dictionary<string, FilterType> FilterTypeCodes =
+        internal static readonly Dictionary<string, Operator> FilterTypeCodes =
             FilterInfo.FilterTypeNameMapper.Select(p => Tuple.Create(p.Value, p.Key))
             .Concat(new[] {
-                Tuple.Create("=",FilterType.Equals),
-                Tuple.Create("<>",FilterType.NotEquals)
+                Tuple.Create("=",Operator.Equals),
+                Tuple.Create("<>",Operator.NotEquals)
 
             }).ToDictionary(p => p.Item1, p => p.Item2);
         internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
@@ -28,10 +28,10 @@ namespace YS.Knife.Data
             ["false"] = false,
             ["null"] = null
         };
-        internal static readonly Dictionary<string, OpType> OpTypeCodes = new Dictionary<string, OpType>(StringComparer.InvariantCultureIgnoreCase)
+        internal static readonly Dictionary<string, CombinSymbol> OpTypeCodes = new Dictionary<string, CombinSymbol>(StringComparer.InvariantCultureIgnoreCase)
         {
-            [FilterInfo.Operator_And] = OpType.AndItems,
-            [FilterInfo.Operator_Or] = OpType.OrItems
+            [FilterInfo.Operator_And] = CombinSymbol.AndItems,
+            [FilterInfo.Operator_Or] = CombinSymbol.OrItems
         };
 
         private readonly char _numberDecimal; // 小数点
@@ -77,7 +77,7 @@ namespace YS.Knife.Data
         private FilterInfo ParseCombinFilter(ParseContext context)
         {
             List<FilterInfo> orItems = new List<FilterInfo>();
-            OpType lastOpType = OpType.OrItems;
+            CombinSymbol lastOpType = CombinSymbol.OrItems;
             while (context.NotEnd())
             {
                 // skip start bracket
@@ -96,7 +96,7 @@ namespace YS.Knife.Data
                 }
                 context.Index++;
 
-                if (lastOpType == OpType.OrItems || orItems.Count == 0)
+                if (lastOpType == CombinSymbol.OrItems || orItems.Count == 0)
                 {
                     orItems.Add(inner);
                 }
@@ -105,7 +105,7 @@ namespace YS.Knife.Data
                     orItems[^1] = orItems[^1].AndAlso(inner);
                 }
 
-                OpType? opType = TryParseOpType(context);
+                CombinSymbol? opType = TryParseOpType(context);
 
                 if (opType == null)
                 {
@@ -116,9 +116,9 @@ namespace YS.Knife.Data
                     lastOpType = opType.Value;
                 }
             }
-            return orItems.Count > 1 ? new FilterInfo(orItems, OpType.OrItems) : orItems.FirstOrDefault();
+            return orItems.Count > 1 ? new FilterInfo(orItems, CombinSymbol.OrItems) : orItems.FirstOrDefault();
         }
-        private OpType? TryParseOpType(ParseContext context)
+        private CombinSymbol? TryParseOpType(ParseContext context)
         {
             var originIndex = context.Index;
 
@@ -151,7 +151,7 @@ namespace YS.Knife.Data
 
             return new FilterInfo()
             {
-                OpType = OpType.SingleItem,
+                OpType = CombinSymbol.SingleItem,
                 FieldName = field,
                 FilterType = type,
                 Function = func,
@@ -186,7 +186,7 @@ namespace YS.Knife.Data
                 context.Index++;
             }
         }
-        private (string Field, FunctionInfo Function) ParseFieldPath(ParseContext context)
+        private (string Field, FilterFunction Function) ParseFieldPath(ParseContext context)
         {
             SkipWhiteSpace(context);
             List<string> names = new List<string>();
@@ -219,7 +219,7 @@ namespace YS.Knife.Data
                 }
                 else if (context.Current() == '(')
                 {
-                    FunctionInfo functionInfo = ParseFunctionBody(context);
+                    FilterFunction functionInfo = ParseFunctionBody(context);
                     functionInfo.Name = name;
                     return (JoinNames(names), functionInfo);
                 }
@@ -253,7 +253,7 @@ namespace YS.Knife.Data
             }
             return JoinNames(names);
         }
-        private FunctionInfo ParseFunctionBody(ParseContext context)
+        private FilterFunction ParseFunctionBody(ParseContext context)
         {
             // skip start (
             context.Index++;
@@ -262,7 +262,7 @@ namespace YS.Knife.Data
             FilterInfo filterInfo = ParseFunctionFilter(context);
 
             SkipCloseBracket(context);
-            return new FunctionInfo
+            return new FilterFunction
             {
                 Args = args,
                 FieldNames = fields,
@@ -377,7 +377,7 @@ namespace YS.Knife.Data
             return context.Text.Substring(startIndex, context.Index - startIndex);
         }
 
-        private FilterType ParseType(ParseContext context)
+        private Operator ParseType(ParseContext context)
         {
             SkipWhiteSpace(context);
             int startIndex = context.Index;
@@ -388,7 +388,7 @@ namespace YS.Knife.Data
                     context.Index++;
                 }
                 string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
-                if (FilterTypeCodes.TryGetValue(opCode.ToLowerInvariant(), out FilterType filterType))
+                if (FilterTypeCodes.TryGetValue(opCode.ToLowerInvariant(), out Operator filterType))
                 {
                     return filterType;
                 }
@@ -404,7 +404,7 @@ namespace YS.Knife.Data
                     context.Index++;
                 }
                 string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
-                if (FilterTypeCodes.TryGetValue(opCode, out FilterType filterType))
+                if (FilterTypeCodes.TryGetValue(opCode, out Operator filterType))
                 {
                     return filterType;
                 }

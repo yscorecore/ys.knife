@@ -25,4 +25,14 @@
     <ItemGroup>
       <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
     </ItemGroup>
+
+
+
+
+
+    <ItemGroup>
+      <Folder Include="Data\Functions\String\" />
+      <Folder Include="Filter\Functions\Collections\" />
+      <Folder Include="Filter\Functions\Simple\" />
+    </ItemGroup>
 </Project>
