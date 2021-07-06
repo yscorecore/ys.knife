@@ -42,10 +42,10 @@ namespace YS.Knife.Data.Filter.Operators
                     {
                         Type targetType = typeof(Nullable<>).MakeGenericType(right.ExpressionValueType);
                         return CompareValue(
-                            Expression.Convert(right.CurrentExpression, targetType), Expression.Constant(null, targetType), targetType);
+                            Expression.Convert(right.ValueExpression, targetType), Expression.Constant(null, targetType), targetType);
                     }
                 }
-                return CompareValue(ConstValueExpression(left.Value, right.ExpressionValueType), right.CurrentExpression, right.ExpressionValueType);
+                return CompareValue(ConstValueExpression(left.Value, right.ExpressionValueType), right.ValueExpression, right.ExpressionValueType);
             }
             Expression CompareExpressionAndConst(FilterValueDesc left, FilterValueDesc right)
             {
@@ -55,35 +55,35 @@ namespace YS.Knife.Data.Filter.Operators
                     {
                         Type targetType = typeof(Nullable<>).MakeGenericType(left.ExpressionValueType);
                         return CompareValue(
-                            Expression.Convert(left.CurrentExpression, targetType), Expression.Constant(null, targetType), targetType);
+                            Expression.Convert(left.ValueExpression, targetType), Expression.Constant(null, targetType), targetType);
                     }
                 }
-                return CompareValue(left.CurrentExpression, ConstValueExpression(right.Value, left.ExpressionValueType), left.ExpressionValueType);
+                return CompareValue(left.ValueExpression, ConstValueExpression(right.Value, left.ExpressionValueType), left.ExpressionValueType);
             }
             Expression CompareExpressionAndExpression(FilterValueDesc left, FilterValueDesc right)
             {
                 if (left.ExpressionValueType == right.ExpressionValueType)
                 {
-                    return CompareValue(left.CurrentExpression, right.CurrentExpression, left.ExpressionValueType);
+                    return CompareValue(left.ValueExpression, right.ValueExpression, left.ExpressionValueType);
                 }
                 else if (Nullable.GetUnderlyingType(left.ExpressionValueType) == right.ExpressionValueType)
                 {
                     // left is nullable, right is value 
-                    return CompareValue(left.CurrentExpression,
-                        Expression.Convert(right.CurrentExpression, left.ExpressionValueType)
+                    return CompareValue(left.ValueExpression,
+                        Expression.Convert(right.ValueExpression, left.ExpressionValueType)
                         , left.ExpressionValueType);
                 }
                 else if (Nullable.GetUnderlyingType(right.ExpressionValueType) == left.ExpressionValueType)
                 {
                     // right is nullable, left is value 
-                    return CompareValue(Expression.Convert(left.CurrentExpression, right.ExpressionValueType),
-                        right.CurrentExpression
+                    return CompareValue(Expression.Convert(left.ValueExpression, right.ExpressionValueType),
+                        right.ValueExpression
                         , right.ExpressionValueType);
                 }
                 else
                 {
-                    return CompareValue(left.CurrentExpression,
-                         Expression.Convert(right.CurrentExpression, left.ExpressionValueType)
+                    return CompareValue(left.ValueExpression,
+                         Expression.Convert(right.ValueExpression, left.ExpressionValueType)
                         , left.ExpressionValueType);
                 }
             }

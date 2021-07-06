@@ -130,7 +130,7 @@ namespace YS.Knife.Data
                     lastOpType = opType.Value;
                 }
             }
-            return orItems.Count > 1 ? new FilterInfo2{ OpType =  CombinSymbol.OrItems, Items = orItems} : orItems.FirstOrDefault();
+            return orItems.Count > 1 ? new FilterInfo2 { OpType = CombinSymbol.OrItems, Items = orItems } : orItems.FirstOrDefault();
         }
         private CombinSymbol? TryParseOpType(ParseContext context)
         {
@@ -224,58 +224,26 @@ namespace YS.Knife.Data
                 SkipWhiteSpace(context);
                 if (context.End())
                 {
-                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name });
                     break;
                 }
                 else if (context.Current() == '.')
                 {
                     // a.b
-                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name });
                     context.Index++;
 
                 }
-                else if (context.Current() == '?' || context.Current() == '!')
-                {
-                    // a?.b or a!.b
-                    var requiredKind = context.Current()=='?'?FieldRequiredKind.Optional:FieldRequiredKind.Must;
-                    context.Index++;
-                    if (context.NotEnd() && context.Current() == '.')
-                    {
-                        names.Add(new ValuePath { Name = name, RequiredKind = requiredKind });
-                        context.Index++;
-                    }
-                    else
-                    {
-                        names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
-                        context.Index--;
-                        break;
-                    }
-                }
+
                 else if (context.Current() == '(')
                 {
-                    var (args,subFilter) = ParseFunctionBody2(context);
+                    var (args, subFilter) = ParseFunctionBody2(context);
                     var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
                     SkipWhiteSpace(context);
                     names.Add(nameInfo);
                     if (context.NotEnd())
                     {
-                        if (context.Current() == '?' || context.Current() == '!')
-                        {
-                            var requiredKind = context.Current() == '?' ? FieldRequiredKind.Optional : FieldRequiredKind.Must;
-                            context.Index++;
-                            if (context.NotEnd() && context.Current() == '.')
-                            {
-                                nameInfo.RequiredKind = requiredKind;
-                                context.Index++;
-                            }
-                            else
-                            {
-                                context.Index--;
-                                break;
-                            }
-                        }
-
-                        else if (context.Current() == '.')
+                        if (context.Current() == '.')
                         {
                             context.Index++;
                         }
@@ -284,22 +252,17 @@ namespace YS.Knife.Data
                             break;
                         }
                     }
-                   
-
-
-                      
-
                 }
                 else
                 {
-                    names.Add(new ValuePath { Name = name, RequiredKind = FieldRequiredKind.None });
+                    names.Add(new ValuePath { Name = name });
                     break;
                 }
 
             }
             return names;
         }
-        private (List<FilterValue> Args,FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
+        private (List<FilterValue> Args, FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
         {
             context.Index++;
             List<FilterValue> args = ParseFunctionArguments(context);
@@ -361,7 +324,7 @@ namespace YS.Knife.Data
                             {
                                 var nestedFunction = values.NavigatePaths.Last();
                                 nestedFunction.IsFunction = true;
-                                nestedFunction.FunctionArgs= ParseFunctionArguments(context);
+                                nestedFunction.FunctionArgs = ParseFunctionArguments(context);
                                 nestedFunction.FunctionFilter = ParseFunctionFilter(context);
                                 SkipCloseBracket(context);
                             }
@@ -397,7 +360,7 @@ namespace YS.Knife.Data
                 return ParseFilterExpression(context); ;
             }
         }
-       
+
 
         private string ParseNameChain(ParseContext context)
         {
@@ -418,7 +381,7 @@ namespace YS.Knife.Data
             }
             return JoinNames(names);
         }
-    
+
         private string JoinNames(IEnumerable<string> names)
         {
             return string.Join('.', names);
@@ -482,7 +445,7 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidFilterType(context);
             }
         }
-        private (bool,object) TryParseValue(ParseContext context)
+        private (bool, object) TryParseValue(ParseContext context)
         {
             var originIndex = context.Index;
             SkipWhiteSpace(context);
@@ -490,13 +453,13 @@ namespace YS.Knife.Data
             if (current == '\"')
             {
                 //string
-                return (true,ParseStringValue(context));
+                return (true, ParseStringValue(context));
             }
             else if (char.IsLetter(current))
             {
                 //keyword eg
                 string name = ParseName(context);
-                if (KeyWordValues.TryGetValue(name,out var val))
+                if (KeyWordValues.TryGetValue(name, out var val))
                 {
                     return (true, val);
                 }
@@ -511,7 +474,7 @@ namespace YS.Knife.Data
                 //number
                 return (true, ParseNumberValue(context));
             }
-            else if ( current == '[')
+            else if (current == '[')
             {
                 return (true, ParseArrayValue(context));
                 //array

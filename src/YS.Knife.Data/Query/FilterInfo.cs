@@ -14,6 +14,7 @@ namespace YS.Knife.Data
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
     [DebuggerDisplay("{ToString()}")]
+    [Obsolete]
     public class FilterInfo
     {
         internal const string Operator_And = "and";
@@ -500,7 +501,6 @@ namespace YS.Knife.Data
     {
         public string Name { get; set; }
         public bool IsFunction { get; set; }
-        public FieldRequiredKind RequiredKind { get; set; }
         public List<FilterValue> FunctionArgs { get; set; }
         public FilterInfo2 FunctionFilter { get; set; }
         public override string ToString()
@@ -517,29 +517,15 @@ namespace YS.Knife.Data
                     args.Add(FunctionFilter.ToString());
                 }
 
-                return $"{Name}({string.Join(", ",args)}){RequiredKindToString(RequiredKind)}";
+                return $"{Name}({string.Join(", ",args)})";
             }
             else
             {
-                return $"{Name}{RequiredKindToString(RequiredKind)}";
+                return $"{Name}";
             }
 
-            string RequiredKindToString(FieldRequiredKind kind)
-            {
-                switch (kind)
-                {
-                    case  FieldRequiredKind.Must: return "!";
-                    case FieldRequiredKind.Optional: return "?";
-                    default: return string.Empty;
-                }
-            }
+           
         }
-    }
-    public enum FieldRequiredKind
-    {
-        None,
-        Must,
-        Optional,
     }
 
     public class FilterFunction
@@ -566,7 +552,6 @@ namespace YS.Knife.Data
                     return FilterInfo.Parse(base64StringOrFilterExpression, culture);
                 }
             }
-
             return base.ConvertFrom(context, culture, value);
         }
     }

@@ -185,24 +185,7 @@ namespace YS.Knife.Data.UnitTest
         {
             TestFilterExpression(expression, expectedExpression);
         }
-        [DataTestMethod]
-        [DataRow("a?.b>1", "a?.b > 1")]
-        [DataRow("a?.b>1", "a?.b > 1")]
-        [DataRow("a?.b?.c>1", "a?.b?.c > 1")]
-        [DataRow("a?.b?.c(e.b.c,d=1)>1", "a?.b?.c(e.b.c, d == 1) > 1")]
-        [DataRow("a?.b?.c(e.b.c,d?.e=1)>1", "a?.b?.c(e.b.c, d?.e == 1) > 1")]
-        [DataRow("a?.b?.c(e?.b?.c=1)>1", "a?.b?.c(e?.b?.c == 1) > 1")]
 
-        [DataRow("a!.b!=1", "a!.b != 1")]
-        [DataRow("a!.b!=1", "a!.b != 1")]
-        [DataRow("a!.b!.c!=1", "a!.b!.c != 1")]
-        [DataRow("a!.b!.c(e.b.c,d!=1)!=1", "a!.b!.c(e.b.c, d != 1) != 1")]
-        [DataRow("a!.b!.c(e.b.c,d!.e!=1)!=1", "a!.b!.c(e.b.c, d!.e != 1) != 1")]
-        [DataRow("a!.b!.c(e!.b!.c!=1)!=1", "a!.b!.c(e!.b!.c != 1) != 1")]
-        public void ShouldParseOptionalFieldName(string expression, string expectedExpression)
-        {
-            TestFilterExpression(expression, expectedExpression);
-        }
 
 
         [ExpectedException(typeof(FilterInfoParseException))]

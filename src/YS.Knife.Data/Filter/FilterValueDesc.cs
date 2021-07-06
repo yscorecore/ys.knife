@@ -11,8 +11,10 @@ namespace YS.Knife.Data.Filter
 
         public Type ExpressionValueType { get; set; }
 
-        public Expression CurrentExpression { get; set; }
+        public Expression ValueExpression { get; set; }
 
-        public bool IsConstValue { get => CurrentExpression == null; } 
+        public bool IsConstValue { get => ValueExpression == null; } 
+
+       
     }
 }

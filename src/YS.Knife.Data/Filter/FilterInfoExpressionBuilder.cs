@@ -92,7 +92,7 @@ namespace YS.Knife.Data.Filter
             return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.FilterType, right);
         }
 
-        public FilterValueDesc CreateFilterValueDesc(ParameterExpression p, IMemberExpressionProvider memberProvider, FilterValue valueInfo)
+        public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberExpressionProvider memberProvider, FilterValue valueInfo)
         {
             if (valueInfo == null || valueInfo.IsConstant)
             {
@@ -120,22 +120,14 @@ namespace YS.Knife.Data.Filter
                 {
                     if (pathInfo.IsFunction)
                     {
-                        // TODO ..
-                        var functionContext = new FunctionContext();
-
-                        var function = Functions.FilterFunction.GetFunctionByName(pathInfo.Name);
-                        if (function == null)
+                        var functionResult = IFilterFunction.ExecuteFunction(new FunctionContext
                         {
-                            throw Errors.NotSupportFunction(pathInfo.Name);
-                        }
-                        //TODO apply function
-                        var functionResult = function.Execute(new FunctionContext
-                        {
-                            //FromType = context.ExpressionValueType,
-                            //Args = singleItem.Function.Args,
-                            //FieldNames = singleItem.Function.FieldNames,
-                            //SubFilter = singleItem.Function.SubFilter
-                        });
+                            Name = pathInfo.Name,
+                            Args = pathInfo.FunctionArgs ?? new List<FilterValue>(),
+                            SubFilter = pathInfo.FunctionFilter,
+                            CurrentExpression = currentExpression,
+                            MemberExpressionProvider = currentMemberProvider,
+                        }); ;
                         currentExpressionType = functionResult.LambdaValueType;
                         currentExpression = currentExpression.Connect(functionResult.LambdaExpression);
                         currentMemberProvider = functionResult.MemberProvider;
@@ -159,7 +151,7 @@ namespace YS.Knife.Data.Filter
                 return new FilterValueDesc
                 {
                     ExpressionValueType = currentExpressionType,
-                    CurrentExpression = currentExpression
+                    ValueExpression = currentExpression
                 };
             }
         }
@@ -353,14 +345,7 @@ namespace YS.Knife.Data.Filter
             {
                 return new FieldInfo2ExpressionException($"Not supported field name '{name}' in filter info.");
             }
-            public static Exception NotSupportFunction(string functionName)
-            {
-                return new FieldInfo2ExpressionException($"Not support function '{functionName}'."); ;
-            }
-            public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string fullField)
-            {
-                return new FieldInfo2ExpressionException("Only can use function in collection type");
-            }
+           
         }
     }
 }
