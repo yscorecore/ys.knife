@@ -219,9 +219,14 @@ namespace YS.Knife.Data.UnitTest
                 }
             }
             [DataTestMethod]
-            [DataRow("", "001,002,003,004,005,006")]
-            [DataRow("tName=\"li si\"", "002")]
+            //[DataRow("", "001,002,003,004,005,006")]
+            //[DataRow("tName=\"li si\"", "002")]
             [DataRow("tName=null", "003")]
+            [DataRow("tName>null", "")]
+            [DataRow("tName>=null", "")]
+            [DataRow("tName<null", "")]
+            [DataRow("tName<=null", "")]
+            [DataRow("null=tName", "003")]
             public void ShouldFilterSingleItem(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
@@ -333,7 +338,9 @@ namespace YS.Knife.Data.UnitTest
             public string Id { get; set; }
             public string Name { get; set; }
             public int Age { get; set; }
-            public int Height { get; set; }
+            public decimal? Height { get; set; }
+
+            public decimal? Weight { get; set; }
             public IEnumerable<ScoreRecord> Scores { get; set; }
             public Address Address { get; set; }
         }

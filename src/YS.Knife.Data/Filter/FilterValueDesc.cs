@@ -13,6 +13,6 @@ namespace YS.Knife.Data.Filter
 
         public Expression CurrentExpression { get; set; }
 
-        public bool IsConstValue { get => CurrentExpression != null; } 
+        public bool IsConstValue { get => CurrentExpression == null; } 
     }
 }

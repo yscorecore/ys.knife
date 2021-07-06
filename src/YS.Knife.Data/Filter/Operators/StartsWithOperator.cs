@@ -7,11 +7,7 @@ namespace YS.Knife.Data.Filter.Operators
 {
     class StartsWithOperator : StringOperator
     {
+        protected override string MethodName => nameof(string.StartsWith);
         public override Operator Operator => Operator.StartsWith;
-
-        protected override Expression CompareValue(Expression left, Expression right)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

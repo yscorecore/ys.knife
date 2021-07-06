@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
@@ -9,75 +10,151 @@ namespace YS.Knife.Data.Filter.Operators
     public abstract class SampleTypeOperator : IFilterOperator
     {
         public abstract Operator Operator { get; }
-
         public virtual Expression CompareValue(FilterValueDesc left, FilterValueDesc right)
         {
             if (left.IsConstValue)
             {
                 if (right.IsConstValue)
                 {
-                    return CompareConstValue(left.Value, right.Value);
+                    return CompareConstAndConst(left.Value, right.Value);
                 }
                 else
                 {
-                    var leftExpression = BuildExpression(left.Value, right.ExpressionValueType);
-                    var rightExpression = right.CurrentExpression;
-                    return CompareValue(leftExpression, rightExpression);
+                    return CompareConstAndExpression(left, right);
                 }
             }
             else
             {
                 if (right.IsConstValue)
                 {
-                    var leftExpression = left.CurrentExpression;
-                    var rightExpression = BuildExpression(right.Value, left.ExpressionValueType);
-                    return CompareValue(leftExpression, rightExpression);
+                    return CompareExpressionAndConst(left, right);
                 }
                 else
                 {
-                    var leftExpression = left.CurrentExpression;
-                    var rightExpression =
-                       ConvertExpressionType(right.CurrentExpression, right.ExpressionValueType, left.ExpressionValueType);
-                    return CompareValue(leftExpression, rightExpression);
+                    return CompareExpressionAndExpression(left, right);
                 }
             }
+            Expression CompareConstAndExpression(FilterValueDesc left, FilterValueDesc right)
+            {
+                if (left.Value == null)
+                {
+                    if (right.ExpressionValueType.IsValueType && !right.ExpressionValueType.IsNullableType())
+                    {
+                        Type targetType = typeof(Nullable<>).MakeGenericType(right.ExpressionValueType);
+                        return CompareValue(
+                            Expression.Convert(right.CurrentExpression, targetType), Expression.Constant(null, targetType), targetType);
+                    }
+                }
+                return CompareValue(ConstValueExpression(left.Value, right.ExpressionValueType), right.CurrentExpression, right.ExpressionValueType);
+            }
+            Expression CompareExpressionAndConst(FilterValueDesc left, FilterValueDesc right)
+            {
+                if (right.Value == null)
+                {
+                    if (left.ExpressionValueType.IsValueType && !left.ExpressionValueType.IsNullableType())
+                    {
+                        Type targetType = typeof(Nullable<>).MakeGenericType(left.ExpressionValueType);
+                        return CompareValue(
+                            Expression.Convert(left.CurrentExpression, targetType), Expression.Constant(null, targetType), targetType);
+                    }
+                }
+                return CompareValue(left.CurrentExpression, ConstValueExpression(right.Value, left.ExpressionValueType), left.ExpressionValueType);
+            }
+            Expression CompareExpressionAndExpression(FilterValueDesc left, FilterValueDesc right)
+            {
+                if (left.ExpressionValueType == right.ExpressionValueType)
+                {
+                    return CompareValue(left.CurrentExpression, right.CurrentExpression, left.ExpressionValueType);
+                }
+                else if (Nullable.GetUnderlyingType(left.ExpressionValueType) == right.ExpressionValueType)
+                {
+                    // left is nullable, right is value 
+                    return CompareValue(left.CurrentExpression,
+                        Expression.Convert(right.CurrentExpression, left.ExpressionValueType)
+                        , left.ExpressionValueType);
+                }
+                else if (Nullable.GetUnderlyingType(right.ExpressionValueType) == left.ExpressionValueType)
+                {
+                    // right is nullable, left is value 
+                    return CompareValue(Expression.Convert(left.CurrentExpression, right.ExpressionValueType),
+                        right.CurrentExpression
+                        , right.ExpressionValueType);
+                }
+                else
+                {
+                    return CompareValue(left.CurrentExpression,
+                         Expression.Convert(right.CurrentExpression, left.ExpressionValueType)
+                        , left.ExpressionValueType);
+                }
+            }
+            Expression CompareConstAndConst(object left, object right)
+            {
+                if (left is null)
+                {
+                    if (right is null)
+                    {
+                        throw ExpressionErrors.CompareBothNullError();
+                    }
+                    else
+                    {
+                        var targetType = right.GetType();
+                        if (targetType.IsValueType)
+                        {
+                            targetType = typeof(Nullable<>).MakeGenericType(right.GetType());
+                        }
+                        return CompareValue(ConstValueExpression(left, targetType), ConstValueExpression(right, targetType), targetType);
+                    }
+                }
+                else
+                {
+                    var targetType = left.GetType();
+                    if (right is null && targetType.IsValueType)
+                    {
+                        targetType = typeof(Nullable<>).MakeGenericType(left.GetType());
+                    }
+                    return CompareValue(ConstValueExpression(left, targetType), ConstValueExpression(right, targetType), targetType);
+                }
+            }
+
+            Expression ConstValueExpression(object value, Type targetType)
+            {
+                if (targetType.IsNullableType() && value is null)
+                {
+                    return Expression.Constant(value, targetType);
+                }
+                return Expression.Constant(ChangeType(value, targetType), targetType);
+            }
+
         }
 
-        private Expression CompareConstValue(object left, object right)
+
+        protected abstract Expression CompareValue(Expression left, Expression right, Type type);
+
+        private object ChangeType(object value, Type valueType)
         {
-            if (left is null)
+            if (value == null)
             {
-                if (right is null)
+                return valueType.DefaultValue();
+            }
+            try
+            {
+                var originType = Nullable.GetUnderlyingType(valueType) ?? valueType;
+                if (value is IConvertible && typeof(IConvertible).IsAssignableFrom(originType))
                 {
-                    return CompareValue(Expression.Constant(null), Expression.Constant(null));
+                    return Convert.ChangeType(value, originType);
                 }
                 else
                 {
-                    var leftExpression = BuildExpression(left,right.GetType());
-                    var rightExpression = Expression.Constant(right);
-                    return CompareValue(leftExpression, rightExpression);
+                    var converter = TypeDescriptor.GetConverter(originType);
+                    return converter.ConvertFrom(value);
                 }
             }
-            else
+            catch (Exception ex)
             {
-                var leftExpression = Expression.Constant(left);
-                var rightExpression = BuildExpression(right, left.GetType());
-                return CompareValue(leftExpression, rightExpression);
+                throw ExpressionErrors.ConvertValueError(value, valueType, ex);
             }
         }
-        protected abstract Expression CompareValue(Expression left, Expression right);
-        private Expression BuildExpression(object value, Type valueType)
-        {
-            return null;
-        }
-        private Expression ConvertExpressionType(Expression expression, Type currentType, Type targetType)
-        {
-            if (currentType == targetType)
-            {
-                return expression;
-            }
-            // TODO ...
-            return null;
-        }
+       
+
     }
 }

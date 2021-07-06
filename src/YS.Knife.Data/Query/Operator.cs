@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace YS.Knife.Data
 {
@@ -7,6 +8,7 @@ namespace YS.Knife.Data
         /// <summary>
         /// == eq
         /// </summary>
+        [Description("==")]
         Equals = 0,
         /// <summary>
         /// != neq
