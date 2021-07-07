@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using YS.Knife;
 using YS.Knife.Data;
 using YS.Knife.Data.Mappers;
 
@@ -20,7 +21,8 @@ namespace System.Linq
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             var mapper =selectInfo?.Include==null?baseMapper: baseMapper.Pick(selectInfo?.Include);
-            return source.Select(mapper.BuildExpression());
+
+            return source.Map(mapper);
         }
         
         public static IQueryable<R> Select<T,R>(this IQueryable<T> source, SelectInfo selectInfo)

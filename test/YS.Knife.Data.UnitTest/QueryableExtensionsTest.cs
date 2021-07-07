@@ -20,7 +20,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListWhenListAllWithFilterInfoAndNoOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(FilterInfo.CreateItem("Name", Operator.Contains, "a"), null,null);
+            var actual = users.ListAll(FilterInfo2.CreateItem("Name", Operator.Contains, "a"), null,null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a"))).ToList());
         }
 
@@ -36,7 +36,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListWhenListAllWithFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(FilterInfo.CreateItem("Name", Operator.Contains, "a"),
+            var actual = users.ListAll(FilterInfo2.CreateItem("Name", Operator.Contains, "a"),
                 OrderInfo.Create("Name", OrderType.Desc),null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a")))
                 .OrderByDescending(p => p.Name).ToList());
@@ -100,7 +100,7 @@ namespace YS.Knife.Data.UnitTest
                 new User()
                 {
                     Id = "005",
-                    Name = null,
+                    Name = "",
                     Age = 21,
                     Addresses = new List<Address>() {new Address() {City = "beijing"}, new Address() {City = "beijing"}}
                 }

@@ -333,7 +333,7 @@ namespace YS.Knife.Data
 
         public FilterValue Left { get; set; }
         public FilterValue Right { get; set; }
-        public Operator FilterType { get; set; }
+        public Operator Operator { get; set; }
         public CombinSymbol OpType { get; set; }
         public List<FilterInfo2> Items { get; set; }
         
@@ -398,7 +398,7 @@ namespace YS.Knife.Data
                     return string.Join($" {Operator_Or} ", Items.TrimNotNull().Select(p => $"({p})"));
                 default:
                     return
-                        $"{ValueToString(Left)} {FilterTypeToString(FilterType)} {ValueToString(Right)}";
+                        $"{ValueToString(Left)} {FilterTypeToString(Operator)} {ValueToString(Right)}";
             }
             string ValueToString(FilterValue p0)
             {
@@ -422,6 +422,7 @@ namespace YS.Knife.Data
             return new FilterInfo2()
             {
                 OpType = CombinSymbol.SingleItem,
+                 Operator = filterType,
                 Left = new FilterValue { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
                 Right = new FilterValue { IsConstant = true, ConstantValue =value }
                 

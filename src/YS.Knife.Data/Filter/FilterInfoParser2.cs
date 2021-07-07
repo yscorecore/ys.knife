@@ -167,7 +167,7 @@ namespace YS.Knife.Data
             {
                 OpType = CombinSymbol.SingleItem,
                 Left = leftValue,
-                FilterType = type,
+                Operator = type,
                 Right = rightValue,
             };
 

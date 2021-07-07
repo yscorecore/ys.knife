@@ -2,7 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Data.Filter
 {
     [TestClass]
     public class FilterInfoExtensionsTest

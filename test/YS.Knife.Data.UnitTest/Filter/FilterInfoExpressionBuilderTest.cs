@@ -11,7 +11,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
 
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Data.Filter
 {
     [TestClass]
     public class FilterInfoExpressionBuilderTest

@@ -89,7 +89,7 @@ namespace YS.Knife.Data.Filter
         {
             var left = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Left);
             var right = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Right);
-            return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.FilterType, right);
+            return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.Operator, right);
         }
 
         public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberExpressionProvider memberProvider, FilterValue valueInfo)
