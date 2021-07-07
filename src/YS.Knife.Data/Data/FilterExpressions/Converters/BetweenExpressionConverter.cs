@@ -28,7 +28,7 @@ namespace YS.Knife.Data.FilterExpressions.Converters
             }
             var propExpression = Expression.Property(p, propInfo);
             if (isnullabletype)
-                propExpression = Expression.Property(propExpression, "Value");
+                propExpression = Expression.Property(propExpression, "ConstValue");
             var left = Expression.GreaterThanOrEqual(Expression.Call(
                 propExpression,
                 ptype.GetMethod("CompareTo", new Type[] { ptype }),

@@ -16,7 +16,7 @@ namespace YS.Knife.Data
             if (enumerableType.IsGenericTypeDefinition) return null;
             return EnumerableLocalCache.GetOrAdd(enumerableType, type =>
             {
-                if (type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
                 {
                     return type.GetGenericArguments().First();
                 }
@@ -31,7 +31,7 @@ namespace YS.Knife.Data
             if (enumerableType.IsGenericTypeDefinition) return null;
             return QueryableLocalCache.GetOrAdd(enumerableType, type =>
             {
-                if (type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
                 {
                     return type.GetGenericArguments().First();
                 }

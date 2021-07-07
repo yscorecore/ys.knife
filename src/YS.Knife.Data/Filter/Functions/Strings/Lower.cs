@@ -17,14 +17,15 @@ namespace YS.Knife.Data.Filter.Functions.Strings
             {
                 throw FunctionErrors.ArgumentCountNotMatched(this.Name);
             }
-
-            FilterValueDesc valueDesc = FilterInfoExpressionBuilder.Default.CreateFilterValueDesc(context.CurrentExpression , context.MemberExpressionProvider, context.Args.First());
-            Expression.Call(valueDesc.ValueExpression, ToLowerMethod);
+            var para = Expression.Parameter(context.MemberExpressionProvider.CurrentType);
+            FilterValueDesc valueDesc = FilterInfoExpressionBuilder.Default.CreateFilterValueDesc(para, context.MemberExpressionProvider, context.Args.First());
+            var exp = Expression.Call(valueDesc.GetExpression(typeof(string)), ToLowerMethod);
 
             return new FunctionResult
             {
-                 LambdaValueType = typeof(string),
-                 MemberProvider = IMemberExpressionProvider.GetObjectProvider(typeof(string)),
+                LambdaValueType = typeof(string),
+                MemberProvider = IMemberExpressionProvider.GetObjectProvider(typeof(string)),
+                LambdaExpression = Expression.Lambda(exp, para)
 
             };
         }

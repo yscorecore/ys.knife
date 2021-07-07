@@ -13,5 +13,7 @@ namespace YS.Knife.Data.Filter.Functions
         public List<FilterValue> Args { get; set; }
         public Expression CurrentExpression { get; set; }
         public IMemberExpressionProvider MemberExpressionProvider { get; set; }
+
+        public virtual Type CurrentType { get; set; }
     }
 }

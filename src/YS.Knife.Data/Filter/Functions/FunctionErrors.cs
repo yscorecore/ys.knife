@@ -14,9 +14,9 @@ namespace YS.Knife.Data.Filter.Functions
         {
             return new FieldInfo2ExpressionException($" Argument count not matched '{functionName}'."); ;
         }
-        public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string fullField)
+        public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string functionName)
         {
-            return new FieldInfo2ExpressionException("Only can use function in collection type");
+            return new FieldInfo2ExpressionException($"Only can use function {functionName} in collection type");
         }
     }
 }

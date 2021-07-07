@@ -22,7 +22,7 @@ namespace YS.Knife.Data.Filter
             var memberExpressionProvider = IMemberExpressionProvider.GetMapperProvider(mapper);
             return CreateFilterLambdaExpression<TSource>(targetFilter, memberExpressionProvider);
         }
-
+        
         public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(
             FilterInfo2 filter)
         {
@@ -107,7 +107,7 @@ namespace YS.Knife.Data.Filter
             {
                 return new FilterValueDesc
                 {
-                    Value = value
+                    ConstValue = value
                 };
             }
             FilterValueDesc CreatePathValueExpression(List<ValuePath> pathInfos)
@@ -127,7 +127,8 @@ namespace YS.Knife.Data.Filter
                             SubFilter = pathInfo.FunctionFilter,
                             CurrentExpression = currentExpression,
                             MemberExpressionProvider = currentMemberProvider,
-                        }); ;
+                            CurrentType = currentExpressionType,
+                        });
                         currentExpressionType = functionResult.LambdaValueType;
                         currentExpression = currentExpression.Connect(functionResult.LambdaExpression);
                         currentMemberProvider = functionResult.MemberProvider;
@@ -150,8 +151,8 @@ namespace YS.Knife.Data.Filter
                 }
                 return new FilterValueDesc
                 {
-                    ExpressionValueType = currentExpressionType,
-                    ValueExpression = currentExpression
+                    PathValueType = currentExpressionType,
+                    PathValueExpression = currentExpression
                 };
             }
         }

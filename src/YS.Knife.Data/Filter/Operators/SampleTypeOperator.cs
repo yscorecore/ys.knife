@@ -16,7 +16,7 @@ namespace YS.Knife.Data.Filter.Operators
             {
                 if (right.IsConstValue)
                 {
-                    return CompareConstAndConst(left.Value, right.Value);
+                    return CompareConstAndConst(left.ConstValue, right.ConstValue);
                 }
                 else
                 {
@@ -36,55 +36,55 @@ namespace YS.Knife.Data.Filter.Operators
             }
             Expression CompareConstAndExpression(FilterValueDesc left, FilterValueDesc right)
             {
-                if (left.Value == null)
+                if (left.ConstValue == null)
                 {
-                    if (right.ExpressionValueType.IsValueType && !right.ExpressionValueType.IsNullableType())
+                    if (right.PathValueType.IsValueType && !right.PathValueType.IsNullableType())
                     {
-                        Type targetType = typeof(Nullable<>).MakeGenericType(right.ExpressionValueType);
+                        Type targetType = typeof(Nullable<>).MakeGenericType(right.PathValueType);
                         return CompareValue(
-                            Expression.Convert(right.ValueExpression, targetType), Expression.Constant(null, targetType), targetType);
+                            Expression.Convert(right.PathValueExpression, targetType), Expression.Constant(null, targetType), targetType);
                     }
                 }
-                return CompareValue(ConstValueExpression(left.Value, right.ExpressionValueType), right.ValueExpression, right.ExpressionValueType);
+                return CompareValue(ConstValueExpression(left.ConstValue, right.PathValueType), right.PathValueExpression, right.PathValueType);
             }
             Expression CompareExpressionAndConst(FilterValueDesc left, FilterValueDesc right)
             {
-                if (right.Value == null)
+                if (right.ConstValue == null)
                 {
-                    if (left.ExpressionValueType.IsValueType && !left.ExpressionValueType.IsNullableType())
+                    if (left.PathValueType.IsValueType && !left.PathValueType.IsNullableType())
                     {
-                        Type targetType = typeof(Nullable<>).MakeGenericType(left.ExpressionValueType);
+                        Type targetType = typeof(Nullable<>).MakeGenericType(left.PathValueType);
                         return CompareValue(
-                            Expression.Convert(left.ValueExpression, targetType), Expression.Constant(null, targetType), targetType);
+                            Expression.Convert(left.PathValueExpression, targetType), Expression.Constant(null, targetType), targetType);
                     }
                 }
-                return CompareValue(left.ValueExpression, ConstValueExpression(right.Value, left.ExpressionValueType), left.ExpressionValueType);
+                return CompareValue(left.PathValueExpression, ConstValueExpression(right.ConstValue, left.PathValueType), left.PathValueType);
             }
             Expression CompareExpressionAndExpression(FilterValueDesc left, FilterValueDesc right)
             {
-                if (left.ExpressionValueType == right.ExpressionValueType)
+                if (left.PathValueType == right.PathValueType)
                 {
-                    return CompareValue(left.ValueExpression, right.ValueExpression, left.ExpressionValueType);
+                    return CompareValue(left.PathValueExpression, right.PathValueExpression, left.PathValueType);
                 }
-                else if (Nullable.GetUnderlyingType(left.ExpressionValueType) == right.ExpressionValueType)
+                else if (Nullable.GetUnderlyingType(left.PathValueType) == right.PathValueType)
                 {
                     // left is nullable, right is value 
-                    return CompareValue(left.ValueExpression,
-                        Expression.Convert(right.ValueExpression, left.ExpressionValueType)
-                        , left.ExpressionValueType);
+                    return CompareValue(left.PathValueExpression,
+                        Expression.Convert(right.PathValueExpression, left.PathValueType)
+                        , left.PathValueType);
                 }
-                else if (Nullable.GetUnderlyingType(right.ExpressionValueType) == left.ExpressionValueType)
+                else if (Nullable.GetUnderlyingType(right.PathValueType) == left.PathValueType)
                 {
                     // right is nullable, left is value 
-                    return CompareValue(Expression.Convert(left.ValueExpression, right.ExpressionValueType),
-                        right.ValueExpression
-                        , right.ExpressionValueType);
+                    return CompareValue(Expression.Convert(left.PathValueExpression, right.PathValueType),
+                        right.PathValueExpression
+                        , right.PathValueType);
                 }
                 else
                 {
-                    return CompareValue(left.ValueExpression,
-                         Expression.Convert(right.ValueExpression, left.ExpressionValueType)
-                        , left.ExpressionValueType);
+                    return CompareValue(left.PathValueExpression,
+                         Expression.Convert(right.PathValueExpression, left.PathValueType)
+                        , left.PathValueType);
                 }
             }
             Expression CompareConstAndConst(object left, object right)

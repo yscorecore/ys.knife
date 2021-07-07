@@ -244,8 +244,10 @@ namespace YS.Knife.Data.UnitTest
 
             [DataTestMethod]
 
-            //[DataRow("TScores?.Count()=6", "001,002,003")]
-            [DataRow("TScores.Count(TScore=60)=6", "001,002,003")]
+            //[DataRow("Lower(tName)=\"zhang san\"", "001")]
+            //[DataRow("Lower(tAddress.city)=\"xi'an\"", "001")]
+            //[DataRow("TScores.Count()=6", "001,002,003")]
+            [DataRow("TScores.Count(TClassName=\"Chinese\")=2", "001,002,003")]
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
