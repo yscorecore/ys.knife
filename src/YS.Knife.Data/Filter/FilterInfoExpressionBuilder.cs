@@ -87,6 +87,43 @@ namespace YS.Knife.Data.Filter
         private Expression CreateSingleItemFilterExpression(ParameterExpression p, FilterInfo2 singleItemFilter
           , IMemberExpressionProvider memberExpressionProvider)
         {
+            /*** 
+            a.b.c = null    >  a==null || a.b==null || a.b.c == null
+            a.b.c ="abc"   >  a!=null && a.b!=null && a.b.c = "abc"
+            a.b.c != null    > a!=null && a.b!=null && a.b.c !=null
+            a.b.c != "abc"  > a==null || a.b==null || a.b.c
+
+            a.b.c ct "abc"  > a!=null && b!=null && a.b.c!=null && a.b.c ct "abc" 
+            a.b.c nct "abc" > a==null || b==null || c==null || a.b.c nct "abc"
+
+            a.b.c sw "abc"  > a!=null && b!=null && a.b.c!=null && a.b.c sw"abc" 
+            a.b.c nsw "abc" > a==null || b==null || c==null || a.b.c nsw "abc"
+
+            a.b.c sw "abc"  > a!=null && b!=null && a.b.c!=null && a.b.c sw"abc" 
+            a.b.c nsw "abc" > a==null || b==null || c==null || a.b.c nsw "abc"
+
+            a.b.c > 5  > a!=null && a.b!=null && a.b.c > 5
+            a.b.c > null > false
+
+            a.b.c in [1,2,3] > a!=null && b!=null && c!=null && [1,2,3] contains(a.b.c)
+            a.b.c in [1,2,3,null] >  a==null || a.b==null || a.b.c==null || [1,2,3] contains(a.b.c)
+            a.b.c not in [1,2,3] > a==null || a.b==null || a.b.c==null || [1,2,3] not contains(a.b.c)
+            a.b.c not in [1,2,3,null] > a!=null || a.b!=null || a.b.c!=null || [1,2,3] not contains(a.b.c)
+
+
+
+            a.b.c = c.d.e
+
+            ((a=null || a.b =null || a.b.c =null) &&(c==null || c.d==null || c.d.e==null))
+                or
+            (a!=null && a.b!=null && c!=null && c.d!=null && a.b.c == c.d.e)
+
+            a.b.c != c.d.e
+	
+
+             * 
+             * */
+
             var left = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Left);
             var right = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Right);
             return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.Operator, right);

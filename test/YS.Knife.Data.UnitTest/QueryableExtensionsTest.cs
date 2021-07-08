@@ -100,7 +100,7 @@ namespace YS.Knife.Data.UnitTest
                 new User()
                 {
                     Id = "005",
-                    Name = "",
+                    Name = null,
                     Age = 21,
                     Addresses = new List<Address>() {new Address() {City = "beijing"}, new Address() {City = "beijing"}}
                 }

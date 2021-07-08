@@ -12,7 +12,7 @@ namespace YS.Knife.Data.Filter.Functions
         }
         public static Exception ArgumentCountNotMatched(string functionName)
         {
-            return new FieldInfo2ExpressionException($" Argument count not matched '{functionName}'."); ;
+            return new FieldInfo2ExpressionException($"Argument count not matched '{functionName}'."); ;
         }
         public static FieldInfo2ExpressionException OnlyCanUseFunctionInCollectionType(string functionName)
         {
