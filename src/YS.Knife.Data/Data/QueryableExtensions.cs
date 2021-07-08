@@ -49,7 +49,7 @@ namespace System.Linq
             // ignore limit info
             return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
         }
-        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo2 filter, OrderInfo order, SelectInfo select)
+        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo2 filter, OrderInfo order, SelectInfo2 select)
             where T : class, new()
         {
             return source.Where(filter)
@@ -63,7 +63,7 @@ namespace System.Linq
             // ignore limit info
             return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select, mapper);
         }
-        public static List<TTarget> ListAll<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo targetSelect, ObjectMapper<TSource, TTarget> mapper)
+        public static List<TTarget> ListAll<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo2 targetSelect, ObjectMapper<TSource, TTarget> mapper)
             where TSource : class
             where TTarget : class, new()
         {
@@ -77,7 +77,7 @@ namespace System.Linq
                 .Select(targetSelect, mapper)
             .ToList();
         }
-        public static List<R> ListAll<T, R>(this IQueryable<T> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo selectInfoForResult)
+        public static List<R> ListAll<T, R>(this IQueryable<T> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo2 selectInfoForResult)
             where T : class
             where R : class, new()
         {
