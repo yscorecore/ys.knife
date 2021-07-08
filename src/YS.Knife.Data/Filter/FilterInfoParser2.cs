@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace YS.Knife.Data
 {
-    internal class FilterInfoParser2
+    internal partial class FilterInfoParser2
     {
-        static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
+       
         static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
         static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
@@ -55,7 +55,7 @@ namespace YS.Knife.Data
             if (string.IsNullOrWhiteSpace(text)) { return null; }
             var context = new ParseContext(text);
             var filterInfo = ParseFilterExpression(context);
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             if (context.NotEnd())
             {
                 throw ParseErrors.InvalidText(context);
@@ -66,7 +66,7 @@ namespace YS.Knife.Data
         public List<ValuePath> ParsePaths(string text)
         {
             var context = new ParseContext(text);
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             var paths = ParsePropertyPaths(context);
             if (context.NotEnd())
             {
@@ -78,7 +78,7 @@ namespace YS.Knife.Data
 
         private FilterInfo2 ParseFilterExpression(ParseContext context)
         {
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             if (context.Current() == '(')
             {
                 return ParseCombinFilter(context);
@@ -95,16 +95,16 @@ namespace YS.Knife.Data
             while (context.NotEnd())
             {
                 // skip start bracket
-                SkipWhiteSpace(context);
+                context.SkipWhiteSpace();
                 if (context.Current() != '(')
                 {
                     throw ParseErrors.MissOpenBracket(context);
                 }
                 context.Index++;
-                SkipWhiteSpace(context);
+                context.SkipWhiteSpace();
                 var inner = ParseFilterExpression(context);
-                SkipWhiteSpace(context);
-                if (context.Current() != ')')
+                context.SkipWhiteSpace();
+                if (context.End()|| context.Current() != ')')
                 {
                     throw ParseErrors.MissCloseBracket(context);
                 }
@@ -136,7 +136,7 @@ namespace YS.Knife.Data
         {
             var originIndex = context.Index;
 
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             var wordStartIndex = context.Index;
             while (context.NotEnd() && IsValidNameChar(context.Current()))
             {
@@ -172,25 +172,10 @@ namespace YS.Knife.Data
             };
 
         }
-        private void SkipWhiteSpace(ParseContext context)
-        {
-            while (context.Index < context.TotalLength)
-            {
-                if (IsWhiteSpace(context.Current()))
-                {
-                    context.Index++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-        }
-
         private void SkipCloseBracket(ParseContext context)
         {
-            SkipWhiteSpace(context);
-            if (context.Current() != ')')
+            context.SkipWhiteSpace();
+            if (context.End()|| context.Current() != ')')
             {
                 throw ParseErrors.MissCloseBracket(context);
             }
@@ -202,7 +187,7 @@ namespace YS.Knife.Data
 
         private FilterValue ParseValueInfo(ParseContext context)
         {
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
 
             var (isValue, value) = TryParseValue(context);
             if (isValue)
@@ -221,7 +206,7 @@ namespace YS.Knife.Data
             while (context.NotEnd())
             {
                 var name = ParseName(context);
-                SkipWhiteSpace(context);
+                context.SkipWhiteSpace();
                 if (context.End())
                 {
                     names.Add(new ValuePath { Name = name });
@@ -239,7 +224,7 @@ namespace YS.Knife.Data
                 {
                     var (args, subFilter) = ParseFunctionBody2(context);
                     var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
-                    SkipWhiteSpace(context);
+                    context.SkipWhiteSpace();
                     names.Add(nameInfo);
                     if (context.NotEnd())
                     {
@@ -287,7 +272,7 @@ namespace YS.Knife.Data
                 List<FilterValue> datas = new List<FilterValue>();
                 while (context.NotEnd())
                 {
-                    SkipWhiteSpace(context);
+                    context.SkipWhiteSpace();
                     if (IsNumberStartChar(context.Current()))
                     {
                         //number
@@ -303,7 +288,7 @@ namespace YS.Knife.Data
                         var originStartIndex = context.Index;
                         var nameChain = ParseNameChain(context);
                         var values = NameChainToValue(nameChain);
-                        SkipWhiteSpace(context);
+                        context.SkipWhiteSpace();
                         if (context.Current() == ',')
                         {
                             datas.Add(values);
@@ -336,7 +321,7 @@ namespace YS.Knife.Data
                             break;
                         }
                     }
-                    SkipWhiteSpace(context);
+                    context.SkipWhiteSpace();
 
                     if (context.Current() == ',')
                     {
@@ -352,8 +337,8 @@ namespace YS.Knife.Data
             }
             FilterInfo2 ParseFunctionFilter(ParseContext context)
             {
-                SkipWhiteSpace(context);
-                if (context.Current() == ')')
+                context.SkipWhiteSpace();
+                if ( context.Current() == ')')
                 {
                     return null;
                 }
@@ -370,6 +355,11 @@ namespace YS.Knife.Data
             while (context.NotEnd())
             {
                 names.Add(ParseName(context));
+                context.SkipWhiteSpace();
+                if (context.End())
+                {
+                    break;
+                }
                 if (context.Current() == '.')
                 {
                     context.Index++;
@@ -388,7 +378,7 @@ namespace YS.Knife.Data
         }
         private string ParseName(ParseContext context)
         {
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             int startIndex = context.Index;
             if (!IsValidNameFirstChar(context.Current()))
             {
@@ -406,7 +396,7 @@ namespace YS.Knife.Data
 
         private Operator ParseType(ParseContext context)
         {
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             int startIndex = context.Index;
             if (char.IsLetter(context.Current()))
             {
@@ -448,7 +438,12 @@ namespace YS.Knife.Data
         private (bool, object) TryParseValue(ParseContext context)
         {
             var originIndex = context.Index;
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
+            if (context.End())
+            {
+                context.Index = originIndex;
+                return (false, null);
+            }
             var current = context.Current();
             if (current == '\"')
             {
@@ -485,7 +480,7 @@ namespace YS.Knife.Data
 
         private object ParseValue(ParseContext context, bool parseArray = true)
         {
-            SkipWhiteSpace(context);
+            context.SkipWhiteSpace();
             var current = context.Current();
             if (current == '\"')
             {
@@ -626,7 +621,7 @@ namespace YS.Knife.Data
             context.Index++;
             while (context.NotEnd())
             {
-                SkipWhiteSpace(context);
+                context.SkipWhiteSpace();
                 var current = context.Current();
                 if (current == ']')
                 {
@@ -634,7 +629,7 @@ namespace YS.Knife.Data
                     break;
                 }
                 datas.Add(ParseValue(context, false));
-                SkipWhiteSpace(context);
+                context.SkipWhiteSpace();
                 if (context.Current() == ',')
                 {
                     context.Index++;
@@ -642,77 +637,6 @@ namespace YS.Knife.Data
 
             }
             return datas.ToArray();
-        }
-        class ParseContext
-        {
-            public ParseContext(string text)
-            {
-                this.Text = text;
-                this.TotalLength = text.Length;
-            }
-            public char Current()
-            {
-                if (Index >= TotalLength)
-                {
-                    throw ParseErrors.InvalidText(this);
-                }
-                return Text[Index];
-            }
-            public bool NotEnd()
-            {
-                return Index < TotalLength;
-            }
-            public bool End()
-            {
-                return Index >= TotalLength;
-            }
-            public string Text;
-            public int TotalLength;
-            public int Index;
-        }
-        class ParseErrors
-        {
-            public static Exception InvalidText(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid text near index {context.Index}.");
-            }
-            public static Exception InvalidFieldNameText(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid field name near index {context.Index}.");
-            }
-            public static Exception InvalidFilterType(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid filter type near index {context.Index}.");
-            }
-            public static Exception InvalidFilterType(ParseContext context, string code)
-            {
-                throw new FilterInfoParseException($"Invalid filter type '{code}' near index {context.Index}.");
-            }
-            public static Exception InvalidValue(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid value near index {context.Index}.");
-            }
-            public static Exception InvalidKeywordValue(ParseContext context, string keyword)
-            {
-                throw new FilterInfoParseException($"Invalid keyword '{keyword}' near index {context.Index}.");
-            }
-            public static Exception InvalidStringValue(ParseContext context, string str, Exception inner)
-            {
-                throw new FilterInfoParseException($"Invalid string '{str}' near index {context.Index}.", inner);
-            }
-            public static Exception InvalidNumberValue(ParseContext context, string str, Exception inner)
-            {
-                throw new FilterInfoParseException($"Invalid number '{str}' near index {context.Index}.", inner);
-            }
-
-            public static Exception MissOpenBracket(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid expression, missing open bracket near index {context.Index}.");
-            }
-            public static Exception MissCloseBracket(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid expression, missing close bracket near index {context.Index}.");
-            }
         }
     }
 

@@ -114,5 +114,17 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be("a,b{(c > 1) and (d < 2),+e,-f,+g,1,5}(h,i),j");
         }
+
+        //[TestMethod]
+        //public void should_deserialize_from_json_string()
+        //{
+        //    var jsonText = "{\"select\":\"a,b,c\"}";
+        //    var selectWrap = Json.DeSerialize<SelectWrap>(jsonText);
+        //    selectWrap.Select.Should().BeEquivalentTo(SelectInfo.Parse("a,b,c"));
+        //}
+        class SelectWrap
+        {
+            public SelectInfo Select { get; set; }
+        }
     }
 }

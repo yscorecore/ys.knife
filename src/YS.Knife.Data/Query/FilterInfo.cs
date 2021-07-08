@@ -303,7 +303,28 @@ namespace YS.Knife.Data
 
         public static FilterInfo Parse(string filterExpression, CultureInfo cultureInfo)
         {
-            return new FilterInfoParser(cultureInfo).Parse(filterExpression);
+            var filter = new FilterInfoParser2(cultureInfo).Parse(filterExpression);
+
+            FilterInfo ToFilterInfo(FilterInfo2 filterInfo2)
+            {
+                if (filterInfo2 == null) return null;
+                if (filterInfo2.OpType == CombinSymbol.SingleItem)
+                {
+                    string path = filterInfo2.Left.ToString();
+                    object value = filterInfo2.Right.ConstantValue;
+                    return CreateItem(path, filterInfo2.Operator, value);
+                }
+                else if (filterInfo2.OpType == CombinSymbol.AndItems)
+                {
+                    return CreateAnd(filterInfo2.Items.Select(ToFilterInfo).ToArray());
+                }
+                else
+                { // or 
+                    return CreateOr(filterInfo2.Items.Select(ToFilterInfo).ToArray());
+                }
+            }
+            return ToFilterInfo(filter);
+           
         }
     }
     public class FilterInfo2
