@@ -8,14 +8,14 @@ namespace System.Linq
 {
     public static class SelectExtensions
     {
-        public static IQueryable<T> Select<T>(this IQueryable<T> source, SelectInfo2 selectInfo)
+        public static IQueryable<T> Select<T>(this IQueryable<T> source, SelectInfo selectInfo)
             where T:class,new()
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             return source.Select<T, T>(selectInfo);
         }
         
-        public static IQueryable<R> Select<T,R>(this IQueryable<T> source, SelectInfo2 selectInfo, ObjectMapper<T,R> baseMapper)
+        public static IQueryable<R> Select<T,R>(this IQueryable<T> source, SelectInfo selectInfo, ObjectMapper<T,R> baseMapper)
             where T:class
             where R:class,new()
         {
@@ -25,7 +25,7 @@ namespace System.Linq
             return source.Map(mapper);
         }
         
-        public static IQueryable<R> Select<T,R>(this IQueryable<T> source, SelectInfo2 selectInfo)
+        public static IQueryable<R> Select<T,R>(this IQueryable<T> source, SelectInfo selectInfo)
             where T:class
             where R:class,new()
         {

@@ -14,7 +14,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_get_empty_string_when_to_string_given_non_items()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = null
             };
@@ -23,7 +23,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_simple_items()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {
@@ -37,7 +37,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_sub_items()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {
@@ -51,7 +51,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_filter()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {
@@ -65,7 +65,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_order()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {
@@ -79,7 +79,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_limit()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {
@@ -93,7 +93,7 @@ namespace YS.Knife.Data.Select
         [TestMethod]
         public void should_join_items_when_to_string_given_all_sub_sfuff()
         {
-            var select = new SelectInfo2()
+            var select = new SelectInfo()
             {
                 Items = new List<SelectItem>
                 {

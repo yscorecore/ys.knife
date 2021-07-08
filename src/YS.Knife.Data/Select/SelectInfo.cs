@@ -8,7 +8,7 @@ namespace YS.Knife.Data
 {
     [Serializable]
     [DebuggerDisplay("{ToString()}")]
-    public class SelectInfo2
+    public class SelectInfo
     {
         public List<SelectItem> Items { get; set; }
 

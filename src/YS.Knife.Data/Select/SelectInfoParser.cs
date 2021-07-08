@@ -6,7 +6,7 @@ namespace YS.Knife.Data
 {
     internal class SelectInfoParser
     {
-        public SelectInfo2 ParseSelectInfo(string text)
+        public SelectInfo ParseSelectInfo(string text)
         {
             return null;
         }

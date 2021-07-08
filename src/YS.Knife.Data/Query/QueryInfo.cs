@@ -10,7 +10,7 @@ namespace YS.Knife.Data
         public FilterInfo2 Filter { get; set; }
         public OrderInfo Order { get; set; }
         public LimitInfo Limit { get; set; }
-        public SelectInfo2 Select { get; set; }
+        public SelectInfo Select { get; set; }
     }
 
 
