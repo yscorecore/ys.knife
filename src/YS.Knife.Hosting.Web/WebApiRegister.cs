@@ -22,7 +22,7 @@ namespace YS.Knife.Hosting.Web
             var options = context.Configuration.GetConfigOrNew<KnifeWebOptions>();
             IMvcBuilder mvcBuilder = services.AddMvc((mvc) =>
             {
-                if (options.WrapCodeMessageResult)
+                if (options.WrapCodeException)
                 {
                     mvc.Filters.Add(typeof(WrapCodeMessageAttribute));
                 }

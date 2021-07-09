@@ -32,7 +32,7 @@ namespace YS.Knife.Rest.Client
         public async Task<T> SendHttp<T>(ApiInfo apiInfo)
         {
             var response = await this.SendHttpAsResponse(apiInfo);
-            return FromResponse<T>(response);
+            return await FromResponse<T>(response);
         }
         #endregion
 
@@ -57,11 +57,11 @@ namespace YS.Knife.Rest.Client
             }
         }
 
-        protected virtual T FromResponse<T>(HttpResponseMessage response)
+        protected async virtual Task<T> FromResponse<T>(HttpResponseMessage response)
         {
             _ = response ?? throw new ArgumentNullException(nameof(response));
             var content = response.Content;
-            var responseData = content.ReadAsStringAsync().Result;
+            var responseData = await content.ReadAsStringAsync();
             return EntityResolver.Resolve<T>(response.Content.Headers?.ContentType?.MediaType, responseData);
         }
 

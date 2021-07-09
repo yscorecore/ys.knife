@@ -19,7 +19,7 @@ namespace YS.Knife.Aop.CodeExceptions
         public void ShouldGetCodeTemplateMessageWhenNoConfigKeyInI18NResx()
         {
             var actual = _allErrors.NotConfigKeyInI18NResx();
-            var expected = new CodeException(200001, "code template first");
+            var expected = new CodeException("200001", "code template first");
 
             actual.Should().BeOfType<CodeException>()
                 .Which.Should().BeEquivalentTo(expected);
@@ -29,7 +29,7 @@ namespace YS.Knife.Aop.CodeExceptions
         public void ShouldGetEmptyMessageWhenConfigEmptyTemplateInI18NResx()
         {
             var actual = _allErrors.ConfigEmptyTemplateInI18NResx();
-            var expected = new CodeException(200002, string.Empty);
+            var expected = new CodeException("200002", string.Empty);
 
             actual.Should().BeOfType<CodeException>()
                 .Which.Should().BeEquivalentTo(expected);
@@ -39,7 +39,7 @@ namespace YS.Knife.Aop.CodeExceptions
         public void ShouldGetConfigValueWhenConfigSomeValueInI18NResx()
         {
             var actual = _allErrors.ConfigSomeValueInI18NResx();
-            var expected = new CodeException(200003, "abc");
+            var expected = new CodeException("200003", "abc");
 
             actual.Should().BeOfType<CodeException>()
                 .Which.Should().BeEquivalentTo(expected);
@@ -49,7 +49,7 @@ namespace YS.Knife.Aop.CodeExceptions
         public void ShouldGetFormatMessageWhenConfigNameTemplateValueInI18NResx()
         {
             var actual = _allErrors.ConfigNameTemplateValueInI18NResx(1);
-            var expected = new CodeException(200004, "value is   001.")
+            var expected = new CodeException("200004", "value is   001.")
                 .WithData("val", 1);
 
             actual.Should().BeOfType<CodeException>()
@@ -60,7 +60,7 @@ namespace YS.Knife.Aop.CodeExceptions
         public void ShouldGetFormatMessageWhenConfigIndexTemplateValueInI18NResx()
         {
             var actual = _allErrors.ConfigIndexTemplateValueInI18NResx(1);
-            var expected = new CodeException(200005, "value is   001.")
+            var expected = new CodeException("200005", "value is   001.")
                 .WithData("val", 1);
 
             actual.Should().BeOfType<CodeException>()

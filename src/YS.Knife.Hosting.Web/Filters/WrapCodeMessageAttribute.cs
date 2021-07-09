@@ -4,43 +4,38 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace YS.Knife.Hosting.Web.Filters
 {
-    public class WrapCodeMessageAttribute : Attribute, IResultFilter, IExceptionFilter
+    public class WrapCodeMessageAttribute : Attribute,  IExceptionFilter
     {
+        public WrapCodeMessageAttribute(KnifeWebOptions knifeWebOptions)
+        {
+            KnifeWebOptions = knifeWebOptions;
+        }
+
+        public KnifeWebOptions KnifeWebOptions { get; }
+
         public void OnException(ExceptionContext context)
         {
-            context.Result = new ObjectResult(new
+            if (context.Exception is CodeException codeException)
             {
-                Code = "error",
-                Message = context.Exception.Message,
-            });
+                context.Result = new ObjectResult(new
+                {
+                    Code = codeException.Code,
+                    Message = context.Exception.Message,
+                    Data = codeException.Data,
+                });
+            }
+            else
+            {
+                context.Result = new ObjectResult(new
+                {
+                    Code = "error",
+                    Message = context.Exception.Message,
+                });
+            }
             context.ExceptionHandled = true;
         }
 
-        public void OnResultExecuted(ResultExecutedContext context)
-        {
-
-        }
-
-        public void OnResultExecuting(ResultExecutingContext context)
-        {
-            if (context.Result is ObjectResult obj)
-            {
-                context.Result = new ObjectResult(new
-                {
-                    Code = "0",
-                    Message = "success",
-                    Result = obj.Value,
-
-                });
-            }
-            else if (context.Result is EmptyResult)
-            {
-                context.Result = new ObjectResult(new
-                {
-                    Code = "0",
-                    Message = "success"
-                });
-            }
-        }
+      
     }
+   
 }

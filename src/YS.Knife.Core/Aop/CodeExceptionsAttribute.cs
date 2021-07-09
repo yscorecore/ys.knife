@@ -11,23 +11,23 @@ namespace YS.Knife.Aop
 {
     public class CodeExceptionsAttribute : DynamicProxyAttribute
     {
-        public CodeExceptionsAttribute(int baseErrorCode = 100000) : base(ServiceLifetime.Singleton)
+        public CodeExceptionsAttribute(string baseErrorCode = "100000") : base(ServiceLifetime.Singleton)
         {
             BaseErrorCode = baseErrorCode;
         }
 
         public string ErrorMessageKeyPrefix { get; set; } = "CE";
-        public int BaseErrorCode { get; }
+        public string BaseErrorCode { get; }
     }
 
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     public class CeAttribute : BaseAopAttribute
     {
-        public ushort SubErrorCode { get; }
+        public string SubErrorCode { get; }
         public string MessageTemplate { get; }
 
 
-        public CeAttribute(ushort errorCode, string messageTemplate)
+        public CeAttribute(string errorCode, string messageTemplate)
         {
             this.SubErrorCode = errorCode;
             this.MessageTemplate = messageTemplate;
@@ -52,7 +52,7 @@ namespace YS.Knife.Aop
             return context.Parameters.OfType<Exception>().FirstOrDefault();
         }
 
-        private Exception BuildException(int code, string message, IDictionary<string, object> data,
+        private Exception BuildException(string code, string message, IDictionary<string, object> data,
             Exception innerException)
         {
             var exception = new CodeException(code, message, innerException);
@@ -67,7 +67,7 @@ namespace YS.Knife.Aop
             return exception;
         }
 
-        private int GetErrorCode(AspectContext context)
+        private string GetErrorCode(AspectContext context)
         {
             var codeExceptionsAttribute = GetCodeExceptionsAttributeInDeclareType(context);
             return codeExceptionsAttribute.BaseErrorCode + this.SubErrorCode;

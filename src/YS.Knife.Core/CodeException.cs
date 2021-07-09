@@ -7,18 +7,18 @@ namespace YS.Knife
     [Serializable]
     public class CodeException : ApplicationException
     {
-        public int Code { get; set; }
+        public string Code { get; set; }
 
         public CodeException()
         {
         }
 
-        public CodeException(int code)
+        public CodeException(string code)
         {
             this.Code = code;
         }
 
-        public CodeException(int code, string message) : base(message)
+        public CodeException(string code, string message) : base(message)
         {
             this.Code = code;
         }
@@ -27,7 +27,7 @@ namespace YS.Knife
         {
         }
 
-        public CodeException(int code, string message, Exception inner) : base(message, inner)
+        public CodeException(string code, string message, Exception inner) : base(message, inner)
         {
             this.Code = code;
         }
