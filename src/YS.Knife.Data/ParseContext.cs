@@ -47,6 +47,24 @@ namespace YS.Knife.Data
             return false;
         }
 
+        public void SkipWhiteSpaceAndFirstChar(char ch) 
+        {
+            if (SkipWhiteSpace())
+            {
+                if (this.Current() != ch)
+                {
+                    throw ParseErrors.ExpectedCharNotFound(this, ch);
+                }
+                else
+                {
+                    Index++;
+                }
+            }
+            else
+            {
+                throw ParseErrors.ExpectedCharNotFound(this, ch);
+            }
+        }
 
 
 
@@ -71,6 +89,31 @@ namespace YS.Knife.Data
             {
                 return (false, null);
             }
+        }
+        public (bool, int) TryParseUnsignInt32()
+        {
+            int startIndex = Index;
+            while (NotEnd() && char.IsDigit(Current()))
+            {
+                Index++;
+            }
+            if (Index > startIndex)
+            {
+                string numText = Text.Substring(startIndex, Index - startIndex);
+                try
+                {
+                    return (true, int.Parse(numText));
+                }
+                catch (Exception ex)
+                {
+                    throw ParseErrors.InvalidNumberValue(this, numText, ex);
+                }
+            }
+            else
+            {
+                return (false, 0);
+            }
+
         }
     }
 

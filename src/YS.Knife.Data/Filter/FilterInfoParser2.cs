@@ -76,7 +76,7 @@ namespace YS.Knife.Data
         }
 
 
-        private FilterInfo2 ParseFilterExpression(ParseContext context)
+        internal FilterInfo2 ParseFilterExpression(ParseContext context)
         {
             context.SkipWhiteSpace();
             if (context.Current() == '(')

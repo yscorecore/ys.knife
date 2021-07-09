@@ -41,7 +41,7 @@ namespace YS.Knife.Data
                     break;
                 }
             }
-            return orderInfo;
+            return orderInfo.HasItems()?orderInfo:null;
         }
     }
 }

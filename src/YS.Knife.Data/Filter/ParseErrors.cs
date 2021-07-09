@@ -46,7 +46,14 @@ namespace YS.Knife.Data
         {
             throw new FilterInfoParseException($"Invalid expression, missing close bracket near index {context.Index}.");
         }
-
+        public static Exception ExpectedCharNotFound(ParseContext context,char ch)
+        {
+            throw new FilterInfoParseException($"Invalid expression near index {context.Index}, expect char '{ch}' but not found.");
+        }
+        public static Exception ParaseLimitNumberError(ParseContext context)
+        {
+            throw new FilterInfoParseException($"Invalid expression near index {context.Index}, parse limit error.");
+        }
         public static class Select
         {
             public static Exception InvalidText(ParseContext context)

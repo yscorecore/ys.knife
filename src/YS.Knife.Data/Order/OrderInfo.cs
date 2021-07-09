@@ -16,7 +16,7 @@ namespace YS.Knife.Data
         {
         }
 
-        public OrderInfo(IEnumerable<OrderItem> orderItems)
+        public OrderInfo(params OrderItem[] orderItems)
         {
             var items = (orderItems ?? Enumerable.Empty<OrderItem>()).Where(p => p != null);
             this.Items.AddRange(items);

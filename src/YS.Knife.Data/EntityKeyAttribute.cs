@@ -65,7 +65,7 @@ namespace YS.Knife.Data
                 else
                 {
                     var keyOrderItems = type.GetEntityKeyProps().Select(p => new OrderItem(p.Name, OrderType.Asc));
-                    return new OrderInfo(keyOrderItems);
+                    return new OrderInfo(keyOrderItems.ToArray());
                 }
             });
         }

@@ -23,7 +23,11 @@ namespace YS.Knife.Data
 
         public static SelectInfo Parse(string text)
         {
-            return new SelectInfoParser().ParseSelectInfo(text);
+            return Parse(text, CultureInfo.CurrentCulture);
+        }
+        public static SelectInfo Parse(string text, CultureInfo culture)
+        {
+            return new SelectInfoParser(culture).ParseSelectInfo(text);
         }
     }
     public class SelectInfoTypeConverter : StringConverter
