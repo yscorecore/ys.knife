@@ -30,6 +30,7 @@ namespace YS.Knife.Hosting.Web.Filters
                 {
                     Code = "error",
                     Message = context.Exception.Message,
+                    Data = context.Exception.Data,
                 });
             }
             context.ExceptionHandled = true;

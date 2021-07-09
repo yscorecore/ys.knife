@@ -24,22 +24,15 @@ namespace YS.Knife.Data
 
         public List<OrderItem> Items { get; private set; } = new List<OrderItem>();
 
-        /// <summary>
-        /// 隐式转化为OrderItem
-        /// </summary>
-        /// <param name="orderItem"></param>
-        public static implicit operator OrderInfo(OrderItem orderItem)
-        {
-            return Create(orderItem);
-        }
+
 
         public static OrderInfo Create(OrderItem orderItem)
         {
             return new OrderInfo(new OrderItem[] { orderItem });
         }
-        public static OrderInfo Create(string name, OrderType orderType= OrderType.Asc)
+        public static OrderInfo Create(string name, OrderType orderType = OrderType.Asc)
         {
-            return Create(new OrderItem{ FieldName = name, OrderType = orderType});
+            return Create(new OrderItem { FieldName = name, OrderType = orderType });
         }
         public static OrderInfo Create(params OrderItem[] orderItems)
         {
@@ -47,12 +40,7 @@ namespace YS.Knife.Data
         }
         public static OrderInfo Parse(string orderText)
         {
-            _ = orderText ?? throw new ArgumentNullException(nameof(orderText));
-            var orderItems = orderText.Split(new char[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(p => p.Trim())
-                .Where(p => !string.IsNullOrEmpty(p))
-                .Select(OrderItem.Parse);
-            return new OrderInfo(orderItems);
+            return OrderInfoParser.Default.ParseOrderInfo(orderText);
         }
 
 
@@ -63,7 +51,7 @@ namespace YS.Knife.Data
 
         public override string ToString()
         {
-            return string.Join(",", this.Items ?? Enumerable.Empty<OrderItem>());
+            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem>()).Where(item => item != null));
         }
 
         public OrderInfo Add(OrderItem orderItem)

@@ -6,8 +6,8 @@ namespace YS.Knife.Data
 
     class ParseContext
     {
-        static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
-        static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
+        public static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
+        public static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
         static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
         public ParseContext(string text)
         {

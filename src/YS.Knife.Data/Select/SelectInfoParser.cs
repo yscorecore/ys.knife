@@ -52,7 +52,8 @@ namespace YS.Knife.Data
             SelectItem item = new SelectItem { Name = name };
             if (context.SkipWhiteSpace() &&context.Current() == '{')
             {
-               // parse collection infos
+                // parse collection infos
+                ParseCollectionInfos(item, context);
             }
             if (context.SkipWhiteSpace() && context.Current() == '(')
             {
@@ -69,6 +70,39 @@ namespace YS.Knife.Data
                 }
             }
             return item;
+        }
+        private void ParseCollectionInfos(SelectItem selectItem,ParseContext context)
+        {
+            context.Index++;
+            //skip start {
+            if (context.SkipWhiteSpace())
+            {
+                if (context.Current() == '(')
+                {
+                    // parse filter info
+                }
+                else if (ParseContext.IsValidNameFirstChar(context.Current()))
+                {
+                    //maybe filter,or order info
+                    var (_, name) = context.TryParseName();
+
+                }
+                else if (char.IsDigit(context.Current()))
+                {
+                    // limit info, or filter info
+                }
+                else
+                {
+                    throw ParseErrors.InvalidText(context);
+                }
+
+                // {a=b,c,true,,1,2}
+
+            }
+            else
+            {
+                throw ParseErrors.InvalidText(context);
+            }
         }
         
        
