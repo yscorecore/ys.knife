@@ -10,6 +10,11 @@ namespace YS.Knife.Data
         public ValueInfo Value { get; set; }
         public OrderType OrderType { get; set; }
 
+        public override string ToString()
+        {
+
+            return  OrderType== OrderType.Desc? $"{Value}.desc()":$"{Value}.asc()";
+        }
         public static OrderItem2 FromValuePaths(List<ValuePath> paths)
         {
             var last = paths?.LastOrDefault();
@@ -37,7 +42,7 @@ namespace YS.Knife.Data
                             IsConstant = false,
                             NavigatePaths = paths.Where(p => p != last).ToList()
                         },
-                        OrderType = OrderType.Desc
+                        OrderType = OrderType.Asc
                     };
                 }
             }

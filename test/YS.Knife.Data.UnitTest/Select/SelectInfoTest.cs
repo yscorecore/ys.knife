@@ -70,11 +70,11 @@ namespace YS.Knife.Data.Select
                 Items = new List<SelectItem>
                 {
                      new SelectItem{ Name="a" },
-                     new SelectItem{ Name="b",CollectionOrder= OrderInfo.Parse("c,-d,+e")},
+                     new SelectItem{ Name="b",CollectionOrder= OrderInfo.Parse("c,d.desc(),e.asc()")},
                      new SelectItem{ Name="f" },
                 }
             };
-            select.ToString().Should().Be("a,b{+c,-d,+e},f");
+            select.ToString().Should().Be("a,b{c.asc(),d.desc(),e.asc()},f");
         }
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_limit()
@@ -102,7 +102,7 @@ namespace YS.Knife.Data.Select
                      {
                          Name="b",
                          CollectionFilter=FilterInfo2.Parse("(c>1)and(d<2)"),
-                         CollectionOrder=OrderInfo.Parse("e,-f,+g"),
+                         CollectionOrder=OrderInfo.Parse("e,f.desc(),g.asc()"),
                          CollectionLimit=new LimitInfo(1,5),
                          SubItems = new List<SelectItem> {
                              new SelectItem{Name="h"},
@@ -112,7 +112,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem{ Name="j" },
                 }
             };
-            select.ToString().Should().Be("a,b{(c > 1) and (d < 2),+e,-f,+g,1,5}(h,i),j");
+            select.ToString().Should().Be("a,b{1,5,e.asc(),f.desc(),g.asc(),(c > 1) and (d < 2)}(h,i),j");
         }
 
         //[TestMethod]
