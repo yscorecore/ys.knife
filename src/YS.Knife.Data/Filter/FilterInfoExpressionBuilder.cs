@@ -129,7 +129,7 @@ namespace YS.Knife.Data.Filter
             return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.Operator, right);
         }
 
-        public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberExpressionProvider memberProvider, FilterValue valueInfo)
+        public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberExpressionProvider memberProvider, ValueInfo valueInfo)
         {
             if (valueInfo == null || valueInfo.IsConstant)
             {
@@ -160,7 +160,7 @@ namespace YS.Knife.Data.Filter
                         var functionResult = IFilterFunction.ExecuteFunction(new FunctionContext
                         {
                             Name = pathInfo.Name,
-                            Args = pathInfo.FunctionArgs ?? new List<FilterValue>(),
+                            Args = pathInfo.FunctionArgs ?? new List<ValueInfo>(),
                             SubFilter = pathInfo.FunctionFilter,
                             CurrentExpression = currentExpression,
                             MemberExpressionProvider = currentMemberProvider,

@@ -16,33 +16,38 @@ namespace YS.Knife.Data
         {
         }
 
-        public OrderInfo(params OrderItem[] orderItems)
+        public OrderInfo(params OrderItem2[] orderItems)
         {
-            var items = (orderItems ?? Enumerable.Empty<OrderItem>()).Where(p => p != null);
+            var items = (orderItems ?? Enumerable.Empty<OrderItem2>()).Where(p => p != null);
             this.Items.AddRange(items);
         }
 
-        public List<OrderItem> Items { get; private set; } = new List<OrderItem>();
+        public List<OrderItem2> Items { get; private set; } = new List<OrderItem2>();
 
 
 
-        public static OrderInfo Create(OrderItem orderItem)
+        public static OrderInfo Create(OrderItem2 orderItem)
         {
-            return new OrderInfo(new OrderItem[] { orderItem });
+            return new OrderInfo(new OrderItem2[] { orderItem });
         }
-        public static OrderInfo Create(string name, OrderType orderType = OrderType.Asc)
+        public static OrderInfo Create(string fieldNames, OrderType orderType = OrderType.Asc)
         {
-            return Create(new OrderItem { FieldName = name, OrderType = orderType });
+            var orderInfo = new OrderInfo();
+
+            return orderInfo.Add(fieldNames, orderType);
         }
-        public static OrderInfo Create(params OrderItem[] orderItems)
+        public static OrderInfo Create(params OrderItem2[] orderItems)
         {
             return new OrderInfo(orderItems);
         }
         public static OrderInfo Parse(string orderText)
         {
-            return OrderInfoParser.Default.ParseOrderInfo(orderText);
+            return Parse(orderText, CultureInfo.CurrentCulture);
         }
-
+        public static OrderInfo Parse(string orderText,CultureInfo cultureInfo)
+        {
+            return  new FilterInfoParser2(cultureInfo).ParseOrder(orderText);
+        }
 
         public bool HasItems()
         {
@@ -51,17 +56,21 @@ namespace YS.Knife.Data
 
         public override string ToString()
         {
-            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem>()).Where(item => item != null));
+            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem2>()).Where(item => item != null));
         }
 
-        public OrderInfo Add(OrderItem orderItem)
+        public OrderInfo Add(OrderItem2 orderItem)
         {
             this.Items.Add(orderItem);
             return this;
         }
-        public OrderInfo Add(string fieldName, OrderType orderType)
+        public OrderInfo Add(string fieldPaths, OrderType orderType)
         {
-            return this.Add(new OrderItem(fieldName, orderType));
+            var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
+            var paths = parser.ParsePaths(fieldPaths);
+            var orderItem = OrderItem2.FromValuePaths(paths);
+            orderItem.OrderType = orderType;
+            return this.Add(orderItem);
         }
     }
 

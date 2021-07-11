@@ -10,7 +10,8 @@ namespace System.Linq
         public static IQueryable<T> Order<T>(this IQueryable<T> source, OrderInfo orderInfo)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
+            return null;
+            //return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
         }
         private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
         {

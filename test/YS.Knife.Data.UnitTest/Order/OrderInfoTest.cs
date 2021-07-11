@@ -27,9 +27,9 @@ namespace YS.Knife.Data.UnitTest
             AssertOrderItem(orderInfo.Items[2], "Address", OrderType.Asc);
         }
 
-        private void AssertOrderItem(OrderItem orderItem, string field, OrderType orderType)
+        private void AssertOrderItem(OrderItem2 orderItem, string field, OrderType orderType)
         {
-            Assert.AreEqual(field, orderItem.FieldName);
+            Assert.AreEqual(field, orderItem.ToString());
             Assert.AreEqual(orderType, orderItem.OrderType);
         }
 

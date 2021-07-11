@@ -235,16 +235,16 @@ namespace YS.Knife.Data.Filter
             filter.Items.Should().BeNull();
             filter.Left.ToString().Should().Be(expectedLeftExpression);
             filter.Operator.Should().Be(expectedFilterType);
-            filter.Right.Should().BeEquivalentTo(new FilterValue { IsConstant = true, ConstantValue = expectedRightValue });
+            filter.Right.Should().BeEquivalentTo(new ValueInfo { IsConstant = true, ConstantValue = expectedRightValue });
         }
         private void TestBothConstValueFilter(string expression, object expectedLeftValue, Operator expectedFilterType, object expectedRightValue)
         {
             var filter = Parse(expression);
             filter.OpType.Should().Be(CombinSymbol.SingleItem);
             filter.Items.Should().BeNull();
-            filter.Left.Should().BeEquivalentTo(new FilterValue { IsConstant = true, ConstantValue = expectedLeftValue });
+            filter.Left.Should().BeEquivalentTo(new ValueInfo { IsConstant = true, ConstantValue = expectedLeftValue });
             filter.Operator.Should().Be(expectedFilterType);
-            filter.Right.Should().BeEquivalentTo(new FilterValue { IsConstant = true, ConstantValue = expectedRightValue });
+            filter.Right.Should().BeEquivalentTo(new ValueInfo { IsConstant = true, ConstantValue = expectedRightValue });
         }
         private void TestSimpleFilter(string expression, string expectedLeftExpression, Operator expectedFilterType, string expectedRightExpression)
         {

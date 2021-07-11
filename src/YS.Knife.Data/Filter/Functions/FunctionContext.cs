@@ -10,7 +10,7 @@ namespace YS.Knife.Data.Filter.Functions
         public string Name { get; set; }
         // subfilter and sub mapper only for collection type
         public FilterInfo2 SubFilter { get; set; }
-        public List<FilterValue> Args { get; set; }
+        public List<ValueInfo> Args { get; set; }
         public Expression CurrentExpression { get; set; }
         public IMemberExpressionProvider MemberExpressionProvider { get; set; }
 

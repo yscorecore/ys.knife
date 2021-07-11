@@ -303,7 +303,7 @@ namespace YS.Knife.Data
 
         public static FilterInfo Parse(string filterExpression, CultureInfo cultureInfo)
         {
-            var filter = new FilterInfoParser2(cultureInfo).Parse(filterExpression);
+            var filter = new FilterInfoParser2(cultureInfo).ParseFilter(filterExpression);
 
             FilterInfo ToFilterInfo(FilterInfo2 filterInfo2)
             {
@@ -352,8 +352,8 @@ namespace YS.Knife.Data
                 [Operator.NotContains] = "nct",
             };
 
-        public FilterValue Left { get; set; }
-        public FilterValue Right { get; set; }
+        public ValueInfo Left { get; set; }
+        public ValueInfo Right { get; set; }
         public Operator Operator { get; set; }
         public CombinSymbol OpType { get; set; }
         public List<FilterInfo2> Items { get; set; }
@@ -421,7 +421,7 @@ namespace YS.Knife.Data
                     return
                         $"{ValueToString(Left)} {FilterTypeToString(Operator)} {ValueToString(Right)}";
             }
-            string ValueToString(FilterValue p0)
+            string ValueToString(ValueInfo p0)
             {
                 return p0?.ToString() ?? "null";
             }
@@ -435,7 +435,7 @@ namespace YS.Knife.Data
 
         public static FilterInfo2 Parse(string filterExpression, CultureInfo cultureInfo)
         {
-            return new FilterInfoParser2(cultureInfo).Parse(filterExpression);
+            return new FilterInfoParser2(cultureInfo).ParseFilter(filterExpression);
         }
         public static FilterInfo2 CreateItem(string fieldPaths, Operator filterType, object value)
         {
@@ -444,8 +444,8 @@ namespace YS.Knife.Data
             {
                 OpType = CombinSymbol.SingleItem,
                  Operator = filterType,
-                Left = new FilterValue { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
-                Right = new FilterValue { IsConstant = true, ConstantValue =value }
+                Left = new ValueInfo { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
+                Right = new ValueInfo { IsConstant = true, ConstantValue =value }
                 
             };
         }
@@ -462,7 +462,7 @@ namespace YS.Knife.Data
 
     }
     [DebuggerDisplay("{ToString()}")]
-    public class FilterValue
+    public class ValueInfo
     {
         public object ConstantValue { get; set; }
         public bool IsConstant { get; set; }
@@ -523,7 +523,7 @@ namespace YS.Knife.Data
     {
         public string Name { get; set; }
         public bool IsFunction { get; set; }
-        public List<FilterValue> FunctionArgs { get; set; }
+        public List<ValueInfo> FunctionArgs { get; set; }
         public FilterInfo2 FunctionFilter { get; set; }
         public override string ToString()
         {

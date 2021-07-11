@@ -33,9 +33,9 @@ namespace YS.Knife.Data
                 sb.Append("{");
                 string collectionInfo = string.Join(',',
                     new string[] {
-                        CollectionFilter?.ToString(),
+                        CollectionLimit?.ToString(),
                         CollectionOrder?.ToString(),
-                        CollectionLimit?.ToString()
+                        CollectionFilter?.ToString(),
                 }.Where(p => p != null));
                 sb.Append(collectionInfo);
                 sb.Append("}");

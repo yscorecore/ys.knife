@@ -50,7 +50,7 @@ namespace YS.Knife.Data
             // eg. [1,234], so use '_' instead of default number group separator
             this._numberGroupSeparator = '_';
         }
-        public FilterInfo2 Parse(string text)
+        public FilterInfo2 ParseFilter(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) { return null; }
             var context = new ParseContext(text);
@@ -62,6 +62,39 @@ namespace YS.Knife.Data
             }
             return filterInfo;
         }
+
+        public OrderInfo ParseOrder(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            var context = new ParseContext(text);
+            OrderInfo orderInfo = ParseOrderInfo(context);
+            context.SkipWhiteSpace();
+            if (context.NotEnd())
+            {
+                throw ParseErrors.InvalidText(context);
+            }
+            return orderInfo;
+        }
+        private OrderInfo ParseOrderInfo(ParseContext context)
+        {
+            OrderInfo orderInfo = new OrderInfo();
+            while (context.SkipWhiteSpace())
+            {
+                var valueInfo = this.ParseValueInfo(context);
+                orderInfo.Add(OrderItem2.FromValueInfo(valueInfo));
+
+                if (context.SkipWhiteSpace() && context.Current() == ',')
+                {
+                    context.Index++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return orderInfo.HasItems() ? orderInfo : null;
+        }
+
 
         public List<ValuePath> ParsePaths(string text)
         {
@@ -185,19 +218,19 @@ namespace YS.Knife.Data
             }
         }
 
-        private FilterValue ParseValueInfo(ParseContext context)
+        internal ValueInfo ParseValueInfo(ParseContext context)
         {
             context.SkipWhiteSpace();
 
             var (isValue, value) = TryParseValue(context);
             if (isValue)
             {
-                return new FilterValue() { IsConstant = true, ConstantValue = value };
+                return new ValueInfo() { IsConstant = true, ConstantValue = value };
             }
 
             var propertyPaths = ParsePropertyPaths(context);
 
-            return new FilterValue { IsConstant = false, NavigatePaths = propertyPaths };
+            return new ValueInfo { IsConstant = false, NavigatePaths = propertyPaths };
         }
 
         private List<ValuePath> ParsePropertyPaths(ParseContext context)
@@ -247,41 +280,41 @@ namespace YS.Knife.Data
             }
             return names;
         }
-        private (List<FilterValue> Args, FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
+        private (List<ValueInfo> Args, FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
         {
             context.Index++;
-            List<FilterValue> args = ParseFunctionArguments(context);
+            List<ValueInfo> args = ParseFunctionArguments(context);
             FilterInfo2 filterInfo = ParseFunctionFilter(context);
 
             SkipCloseBracket(context);
             return (args, filterInfo);
-            FilterValue NameChainToValue(string nameChain)
+            ValueInfo NameChainToValue(string nameChain)
             {
                 var items = nameChain.Split('.');
                 if (items.Length == 1 && KeyWordValues.ContainsKey(items[0]))
                 {
-                    return new FilterValue { IsConstant = true, ConstantValue = KeyWordValues[items[0]] };
+                    return new ValueInfo { IsConstant = true, ConstantValue = KeyWordValues[items[0]] };
                 }
                 else
                 {
-                    return new FilterValue { IsConstant = false, NavigatePaths = items.Select(p => new ValuePath { Name = p }).ToList() };
+                    return new ValueInfo { IsConstant = false, NavigatePaths = items.Select(p => new ValuePath { Name = p }).ToList() };
                 }
             }
-            List<FilterValue> ParseFunctionArguments(ParseContext context)
+            List<ValueInfo> ParseFunctionArguments(ParseContext context)
             {
-                List<FilterValue> datas = new List<FilterValue>();
+                List<ValueInfo> datas = new List<ValueInfo>();
                 while (context.NotEnd())
                 {
                     context.SkipWhiteSpace();
                     if (IsNumberStartChar(context.Current()))
                     {
                         //number
-                        datas.Add(new FilterValue { IsConstant = true, ConstantValue = ParseNumberValue(context) });
+                        datas.Add(new ValueInfo { IsConstant = true, ConstantValue = ParseNumberValue(context) });
                     }
                     else if (context.Current() == '\"')
                     {
                         //string
-                        datas.Add(new FilterValue { IsConstant = true, ConstantValue = ParseStringValue(context) });
+                        datas.Add(new ValueInfo { IsConstant = true, ConstantValue = ParseStringValue(context) });
                     }
                     else if (IsValidNameFirstChar(context.Current()))
                     {

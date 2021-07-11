@@ -5,7 +5,7 @@ using System.Text;
 
 namespace YS.Knife.Data
 {
-    internal class SelectInfoParser
+    internal class SelectInfoParser:BaseParser
     {
         public SelectInfoParser(CultureInfo currentCulture)
         {
@@ -107,7 +107,7 @@ namespace YS.Knife.Data
                     else if (context.Current() == '}')
                     {
                         // single order
-                        selectItem.CollectionOrder = new OrderInfo(OrderItem.Parse(name));
+                        //selectItem.CollectionOrder = new OrderInfo(OrderItem.Parse(name));
 
                     }
                     else
@@ -181,7 +181,7 @@ namespace YS.Knife.Data
         }
         private void ParseCollectionInfosFromOrderInfo(SelectItem selectItem, ParseContext context)
         {
-            selectItem.CollectionOrder = OrderInfoParser.Default.ParseOrderInfo(context);
+           // selectItem.CollectionOrder =new OrderInfoParser(CultureInfo.CurrentCulture).ParseOrderInfo(context);
 
             //offset,limit
             if (context.SkipWhiteSpace())
