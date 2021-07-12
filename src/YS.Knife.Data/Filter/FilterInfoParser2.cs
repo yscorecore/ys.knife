@@ -288,85 +288,49 @@ namespace YS.Knife.Data
 
             SkipCloseBracket(context);
             return (args, filterInfo);
-            ValueInfo NameChainToValue(string nameChain)
-            {
-                var items = nameChain.Split('.');
-                if (items.Length == 1 && KeyWordValues.ContainsKey(items[0]))
-                {
-                    return new ValueInfo { IsConstant = true, ConstantValue = KeyWordValues[items[0]] };
-                }
-                else
-                {
-                    return new ValueInfo { IsConstant = false, NavigatePaths = items.Select(p => new ValuePath { Name = p }).ToList() };
-                }
-            }
+         
             List<ValueInfo> ParseFunctionArguments(ParseContext context)
             {
-                List<ValueInfo> datas = new List<ValueInfo>();
-                while (context.NotEnd())
+                List<ValueInfo> arguments = new List<ValueInfo>();
+                while (context.SkipWhiteSpace())
                 {
-                    context.SkipWhiteSpace();
-                    if (IsNumberStartChar(context.Current()))
+                    if (context.Current() == '(')
                     {
-                        //number
-                        datas.Add(new ValueInfo { IsConstant = true, ConstantValue = ParseNumberValue(context) });
+                        // sub filter
+                        break;
                     }
-                    else if (context.Current() == '\"')
+                    if (context.Current() == ')')
                     {
-                        //string
-                        datas.Add(new ValueInfo { IsConstant = true, ConstantValue = ParseStringValue(context) });
+                        break;
                     }
-                    else if (IsValidNameFirstChar(context.Current()))
+                    var originStartIndex = context.Index;
+                    var valueInfo = ParseValueInfo(context);
+
+                    if (context.SkipWhiteSpace())
                     {
-                        var originStartIndex = context.Index;
-                        var nameChain = ParseNameChain(context);
-                        var values = NameChainToValue(nameChain);
-                        context.SkipWhiteSpace();
                         if (context.Current() == ',')
                         {
-                            datas.Add(values);
+                            arguments.Add(valueInfo);
+                            context.Index++;
                         }
                         else if (context.Current() == ')')
                         {
-                            datas.Add(values);
+                            arguments.Add(valueInfo);
                             break;
-                        }
-                        else if (context.Current() == '(')
-                        {
-                            //nested function
-                            if (values.IsConstant)
-                            {
-                                throw ParseErrors.InvalidText(context);
-                            }
-                            else
-                            {
-                                var nestedFunction = values.NavigatePaths.Last();
-                                nestedFunction.IsFunction = true;
-                                nestedFunction.FunctionArgs = ParseFunctionArguments(context);
-                                nestedFunction.FunctionFilter = ParseFunctionFilter(context);
-                                SkipCloseBracket(context);
-                            }
-
                         }
                         else
                         {
+                            //reset index
                             context.Index = originStartIndex;
                             break;
                         }
                     }
-                    context.SkipWhiteSpace();
-
-                    if (context.Current() == ',')
-                    {
-                        context.Index++;
-                    }
                     else
                     {
-                        break;
+                        throw ParseErrors.InvalidText(context);
                     }
-
                 }
-                return datas.Any() ? datas : null;
+                return arguments.Any() ? arguments : null;
             }
             FilterInfo2 ParseFunctionFilter(ParseContext context)
             {

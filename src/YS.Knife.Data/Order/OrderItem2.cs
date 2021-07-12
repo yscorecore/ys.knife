@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using System.Globalization;
 
 namespace YS.Knife.Data
 {
@@ -68,6 +69,15 @@ namespace YS.Knife.Data
 
             return new OrderItem2 { Value = value, OrderType = OrderType.Asc };
 
+        }
+
+        public static OrderItem2 Create(string fieldNames,OrderType orderType)
+        {
+            var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
+            var paths = parser.ParsePaths(fieldNames);
+            var orderItem = OrderItem2.FromValuePaths(paths);
+            orderItem.OrderType = orderType;
+            return orderItem;
         }
     }
 }

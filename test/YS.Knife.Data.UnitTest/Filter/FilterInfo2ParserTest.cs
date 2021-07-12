@@ -161,12 +161,12 @@ namespace YS.Knife.Data.Filter
         [DataRow("a.func(b.c.d!=\"e\")=null", "a.func(b.c.d != \"e\") == null")]
         [DataRow("a.func(b.c,d!=\"e\")=null", "a.func(b.c, d != \"e\") == null")]
         [DataRow("a.func((((b.c!=\"e\")or(c.e in [1 ,2]))))=null", "a.func((b.c != \"e\") or (c.e in [1,2])) == null")]
-      //  [DataRow("a.func(b.c,d.count(e,f=true)>1) = null", "a.func(b.c, d.count(e, f == true) > 1) == null")]
+        [DataRow("a.func(b.c,d.count(e,f=true)>1) = null", "a.func(b.c, d.count(e, f == true) > 1) == null")]
         [DataRow("a.func((((b.c!=\"e\")or(c.e in [1 ,2]))))=a.func((((b.c!=\"e\")or(c.e in [1 ,2]))))", "a.func((b.c != \"e\") or (c.e in [1,2])) == a.func((b.c != \"e\") or (c.e in [1,2]))")]
-      //  [DataRow("user.scores.max(score,class=\"yuwen\").add(user.scores.max(class=\"shuxue\")).add(5)=100", "lower(user.score.first( score>1, score, true).name) == \"a\"")]
+        [DataRow("user.scores.max(score,class=\"yuwen\").add(user.scores.max(class=\"shuxue\")).add(5)=100", "user.scores.max(score, class == \"yuwen\").add(user.scores.max(class == \"shuxue\")).add(5) == 100")]
         [DataRow("a() .b () .c ( ) .c () . d().e=1", "a().b().c().c().d().e == 1")]
 
-       
+
         public void ShouldParseFunction(string expression, string expectedExpression)
         {
             TestFilterExpression(expression, expectedExpression);

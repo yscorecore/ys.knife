@@ -13,47 +13,49 @@ namespace System.Linq
             return null;
             //return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
         }
-        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
+        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem2> orderItems)
         {
-            _ = source ?? throw new ArgumentNullException(nameof(source));
-            HashSet<string> used = new HashSet<string>();
-            IOrderedQueryable<T> result = null;
-            foreach (var v in orderItems ?? Enumerable.Empty<OrderItem>())
-            {
-                if (!used.Contains(v.FieldName))
-                {
-                    used.Add(v.FieldName);
-                    if (v.OrderType == OrderType.Asc)
-                    { //顺序
-                        if (result != null)
-                        {
-                            result = result.ThenAsc(v.FieldName);
-                        }
-                        else
-                        {
-                            result = source.Asc(v.FieldName);
-                        }
-                    }
-                    else
-                    {
-                        if (result != null)
-                        {
-                            result = result.ThenDesc(v.FieldName);
-                        }
-                        else
-                        {
-                            result = source.Desc(v.FieldName);
-                        }
-                    }
+            return source;
+            //_ = source ?? throw new ArgumentNullException(nameof(source));
+            //HashSet<string> used = new HashSet<string>();
+            //IOrderedQueryable<T> result = null;
+            //foreach (var v in orderItems ?? Enumerable.Empty<OrderItem>())
+            //{
+            //    if (!used.Contains(v.FieldName))
+            //    {
+            //        used.Add(v.FieldName);
+            //        if (v.OrderType == OrderType.Asc)
+            //        { //顺序
+            //            if (result != null)
+            //            {
+            //                result = result.ThenAsc(v.FieldName);
+            //            }
+            //            else
+            //            {
+            //                result = source.Asc(v.FieldName);
+            //            }
+            //        }
+            //        else
+            //        {
+            //            if (result != null)
+            //            {
+            //                result = result.ThenDesc(v.FieldName);
+            //            }
+            //            else
+            //            {
+            //                result = source.Desc(v.FieldName);
+            //            }
+            //        }
 
-                }
-            }
-            return result ?? source;
+            //    }
+            //}
+            //return result ?? source;
         }
-        public static IQueryable<T> Order<T>(this IQueryable<T> source, params OrderItem[] orderitems)
+        public static IQueryable<T> Order<T>(this IQueryable<T> source, params OrderItem2[] orderitems)
         {
+            return source;
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            return Order(source, orderitems as IEnumerable<OrderItem>);
+            //return Order(source, orderitems as IEnumerable<OrderItem2>);
         }
         private static IOrderedQueryable<T> Asc<T>(this IQueryable<T> source, string fieldName)
         {

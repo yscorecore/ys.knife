@@ -13,13 +13,13 @@ namespace YS.Knife.Data.UnitTest
         {
             OrderInfo order = OrderInfo.Create("Name")
                     .Add("Age", OrderType.Desc);
-            Assert.AreEqual("Name__asc,Age__desc", order.ToString());
+            Assert.AreEqual("Name.asc(),Age.desc()", order.ToString());
         }
 
         [TestMethod]
         public void ShouldGetExpectedOrderInfoWhenParseFromString()
         {
-            var orderInfo = OrderInfo.Parse("Name, Age__desc ,Address__asc ");
+            var orderInfo = OrderInfo.Parse("Name, Age.desc() ,Address.asc() ");
             Assert.IsTrue(orderInfo.HasItems());
             Assert.AreEqual(3, orderInfo.Items.Count);
             AssertOrderItem(orderInfo.Items[0], "Name", OrderType.Asc);
@@ -29,7 +29,7 @@ namespace YS.Knife.Data.UnitTest
 
         private void AssertOrderItem(OrderItem2 orderItem, string field, OrderType orderType)
         {
-            Assert.AreEqual(field, orderItem.ToString());
+            Assert.AreEqual(field, orderItem.Value.ToString());
             Assert.AreEqual(orderType, orderItem.OrderType);
         }
 
@@ -39,14 +39,14 @@ namespace YS.Knife.Data.UnitTest
             var converter = TypeDescriptor.GetConverter(typeof(OrderInfo));
             Assert.AreEqual(true, converter.CanConvertTo(typeof(string)));
             OrderInfo orderItem = new OrderInfo().Add("Field", OrderType.Desc);
-            Assert.AreEqual("Field__desc", converter.ConvertTo(orderItem, typeof(string)));
+            Assert.AreEqual("Field.desc()", converter.ConvertTo(orderItem, typeof(string)));
         }
         [TestMethod]
         public void ShouldCanConvertFromString()
         {
             var converter = TypeDescriptor.GetConverter(typeof(OrderInfo));
             Assert.AreEqual(true, converter.CanConvertFrom(typeof(string)));
-            Assert.IsInstanceOfType(converter.ConvertFrom("Field__desc,Field2__desc"), typeof(OrderInfo));
+            Assert.IsInstanceOfType(converter.ConvertFrom("Field.desc(),Field2.desc()"), typeof(OrderInfo));
         }
     }
 }

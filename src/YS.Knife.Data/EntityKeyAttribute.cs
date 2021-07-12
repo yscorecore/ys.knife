@@ -24,7 +24,7 @@ namespace YS.Knife.Data
     {
         public DefaultOrderByAttribute(string propName, OrderType orderType = OrderType.Asc)
         {
-            this.OrderInfo = new OrderItem(propName, orderType).ToString();
+            this.OrderInfo = OrderItem2.Create(propName, orderType).ToString();
         }
         public string OrderInfo { get; }
     }
@@ -69,7 +69,7 @@ namespace YS.Knife.Data
                     {
                         orderInfo.Add(key.Name, OrderType.Asc);
                     }
-                    var keyOrderItems = type.GetEntityKeyProps().Select(p => new OrderItem(p.Name, OrderType.Asc));
+                    var keyOrderItems = type.GetEntityKeyProps().Select(p => OrderItem2.Create(p.Name, OrderType.Asc));
                     return orderInfo;
                 }
             });

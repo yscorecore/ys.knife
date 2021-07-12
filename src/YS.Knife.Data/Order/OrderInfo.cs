@@ -66,11 +66,7 @@ namespace YS.Knife.Data
         }
         public OrderInfo Add(string fieldPaths, OrderType orderType)
         {
-            var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
-            var paths = parser.ParsePaths(fieldPaths);
-            var orderItem = OrderItem2.FromValuePaths(paths);
-            orderItem.OrderType = orderType;
-            return this.Add(orderItem);
+            return this.Add(OrderItem2.Create(fieldPaths,orderType));
         }
     }
 
