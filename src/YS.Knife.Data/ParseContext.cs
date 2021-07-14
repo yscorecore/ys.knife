@@ -4,7 +4,7 @@ using System.Diagnostics;
 namespace YS.Knife.Data
 {
 
-    class ParseContext
+    public class ParseContext
     {
         public static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         public static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';

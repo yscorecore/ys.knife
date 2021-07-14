@@ -157,11 +157,8 @@ namespace YS.Knife.Data.Filter
                 {
                     if (pathInfo.IsFunction)
                     {
-                        var functionResult = IFilterFunction.ExecuteFunction(new FunctionContext
+                        var functionResult = IFilterFunction.ExecuteFunction(pathInfo.Name,pathInfo.FunctionArgs, new ExecuteContext
                         {
-                            Name = pathInfo.Name,
-                            Args = pathInfo.FunctionArgs ?? new List<ValueInfo>(),
-                            SubFilter = pathInfo.FunctionFilter,
                             CurrentExpression = currentExpression,
                             MemberExpressionProvider = currentMemberProvider,
                             CurrentType = currentExpressionType,

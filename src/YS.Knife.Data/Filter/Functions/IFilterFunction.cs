@@ -9,21 +9,33 @@ namespace YS.Knife.Data.Filter.Functions
     public interface IFilterFunction
     {
         string Name { get; }
-        FunctionResult Execute(FunctionContext context);
-        private static readonly Dictionary<string, IFilterFunction> AllFunctions =
+        FunctionResult Execute(object[] args, ExecuteContext context);
+        object[] ParseArguments(ParseContext parseContext);
+        public static readonly Dictionary<string, IFilterFunction> AllFunctions =
               AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IFilterFunction>().ToDictionary(type => type.Name,
                   type => Activator.CreateInstance(type) as IFilterFunction,
                   StringComparer.InvariantCultureIgnoreCase);
 
-        internal static FunctionResult ExecuteFunction(FunctionContext context)
+        internal static FunctionResult ExecuteFunction(string functionName,object[] args, ExecuteContext context)
         {
-            if (AllFunctions.TryGetValue(context.Name, out IFilterFunction func))
+            if (AllFunctions.TryGetValue(functionName, out IFilterFunction func))
             {
-                return func.Execute(context);
+                return func.Execute(args,context);
             }
             else
             {
-                throw FunctionErrors.NotSupportFunction(context.Name);   
+                throw FunctionErrors.NotSupportFunction(functionName);   
+            }
+        }
+        internal static object[] ParseFunctionArgument(string functionName, ParseContext parseContext)
+        {
+            if (AllFunctions.TryGetValue(functionName, out IFilterFunction func))
+            {
+                return func.ParseArguments(parseContext);
+            }
+            else
+            {
+                throw FunctionErrors.NotSupportFunction(functionName);
             }
         }
     }

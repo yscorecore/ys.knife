@@ -8,6 +8,13 @@ namespace YS.Knife.Data.Filter.Functions
     {
         public string Name => this.GetType().Name.ToLower();
 
-        public abstract FunctionResult Execute(FunctionContext context);
+        public abstract FunctionResult Execute(object[] args, ExecuteContext context);
+
+        //TODO make parse argument as abstract
+        public virtual object[] ParseArguments(ParseContext parseContext)
+        {
+            return null;
+        }
+
     }
 }

@@ -523,8 +523,7 @@ namespace YS.Knife.Data
     {
         public string Name { get; set; }
         public bool IsFunction { get; set; }
-        public List<ValueInfo> FunctionArgs { get; set; }
-        public FilterInfo2 FunctionFilter { get; set; }
+        public object[] FunctionArgs { get; set; }
         public override string ToString()
         {
             if (IsFunction)
@@ -532,13 +531,8 @@ namespace YS.Knife.Data
                 List<string> args = new List<string>();
                 if (FunctionArgs != null)
                 {
-                    args.AddRange(FunctionArgs.Where(p => p != null).Select(p => p.ToString()));
+                    args.AddRange(FunctionArgs.Where(p => p != null).Select(p => p?.ToString()));
                 }
-                if (FunctionFilter != null)
-                {
-                    args.Add(FunctionFilter.ToString());
-                }
-
                 return $"{Name}({string.Join(", ",args)})";
             }
             else

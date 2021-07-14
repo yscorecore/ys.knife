@@ -15,7 +15,7 @@ namespace YS.Knife.Data.Filter.Functions.Collections
             typeof(long?), typeof(double?), typeof(float?), typeof(int?)
         };
 
-        public sealed override FunctionResult Execute(FunctionContext context)
+        public sealed override FunctionResult Execute(object[] args,ExecuteContext context)
         {
             var itemType = EnumerableTypeUtils.GetEnumerableItemType(context.CurrentType);
             if (itemType == null)
@@ -39,7 +39,7 @@ namespace YS.Knife.Data.Filter.Functions.Collections
 
         protected class CollectionFunctionContext  
         {
-            public CollectionFunctionContext(FunctionContext functionContext,Type itemType, Expression expression)
+            public CollectionFunctionContext(ExecuteContext functionContext,Type itemType, Expression expression)
             {
                 FunctionContext = functionContext;
                 ItemType = itemType;
@@ -48,7 +48,7 @@ namespace YS.Knife.Data.Filter.Functions.Collections
             }
             public  Type QueryableType { get; }
 
-            public FunctionContext FunctionContext { get; }
+            public ExecuteContext FunctionContext { get; }
 
             public Expression Expression { get; }
             public Type ItemType { get; }

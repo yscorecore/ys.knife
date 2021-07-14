@@ -4,12 +4,13 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using YS.Knife.Data.Filter.Functions;
 
 namespace YS.Knife.Data
 {
     internal partial class FilterInfoParser2
     {
-       
+
         static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
         static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
@@ -137,7 +138,7 @@ namespace YS.Knife.Data
                 context.SkipWhiteSpace();
                 var inner = ParseFilterExpression(context);
                 context.SkipWhiteSpace();
-                if (context.End()|| context.Current() != ')')
+                if (context.End() || context.Current() != ')')
                 {
                     throw ParseErrors.MissCloseBracket(context);
                 }
@@ -208,7 +209,7 @@ namespace YS.Knife.Data
         private void SkipCloseBracket(ParseContext context)
         {
             context.SkipWhiteSpace();
-            if (context.End()|| context.Current() != ')')
+            if (context.End() || context.Current() != ')')
             {
                 throw ParseErrors.MissCloseBracket(context);
             }
@@ -255,8 +256,8 @@ namespace YS.Knife.Data
 
                 else if (context.Current() == '(')
                 {
-                    var (args, subFilter) = ParseFunctionBody2(context);
-                    var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args, FunctionFilter = subFilter };
+                    var args = ParseFunctionArguments2(name, context);
+                    var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args };
                     context.SkipWhiteSpace();
                     names.Add(nameInfo);
                     if (context.NotEnd())
@@ -280,7 +281,18 @@ namespace YS.Knife.Data
             }
             return names;
         }
-        private (List<ValueInfo> Args, FilterInfo2 SubFilter) ParseFunctionBody2(ParseContext context)
+        private object[] ParseFunctionArguments2(string name, ParseContext context)
+        {
+            //skip open bracket
+            context.Index++;
+
+            var arguments = IFilterFunction.ParseFunctionArgument(name, context);
+            SkipCloseBracket(context);
+            return arguments;
+
+
+        }
+        private (List<ValueInfo> Args, FilterInfo2 SubFilter) ParseFunctionArguments(string name, ParseContext context)
         {
             context.Index++;
             List<ValueInfo> args = ParseFunctionArguments(context);
@@ -288,21 +300,24 @@ namespace YS.Knife.Data
 
             SkipCloseBracket(context);
             return (args, filterInfo);
-         
+
             List<ValueInfo> ParseFunctionArguments(ParseContext context)
             {
                 List<ValueInfo> arguments = new List<ValueInfo>();
-                while (context.SkipWhiteSpace())
+                if (context.SkipWhiteSpace())
                 {
                     if (context.Current() == '(')
                     {
-                        // sub filter
-                        break;
+                        return null;
                     }
                     if (context.Current() == ')')
                     {
-                        break;
+                        return null;
                     }
+                }
+                while (context.SkipWhiteSpace())
+                {
+
                     var originStartIndex = context.Index;
                     var valueInfo = ParseValueInfo(context);
 
@@ -335,38 +350,12 @@ namespace YS.Knife.Data
             FilterInfo2 ParseFunctionFilter(ParseContext context)
             {
                 context.SkipWhiteSpace();
-                if ( context.Current() == ')')
+                if (context.Current() == ')')
                 {
                     return null;
                 }
                 return ParseFilterExpression(context); ;
             }
-        }
-
-
-        private string ParseNameChain(ParseContext context)
-        {
-            // name chain not contains '?', only contains '.'
-            // eg.  "a.b" is valid ,"a?.b" is not valid 
-            List<string> names = new List<string>();
-            while (context.NotEnd())
-            {
-                names.Add(ParseName(context));
-                context.SkipWhiteSpace();
-                if (context.End())
-                {
-                    break;
-                }
-                if (context.Current() == '.')
-                {
-                    context.Index++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            return JoinNames(names);
         }
 
         private string JoinNames(IEnumerable<string> names)
