@@ -5,7 +5,7 @@ using System.Text;
 
 namespace YS.Knife.Data
 {
-    internal class SelectInfoParser:BaseParser
+    internal class SelectInfoParser
     {
         public SelectInfoParser(CultureInfo currentCulture)
         {

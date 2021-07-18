@@ -81,8 +81,8 @@ namespace YS.Knife.Data
             OrderInfo orderInfo = new OrderInfo();
             while (context.SkipWhiteSpace())
             {
-                var valueInfo = this.ParseValueInfo(context);
-                orderInfo.Add(OrderItem2.FromValueInfo(valueInfo));
+                var paths = this.ParsePropertyPaths(context);
+                orderInfo.Add(OrderItem.FromValuePaths(paths));
 
                 if (context.SkipWhiteSpace() && context.Current() == ',')
                 {

@@ -13,7 +13,7 @@ namespace System.Linq
             return null;
             //return source.Order(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
         }
-        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem2> orderItems)
+        private static IQueryable<T> Order<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
         {
             return source;
             //_ = source ?? throw new ArgumentNullException(nameof(source));
@@ -51,11 +51,11 @@ namespace System.Linq
             //}
             //return result ?? source;
         }
-        public static IQueryable<T> Order<T>(this IQueryable<T> source, params OrderItem2[] orderitems)
+        public static IQueryable<T> Order<T>(this IQueryable<T> source, params OrderItem[] orderitems)
         {
             return source;
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            //return Order(source, orderitems as IEnumerable<OrderItem2>);
+            //return Order(source, orderitems as IEnumerable<OrderItem>);
         }
         private static IOrderedQueryable<T> Asc<T>(this IQueryable<T> source, string fieldName)
         {

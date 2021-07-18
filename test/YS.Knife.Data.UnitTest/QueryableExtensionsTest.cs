@@ -28,7 +28,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetOriginListWhenListAllWithNoFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(null, OrderInfo.Create("Name", OrderType.Desc),null);
+            var actual = users.ListAll(null, OrderInfo.Parse("Name.desc()"),null);
             actual.Should().BeEquivalentTo(users.OrderByDescending(p => p.Name).ToList());
         }
 
@@ -37,7 +37,7 @@ namespace YS.Knife.Data.UnitTest
         {
             var users = CreateUsersWithAddress();
             var actual = users.ListAll(FilterInfo2.CreateItem("Name", Operator.Contains, "a"),
-                OrderInfo.Create("Name", OrderType.Desc),null);
+                OrderInfo.Parse("Name.Desc()"),null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a")))
                 .OrderByDescending(p => p.Name).ToList());
         }

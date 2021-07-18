@@ -16,27 +16,21 @@ namespace YS.Knife.Data
         {
         }
 
-        public OrderInfo(params OrderItem2[] orderItems)
+        public OrderInfo(params OrderItem[] orderItems)
         {
-            var items = (orderItems ?? Enumerable.Empty<OrderItem2>()).Where(p => p != null);
+            var items = (orderItems ?? Enumerable.Empty<OrderItem>()).Where(p => p != null);
             this.Items.AddRange(items);
         }
 
-        public List<OrderItem2> Items { get; private set; } = new List<OrderItem2>();
+        public List<OrderItem> Items { get;  set; } = new List<OrderItem>();
 
 
 
-        public static OrderInfo Create(OrderItem2 orderItem)
+        public static OrderInfo Create(OrderItem orderItem)
         {
-            return new OrderInfo(new OrderItem2[] { orderItem });
+            return new OrderInfo(new OrderItem[] { orderItem });
         }
-        public static OrderInfo Create(string fieldNames, OrderType orderType = OrderType.Asc)
-        {
-            var orderInfo = new OrderInfo();
-
-            return orderInfo.Add(fieldNames, orderType);
-        }
-        public static OrderInfo Create(params OrderItem2[] orderItems)
+        public static OrderInfo Create(params OrderItem[] orderItems)
         {
             return new OrderInfo(orderItems);
         }
@@ -56,18 +50,15 @@ namespace YS.Knife.Data
 
         public override string ToString()
         {
-            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem2>()).Where(item => item != null));
+            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem>()).Where(item => item != null));
         }
 
-        public OrderInfo Add(OrderItem2 orderItem)
+        public OrderInfo Add(OrderItem orderItem)
         {
             this.Items.Add(orderItem);
             return this;
         }
-        public OrderInfo Add(string fieldPaths, OrderType orderType)
-        {
-            return this.Add(OrderItem2.Create(fieldPaths,orderType));
-        }
+
     }
 
     public class OrderInfoConverter : StringConverter

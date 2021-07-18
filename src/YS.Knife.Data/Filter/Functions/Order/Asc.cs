@@ -4,7 +4,12 @@ using System.Text;
 
 namespace YS.Knife.Data.Filter.Functions.Order
 {
-    class Asc
+    public class Asc : EmptyArgumentFunction
     {
+        protected override FunctionResult OnExecute(ExecuteContext context)
+        {
+            // always should not run to here
+            throw new NotImplementedException();
+        }
     }
 }

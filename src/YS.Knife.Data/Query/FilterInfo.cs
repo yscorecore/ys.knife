@@ -76,7 +76,10 @@ namespace YS.Knife.Data
         {
             return new FilterInfo()
             {
-                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem,
+                FieldName = fieldName,
+                FilterType = filterType,
+                Value = value
             };
         }
 
@@ -84,7 +87,10 @@ namespace YS.Knife.Data
         {
             return new FilterInfo()
             {
-                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Items = items.ToList()
+                OpType = CombinSymbol.SingleItem,
+                FieldName = fieldName,
+                FilterType = filterType,
+                Items = items.ToList()
             };
         }
 
@@ -120,7 +126,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() {this, other}};
+                return new FilterInfo() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() { this, other } };
             }
         }
 
@@ -128,7 +134,10 @@ namespace YS.Knife.Data
         {
             return AndAlso(new FilterInfo()
             {
-                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem,
+                FieldName = fieldName,
+                FilterType = filterType,
+                Value = value
             });
         }
 
@@ -154,7 +163,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() {this, other}};
+                return new FilterInfo() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() { this, other } };
             }
         }
 
@@ -162,7 +171,10 @@ namespace YS.Knife.Data
         {
             return OrElse(new FilterInfo()
             {
-                OpType = CombinSymbol.SingleItem, FieldName = fieldName, FilterType = filterType, Value = value
+                OpType = CombinSymbol.SingleItem,
+                FieldName = fieldName,
+                FilterType = filterType,
+                Value = value
             });
         }
 
@@ -176,7 +188,7 @@ namespace YS.Knife.Data
             else if (this.OpType == CombinSymbol.AndItems)
             {
                 // AndCondition current = this as AndCondition;
-                FilterInfo oc = new FilterInfo() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>()};
+                FilterInfo oc = new FilterInfo() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() };
                 foreach (var v in this.Items)
                 {
                     oc.Items.Add(v.Not());
@@ -186,7 +198,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                FilterInfo oc = new FilterInfo() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>()};
+                FilterInfo oc = new FilterInfo() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() };
                 foreach (var v in this.Items)
                 {
                     oc.Items.Add(v.Not());
@@ -324,7 +336,7 @@ namespace YS.Knife.Data
                 }
             }
             return ToFilterInfo(filter);
-           
+
         }
     }
     public class FilterInfo2
@@ -357,7 +369,7 @@ namespace YS.Knife.Data
         public Operator Operator { get; set; }
         public CombinSymbol OpType { get; set; }
         public List<FilterInfo2> Items { get; set; }
-        
+
         public FilterInfo2 AndAlso(FilterInfo2 other)
         {
             if (other == null)
@@ -380,7 +392,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() {OpType = CombinSymbol.AndItems, Items = new List<FilterInfo2>() {this, other}};
+                return new FilterInfo2() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo2>() { this, other } };
             }
         }
         public FilterInfo2 OrElse(FilterInfo2 other)
@@ -405,7 +417,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() {OpType = CombinSymbol.OrItems, Items = new List<FilterInfo2>() {this, other}};
+                return new FilterInfo2() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo2>() { this, other } };
             }
         }
         public override string ToString()
@@ -443,10 +455,10 @@ namespace YS.Knife.Data
             return new FilterInfo2()
             {
                 OpType = CombinSymbol.SingleItem,
-                 Operator = filterType,
+                Operator = filterType,
                 Left = new ValueInfo { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
-                Right = new ValueInfo { IsConstant = true, ConstantValue =value }
-                
+                Right = new ValueInfo { IsConstant = true, ConstantValue = value }
+
             };
         }
 
@@ -478,7 +490,7 @@ namespace YS.Knife.Data
                 var names = (NavigatePaths ?? Enumerable.Empty<ValuePath>()).Where(p => p != null).Select(p => p.ToString());
                 return string.Join(".", names);
             }
-            
+
             string ValueToString(object value, bool convertCollection = true)
             {
                 if (value == null || value == DBNull.Value)
@@ -514,10 +526,33 @@ namespace YS.Knife.Data
                 return $"\"{Regex.Escape(str).Replace("\"", "\\\"")}\"";
             }
         }
-     
+
+        public static ValueInfo FromProperty(string propertyName)
+        {
+            return new ValueInfo
+            {
+                IsConstant = false,
+                NavigatePaths = new List<ValuePath>
+                {
+                    new ValuePath
+                    {
+                        IsFunction=false,
+                        Name= propertyName
+                    }
+                }
+            };
+        }
+        public static ValueInfo FromConstantValue(object value)
+        {
+            return new ValueInfo
+            {
+                IsConstant = true,
+                ConstantValue = value
+            };
+        }
     }
 
-   
+
 
     public class ValuePath
     {
@@ -533,14 +568,14 @@ namespace YS.Knife.Data
                 {
                     args.AddRange(FunctionArgs.Where(p => p != null).Select(p => p?.ToString()));
                 }
-                return $"{Name}({string.Join(", ",args)})";
+                return $"{Name}({string.Join(", ", args)})";
             }
             else
             {
                 return $"{Name}";
             }
 
-           
+
         }
     }
 

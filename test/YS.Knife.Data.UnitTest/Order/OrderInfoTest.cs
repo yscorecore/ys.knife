@@ -11,8 +11,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedStringWhenToString()
         {
-            OrderInfo order = OrderInfo.Create("Name")
-                    .Add("Age", OrderType.Desc);
+            OrderInfo order = OrderInfo.Parse("Name,Age.desc()");
             Assert.AreEqual("Name.asc(),Age.desc()", order.ToString());
         }
 
@@ -27,9 +26,9 @@ namespace YS.Knife.Data.UnitTest
             AssertOrderItem(orderInfo.Items[2], "Address", OrderType.Asc);
         }
 
-        private void AssertOrderItem(OrderItem2 orderItem, string field, OrderType orderType)
+        private void AssertOrderItem(OrderItem orderItem, string field, OrderType orderType)
         {
-            Assert.AreEqual(field, orderItem.Value.ToString());
+            Assert.AreEqual(field, string.Join(".", orderItem.NavigatePaths));
             Assert.AreEqual(orderType, orderItem.OrderType);
         }
 
@@ -38,7 +37,7 @@ namespace YS.Knife.Data.UnitTest
         {
             var converter = TypeDescriptor.GetConverter(typeof(OrderInfo));
             Assert.AreEqual(true, converter.CanConvertTo(typeof(string)));
-            OrderInfo orderItem = new OrderInfo().Add("Field", OrderType.Desc);
+            OrderInfo orderItem = OrderInfo.Parse("Field.Desc()");
             Assert.AreEqual("Field.desc()", converter.ConvertTo(orderItem, typeof(string)));
         }
         [TestMethod]

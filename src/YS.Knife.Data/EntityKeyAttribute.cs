@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -22,9 +23,9 @@ namespace YS.Knife.Data
     [System.AttributeUsage(System.AttributeTargets.Class, Inherited = true, AllowMultiple = false)]
     public sealed class DefaultOrderByAttribute : System.Attribute
     {
-        public DefaultOrderByAttribute(string propName, OrderType orderType = OrderType.Asc)
+        public DefaultOrderByAttribute(string orderInfo)
         {
-            this.OrderInfo = OrderItem2.Create(propName, orderType).ToString();
+            this.OrderInfo = orderInfo;
         }
         public string OrderInfo { get; }
     }
@@ -64,13 +65,16 @@ namespace YS.Knife.Data
                 }
                 else
                 {
-                    OrderInfo orderInfo = new OrderInfo();
-                    foreach (var key in type.GetEntityKeyProps())
+                    return new OrderInfo
                     {
-                        orderInfo.Add(key.Name, OrderType.Asc);
-                    }
-                    var keyOrderItems = type.GetEntityKeyProps().Select(p => OrderItem2.Create(p.Name, OrderType.Asc));
-                    return orderInfo;
+                        Items = type.GetEntityKeyProps().Select(prop => new OrderItem
+                        {
+                            NavigatePaths = new List<ValuePath> { new ValuePath { Name = prop.Name } },
+                            OrderType = OrderType.Asc,
+                        }).ToList()
+                    };
+
+
                 }
             });
         }
