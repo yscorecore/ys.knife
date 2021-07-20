@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using YS.Knife.Data.Filter.Functions;
 
 namespace YS.Knife.Data
 {
@@ -8,11 +12,31 @@ namespace YS.Knife.Data
     {
         public static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         public static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
-        static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
-        public ParseContext(string text)
+
+        public CultureInfo CurrentCulture { get; }
+
+        public char NumberDecimal { get; } // 小数点
+        public char NumberNegativeSign { get; }// 负号
+        public char NumberPositiveSign { get; } // 正号
+        public char NumberGroupSeparator { get; }// 分组符号
+
+        [Obsolete("should use ctor with culture info")]
+        public ParseContext(string text) : this(text, CultureInfo.CurrentCulture)
+        {
+
+        }
+        public ParseContext(string text, CultureInfo cultureInfo)
         {
             this.Text = text;
             this.TotalLength = text.Length;
+            this.CurrentCulture = cultureInfo;
+            this.NumberDecimal = cultureInfo.NumberFormat.NumberDecimalSeparator[0];
+            this.NumberNegativeSign = cultureInfo.NumberFormat.NegativeSign[0];
+            this.NumberPositiveSign = cultureInfo.NumberFormat.PositiveSign[0];
+            // this._numberGroupSeparator = cultureInfo.NumberFormat.NumberGroupSeparator[0];
+            // default number group separator will conflict with array separator
+            // eg. [1,234], so use '_' instead of default number group separator
+            this.NumberGroupSeparator = '_';
         }
         public char Current()
         {
@@ -30,43 +54,6 @@ namespace YS.Knife.Data
         {
             return Index >= TotalLength;
         }
-
-        public bool SkipWhiteSpace()
-        {
-            while (NotEnd())
-            {
-                if (IsWhiteSpace(Text[Index]))
-                {
-                    Index++;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public void SkipWhiteSpaceAndFirstChar(char ch) 
-        {
-            if (SkipWhiteSpace())
-            {
-                if (this.Current() != ch)
-                {
-                    throw ParseErrors.ExpectedCharNotFound(this, ch);
-                }
-                else
-                {
-                    Index++;
-                }
-            }
-            else
-            {
-                throw ParseErrors.ExpectedCharNotFound(this, ch);
-            }
-        }
-
-
 
         public string Text;
         public int TotalLength;
@@ -117,5 +104,357 @@ namespace YS.Knife.Data
         }
     }
 
+    public static class ParseContextEntensions
+    {
+        internal static readonly Dictionary<string, object> KeyWordValues = new Dictionary<string, object>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            ["true"] = true,
+            ["false"] = false,
+            ["null"] = null
+        };
+        private static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
+        private static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
+        private static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
+        private static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
 
+        private static bool IsNumberStartChar(char current, ParseContext context) => char.IsDigit(current) || current == context.NumberDecimal || current == context.NumberNegativeSign || current == context.NumberPositiveSign;
+
+
+        public static bool SkipWhiteSpace(this ParseContext context)
+        {
+            while (context.NotEnd())
+            {
+                if (IsWhiteSpace(context.Text[context.Index]))
+                {
+                    context.Index++;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public static void SkipWhiteSpaceAndFirstChar(this ParseContext context, char ch)
+        {
+            if (context.SkipWhiteSpace())
+            {
+                if (context.Current() != ch)
+                {
+                    throw ParseErrors.ExpectedCharNotFound(context, ch);
+                }
+                else
+                {
+                    context.Index++;
+                }
+            }
+            else
+            {
+                throw ParseErrors.ExpectedCharNotFound(context, ch);
+            }
+        }
+
+        public static ValueInfo ParseValueInfo(this ParseContext context)
+        {
+            context.SkipWhiteSpace();
+
+            var (isValue, value) = TryParseValue(context);
+            if (isValue)
+            {
+                return new ValueInfo() { IsConstant = true, ConstantValue = value };
+            }
+
+            var propertyPaths = ParsePropertyPaths(context);
+
+            return new ValueInfo { IsConstant = false, NavigatePaths = propertyPaths };
+        }
+
+
+        public static string ParseName(this ParseContext context)
+        {
+            context.SkipWhiteSpace();
+            int startIndex = context.Index;
+            if (!IsValidNameFirstChar(context.Current()))
+            {
+                throw ParseErrors.InvalidFieldNameText(context);
+            }
+            context.Index++;// first char
+
+            while (context.NotEnd() && IsValidNameChar(context.Current()))
+            {
+                context.Index++;
+            }
+
+            return context.Text.Substring(startIndex, context.Index - startIndex);
+        }
+        public static (bool, object) TryParseValue(this ParseContext context)
+        {
+            var originIndex = context.Index;
+            context.SkipWhiteSpace();
+            if (context.End())
+            {
+                context.Index = originIndex;
+                return (false, null);
+            }
+            var current = context.Current();
+            if (current == '\"')
+            {
+                //string
+                return (true, ParseStringValue(context));
+            }
+            else if (char.IsLetter(current))
+            {
+                //keyword eg
+                string name = ParseName(context);
+                if (KeyWordValues.TryGetValue(name, out var val))
+                {
+                    return (true, val);
+                }
+                else
+                {
+                    context.Index = originIndex;
+                    return (false, null);
+                }
+            }
+            else if (IsNumberStartChar(current,context))
+            {
+                //number
+                return (true, ParseNumberValue(context));
+            }
+            else if (current == '[')
+            {
+                return (true, ParseArrayValue(context));
+                //array
+            }
+            return (false, null);
+
+
+            string ParseStringValue(ParseContext context)
+            {
+                // skip start
+                context.Index++;
+                bool lastIsEscapeChar = false;
+                var startIndex = context.Index;
+
+                while (context.NotEnd())
+                {
+                    if (lastIsEscapeChar)
+                    {
+                        lastIsEscapeChar = false;
+                        context.Index++;
+                        continue;
+                    }
+                    else
+                    {
+                        var current = context.Current();
+                        if (current == '\"')
+                        {
+                            break;
+                        }
+                        lastIsEscapeChar = IsEscapeChar(current);
+                        context.Index++;
+                    }
+
+                }
+                string origin = context.Text.Substring(startIndex, context.Index - startIndex);
+                // skip end
+                context.Index++;
+                try
+                {
+                    return Regex.Unescape(origin);
+                }
+                catch (Exception ex)
+                {
+                    throw ParseErrors.InvalidStringValue(context, origin, ex);
+                }
+            }
+
+            object ParseNumberValue(ParseContext context)
+            {
+                int startIndex = context.Index;
+                bool hasDecimsl = context.Current() == context.NumberDecimal;
+                bool hasDigit = char.IsDigit(context.Current());
+                // skip first char
+                context.Index++;
+                while (context.NotEnd())
+                {
+                    var current = context.Current();
+                    if (char.IsDigit(current))
+                    {
+                        hasDigit = true;
+                        context.Index++;
+                    }
+                    else if (current == context.NumberGroupSeparator)
+                    {
+                        if (hasDecimsl)
+                        {
+                            throw ParseErrors.InvalidValue(context);
+                        }
+                        context.Index++;
+                    }
+                    else if (current == context.NumberDecimal)
+                    {
+                        if (hasDecimsl)
+                        {
+                            throw ParseErrors.InvalidValue(context);
+                        }
+                        else
+                        {
+                            hasDecimsl = true;
+                        }
+                        context.Index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (!hasDigit) 
+                {
+                   throw  ParseErrors.InvalidValue(context);
+                }
+                var numString = context.Text.Substring(startIndex, context.Index - startIndex);
+                try
+                {
+                    if (hasDecimsl)
+                    {
+                        return double.Parse(numString.Replace(context.NumberGroupSeparator.ToString(), string.Empty), NumberStyles.Any, context.CurrentCulture);
+
+                    }
+                    else
+                    {
+                        return int.Parse(numString.Replace(context.NumberGroupSeparator.ToString(), string.Empty), NumberStyles.Any, context.CurrentCulture);
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    throw ParseErrors.InvalidNumberValue(context, numString, ex);
+                }
+            }
+
+            object ParseArrayValue(ParseContext context)
+            {
+                // skip start [
+                List<object> datas = new List<object>();
+                context.Index++;
+                while (context.NotEnd())
+                {
+                    context.SkipWhiteSpace();
+                    var current = context.Current();
+                    if (current == ']')
+                    {
+                        context.Index++;
+                        break;
+                    }
+                    datas.Add(ParseValue(context, false));
+                    context.SkipWhiteSpace();
+                    if (context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+
+                }
+                return datas.ToArray();
+            }
+            object ParseKeywordValue(ParseContext context)
+            {
+                int startIndex = context.Index;
+                while (context.NotEnd() && IsValidNameChar(context.Current()))
+                {
+                    context.Index++;
+                }
+                string keyWord = context.Text.Substring(startIndex, context.Index - startIndex);
+                if (KeyWordValues.TryGetValue(keyWord, out object value))
+                {
+                    return value;
+                }
+                else
+                {
+                    throw ParseErrors.InvalidKeywordValue(context, keyWord);
+                }
+            }
+
+            object ParseValue(ParseContext context, bool parseArray = true)
+            {
+                context.SkipWhiteSpace();
+                var current = context.Current();
+                if (current == '\"')
+                {
+                    //string
+                    return ParseStringValue(context);
+                }
+                else if (char.IsLetter(current))
+                {
+                    //keyword
+                    return ParseKeywordValue(context);
+                }
+                else if (IsNumberStartChar(current,context))
+                {
+                    //number
+                    return ParseNumberValue(context);
+                }
+                else if (parseArray && current == '[')
+                {
+                    return ParseArrayValue(context);
+                    //array
+                }
+                else
+                {
+                    throw ParseErrors.InvalidValue(context);
+                }
+            }
+        }
+
+        public static List<ValuePath> ParsePropertyPaths(this ParseContext context)
+        {
+            List<ValuePath> names = new List<ValuePath>();
+            while (context.NotEnd())
+            {
+                var name = ParseName(context);
+                context.SkipWhiteSpace();
+                if (context.End())
+                {
+                    names.Add(new ValuePath { Name = name });
+                    break;
+                }
+                else if (context.Current() == '.')
+                {
+                    // a.b
+                    names.Add(new ValuePath { Name = name });
+                    context.Index++;
+
+                }
+
+                else if (context.Current() == '(')
+                {
+                    var args = IFilterFunction.ParseFunctionArgument(name, context);
+                    var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args };
+                    context.SkipWhiteSpace();
+                    names.Add(nameInfo);
+                    if (context.NotEnd())
+                    {
+                        if (context.Current() == '.')
+                        {
+                            context.Index++;
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    names.Add(new ValuePath { Name = name });
+                    break;
+                }
+
+            }
+            return names;
+
+           
+        }
+    }
 }

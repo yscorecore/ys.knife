@@ -81,7 +81,7 @@ namespace YS.Knife.Data
             OrderInfo orderInfo = new OrderInfo();
             while (context.SkipWhiteSpace())
             {
-                var paths = this.ParsePropertyPaths(context);
+                var paths = context.ParsePropertyPaths();
                 orderInfo.Add(OrderItem.FromValuePaths(paths));
 
                 if (context.SkipWhiteSpace() && context.Current() == ',')
@@ -101,7 +101,7 @@ namespace YS.Knife.Data
         {
             var context = new ParseContext(text);
             context.SkipWhiteSpace();
-            var paths = ParsePropertyPaths(context);
+            var paths = context.ParsePropertyPaths();
             if (context.NotEnd())
             {
                 throw ParseErrors.InvalidText(context);
@@ -191,11 +191,11 @@ namespace YS.Knife.Data
 
         private FilterInfo2 ParseSingleItemOne(ParseContext context)
         {
-            var leftValue = ParseValueInfo(context);
+            var leftValue = context.ParseValueInfo();
 
             var type = ParseType(context);
 
-            var rightValue = ParseValueInfo(context);
+            var rightValue = context.ParseValueInfo();
 
             return new FilterInfo2()
             {
@@ -219,166 +219,17 @@ namespace YS.Knife.Data
             }
         }
 
-        internal ValueInfo ParseValueInfo(ParseContext context)
-        {
-            context.SkipWhiteSpace();
+       
 
-            var (isValue, value) = TryParseValue(context);
-            if (isValue)
-            {
-                return new ValueInfo() { IsConstant = true, ConstantValue = value };
-            }
-
-            var propertyPaths = ParsePropertyPaths(context);
-
-            return new ValueInfo { IsConstant = false, NavigatePaths = propertyPaths };
-        }
-
-        private List<ValuePath> ParsePropertyPaths(ParseContext context)
-        {
-            List<ValuePath> names = new List<ValuePath>();
-            while (context.NotEnd())
-            {
-                var name = ParseName(context);
-                context.SkipWhiteSpace();
-                if (context.End())
-                {
-                    names.Add(new ValuePath { Name = name });
-                    break;
-                }
-                else if (context.Current() == '.')
-                {
-                    // a.b
-                    names.Add(new ValuePath { Name = name });
-                    context.Index++;
-
-                }
-
-                else if (context.Current() == '(')
-                {
-                    var args = ParseFunctionArguments2(name, context);
-                    var nameInfo = new ValuePath { Name = name, IsFunction = true, FunctionArgs = args };
-                    context.SkipWhiteSpace();
-                    names.Add(nameInfo);
-                    if (context.NotEnd())
-                    {
-                        if (context.Current() == '.')
-                        {
-                            context.Index++;
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    names.Add(new ValuePath { Name = name });
-                    break;
-                }
-
-            }
-            return names;
-        }
-        private object[] ParseFunctionArguments2(string name, ParseContext context)
-        {
-            //skip open bracket
-            context.Index++;
-
-            var arguments = IFilterFunction.ParseFunctionArgument(name, context);
-            SkipCloseBracket(context);
-            return arguments;
-
-
-        }
-        private (List<ValueInfo> Args, FilterInfo2 SubFilter) ParseFunctionArguments(string name, ParseContext context)
-        {
-            context.Index++;
-            List<ValueInfo> args = ParseFunctionArguments(context);
-            FilterInfo2 filterInfo = ParseFunctionFilter(context);
-
-            SkipCloseBracket(context);
-            return (args, filterInfo);
-
-            List<ValueInfo> ParseFunctionArguments(ParseContext context)
-            {
-                List<ValueInfo> arguments = new List<ValueInfo>();
-                if (context.SkipWhiteSpace())
-                {
-                    if (context.Current() == '(')
-                    {
-                        return null;
-                    }
-                    if (context.Current() == ')')
-                    {
-                        return null;
-                    }
-                }
-                while (context.SkipWhiteSpace())
-                {
-
-                    var originStartIndex = context.Index;
-                    var valueInfo = ParseValueInfo(context);
-
-                    if (context.SkipWhiteSpace())
-                    {
-                        if (context.Current() == ',')
-                        {
-                            arguments.Add(valueInfo);
-                            context.Index++;
-                        }
-                        else if (context.Current() == ')')
-                        {
-                            arguments.Add(valueInfo);
-                            break;
-                        }
-                        else
-                        {
-                            //reset index
-                            context.Index = originStartIndex;
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        throw ParseErrors.InvalidText(context);
-                    }
-                }
-                return arguments.Any() ? arguments : null;
-            }
-            FilterInfo2 ParseFunctionFilter(ParseContext context)
-            {
-                context.SkipWhiteSpace();
-                if (context.Current() == ')')
-                {
-                    return null;
-                }
-                return ParseFilterExpression(context); ;
-            }
-        }
+       
+      
+       
 
         private string JoinNames(IEnumerable<string> names)
         {
             return string.Join('.', names);
         }
-        private string ParseName(ParseContext context)
-        {
-            context.SkipWhiteSpace();
-            int startIndex = context.Index;
-            if (!IsValidNameFirstChar(context.Current()))
-            {
-                throw ParseErrors.InvalidFieldNameText(context);
-            }
-            context.Index++;// first char
-
-            while (context.NotEnd() && IsValidNameChar(context.Current()))
-            {
-                context.Index++;
-            }
-
-            return context.Text.Substring(startIndex, context.Index - startIndex);
-        }
+       
 
         private Operator ParseType(ParseContext context)
         {
@@ -421,209 +272,10 @@ namespace YS.Knife.Data
                 throw ParseErrors.InvalidFilterType(context);
             }
         }
-        private (bool, object) TryParseValue(ParseContext context)
-        {
-            var originIndex = context.Index;
-            context.SkipWhiteSpace();
-            if (context.End())
-            {
-                context.Index = originIndex;
-                return (false, null);
-            }
-            var current = context.Current();
-            if (current == '\"')
-            {
-                //string
-                return (true, ParseStringValue(context));
-            }
-            else if (char.IsLetter(current))
-            {
-                //keyword eg
-                string name = ParseName(context);
-                if (KeyWordValues.TryGetValue(name, out var val))
-                {
-                    return (true, val);
-                }
-                else
-                {
-                    context.Index = originIndex;
-                    return (false, null);
-                }
-            }
-            else if (IsNumberStartChar(current))
-            {
-                //number
-                return (true, ParseNumberValue(context));
-            }
-            else if (current == '[')
-            {
-                return (true, ParseArrayValue(context));
-                //array
-            }
-            return (false, null);
+       
 
-        }
 
-        private object ParseValue(ParseContext context, bool parseArray = true)
-        {
-            context.SkipWhiteSpace();
-            var current = context.Current();
-            if (current == '\"')
-            {
-                //string
-                return ParseStringValue(context);
-            }
-            else if (char.IsLetter(current))
-            {
-                //keyword
-                return ParseKeywordValue(context);
-            }
-            else if (IsNumberStartChar(current))
-            {
-                //number
-                return ParseNumberValue(context);
-            }
-            else if (parseArray && current == '[')
-            {
-                return ParseArrayValue(context);
-                //array
-            }
-            else
-            {
-                throw ParseErrors.InvalidValue(context);
-            }
-        }
 
-        private bool IsNumberStartChar(char current) => char.IsDigit(current) || current == _numberDecimal || current == _numberNegativeSign || current == _numberPositiveSign;
-
-        private string ParseStringValue(ParseContext context)
-        {
-            // skip start
-            context.Index++;
-            bool lastIsEscapeChar = false;
-            var startIndex = context.Index;
-
-            while (context.NotEnd())
-            {
-                if (lastIsEscapeChar)
-                {
-                    lastIsEscapeChar = false;
-                    context.Index++;
-                    continue;
-                }
-                else
-                {
-                    var current = context.Current();
-                    if (current == '\"')
-                    {
-                        break;
-                    }
-                    lastIsEscapeChar = IsEscapeChar(current);
-                    context.Index++;
-                }
-
-            }
-            string origin = context.Text.Substring(startIndex, context.Index - startIndex);
-            // skip end
-            context.Index++;
-            try
-            {
-                return Regex.Unescape(origin);
-            }
-            catch (Exception ex)
-            {
-                throw ParseErrors.InvalidStringValue(context, origin, ex);
-            }
-        }
-        private object ParseNumberValue(ParseContext context)
-        {
-            int startIndex = context.Index;
-            bool hasDecimsl = context.Current() == _numberDecimal;
-            // skip first char
-            context.Index++;
-            while (context.NotEnd())
-            {
-                var current = context.Current();
-                if (char.IsDigit(current))
-                {
-                    context.Index++;
-                }
-                else if (current == _numberGroupSeparator)
-                {
-                    if (hasDecimsl)
-                    {
-                        throw ParseErrors.InvalidValue(context);
-                    }
-                    context.Index++;
-                }
-                else if (current == _numberDecimal)
-                {
-                    if (hasDecimsl)
-                    {
-                        throw ParseErrors.InvalidValue(context);
-                    }
-                    else
-                    {
-                        hasDecimsl = true;
-                    }
-                    context.Index++;
-                }
-                else
-                {
-                    break;
-                }
-            }
-            var numString = context.Text.Substring(startIndex, context.Index - startIndex);
-            try
-            {
-                return double.Parse(numString.Replace(_numberGroupSeparator.ToString(), string.Empty), NumberStyles.Any, _currentCulture);
-            }
-            catch (Exception ex)
-            {
-                throw ParseErrors.InvalidNumberValue(context, numString, ex);
-            }
-        }
-        private object ParseKeywordValue(ParseContext context)
-        {
-            int startIndex = context.Index;
-            while (context.NotEnd() && IsValidNameChar(context.Current()))
-            {
-                context.Index++;
-            }
-            string keyWord = context.Text.Substring(startIndex, context.Index - startIndex);
-            if (KeyWordValues.TryGetValue(keyWord, out object value))
-            {
-                return value;
-            }
-            else
-            {
-                throw ParseErrors.InvalidKeywordValue(context, keyWord);
-            }
-        }
-        private object ParseArrayValue(ParseContext context)
-        {
-            // skip start [
-            List<object> datas = new List<object>();
-            context.Index++;
-            while (context.NotEnd())
-            {
-                context.SkipWhiteSpace();
-                var current = context.Current();
-                if (current == ']')
-                {
-                    context.Index++;
-                    break;
-                }
-                datas.Add(ParseValue(context, false));
-                context.SkipWhiteSpace();
-                if (context.Current() == ',')
-                {
-                    context.Index++;
-                }
-
-            }
-            return datas.ToArray();
-        }
     }
 
 }

@@ -48,11 +48,20 @@ namespace YS.Knife.Data
         }
         public static Exception ExpectedCharNotFound(ParseContext context,char ch)
         {
-            throw new FilterInfoParseException($"Invalid expression near index {context.Index}, expect char '{ch}' but not found.");
+            throw new FilterInfoParseException($"Invalid expression near index {context.Index}, expect char '{ch}' not found.");
         }
         public static Exception ParaseLimitNumberError(ParseContext context)
         {
             throw new FilterInfoParseException($"Invalid expression near index {context.Index}, parse limit error.");
+        }
+
+        public static Exception FunctionArgumentLessThan(ParseContext context,string functionName,  int minArgumentLength)
+        {
+            throw new FilterInfoParseException($"The number of arguments of the function '{functionName}' less than min required {minArgumentLength}.");
+        }
+        public static Exception FunctionArgumentGreatThan(ParseContext context, string functionName, int maxArgumentLength)
+        {
+            throw new FilterInfoParseException($"The number of arguments of the function '{functionName}' exceeds the limit {maxArgumentLength}.");
         }
         public static class Select
         {
