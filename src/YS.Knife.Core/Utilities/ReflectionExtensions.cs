@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.InteropServices.ComTypes;
-using AspectCore.Extensions.Reflection;
+
 
 namespace YS.Knife
 {
@@ -139,6 +139,10 @@ namespace YS.Knife
         private static readonly LocalCache<Type, object> DefaultValueCache = new LocalCache<Type, object>();
         public static object DefaultValue(this Type type)
         {
+            if (type.IsClass)
+            {
+                return null;
+            }
             return DefaultValueCache.Get(type,
                  innerType => (Activator.CreateInstance(typeof(DefaultValueProxy<>).MakeGenericType(innerType)) as IDefaultValueProxy)?.GetDefault());
         }

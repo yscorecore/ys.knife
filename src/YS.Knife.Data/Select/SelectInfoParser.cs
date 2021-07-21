@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
+using YS.Knife.Data.Expressions.Functions.Collections;
 
 namespace YS.Knife.Data
 {
@@ -59,7 +61,7 @@ namespace YS.Knife.Data
             if (context.SkipWhiteSpace() && context.Current() == '{')
             {
                 // parse collection infos
-                ParseCollectionInfos(item, context);
+                ParseCollectionInfos2(item, context);
             }
             if (context.SkipWhiteSpace() && context.Current() == '(')
             {
@@ -76,6 +78,78 @@ namespace YS.Knife.Data
                 }
             }
             return item;
+        }
+        private void ParseCollectionInfos2(SelectItem selectItem, ParseContext context)
+        {
+            context.SkipWhiteSpaceAndFirstChar('{');
+            var set = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+            do
+            {
+                if (!context.SkipWhiteSpace())
+                {
+                    break;
+                }
+                if (context.Current() == '}')
+                {
+                    break;
+                }
+                var valueInfo = context.ParseValueInfo();
+
+                if (valueInfo.IsConstant || valueInfo.NavigatePaths.Count != 1 || valueInfo.NavigatePaths[0].IsFunction == false)
+                {
+                    throw ParseErrors.OnlySupportCollectionFunctionInCurlyBracket(context);
+                }
+                var functionName = valueInfo.NavigatePaths[0].Name;
+                if (set.Contains(functionName))
+                {
+                    throw ParseErrors.DuplicateCollectionFunctionInCurlyBracket(context, functionName);
+                }
+                else
+                {
+                    set.Add(functionName);
+                }
+                SetCollectionFilterValue(context, selectItem, valueInfo.NavigatePaths[0]);
+                if (!context.SkipWhiteSpace())
+                {
+                    break;
+                }
+                if (context.Current() == ',')
+                {
+                    context.Index++;
+                }
+                else if (context.Current() == '}')
+                {
+                    break;
+                }
+                else
+                {
+                    throw ParseErrors.InvalidText(context);
+                }
+            }
+            while (true);
+            context.SkipWhiteSpaceAndFirstChar('}');
+
+        }
+
+        private void SetCollectionFilterValue(ParseContext context, SelectItem selectItem, ValuePath valuePath)
+        {
+            if (nameof(Where).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                selectItem.CollectionFilter = valuePath.FunctionArgs.Cast<FilterInfo2>().FirstOrDefault();
+            }
+            else if (nameof(OrderBy).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                selectItem.CollectionOrder = valuePath.FunctionArgs.Cast<OrderInfo>().FirstOrDefault();
+            }
+            else if (nameof(Limit).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+            {
+                selectItem.CollectionLimit = valuePath.FunctionArgs.Cast<LimitInfo>().FirstOrDefault();
+            }
+            else
+            {
+                throw ParseErrors.OnlySupportCollectionFunctionInCurlyBracket(context);
+            }
+                    
         }
         private void ParseCollectionInfos(SelectItem selectItem, ParseContext context)
         {   //skip start {
@@ -165,7 +239,7 @@ namespace YS.Knife.Data
 
         private FilterInfo2 ParseFilterInfo(ParseContext context)
         {
-            return new FilterInfoParser2(this._currentCulture).ParseFilterExpression(context);
+            return context.ParseFilterInfo();
         }
         private void ParseCollectionInfosFromFilterInfo(SelectItem selectItem, ParseContext context)
         {
@@ -181,7 +255,7 @@ namespace YS.Knife.Data
         }
         private void ParseCollectionInfosFromOrderInfo(SelectItem selectItem, ParseContext context)
         {
-           // selectItem.CollectionOrder =new OrderInfoParser(CultureInfo.CurrentCulture).ParseOrderInfo(context);
+            // selectItem.CollectionOrder =new OrderInfoParser(CultureInfo.CurrentCulture).ParseOrderInfo(context);
 
             //offset,limit
             if (context.SkipWhiteSpace())

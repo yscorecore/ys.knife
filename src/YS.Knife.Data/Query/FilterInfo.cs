@@ -452,11 +452,12 @@ namespace YS.Knife.Data
         public static FilterInfo2 CreateItem(string fieldPaths, Operator filterType, object value)
         {
             var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
+
             return new FilterInfo2()
             {
                 OpType = CombinSymbol.SingleItem,
                 Operator = filterType,
-                Left = new ValueInfo { IsConstant = false, NavigatePaths = parser.ParsePaths(fieldPaths) },
+                Left = new ValueInfo { IsConstant = false, NavigatePaths = parser.ParsePropertyPaths(fieldPaths) },
                 Right = new ValueInfo { IsConstant = true, ConstantValue = value }
 
             };

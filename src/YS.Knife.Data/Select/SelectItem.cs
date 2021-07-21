@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using YS.Knife.Data.Expressions.Functions.Collections;
 
 namespace YS.Knife.Data
 {
@@ -24,8 +25,7 @@ namespace YS.Knife.Data
 
         public override string ToString()
         {
-
-            //scores{a=b,+a,-b,1,3}(a,b)
+            //source{where(a=b),orderby(a.asc(),b.desc()),limit(1,3)}(a,b)
             StringBuilder sb = new StringBuilder();
             sb.Append(this.Name);
             if (CollectionFilter != null || CollectionOrder != null || CollectionLimit != null)
@@ -33,9 +33,9 @@ namespace YS.Knife.Data
                 sb.Append("{");
                 string collectionInfo = string.Join(',',
                     new string[] {
-                        CollectionLimit?.ToString(),
-                        CollectionOrder?.ToString(),
-                        CollectionFilter?.ToString(),
+                        LimitInfoToString(CollectionLimit),
+                        OrderInfoToString(CollectionOrder),
+                        FilterInfoToString( CollectionFilter),
                 }.Where(p => p != null));
                 sb.Append(collectionInfo);
                 sb.Append("}");
@@ -45,6 +45,18 @@ namespace YS.Knife.Data
                 sb.Append($"({string.Join(',', SubItems.Where(p => p != null).Select(p => p.ToString()))})");
             }
             return sb.ToString();
+        }
+        private string LimitInfoToString(LimitInfo limitInfo)
+        {
+            return limitInfo != null ? $"{nameof(Limit).ToLower()}({limitInfo})" : null;
+        }
+        private string OrderInfoToString(OrderInfo orderInfo)
+        {
+            return orderInfo != null ? $"{nameof(OrderBy).ToLower()}({orderInfo})" : null;
+        }
+        private string FilterInfoToString(FilterInfo2 filterInfo)
+        {
+            return filterInfo != null ? $"{nameof(Where).ToLower()}({filterInfo})" : null;
         }
     }
 }

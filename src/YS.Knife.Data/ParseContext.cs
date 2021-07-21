@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Text.RegularExpressions;
-using YS.Knife.Data.Filter.Functions;
+using YS.Knife.Data.Expressions.Functions;
 
 namespace YS.Knife.Data
 {
@@ -112,10 +113,24 @@ namespace YS.Knife.Data
             ["false"] = false,
             ["null"] = null
         };
+        internal static readonly Dictionary<string, CombinSymbol> OpTypeCodes = new Dictionary<string, CombinSymbol>(StringComparer.InvariantCultureIgnoreCase)
+        {
+            [FilterInfo2.Operator_And] = CombinSymbol.AndItems,
+            [FilterInfo2.Operator_Or] = CombinSymbol.OrItems
+        };
+
+        internal static readonly Dictionary<string, Operator> FilterTypeCodes =
+           FilterInfo2.OperatorTypeNameDictionary.Select(p => Tuple.Create(p.Value, p.Key))
+           .Concat(new[] {
+                Tuple.Create("=",Operator.Equals),
+                Tuple.Create("<>",Operator.NotEquals)
+
+           }).ToDictionary(p => p.Item1, p => p.Item2);
         private static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         private static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
         private static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';
         private static readonly Func<char, bool> IsEscapeChar = ch => ch == '\\';
+        private static readonly Func<char, bool> IsOperationChar = ch => ch == '=' || ch == '<' || ch == '>' || ch == '!';
 
         private static bool IsNumberStartChar(char current, ParseContext context) => char.IsDigit(current) || current == context.NumberDecimal || current == context.NumberNegativeSign || current == context.NumberPositiveSign;
 
@@ -455,6 +470,225 @@ namespace YS.Knife.Data
             return names;
 
            
+        }
+
+        public static FilterInfo2 ParseFilterInfo(this ParseContext context)
+        {
+            context.SkipWhiteSpace();
+            if (context.Current() == '(')
+            {
+                return ParseCombinFilter(context);
+            }
+            else
+            {
+                return ParseSingleItemOne(context);
+            }
+            FilterInfo2 ParseCombinFilter(ParseContext context)
+            {
+                List<FilterInfo2> orItems = new List<FilterInfo2>();
+                CombinSymbol lastOpType = CombinSymbol.OrItems;
+                while (context.NotEnd())
+                {
+                    // skip start bracket
+                    context.SkipWhiteSpace();
+                    if (context.Current() != '(')
+                    {
+                        throw ParseErrors.MissOpenBracket(context);
+                    }
+                    context.Index++;
+                    context.SkipWhiteSpace();
+                    var inner = ParseFilterInfo(context);
+                    context.SkipWhiteSpace();
+                    if (context.End() || context.Current() != ')')
+                    {
+                        throw ParseErrors.MissCloseBracket(context);
+                    }
+                    context.Index++;
+
+                    if (lastOpType == CombinSymbol.OrItems || orItems.Count == 0)
+                    {
+                        orItems.Add(inner);
+                    }
+                    else
+                    {
+                        orItems[^1] = orItems[^1].AndAlso(inner);
+                    }
+
+                    CombinSymbol? opType = TryParseOpType(context);
+
+                    if (opType == null)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        lastOpType = opType.Value;
+                    }
+                }
+                return orItems.Count > 1 ? new FilterInfo2 { OpType = CombinSymbol.OrItems, Items = orItems } : orItems.FirstOrDefault();
+            }
+            CombinSymbol? TryParseOpType(ParseContext context)
+            {
+                var originIndex = context.Index;
+
+                context.SkipWhiteSpace();
+                var wordStartIndex = context.Index;
+                while (context.NotEnd() && IsValidNameChar(context.Current()))
+                {
+                    context.Index++;
+                }
+                var word = context.Text.Substring(wordStartIndex, context.Index - wordStartIndex);
+                if (OpTypeCodes.TryGetValue(word, out var opType))
+                {
+                    return opType;
+                }
+                else
+                {
+                    // reset index
+                    context.Index = originIndex;
+                    return null;
+                }
+            }
+
+            FilterInfo2 ParseSingleItemOne(ParseContext context)
+            {
+                var leftValue = context.ParseValueInfo();
+
+                var type = ParseType(context);
+
+                var rightValue = context.ParseValueInfo();
+
+                return new FilterInfo2()
+                {
+                    OpType = CombinSymbol.SingleItem,
+                    Left = leftValue,
+                    Operator = type,
+                    Right = rightValue,
+                };
+
+            }
+
+            Operator ParseType(ParseContext context)
+            {
+                context.SkipWhiteSpace();
+                int startIndex = context.Index;
+                if (char.IsLetter(context.Current()))
+                {
+                    while (context.NotEnd() && IsValidNameChar(context.Current()))
+                    {
+                        context.Index++;
+                    }
+                    string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
+                    if (FilterTypeCodes.TryGetValue(opCode.ToLowerInvariant(), out Operator filterType))
+                    {
+                        return filterType;
+                    }
+                    else
+                    {
+                        throw ParseErrors.InvalidFilterType(context, opCode);
+                    }
+                }
+                else if (IsOperationChar(context.Current()))
+                {
+                    while (context.NotEnd() && IsOperationChar(context.Current()))
+                    {
+                        context.Index++;
+                    }
+                    string opCode = context.Text.Substring(startIndex, context.Index - startIndex);
+                    if (FilterTypeCodes.TryGetValue(opCode, out Operator filterType))
+                    {
+                        return filterType;
+                    }
+                    else
+                    {
+                        throw ParseErrors.InvalidFilterType(context, opCode);
+                    }
+                }
+                else
+                {
+                    throw ParseErrors.InvalidFilterType(context);
+                }
+            }
+        }
+
+        public static OrderInfo ParseOrderInfo(this ParseContext context)
+        {
+            OrderInfo orderInfo = new OrderInfo();
+            while (context.SkipWhiteSpace())
+            {
+                var paths = context.ParsePropertyPaths();
+                orderInfo.Add(OrderItem.FromValuePaths(paths));
+
+                if (context.SkipWhiteSpace() && context.Current() == ',')
+                {
+                    context.Index++;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            return orderInfo.HasItems() ? orderInfo : null;
+        }
+
+        public static LimitInfo ParseLimitInfo(this ParseContext context)
+        {
+            if (context.SkipWhiteSpace())
+            {
+                var (first, firstNumber) = TryParseUnsignInt32(context);
+                if (!first)
+                {
+                    throw ParseErrors.ParaseLimitNumberError(context);
+                }
+                if (context.SkipWhiteSpace() && context.Current() == ',')
+                {
+                    context.Index++;
+                    var (second, secondNumber) = TryParseUnsignInt32(context);
+                    if (second)
+                    {
+                        return new LimitInfo { Offset= firstNumber, Limit = secondNumber };
+                    }
+                    else
+                    {
+                        return new LimitInfo { Limit = firstNumber };
+                    }
+                }
+                else
+                {
+                    return new LimitInfo { Limit = firstNumber };
+                }
+            }
+            else
+            {
+                throw ParseErrors.ParaseLimitNumberError(context);
+            }
+
+
+            (bool, int) TryParseUnsignInt32(ParseContext context)
+            {
+                int startIndex = context.Index;
+                while (context.NotEnd() && char.IsDigit(context.Current()))
+                {
+                    context.Index++;
+                }
+                if (context.Index > startIndex)
+                {
+                    string numText = context.Text.Substring(startIndex, context.Index - startIndex);
+                    try
+                    {
+                        return (true, int.Parse(numText));
+                    }
+                    catch (Exception ex)
+                    {
+                        throw ParseErrors.InvalidNumberValue(context, numText, ex);
+                    }
+                }
+                else
+                {
+                    return (false, 0);
+                }
+
+            }
         }
     }
 }

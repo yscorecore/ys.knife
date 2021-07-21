@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using YS.Knife.Data.Filter.Functions;
+using YS.Knife.Data.Expressions.Functions;
 using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
 

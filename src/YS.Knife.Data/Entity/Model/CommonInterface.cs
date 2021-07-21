@@ -120,9 +120,9 @@ namespace YS.Knife.Entity.Model
     /// 表示域数据
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public interface IDomainData<T>
+    public interface ITenantData<T>
     {
-        T DomainId { get; set; }
+        T TenantId { get; set; }
     }
 
 

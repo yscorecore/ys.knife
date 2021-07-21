@@ -261,9 +261,10 @@ namespace YS.Knife.Data.Filter
                     .Select(p => new StudentDto
                     {
                         TAge = p.Age,
-                        TScores = p.Scores.AsQueryable().Where(t => t.Score > 80).Skip(2).Select(t => new ScoreDto { TClassName = t.ClassName, TScore = t.Score }).ToList()
+                        TScores = p.Scores.AsQueryable().OrderBy(p=>(double)p.Score).Skip(1) .Take(2).Select(t => new ScoreDto { TClassName = t.ClassName, TScore = t.Score }).ToList()
+
                     });
-                var data = query.ToList();
+               
                 Console.WriteLine(query.ToQueryString());
                     
             }

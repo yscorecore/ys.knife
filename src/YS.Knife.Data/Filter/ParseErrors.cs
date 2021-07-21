@@ -63,13 +63,18 @@ namespace YS.Knife.Data
         {
             throw new FilterInfoParseException($"The number of arguments of the function '{functionName}' exceeds the limit {maxArgumentLength}.");
         }
-        public static class Select
+
+        #region select
+        public static Exception OnlySupportCollectionFunctionInCurlyBracket(ParseContext context)
         {
-            public static Exception InvalidText(ParseContext context)
-            {
-                throw new FilterInfoParseException($"Invalid text near index {context.Index}.");
-            }
+            throw new FilterInfoParseException($"Invalid select expression near index {context.Index}, only support 'where', 'orderby', 'limit' function in curly brackets.");
         }
+        public static Exception DuplicateCollectionFunctionInCurlyBracket(ParseContext context,string functionName)
+        {
+            throw new FilterInfoParseException($"Invalid select expression near index {context.Index}, duplicate function '{functionName}'.");
+        }
+        #endregion
+
     }
 
 
