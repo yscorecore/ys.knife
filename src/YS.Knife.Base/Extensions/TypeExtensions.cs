@@ -7,26 +7,8 @@ namespace YS.Knife
     public static class TypeExtensions
     {
         private static readonly LocalCache<Type, Type> EnumerableLocalCache = new LocalCache<Type, Type>();
-
-        public static bool IsGenericEnumerable(this Type enumableType)
-        {
-            if (enumableType.IsGenericTypeDefinition) return false;
-            return EnumerableLocalCache.Get(enumableType, type =>
-                type.GetInterfaces()
-                    .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
-                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault()
-            ) != null;
-        }
-
-        public static Type GetEnumerableSubType(this Type enumableType)
-        {
-            if (IsGenericEnumerable(enumableType))
-            {
-                return EnumerableLocalCache.Get(enumableType);
-            }
-            throw new InvalidOperationException(
-                $"Can not get sub item type from type '{enumableType.FullName}', because it's not extend type '{typeof(IEnumerable<>).FullName}'.");
-        }
+        private static readonly LocalCache<Type, Type> QueryableLocalCache = new LocalCache<Type, Type>();
+       
 
         public static bool IsNullableType(this Type type)
         {
@@ -37,5 +19,40 @@ namespace YS.Knife
         {
             return type.IsNullableType() ? (true, Nullable.GetUnderlyingType(type)) : (false, type);
         }
+
+
+        public static Type GetEnumerableItemType(this Type enumerableType)
+        {
+            if (enumerableType.IsGenericTypeDefinition) return null;
+            return EnumerableLocalCache.Get(enumerableType, type =>
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                {
+                    return type.GetGenericArguments().First();
+                }
+                return type.GetInterfaces()
+                      .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                      .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+            }
+            );
+        }
+        public static Type GetQueryableItemType(this Type enumerableType)
+        {
+            if (enumerableType.IsGenericTypeDefinition) return null;
+            return QueryableLocalCache.Get(enumerableType, type =>
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                {
+                    return type.GetGenericArguments().First();
+                }
+                return type.GetInterfaces()
+                    .Where(p => p.IsGenericType && p.GetGenericTypeDefinition() == typeof(IQueryable<>))
+                    .Select(p => p.GetGenericArguments().First()).FirstOrDefault();
+            }
+            );
+        }
+
+        public static bool IsEnumerable(this Type type) => GetEnumerableItemType(type) != null;
+        public static bool IsQueryable(this Type type) => GetQueryableItemType(type) != null;
     }
 }

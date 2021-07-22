@@ -19,8 +19,8 @@ namespace YS.Knife.Data.Mappers
         }
         public override LambdaExpression GetBindExpression()
         {
-            bool sourceIsQueryable = EnumerableTypeUtils.IsQueryable(SourceValueType);
-            bool targetIsQueryable = EnumerableTypeUtils.IsQueryable(TargetValueType);
+            bool sourceIsQueryable = SourceValueType.IsQueryable();
+            bool targetIsQueryable = TargetValueType.IsQueryable();
             var selectMethod = sourceIsQueryable? MethodFinder.GetQuerybleSelect<TSourceValueItem, TTargetValueItem>():MethodFinder.GetEnumerableSelect<TSourceValueItem, TTargetValueItem>();
             var callSelectExpression = Expression.Call(selectMethod, this.SourceExpression.Body, GetAssignExpression());
             var toResultExpression = GetResultExpression(callSelectExpression, sourceIsQueryable, targetIsQueryable);
@@ -41,7 +41,7 @@ namespace YS.Knife.Data.Mappers
             if (!sourceIsQueryable && targetIsQueryable)
             {
                 return Expression.Call(
-                    MethodFinder.GetAsQueryable(EnumerableTypeUtils.GetQueryableItemType(TargetValueType)),
+                    MethodFinder.GetAsQueryable(TargetValueType.GetQueryableItemType()),
                     selectExpression);
             }
           

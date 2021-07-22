@@ -17,7 +17,7 @@ namespace YS.Knife.Data.Query.Functions.Collections
 
         public sealed override FunctionResult Execute(object[] args,ExecuteContext context)
         {
-            var itemType = EnumerableTypeUtils.GetEnumerableItemType(context.CurrentType);
+            var itemType = context.CurrentType.GetEnumerableItemType();
             if (itemType == null)
             {
                 throw FunctionErrors.OnlyCanUseFunctionInCollectionType(this.Name);

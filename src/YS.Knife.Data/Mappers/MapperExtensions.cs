@@ -76,7 +76,7 @@ namespace YS.Knife
             where TTarget : class, new()
         {
             if (sources == null) return null;
-            var sourceItemType = EnumerableTypeUtils.GetEnumerableItemType(sources.GetType());
+            var sourceItemType = sources.GetType().GetEnumerableItemType();
             Should.NotNull(sourceItemType, () => new InvalidOperationException($"can not judge source item type, source should be generic type '{typeof(IEnumerable<>)}'."));
             return Invoke<IEnumerable<TTarget>>(sourceItemType, typeof(TTarget), "map-enumerable", sources);
         }
@@ -102,7 +102,7 @@ namespace YS.Knife
             where TTarget : class, new()
         {
             if (sources == null) return null;
-            var sourceItemType = EnumerableTypeUtils.GetQueryableItemType(sources.GetType());
+            var sourceItemType = sources.GetType().GetQueryableItemType();
             Should.NotNull(sourceItemType, () => new InvalidOperationException($"can not judge source item type, , source should be generic type '{typeof(IQueryable<>)}'."));
             return Invoke<IQueryable<TTarget>>(sourceItemType, typeof(TTarget), "map-queryable", sources);
         }

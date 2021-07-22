@@ -38,8 +38,8 @@ namespace YS.Knife.Data.Mappers
             {
                 if (IsCollectionMap(targetProperty, sourceProperty))
                 {
-                    var targetItemType = EnumerableTypeUtils.GetEnumerableItemType(targetProperty.PropertyType);
-                    var sourceItemType = EnumerableTypeUtils.GetEnumerableItemType(sourceProperty.PropertyType);
+                    var targetItemType = targetProperty.PropertyType.GetEnumerableItemType();
+                    var sourceItemType = sourceProperty.PropertyType.GetEnumerableItemType();
                     if (CanAssignableFrom(targetItemType, sourceItemType))
                     {
                         AppendEnumerableAssign(targetProperty, sourceProperty, targetItemType, sourceItemType);
@@ -70,8 +70,8 @@ namespace YS.Knife.Data.Mappers
                     return false;
                 }
 
-                return EnumerableTypeUtils.IsEnumerable(targetProperty.PropertyType) &&
-                       EnumerableTypeUtils.IsEnumerable(sourceProperty.PropertyType);
+                return targetProperty.PropertyType.IsEnumerable() &&
+                      sourceProperty.PropertyType.IsEnumerable();
             }
 
             private static bool CanAssignableFrom(Type targetType, Type sourceType)
@@ -114,7 +114,7 @@ namespace YS.Knife.Data.Mappers
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
                 
-                var sourceIsQueryable = EnumerableTypeUtils.IsQueryable(sourceProperty.PropertyType);
+                var sourceIsQueryable =sourceProperty.PropertyType.IsQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryableNewObject]
                     : AllAppendMethods[AppendEnumerableNewObject];
@@ -138,7 +138,7 @@ namespace YS.Knife.Data.Mappers
             private void AppendEnumerableAssign(PropertyInfo targetProperty,
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
-                var sourceIsQueryable = EnumerableTypeUtils.IsQueryable(sourceProperty.PropertyType);
+                var sourceIsQueryable =sourceProperty.PropertyType.IsQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryablePropertyAssign]
                     : AllAppendMethods[AppendEnumerablePropertyAssign];
