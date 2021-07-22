@@ -4,15 +4,15 @@ using System.Text;
 
 namespace YS.Knife.Data.Expressions.Functions.Collections
 {
-    class Any : BaseFunction<FilterInfo2>
+    class Any : BaseFunction<FilterInfo>
     {
         protected override int MinArgLength => 0;
 
         protected override int MaxArgLength => 1;
 
-        protected override FunctionResult OnExecute(List<FilterInfo2> args, ExecuteContext context)
+        protected override FunctionResult OnExecute(List<FilterInfo> args, ExecuteContext context)
         {
-            FilterInfo2 filterInfo = args.Count > 0 ? args[0] : null;
+            FilterInfo filterInfo = args.Count > 0 ? args[0] : null;
             if (filterInfo!=null)
             {
 
@@ -24,7 +24,7 @@ namespace YS.Knife.Data.Expressions.Functions.Collections
             }
         }
 
-        protected override FilterInfo2 OnParseArgument(ParseContext parseContext)
+        protected override FilterInfo OnParseArgument(ParseContext parseContext)
         {
             return parseContext.ParseFilterInfo();
         }

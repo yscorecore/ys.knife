@@ -14,7 +14,7 @@ namespace YS.Knife.Data.Filter
         internal static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
 
         public Expression<Func<TSource, bool>> CreateFilterLambdaExpression<TSource, TTarget>(
-           ObjectMapper<TSource, TTarget> mapper, FilterInfo2 targetFilter)
+           ObjectMapper<TSource, TTarget> mapper, FilterInfo targetFilter)
            where TSource : class
            where TTarget : class, new()
         {
@@ -24,26 +24,26 @@ namespace YS.Knife.Data.Filter
         }
         
         public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(
-            FilterInfo2 filter)
+            FilterInfo filter)
         {
             var memberExpressionProvider = IMemberExpressionProvider.GetObjectProvider(typeof(T));
             return CreateFilterLambdaExpression<T>(filter, memberExpressionProvider);
 
         }
-        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
             var p = Expression.Parameter(typeof(T), "p");
             var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
             return Expression.Lambda<Func<T, bool>>(expression, p);
         }
-        public LambdaExpression CreateFilterLambdaExpression(Type objectType, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        public LambdaExpression CreateFilterLambdaExpression(Type objectType, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
             var p = Expression.Parameter(objectType, "p");
             var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(objectType, typeof(bool)), expression, p);
 
         }
-        internal Expression CreateFilterExpression(ParameterExpression p, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        internal Expression CreateFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
             if (filterInfo == null)
             {
@@ -54,7 +54,7 @@ namespace YS.Knife.Data.Filter
                 return CreateCombinGroupsFilterExpression(p, filterInfo, memberExpressionProvider);
             }
         }
-        private Expression CreateCombinGroupsFilterExpression(ParameterExpression p, FilterInfo2 filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateCombinGroupsFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
             return filterInfo.OpType switch
             {
@@ -63,28 +63,28 @@ namespace YS.Knife.Data.Filter
                 _ => CreateSingleItemFilterExpression(p, filterInfo, memberExpressionProvider)
             };
         }
-        private Expression CreateOrConditionFilterExpression(ParameterExpression p, FilterInfo2 orGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateOrConditionFilterExpression(ParameterExpression p, FilterInfo orGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
             Expression current = Expression.Constant(false);
-            foreach (FilterInfo2 item in orGroupFilterInfo.Items.TrimNotNull())
+            foreach (FilterInfo item in orGroupFilterInfo.Items.TrimNotNull())
             {
                 var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
                 current = Expression.OrElse(current, next);
             }
             return current;
         }
-        private Expression CreateAndConditionFilterExpression(ParameterExpression p, FilterInfo2 andGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateAndConditionFilterExpression(ParameterExpression p, FilterInfo andGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
         {
 
             Expression current = Expression.Constant(true);
-            foreach (FilterInfo2 item in andGroupFilterInfo.Items.TrimNotNull())
+            foreach (FilterInfo item in andGroupFilterInfo.Items.TrimNotNull())
             {
                 var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
                 current = Expression.AndAlso(current, next);
             }
             return current;
         }
-        private Expression CreateSingleItemFilterExpression(ParameterExpression p, FilterInfo2 singleItemFilter
+        private Expression CreateSingleItemFilterExpression(ParameterExpression p, FilterInfo singleItemFilter
           , IMemberExpressionProvider memberExpressionProvider)
         {
             /*** 

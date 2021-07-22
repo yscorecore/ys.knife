@@ -57,7 +57,7 @@ namespace YS.Knife.Data.Select
                 Items = new List<SelectItem>
                 {
                      new SelectItem{ Name="a" },
-                     new SelectItem{ Name="b",CollectionFilter= FilterInfo2.Parse("c=123")},
+                     new SelectItem{ Name="b",CollectionFilter= FilterInfo.Parse("c=123")},
                      new SelectItem{ Name="d" },
                 }
             };
@@ -102,7 +102,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem
                      {
                          Name="b",
-                         CollectionFilter=FilterInfo2.Parse("(c>1)and(d<2)"),
+                         CollectionFilter=FilterInfo.Parse("(c>1)and(d<2)"),
                          CollectionOrder=OrderInfo.Parse("e,f.desc(),g.asc()"),
                          CollectionLimit=new LimitInfo(1,5),
                          SubItems = new List<SelectItem> {

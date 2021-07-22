@@ -27,7 +27,7 @@ namespace YS.Knife.Data.Expressions
         }
         public static SelectInfo Parse(string text, CultureInfo culture)
         {
-            return new FilterInfoParser2(culture).ParseSelectInfo(text);
+            return new QueryExpressionParser(culture).ParseSelectInfo(text);
         }
     }
     public class SelectInfoTypeConverter : StringConverter

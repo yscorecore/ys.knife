@@ -82,7 +82,7 @@ namespace YS.Knife.Data.Filter
                 TestSdudentForSingleItem(fieldName, filterType, value, expectedIds);
             }
 
-            private string FilterStudentIds(FilterInfo2 filter)
+            private string FilterStudentIds(FilterInfo filter)
             {
                 var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression<Student>(filter);
                 var ids = Students.AsQueryable().Where(exp)
@@ -92,7 +92,7 @@ namespace YS.Knife.Data.Filter
 
             private void TestSdudentForSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
             {
-                var filter = FilterInfo2.CreateItem(fieldName, filterType, value);
+                var filter = FilterInfo.CreateItem(fieldName, filterType, value);
                 var ids = FilterStudentIds(filter);
                 string.Join(",", ids).Should().Be(expectedIds);
             }
@@ -142,7 +142,7 @@ namespace YS.Knife.Data.Filter
 
             private string FilterDtoStudents(string filterExpressionForDto)
             {
-                var filter = FilterInfo2.Parse(filterExpressionForDto);
+                var filter = FilterInfo.Parse(filterExpressionForDto);
                 var studentMapper = new ObjectMapper<Student, StudentDto>();
                 studentMapper.Append(p => p.TName, p => p.Name);
                 studentMapper.Append(p => p.TAge, p => p.Age);
@@ -272,7 +272,7 @@ namespace YS.Knife.Data.Filter
             
             private string FilterDtoStudents(string filterExpressionForDto)
             {
-                var filter = FilterInfo2.Parse(filterExpressionForDto);
+                var filter = FilterInfo.Parse(filterExpressionForDto);
                 var studentMapper = new ObjectMapper<Student, StudentDto>();
                 studentMapper.Append(p => p.TName, p => p.Name);
                 studentMapper.Append(p => p.TAge, p => p.Age);

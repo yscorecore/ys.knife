@@ -28,7 +28,7 @@ namespace YS.Knife.Data.Expressions
         public static LimitInfo Parse(string limitStr) => Parse(limitStr, CultureInfo.CurrentCulture);
         public static LimitInfo Parse(string limitStr, CultureInfo currentCulture)
         {
-            return new FilterInfoParser2(currentCulture).ParseLimitInfo(limitStr);
+            return new QueryExpressionParser(currentCulture).ParseLimitInfo(limitStr);
         }
 
         public static LimitInfo FromPageInfo(int pageIndex, int pageSize)

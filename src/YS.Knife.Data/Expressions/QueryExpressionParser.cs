@@ -1,21 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using YS.Knife.Data.Expressions.Functions;
 
 namespace YS.Knife.Data.Expressions
 {
-    internal partial class FilterInfoParser2
+    internal partial class QueryExpressionParser
     {
         public CultureInfo CurrentCulture { get; }
-        public FilterInfoParser2(CultureInfo cultureInfo)
+        public QueryExpressionParser(CultureInfo cultureInfo)
         {
             this.CurrentCulture = cultureInfo ?? throw new ArgumentNullException(nameof(cultureInfo));
         }
-        public FilterInfo2 ParseFilter(string text)
+        public FilterInfo ParseFilter(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) { return null; }
             var context = new ParseContext(text,this.CurrentCulture);

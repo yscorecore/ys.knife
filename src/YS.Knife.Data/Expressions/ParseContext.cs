@@ -117,12 +117,12 @@ namespace YS.Knife.Data.Expressions
         };
         internal static readonly Dictionary<string, CombinSymbol> OpTypeCodes = new Dictionary<string, CombinSymbol>(StringComparer.InvariantCultureIgnoreCase)
         {
-            [FilterInfo2.Operator_And] = CombinSymbol.AndItems,
-            [FilterInfo2.Operator_Or] = CombinSymbol.OrItems
+            [FilterInfo.Operator_And] = CombinSymbol.AndItems,
+            [FilterInfo.Operator_Or] = CombinSymbol.OrItems
         };
 
         internal static readonly Dictionary<string, Operator> FilterTypeCodes =
-           FilterInfo2.OperatorTypeNameDictionary.Select(p => Tuple.Create(p.Value, p.Key))
+           FilterInfo.OperatorTypeNameDictionary.Select(p => Tuple.Create(p.Value, p.Key))
            .Concat(new[] {
                 Tuple.Create("=",Operator.Equals),
                 Tuple.Create("<>",Operator.NotEquals)
@@ -474,7 +474,7 @@ namespace YS.Knife.Data.Expressions
            
         }
 
-        public static FilterInfo2 ParseFilterInfo(this ParseContext context)
+        public static FilterInfo ParseFilterInfo(this ParseContext context)
         {
             context.SkipWhiteSpace();
             if (context.Current() == '(')
@@ -485,9 +485,9 @@ namespace YS.Knife.Data.Expressions
             {
                 return ParseSingleItemOne(context);
             }
-            FilterInfo2 ParseCombinFilter(ParseContext context)
+            FilterInfo ParseCombinFilter(ParseContext context)
             {
-                List<FilterInfo2> orItems = new List<FilterInfo2>();
+                List<FilterInfo> orItems = new List<FilterInfo>();
                 CombinSymbol lastOpType = CombinSymbol.OrItems;
                 while (context.NotEnd())
                 {
@@ -527,7 +527,7 @@ namespace YS.Knife.Data.Expressions
                         lastOpType = opType.Value;
                     }
                 }
-                return orItems.Count > 1 ? new FilterInfo2 { OpType = CombinSymbol.OrItems, Items = orItems } : orItems.FirstOrDefault();
+                return orItems.Count > 1 ? new FilterInfo { OpType = CombinSymbol.OrItems, Items = orItems } : orItems.FirstOrDefault();
             }
             CombinSymbol? TryParseOpType(ParseContext context)
             {
@@ -552,7 +552,7 @@ namespace YS.Knife.Data.Expressions
                 }
             }
 
-            FilterInfo2 ParseSingleItemOne(ParseContext context)
+            FilterInfo ParseSingleItemOne(ParseContext context)
             {
                 var leftValue = context.ParseValueInfo();
 
@@ -560,7 +560,7 @@ namespace YS.Knife.Data.Expressions
 
                 var rightValue = context.ParseValueInfo();
 
-                return new FilterInfo2()
+                return new FilterInfo()
                 {
                     OpType = CombinSymbol.SingleItem,
                     Left = leftValue,
@@ -800,7 +800,7 @@ namespace YS.Knife.Data.Expressions
             {
                 if (nameof(Where).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    selectItem.CollectionFilter = valuePath.FunctionArgs.Cast<FilterInfo2>().FirstOrDefault();
+                    selectItem.CollectionFilter = valuePath.FunctionArgs.Cast<FilterInfo>().FirstOrDefault();
                 }
                 else if (nameof(OrderBy).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
                 {

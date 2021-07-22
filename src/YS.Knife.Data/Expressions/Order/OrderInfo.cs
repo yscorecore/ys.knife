@@ -40,7 +40,7 @@ namespace YS.Knife.Data.Expressions
         }
         public static OrderInfo Parse(string orderText,CultureInfo cultureInfo)
         {
-            return  new FilterInfoParser2(cultureInfo).ParseOrder(orderText);
+            return  new QueryExpressionParser(cultureInfo).ParseOrder(orderText);
         }
 
         public bool HasItems()

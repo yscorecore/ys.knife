@@ -11,7 +11,7 @@ namespace YS.Knife.Data.Filter
     [TestClass]
     public class FilterInfo2ParserTest
     {
-        private Func<string, FilterInfo2> Parse => (text) => FilterInfo2.Parse(text);
+        private Func<string, FilterInfo> Parse => (text) => FilterInfo.Parse(text);
         [DataTestMethod]
         [DataRow(null)]
         [DataRow("")]

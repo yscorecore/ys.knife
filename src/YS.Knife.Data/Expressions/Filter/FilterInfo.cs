@@ -16,7 +16,7 @@ namespace YS.Knife.Data
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
     [DebuggerDisplay("{ToString()}")]
-    public class FilterInfo2
+    public class FilterInfo
     {
         internal const string Operator_And = "and";
         internal const string Operator_Or = "or";
@@ -45,9 +45,9 @@ namespace YS.Knife.Data
         public ValueInfo Right { get; set; }
         public Operator Operator { get; set; }
         public CombinSymbol OpType { get; set; }
-        public List<FilterInfo2> Items { get; set; }
+        public List<FilterInfo> Items { get; set; }
 
-        public FilterInfo2 AndAlso(FilterInfo2 other)
+        public FilterInfo AndAlso(FilterInfo other)
         {
             if (other == null)
             {
@@ -58,7 +58,7 @@ namespace YS.Knife.Data
             {
                 if (other.OpType == CombinSymbol.AndItems)
                 {
-                    this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo2>());
+                    this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo>());
                     return this;
                 }
                 else
@@ -69,10 +69,10 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo2>() { this, other } };
+                return new FilterInfo() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() { this, other } };
             }
         }
-        public FilterInfo2 OrElse(FilterInfo2 other)
+        public FilterInfo OrElse(FilterInfo other)
         {
             if (other == null)
             {
@@ -94,7 +94,7 @@ namespace YS.Knife.Data
             }
             else
             {
-                return new FilterInfo2() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo2>() { this, other } };
+                return new FilterInfo() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() { this, other } };
             }
         }
         public override string ToString()
@@ -120,17 +120,17 @@ namespace YS.Knife.Data
             }
         }
 
-        public static FilterInfo2 Parse(string filterExpression) => Parse(filterExpression, CultureInfo.CurrentCulture);
+        public static FilterInfo Parse(string filterExpression) => Parse(filterExpression, CultureInfo.CurrentCulture);
 
-        public static FilterInfo2 Parse(string filterExpression, CultureInfo cultureInfo)
+        public static FilterInfo Parse(string filterExpression, CultureInfo cultureInfo)
         {
-            return new FilterInfoParser2(cultureInfo).ParseFilter(filterExpression);
+            return new QueryExpressionParser(cultureInfo).ParseFilter(filterExpression);
         }
-        public static FilterInfo2 CreateItem(string fieldPaths, Operator filterType, object value)
+        public static FilterInfo CreateItem(string fieldPaths, Operator filterType, object value)
         {
-            var parser = new FilterInfoParser2(CultureInfo.CurrentCulture);
+            var parser = new QueryExpressionParser(CultureInfo.CurrentCulture);
 
-            return new FilterInfo2()
+            return new FilterInfo()
             {
                 OpType = CombinSymbol.SingleItem,
                 Operator = filterType,
@@ -140,14 +140,14 @@ namespace YS.Knife.Data
             };
         }
 
-        public static FilterInfo2 CreateOr(params FilterInfo2[] items)
+        public static FilterInfo CreateOr(params FilterInfo[] items)
         {
-            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.OrItems };
+            return new FilterInfo { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.OrItems };
         }
 
-        public static FilterInfo2 CreateAnd(params FilterInfo2[] items)
+        public static FilterInfo CreateAnd(params FilterInfo[] items)
         {
-            return new FilterInfo2 { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.AndItems };
+            return new FilterInfo { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.AndItems };
         }
 
     }
@@ -263,7 +263,7 @@ namespace YS.Knife.Data
     {
         public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
         {
-            return value is string ? FilterInfo2.Parse(value as string, culture) : base.ConvertFrom(context, culture, value);
+            return value is string ? FilterInfo.Parse(value as string, culture) : base.ConvertFrom(context, culture, value);
         }
     }
 }

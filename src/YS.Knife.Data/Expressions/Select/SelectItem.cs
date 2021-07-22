@@ -17,7 +17,7 @@ namespace YS.Knife.Data.Expressions
 
         // subFilter,Order,Limit only for collection type
 
-        public FilterInfo2 CollectionFilter { get; set; }
+        public FilterInfo CollectionFilter { get; set; }
 
         public OrderInfo CollectionOrder { get; set; }
 
@@ -54,7 +54,7 @@ namespace YS.Knife.Data.Expressions
         {
             return orderInfo != null ? $"{nameof(OrderBy).ToLower()}({orderInfo})" : null;
         }
-        private string FilterInfoToString(FilterInfo2 filterInfo)
+        private string FilterInfoToString(FilterInfo filterInfo)
         {
             return filterInfo != null ? $"{nameof(Where).ToLower()}({filterInfo})" : null;
         }

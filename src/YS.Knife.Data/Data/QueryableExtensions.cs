@@ -31,13 +31,13 @@ namespace System.Linq
         #endregion
 
         #region Where
-        public static IQueryable<TSource> Where<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo2 targetFilter, ObjectMapper<TSource, TTarget> mapper)
+        public static IQueryable<TSource> Where<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo targetFilter, ObjectMapper<TSource, TTarget> mapper)
             where TSource : class
             where TTarget : class, new()
         {
             return targetFilter == null ? source : source.Where(FilterInfoExpressionBuilder.Default.CreateFilterLambdaExpression(mapper, targetFilter));
         }
-        public static IQueryable<T> Where<T>(this IQueryable<T> source, FilterInfo2 filter)
+        public static IQueryable<T> Where<T>(this IQueryable<T> source, FilterInfo filter)
         {
             return filter == null ? source : source.Where(FilterInfoExpressionBuilder.Default.CreateFilterLambdaExpression<T>(filter));
         }
@@ -51,7 +51,7 @@ namespace System.Linq
             // ignore limit info
            // return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
         }
-        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo2 filter, OrderInfo order, SelectInfo select)
+        public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo filter, OrderInfo order, SelectInfo select)
             where T : class, new()
         {
             return source.Where(filter)
@@ -66,7 +66,7 @@ namespace System.Linq
             // ignore limit info
             //return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select, mapper);
         }
-        public static List<TTarget> ListAll<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo targetSelect, ObjectMapper<TSource, TTarget> mapper)
+        public static List<TTarget> ListAll<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo targetFilter, OrderInfo targetOrder, SelectInfo targetSelect, ObjectMapper<TSource, TTarget> mapper)
             where TSource : class
             where TTarget : class, new()
         {
@@ -80,7 +80,7 @@ namespace System.Linq
                 .Select(targetSelect, mapper)
             .ToList();
         }
-        public static List<R> ListAll<T, R>(this IQueryable<T> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo selectInfoForResult)
+        public static List<R> ListAll<T, R>(this IQueryable<T> source, FilterInfo targetFilter, OrderInfo targetOrder, SelectInfo selectInfoForResult)
             where T : class
             where R : class, new()
         {
