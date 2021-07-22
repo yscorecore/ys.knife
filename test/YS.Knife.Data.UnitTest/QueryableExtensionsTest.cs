@@ -2,6 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using YS.Knife.Data.Expressions;
 
 namespace YS.Knife.Data.UnitTest
 {
