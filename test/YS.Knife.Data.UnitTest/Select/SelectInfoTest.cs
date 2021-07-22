@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Expressions;
 
 namespace YS.Knife.Data.Select
 {
@@ -60,7 +61,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem{ Name="d" },
                 }
             };
-            select.ToString().Should().Be("a,b{c == 123},d");
+            select.ToString().Should().Be("a,b{where(c == 123)},d");
         }
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_order()
@@ -74,7 +75,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem{ Name="f" },
                 }
             };
-            select.ToString().Should().Be("a,b{c.asc(),d.desc(),e.asc()},f");
+            select.ToString().Should().Be("a,b{orderby(c.asc(),d.desc(),e.asc())},f");
         }
         [TestMethod]
         public void should_join_items_when_to_string_given_collection_limit()
@@ -88,7 +89,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem{ Name="f" },
                 }
             };
-            select.ToString().Should().Be("a,b{1,5},f");
+            select.ToString().Should().Be("a,b{limit(1,5)},f");
         }
         [TestMethod]
         public void should_join_items_when_to_string_given_all_sub_sfuff()
@@ -112,7 +113,7 @@ namespace YS.Knife.Data.Select
                      new SelectItem{ Name="j" },
                 }
             };
-            select.ToString().Should().Be("a,b{1,5,e.asc(),f.desc(),g.asc(),(c > 1) and (d < 2)}(h,i),j");
+            select.ToString().Should().Be("a,b{limit(1,5),orderby(e.asc(),f.desc(),g.asc()),where((c > 1) and (d < 2))}(h,i),j");
         }
 
         //[TestMethod]

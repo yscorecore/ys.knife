@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Expressions;
 
 namespace YS.Knife.Data.Select
 {

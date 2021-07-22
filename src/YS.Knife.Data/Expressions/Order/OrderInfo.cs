@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     [TypeConverter(typeof(OrderInfoConverter))]
     [Serializable]

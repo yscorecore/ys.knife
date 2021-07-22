@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Data
+﻿namespace YS.Knife.Data.Expressions
 {
     public enum OrderType
     {

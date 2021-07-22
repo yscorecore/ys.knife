@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using YS.Knife.Data;
+using YS.Knife.Data.Expressions;
 
 namespace System.Linq
 {

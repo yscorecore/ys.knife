@@ -5,7 +5,7 @@ using System.Linq;
 using System.Globalization;
 using YS.Knife.Data.Expressions.Functions.Order;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     public class OrderItem
     {

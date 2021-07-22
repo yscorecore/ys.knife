@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using YS.Knife.Data.Expressions.Functions.Collections;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     [DebuggerDisplay("{ToString()}")]
     public class SelectItem

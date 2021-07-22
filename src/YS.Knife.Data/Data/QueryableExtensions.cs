@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 using YS.Knife.Data;
+using YS.Knife.Data.Expressions;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
 
@@ -46,8 +47,9 @@ namespace System.Linq
         public static List<T> ListAll<T>(this IQueryable<T> source, QueryInfo queryInfo)
            where T : class, new()
         {
+            return null;
             // ignore limit info
-            return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
+           // return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
         }
         public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo2 filter, OrderInfo order, SelectInfo select)
             where T : class, new()
@@ -60,8 +62,9 @@ namespace System.Linq
             where TSource : class
             where TTarget : class, new()
         {
+            return null;
             // ignore limit info
-            return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select, mapper);
+            //return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select, mapper);
         }
         public static List<TTarget> ListAll<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo2 targetFilter, OrderInfo targetOrder, SelectInfo targetSelect, ObjectMapper<TSource, TTarget> mapper)
             where TSource : class

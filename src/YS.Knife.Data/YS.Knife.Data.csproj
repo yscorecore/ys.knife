@@ -12,17 +12,10 @@
 
 
 
-    <ItemGroup>
-      <Compile Remove="Data\Mapper\**" />
-      <EmbeddedResource Remove="Data\Mapper\**" />
-      <None Remove="Data\Mapper\**" />
-    </ItemGroup>
-
-
 
 
 
     <ItemGroup>
-      <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+      <ProjectReference Include="..\YS.Knife.Base\YS.Knife.Base.csproj" />
     </ItemGroup>
 </Project>

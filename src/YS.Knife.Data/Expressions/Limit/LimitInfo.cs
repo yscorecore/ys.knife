@@ -2,8 +2,9 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using YS.Knife.Data.Expressions;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     [Serializable]
     [TypeConverter(typeof(LimitIntoTypeConverter))]
@@ -24,24 +25,16 @@ namespace YS.Knife.Data
         {
             return $"{Offset},{Limit}";
         }
-
-        public static LimitInfo Parse(string limitStr)
+        public static LimitInfo Parse(string limitStr) => Parse(limitStr, CultureInfo.CurrentCulture);
+        public static LimitInfo Parse(string limitStr, CultureInfo currentCulture)
         {
-            _ = limitStr ?? throw new ArgumentNullException(nameof(limitStr));
-            var match = Regex.Match(limitStr, @"^(\s*(?<offset>\d+)\s*,)?\s*(?<limit>\d+)\s*$");
-            if (!match.Success)
-            {
-                throw new FormatException($"Invalid format for {nameof(LimitInfo)}.");
-            }
-            return new LimitInfo
-            {
-                Offset = match.Groups["offset"].Success ? Convert.ToInt32(match.Groups["offset"].Value, CultureInfo.InvariantCulture) : 0,
-                Limit = Convert.ToInt32(match.Groups["limit"].Value, CultureInfo.InvariantCulture)
-            };
+            return new FilterInfoParser2(currentCulture).ParseLimitInfo(limitStr);
         }
 
         public static LimitInfo FromPageInfo(int pageIndex, int pageSize)
         {
+            if (pageIndex < 1) throw new ArgumentOutOfRangeException(nameof(pageIndex));
+            if (pageSize < 1) throw new ArgumentOutOfRangeException(nameof(pageSize));
             return new LimitInfo
             {
                 Offset = (pageIndex - 1) * pageSize,

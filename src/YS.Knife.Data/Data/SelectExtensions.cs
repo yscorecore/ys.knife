@@ -2,6 +2,7 @@
 using System.Linq;
 using YS.Knife;
 using YS.Knife.Data;
+using YS.Knife.Data.Expressions;
 using YS.Knife.Data.Mappers;
 
 namespace System.Linq

@@ -4,9 +4,11 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
+using YS.Knife.Data.Expressions;
 using YS.Knife.Data.Expressions.Functions;
+using YS.Knife.Data.Expressions.Functions.Collections;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
 
     public class ParseContext
@@ -686,6 +688,131 @@ namespace YS.Knife.Data
                 else
                 {
                     return (false, 0);
+                }
+
+            }
+        }
+
+        public static SelectInfo ParseSelectInfo(this ParseContext context)
+        {
+            SelectInfo selectInfo = new SelectInfo
+            {
+                Items = new List<SelectItem>()
+            };
+            while (context.SkipWhiteSpace())
+            {
+                var (found, name) = context.TryParseName();
+                if (found)
+                {
+                    selectInfo.Items.Add(ParseSelectItem(name, context));
+                    if (context.SkipWhiteSpace() && context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return selectInfo;
+            SelectItem ParseSelectItem(string name, ParseContext context)
+            {
+                SelectItem item = new SelectItem { Name = name };
+                if (context.SkipWhiteSpace() && context.Current() == '{')
+                {
+                    // parse collection infos
+                    ParseCollectionInfos2(item, context);
+                }
+                if (context.SkipWhiteSpace() && context.Current() == '(')
+                {
+                    // parse sub items
+                    context.Index++;
+                    item.SubItems = ParseSelectInfo(context).Items;
+                    if (context.SkipWhiteSpace() == false || context.Current() != ')')
+                    {
+                        throw ParseErrors.MissCloseBracket(context);
+                    }
+                    else
+                    {
+                        context.Index++;
+                    }
+                }
+                return item;
+            }
+            void ParseCollectionInfos2(SelectItem selectItem, ParseContext context)
+            {
+                context.SkipWhiteSpaceAndFirstChar('{');
+                var set = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+                do
+                {
+                    if (!context.SkipWhiteSpace())
+                    {
+                        break;
+                    }
+                    if (context.Current() == '}')
+                    {
+                        break;
+                    }
+                    var valueInfo = context.ParseValueInfo();
+
+                    if (valueInfo.IsConstant || valueInfo.NavigatePaths.Count != 1 || valueInfo.NavigatePaths[0].IsFunction == false)
+                    {
+                        throw ParseErrors.OnlySupportCollectionFunctionInCurlyBracket(context);
+                    }
+                    var functionName = valueInfo.NavigatePaths[0].Name;
+                    if (set.Contains(functionName))
+                    {
+                        throw ParseErrors.DuplicateCollectionFunctionInCurlyBracket(context, functionName);
+                    }
+                    else
+                    {
+                        set.Add(functionName);
+                    }
+                    SetCollectionFilterValue(context, selectItem, valueInfo.NavigatePaths[0]);
+                    if (!context.SkipWhiteSpace())
+                    {
+                        break;
+                    }
+                    if (context.Current() == ',')
+                    {
+                        context.Index++;
+                    }
+                    else if (context.Current() == '}')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        throw ParseErrors.InvalidText(context);
+                    }
+                }
+                while (true);
+                context.SkipWhiteSpaceAndFirstChar('}');
+
+            }
+            void SetCollectionFilterValue(ParseContext context, SelectItem selectItem, ValuePath valuePath)
+            {
+                if (nameof(Where).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    selectItem.CollectionFilter = valuePath.FunctionArgs.Cast<FilterInfo2>().FirstOrDefault();
+                }
+                else if (nameof(OrderBy).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    selectItem.CollectionOrder = valuePath.FunctionArgs.Cast<OrderInfo>().FirstOrDefault();
+                }
+                else if (nameof(Limit).Equals(valuePath.Name, StringComparison.InvariantCultureIgnoreCase))
+                {
+                    selectItem.CollectionLimit = valuePath.FunctionArgs.Cast<LimitInfo>().FirstOrDefault();
+                }
+                else
+                {
+                    throw ParseErrors.OnlySupportCollectionFunctionInCurlyBracket(context);
                 }
 
             }

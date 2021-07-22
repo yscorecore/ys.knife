@@ -6,7 +6,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     [Serializable]
     [DebuggerDisplay("{ToString()}")]
@@ -27,7 +27,7 @@ namespace YS.Knife.Data
         }
         public static SelectInfo Parse(string text, CultureInfo culture)
         {
-            return new SelectInfoParser(culture).ParseSelectInfo(text);
+            return new FilterInfoParser2(culture).ParseSelectInfo(text);
         }
     }
     public class SelectInfoTypeConverter : StringConverter

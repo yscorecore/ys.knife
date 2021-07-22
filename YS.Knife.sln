@@ -107,7 +107,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Testing.XUnit.Unit
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elasticsearch", "Elasticsearch", "{89635A6D-451D-460B-9741-48D45D59B8E3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Elasticsearch", "src\YS.Knife.Elasticsearch\YS.Knife.Elasticsearch.csproj", "{2DA30CF7-E199-4BA0-9B86-8060B76525EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Elasticsearch", "src\YS.Knife.Elasticsearch\YS.Knife.Elasticsearch.csproj", "{2DA30CF7-E199-4BA0-9B86-8060B76525EC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YS.Knife.Base", "src\YS.Knife.Base\YS.Knife.Base.csproj", "{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -267,6 +269,10 @@ Global
 		{2DA30CF7-E199-4BA0-9B86-8060B76525EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DA30CF7-E199-4BA0-9B86-8060B76525EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DA30CF7-E199-4BA0-9B86-8060B76525EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -323,6 +329,7 @@ Global
 		{336CAAC6-C02C-4AF0-BA7C-8311FCFE136F} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 		{89635A6D-451D-460B-9741-48D45D59B8E3} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{2DA30CF7-E199-4BA0-9B86-8060B76525EC} = {89635A6D-451D-460B-9741-48D45D59B8E3}
+		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}

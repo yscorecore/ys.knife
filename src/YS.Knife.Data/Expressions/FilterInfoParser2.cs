@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using YS.Knife.Data.Expressions.Functions;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Expressions
 {
     internal partial class FilterInfoParser2
     {
@@ -50,8 +50,30 @@ namespace YS.Knife.Data
             }
             return paths;
         }
-
-
+        public SelectInfo ParseSelectInfo(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            var context = new ParseContext(text,this.CurrentCulture);
+            SelectInfo selectInfo = context.ParseSelectInfo();
+            context.SkipWhiteSpace();
+            if (context.NotEnd())
+            {
+                throw ParseErrors.InvalidText(context);
+            }
+            return selectInfo;
+        }
+        public LimitInfo ParseLimitInfo(string text)
+        {
+            if (string.IsNullOrWhiteSpace(text)) return null;
+            var context = new ParseContext(text, this.CurrentCulture);
+            LimitInfo limitInfo = context.ParseLimitInfo();
+            context.SkipWhiteSpace();
+            if (context.NotEnd())
+            {
+                throw ParseErrors.InvalidText(context);
+            }
+            return limitInfo;
+        }
     }
 
 }

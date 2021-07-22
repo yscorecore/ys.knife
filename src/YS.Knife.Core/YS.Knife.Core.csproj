@@ -17,5 +17,9 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\YS.Knife.Base\YS.Knife.Base.csproj" />
+  </ItemGroup>
+
 
 </Project>
