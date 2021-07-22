@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.Data.Expressions;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Select
 {

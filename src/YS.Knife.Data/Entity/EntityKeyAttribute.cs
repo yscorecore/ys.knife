@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using YS.Knife.Data.Expressions;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data
 {
