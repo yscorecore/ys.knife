@@ -32,7 +32,7 @@
                 if (typeof(string) == typeof(T))
                 {
                     return (T)(object)reader.GetString();
-                }             
+                }
                 return default;
             }
 

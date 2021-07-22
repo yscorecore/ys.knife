@@ -21,10 +21,10 @@ namespace YS.Knife
             _ = context ?? throw new ArgumentNullException(nameof(declareType));
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             var injectType = this.InjectType ?? DeduceInjectType(declareType);
-            services.Add(new ServiceDescriptor(injectType,declareType,this.Lifetime));
+            services.Add(new ServiceDescriptor(injectType, declareType, this.Lifetime));
             if (injectType != declareType)
             {
-                services.Add(new ServiceDescriptor(declareType,declareType,this.Lifetime));
+                services.Add(new ServiceDescriptor(declareType, declareType, this.Lifetime));
             }
         }
         private static Type DeduceInjectType(Type serviceType)

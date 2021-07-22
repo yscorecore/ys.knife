@@ -8,6 +8,6 @@ namespace YS.Knife.Data.Query
     {
         string Start { get; }
 
-        int Limit { get;}
+        int Limit { get; }
     }
 }

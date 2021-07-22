@@ -25,7 +25,7 @@ namespace YS.Knife.Data
         /// <summary>
         /// 小于 lt
         /// </summary>
-        LessThan = 2, 
+        LessThan = 2,
         /// <summary>
         /// 大于或等于 nlt
         /// </summary>

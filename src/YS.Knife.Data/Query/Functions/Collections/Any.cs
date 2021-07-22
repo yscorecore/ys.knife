@@ -13,7 +13,7 @@ namespace YS.Knife.Data.Query.Functions.Collections
         protected override FunctionResult OnExecute(List<FilterInfo> args, ExecuteContext context)
         {
             FilterInfo filterInfo = args.Count > 0 ? args[0] : null;
-            if (filterInfo!=null)
+            if (filterInfo != null)
             {
 
                 return null;
@@ -29,5 +29,5 @@ namespace YS.Knife.Data.Query.Functions.Collections
             return parseContext.ParseFilterInfo();
         }
     }
-    
+
 }

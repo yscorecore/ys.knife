@@ -8,7 +8,7 @@ namespace YS.Knife
     {
         private static readonly LocalCache<Type, Type> EnumerableLocalCache = new LocalCache<Type, Type>();
         private static readonly LocalCache<Type, Type> QueryableLocalCache = new LocalCache<Type, Type>();
-       
+
 
         public static bool IsNullableType(this Type type)
         {

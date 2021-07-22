@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace YS.Knife.Utilities
 {
     [TestClass]
@@ -17,7 +17,7 @@ namespace YS.Knife.Utilities
         {
             type.IsGenericEnumerable().Should().Be(false);
         }
-        
+
         [DataRow(typeof(string))]// string is IEnumerable<string>
         [DataRow(typeof(List<int>))]
         [DataRow(typeof(int[]))]
@@ -27,6 +27,6 @@ namespace YS.Knife.Utilities
         {
             type.IsGenericEnumerable().Should().Be(true);
         }
-        
+
     }
 }

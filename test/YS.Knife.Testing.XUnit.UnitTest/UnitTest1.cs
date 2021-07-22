@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,17 +12,17 @@ namespace YS.Knife.Testing.XUnit.UnitTest
         [Fact]
         public void ShouldRunOnceEnvironment()
         {
-            Assert.Equal(1,Environment.Counter);
+            Assert.Equal(1, Environment.Counter);
         }
     }
-    
+
     [Collection(nameof(Environment))]
     public class UnitTest2
     {
         [Fact]
         public void ShouldRunOnceEnvironment()
         {
-            Assert.Equal(1,Environment.Counter);
+            Assert.Equal(1, Environment.Counter);
         }
     }
 }

@@ -15,11 +15,11 @@ namespace YS.Knife.Data.Select
             SelectInfo.Parse(" \t  ").Should().BeNull();
         }
         [DataTestMethod]
-        [DataRow("a","a")]
+        [DataRow("a", "a")]
         [DataRow("abc", "abc")]
         [DataRow("a,b,c", "a,b,c")]
         [DataRow(" a , b , c ", "a,b,c")]
-        public void should_parse_simple_select_items(string input, string expected) 
+        public void should_parse_simple_select_items(string input, string expected)
         {
             ParseSelectInfoShouldBe(input, expected);
         }

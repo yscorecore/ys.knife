@@ -43,7 +43,7 @@ namespace YS.Knife.Hosting
             }
 
         }
-      
+
         private readonly IHost host;
 
         public object GetService(Type serviceType)

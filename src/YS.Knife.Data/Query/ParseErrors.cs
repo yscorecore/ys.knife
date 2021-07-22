@@ -46,7 +46,7 @@ namespace YS.Knife.Data.Query
         {
             throw new FilterInfoParseException($"Invalid expression, missing close bracket near index {context.Index}.");
         }
-        public static Exception ExpectedCharNotFound(ParseContext context,char ch)
+        public static Exception ExpectedCharNotFound(ParseContext context, char ch)
         {
             throw new FilterInfoParseException($"Invalid expression near index {context.Index}, expect char '{ch}' not found.");
         }
@@ -55,7 +55,7 @@ namespace YS.Knife.Data.Query
             throw new FilterInfoParseException($"Invalid expression near index {context.Index}, parse limit error.");
         }
 
-        public static Exception FunctionArgumentLessThan(ParseContext context,string functionName,  int minArgumentLength)
+        public static Exception FunctionArgumentLessThan(ParseContext context, string functionName, int minArgumentLength)
         {
             throw new FilterInfoParseException($"The number of arguments of the function '{functionName}' less than min required {minArgumentLength}.");
         }
@@ -69,7 +69,7 @@ namespace YS.Knife.Data.Query
         {
             throw new FilterInfoParseException($"Invalid select expression near index {context.Index}, only support 'where', 'orderby', 'limit' function in curly brackets.");
         }
-        public static Exception DuplicateCollectionFunctionInCurlyBracket(ParseContext context,string functionName)
+        public static Exception DuplicateCollectionFunctionInCurlyBracket(ParseContext context, string functionName)
         {
             throw new FilterInfoParseException($"Invalid select expression near index {context.Index}, duplicate function '{functionName}'.");
         }

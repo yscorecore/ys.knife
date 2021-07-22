@@ -3,9 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using YS.Knife.Data.Query.Functions;
 using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Filter
 {
@@ -22,7 +22,7 @@ namespace YS.Knife.Data.Filter
             var memberExpressionProvider = IMemberExpressionProvider.GetMapperProvider(mapper);
             return CreateFilterLambdaExpression<TSource>(targetFilter, memberExpressionProvider);
         }
-        
+
         public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(
             FilterInfo filter)
         {
@@ -157,7 +157,7 @@ namespace YS.Knife.Data.Filter
                 {
                     if (pathInfo.IsFunction)
                     {
-                        var functionResult = IFilterFunction.ExecuteFunction(pathInfo.Name,pathInfo.FunctionArgs, new ExecuteContext
+                        var functionResult = IFilterFunction.ExecuteFunction(pathInfo.Name, pathInfo.FunctionArgs, new ExecuteContext
                         {
                             CurrentExpression = currentExpression,
                             MemberExpressionProvider = currentMemberProvider,
@@ -380,7 +380,7 @@ namespace YS.Knife.Data.Filter
             {
                 return new FieldInfo2ExpressionException($"Not supported field name '{name}' in filter info.");
             }
-           
+
         }
     }
 }

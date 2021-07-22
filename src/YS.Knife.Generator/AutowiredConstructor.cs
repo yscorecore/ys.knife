@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace YS.Knife.Generator
 {
-      [Generator]
+    [Generator]
     internal class AutowiredConstructorGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
@@ -95,7 +95,7 @@ namespace YS.Knife.Generator
         private static List<MemberSymbolInfo> GetMembers(INamedTypeSymbol classSymbol, bool recursive)
         {
             var fieldList = classSymbol.GetMembers().OfType<IFieldSymbol>()
-                .Where(x => x.CanBeReferencedByName && !x.IsStatic && HasAttribute(x, nameof(AutowiredAttribute)) )
+                .Where(x => x.CanBeReferencedByName && !x.IsStatic && HasAttribute(x, nameof(AutowiredAttribute)))
                 .Select(it => new MemberSymbolInfo
                 {
                     Type = it.Type.ToDisplayString(PropertyTypeFormat),
@@ -107,7 +107,7 @@ namespace YS.Knife.Generator
 
             var props = classSymbol.GetMembers().OfType<IPropertySymbol>()
                 .Where(x => x.CanBeReferencedByName && !x.IsStatic &&
-                                HasAttribute(x, nameof(AutowiredAttribute)) )
+                                HasAttribute(x, nameof(AutowiredAttribute)))
                 .Select(it => new MemberSymbolInfo
                 {
                     Type = it.Type.ToDisplayString(PropertyTypeFormat),
@@ -132,16 +132,16 @@ namespace YS.Knife.Generator
             name = name.TrimStart('_');
             return name.Substring(0, 1).ToLowerInvariant() + name.Substring(1);
         }
-        
+
         private static IEnumerable<INamedTypeSymbol> GetClassSymbols(GeneratorExecutionContext context, SyntaxReceiver receiver)
         {
             var compilation = context.Compilation;
 
             return from clazz in receiver.CandidateClasses
-                let model = compilation.GetSemanticModel(clazz.SyntaxTree)
-                select model.GetDeclaredSymbol(clazz)! as INamedTypeSymbol into classSymbol
-                where HasMemberInTree(classSymbol)
-                select classSymbol;
+                   let model = compilation.GetSemanticModel(clazz.SyntaxTree)
+                   select model.GetDeclaredSymbol(clazz)! as INamedTypeSymbol into classSymbol
+                   where HasMemberInTree(classSymbol)
+                   select classSymbol;
         }
 
         private static bool HasMember(INamedTypeSymbol classSymbol)

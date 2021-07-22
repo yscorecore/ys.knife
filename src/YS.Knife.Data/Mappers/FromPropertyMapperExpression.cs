@@ -7,7 +7,7 @@ namespace YS.Knife.Data.Mappers
         where TSourceValue : TTargetValue
     {
 
-        public FromPropertyMapperExpression(LambdaExpression sourceExpression):base(sourceExpression)
+        public FromPropertyMapperExpression(LambdaExpression sourceExpression) : base(sourceExpression)
         {
 
         }
@@ -25,7 +25,7 @@ namespace YS.Knife.Data.Mappers
             return this.SourceExpression;
         }
 
-       
+
         public static FromPropertyMapperExpression<TSourceValue, TTargetValue> Create<TSource>(
             Expression<Func<TSource, TSourceValue>> sourceExpression)
             where TSource : class

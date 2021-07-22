@@ -52,7 +52,7 @@ namespace YS.Knife.Data.Query.Functions.Collections
                 };
             }
 
-            
+
         }
     }
 }

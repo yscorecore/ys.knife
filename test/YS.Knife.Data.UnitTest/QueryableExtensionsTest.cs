@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using FluentAssertions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
@@ -21,7 +21,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListWhenListAllWithFilterInfoAndNoOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(FilterInfo.CreateItem("Name", Operator.Contains, "a"), null,null);
+            var actual = users.ListAll(FilterInfo.CreateItem("Name", Operator.Contains, "a"), null, null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a"))).ToList());
         }
 
@@ -29,7 +29,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetOriginListWhenListAllWithNoFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
-            var actual = users.ListAll(null, OrderInfo.Parse("Name.desc()"),null);
+            var actual = users.ListAll(null, OrderInfo.Parse("Name.desc()"), null);
             actual.Should().BeEquivalentTo(users.OrderByDescending(p => p.Name).ToList());
         }
 
@@ -38,12 +38,12 @@ namespace YS.Knife.Data.UnitTest
         {
             var users = CreateUsersWithAddress();
             var actual = users.ListAll(FilterInfo.CreateItem("Name", Operator.Contains, "a"),
-                OrderInfo.Parse("Name.Desc()"),null);
+                OrderInfo.Parse("Name.Desc()"), null);
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a")))
                 .OrderByDescending(p => p.Name).ToList());
         }
 
-        
+
         // [TestMethod, TestCategory("ListAll2")]
         // public void ShouldGetOriginListWhenListAll2WithOutQueryInfo()
         // {

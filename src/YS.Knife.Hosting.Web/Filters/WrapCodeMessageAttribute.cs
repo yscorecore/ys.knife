@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace YS.Knife.Hosting.Web.Filters
 {
-    public class WrapCodeMessageAttribute : Attribute,  IExceptionFilter
+    public class WrapCodeMessageAttribute : Attribute, IExceptionFilter
     {
         public WrapCodeMessageAttribute(KnifeWebOptions knifeWebOptions)
         {
@@ -36,7 +36,7 @@ namespace YS.Knife.Hosting.Web.Filters
             context.ExceptionHandled = true;
         }
 
-      
+
     }
-   
+
 }

@@ -12,11 +12,11 @@ namespace YS.Knife.Data.Filter
         }
         public static FieldInfo2ExpressionException CreateFilterExpressionError(Exception exception)
         {
-            return new FieldInfo2ExpressionException( $"create filter expression error: {exception.Message}",exception);
+            return new FieldInfo2ExpressionException($"create filter expression error: {exception.Message}", exception);
         }
-        public static FieldInfo2ExpressionException ConvertValueError(object value, Type targetType, Exception exception=null)
+        public static FieldInfo2ExpressionException ConvertValueError(object value, Type targetType, Exception exception = null)
         {
-            return new FieldInfo2ExpressionException($"convert value '{value}' to target type '{targetType.Name}' error.",exception);
+            return new FieldInfo2ExpressionException($"convert value '{value}' to target type '{targetType.Name}' error.", exception);
         }
 
         public static FieldInfo2ExpressionException CompareBothNullError()

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Text;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.Query.Functions.Collections
@@ -15,7 +15,7 @@ namespace YS.Knife.Data.Query.Functions.Collections
             typeof(long?), typeof(double?), typeof(float?), typeof(int?)
         };
 
-        public sealed override FunctionResult Execute(object[] args,ExecuteContext context)
+        public sealed override FunctionResult Execute(object[] args, ExecuteContext context)
         {
             var itemType = context.CurrentType.GetEnumerableItemType();
             if (itemType == null)
@@ -37,9 +37,9 @@ namespace YS.Knife.Data.Query.Functions.Collections
         }
         protected abstract FunctionResult OnExecuteQueryable(CollectionFunctionContext context);
 
-        protected class CollectionFunctionContext  
+        protected class CollectionFunctionContext
         {
-            public CollectionFunctionContext(ExecuteContext functionContext,Type itemType, Expression expression)
+            public CollectionFunctionContext(ExecuteContext functionContext, Type itemType, Expression expression)
             {
                 FunctionContext = functionContext;
                 ItemType = itemType;

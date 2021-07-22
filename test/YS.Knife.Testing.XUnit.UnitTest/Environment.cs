@@ -1,18 +1,18 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace YS.Knife.Testing.XUnit.UnitTest
 {
     [CollectionDefinition(nameof(Environment))]
-    public class Environment: IDisposable,  ICollectionFixture<Environment>
+    public class Environment : IDisposable, ICollectionFixture<Environment>
     {
         public static int Counter = 0;
         public Environment()
         {
             this.OnSetUp();
         }
-    
+
         public void Dispose()
         {
             this.OnTeardown();
@@ -23,11 +23,11 @@ namespace YS.Knife.Testing.XUnit.UnitTest
             Counter++;
         }
 
-        private  void OnTeardown()
+        private void OnTeardown()
         {
             Counter--;
         }
 
-      
+
     }
 }

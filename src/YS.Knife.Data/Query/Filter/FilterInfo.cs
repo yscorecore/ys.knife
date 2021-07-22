@@ -12,7 +12,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data
 {
-   
+
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
     [DebuggerDisplay("{ToString()}")]

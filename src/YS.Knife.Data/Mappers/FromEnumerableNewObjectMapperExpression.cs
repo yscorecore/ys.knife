@@ -5,17 +5,17 @@ using System.Linq.Expressions;
 
 namespace YS.Knife.Data.Mappers
 {
-    class FromEnumerableNewObjectMapperExpression<TSourceValueItem,TTargetValueItem> : MapperExpression
+    class FromEnumerableNewObjectMapperExpression<TSourceValueItem, TTargetValueItem> : MapperExpression
 
         where TTargetValueItem : class, new()
         where TSourceValueItem : class
-  
+
     {
 
         public override bool IsCollection { get => true; }
 
         public FromEnumerableNewObjectMapperExpression(LambdaExpression sourceExpression, Type targetValueCollection, ObjectMapper<TSourceValueItem, TTargetValueItem> objectMapper)
-            :base(sourceExpression,sourceExpression.ReturnType,targetValueCollection)
+            : base(sourceExpression, sourceExpression.ReturnType, targetValueCollection)
         {
             this.SubMapper = objectMapper;
         }
@@ -25,7 +25,7 @@ namespace YS.Knife.Data.Mappers
             bool sourceIsQueryable = SourceValueType.IsQueryable();
             bool targetIsQueryable = TargetValueType.IsQueryable();
             var newObjectExpression = this.SubMapper.BuildExpression();
-            var selectMethod = sourceIsQueryable? MethodFinder.GetQuerybleSelect<TSourceValueItem, TTargetValueItem>():MethodFinder.GetEnumerableSelect<TSourceValueItem, TTargetValueItem>();
+            var selectMethod = sourceIsQueryable ? MethodFinder.GetQuerybleSelect<TSourceValueItem, TTargetValueItem>() : MethodFinder.GetEnumerableSelect<TSourceValueItem, TTargetValueItem>();
             var callSelectExpression = Expression.Call(selectMethod, this.SourceExpression.Body, newObjectExpression);
             var toResultExpression = GetResultExpression(callSelectExpression, sourceIsQueryable, targetIsQueryable);
             // 需要处理source为null的情况
@@ -35,10 +35,10 @@ namespace YS.Knife.Data.Mappers
             return Expression.Lambda(resultExpression, this.SourceExpression.Parameters.First());
 
         }
-        
-        private Expression GetResultExpression(Expression selectExpression,bool sourceIsQueryable, bool targetIsQueryable)
+
+        private Expression GetResultExpression(Expression selectExpression, bool sourceIsQueryable, bool targetIsQueryable)
         {
-            if (sourceIsQueryable && targetIsQueryable )
+            if (sourceIsQueryable && targetIsQueryable)
             {
                 return selectExpression;
             }
@@ -49,9 +49,9 @@ namespace YS.Knife.Data.Mappers
                     MethodFinder.GetAsQueryable(TargetValueType.GetQueryableItemType()),
                     selectExpression);
             }
-          
+
             var toResultMethod = this.TargetValueType.IsArray ? MethodFinder.GetEnumerableToArray<TTargetValueItem>() : MethodFinder.GetEnumerableToList<TTargetValueItem>();
-               
+
             return Expression.Call(toResultMethod, selectExpression);
 
         }

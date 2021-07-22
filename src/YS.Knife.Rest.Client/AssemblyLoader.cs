@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace YS.Knife.Rest.Client
 {
@@ -11,8 +11,8 @@ namespace YS.Knife.Rest.Client
         //[ModuleInitializer]
 
         public static void Initializer()
-        { 
-            
+        {
+
         }
     }
 }

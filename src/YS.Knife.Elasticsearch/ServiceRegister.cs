@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Elasticsearch.Net;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
-using System.Linq;
 namespace YS.Knife.Elasticsearch
 {
     class ServiceRegister : IServiceRegister
@@ -14,7 +14,7 @@ namespace YS.Knife.Elasticsearch
             services.AddSingleton<ElasticClient>((sp) =>
             {
                 var options = sp.GetRequiredService<ElasticOptions>();
-                var allUrls= (options.Urls ?? Enumerable.Empty<string>()).Select(p => new Uri(p));
+                var allUrls = (options.Urls ?? Enumerable.Empty<string>()).Select(p => new Uri(p));
                 var pool = new StaticConnectionPool(allUrls);
                 var settings = new ConnectionSettings(pool)
                 .DefaultIndex(options.DefaultIndex);

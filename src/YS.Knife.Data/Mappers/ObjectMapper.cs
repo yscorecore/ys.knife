@@ -7,17 +7,17 @@ using System.Reflection;
 
 namespace YS.Knife.Data.Mappers
 {
-    public sealed class ObjectMapper<TSource, TTarget>:IObjectMapper
+    public sealed class ObjectMapper<TSource, TTarget> : IObjectMapper
         where TSource : class
         where TTarget : class, new()
     {
-       
+
 
         public static ObjectMapper<TSource, TTarget> Default { get; } =
             DefaultObjectMapperFactory.CreateDefault<TSource, TTarget>();
-        
 
-        private  IDictionary<string, IMapperExpression> PropMappers
+
+        private IDictionary<string, IMapperExpression> PropMappers
         {
             get { return this._propMappers; }
         }
@@ -48,12 +48,12 @@ namespace YS.Knife.Data.Mappers
 
         public ObjectMapper<TSource, TTarget> Pick(string[] targetFields) =>
             Pick(targetFields, StringComparer.InvariantCultureIgnoreCase);
-        public ObjectMapper<TSource, TTarget> Pick(string[] targetFields,StringComparer stringComparer)
+        public ObjectMapper<TSource, TTarget> Pick(string[] targetFields, StringComparer stringComparer)
         {
             // cache result
             var mapper = new ObjectMapper<TSource, TTarget>();
             var allKeys = this._propMappers.Keys.Where(p =>
-                (targetFields??Array.Empty<string>()).Contains(p, stringComparer)).ToArray();
+                (targetFields ?? Array.Empty<string>()).Contains(p, stringComparer)).ToArray();
             foreach (var targetField in allKeys)
             {
                 mapper._propMappers[targetField] = this._propMappers[targetField];
@@ -91,7 +91,7 @@ namespace YS.Knife.Data.Mappers
             _ = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
 
             var (memberName, memberType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = FromPropertyMapperExpression<TSourceValue,TTargetValue>.Create(sourceExpression);
+            this.PropMappers[memberName] = FromPropertyMapperExpression<TSourceValue, TTargetValue>.Create(sourceExpression);
             this.DirtyCache();
         }
         [Description(DefaultObjectMapperFactory.AppendNewObject)]
@@ -100,16 +100,16 @@ namespace YS.Knife.Data.Mappers
             where TSourceObject : class
         {
             var (memberName, _) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] =  FromNewComplexObjectMapperExpression<TSourceObject, TTargetObject>.Create(sourceExpression, mapper);
+            this.PropMappers[memberName] = FromNewComplexObjectMapperExpression<TSourceObject, TTargetObject>.Create(sourceExpression, mapper);
             this.DirtyCache();
         }
         [Description(DefaultObjectMapperFactory.AppendEnumerableNewObject)]
-        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IEnumerable <TSourceValueItem>>> sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> mapper)
+        public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IEnumerable<TSourceValueItem>>> sourceExpression, ObjectMapper<TSourceValueItem, TTargetValueItem> mapper)
             where TTargetValueItem : class, new()
             where TSourceValueItem : class
         {
             var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = new  FromEnumerableNewObjectMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType, mapper);
+            this.PropMappers[memberName] = new FromEnumerableNewObjectMapperExpression<TSourceValueItem, TTargetValueItem>(sourceExpression, targetActualType, mapper);
             this.DirtyCache();
         }
         [Description(DefaultObjectMapperFactory.AppendQueryableNewObject)]
@@ -118,16 +118,16 @@ namespace YS.Knife.Data.Mappers
             where TSourceValueItem : class
         {
             var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] =  new FromEnumerableNewObjectMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType, mapper);
+            this.PropMappers[memberName] = new FromEnumerableNewObjectMapperExpression<TSourceValueItem, TTargetValueItem>(sourceExpression, targetActualType, mapper);
             this.DirtyCache();
         }
-        
+
         [Description(DefaultObjectMapperFactory.AppendEnumerablePropertyAssign)]
         public void AppendCollection<TTargetValueItem, TSourceValueItem>(Expression<Func<TTarget, IEnumerable<TTargetValueItem>>> targetMember, Expression<Func<TSource, IEnumerable<TSourceValueItem>>> sourceExpression)
             where TSourceValueItem : TTargetValueItem
         {
             var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] =new FromEnumerableAssignMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType);
+            this.PropMappers[memberName] = new FromEnumerableAssignMapperExpression<TSourceValueItem, TTargetValueItem>(sourceExpression, targetActualType);
             this.DirtyCache();
         }
         [Description(DefaultObjectMapperFactory.AppendQueryablePropertyAssign)]
@@ -135,7 +135,7 @@ namespace YS.Knife.Data.Mappers
             where TSourceValueItem : TTargetValueItem
         {
             var (memberName, targetActualType) = PickTargetMemberInfo(targetMember);
-            this.PropMappers[memberName] = new FromEnumerableAssignMapperExpression<TSourceValueItem,TTargetValueItem>(sourceExpression,targetActualType);
+            this.PropMappers[memberName] = new FromEnumerableAssignMapperExpression<TSourceValueItem, TTargetValueItem>(sourceExpression, targetActualType);
             this.DirtyCache();
         }
         #endregion

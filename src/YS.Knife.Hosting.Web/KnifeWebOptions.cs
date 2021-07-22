@@ -13,7 +13,7 @@ namespace YS.Knife.Hosting.Web
         public int? DefaultErrorStatusCode { get; set; } = 900;
 
         public List<CodeExceptionMap> CodeExceptionMap { get; set; } = new List<CodeExceptionMap>();
-        
+
     }
     public class CodeExceptionMap
     {
@@ -23,7 +23,7 @@ namespace YS.Knife.Hosting.Web
     }
 
 
-public class StaticFileInfo
+    public class StaticFileInfo
     {
         public bool EnableDirectoryBrowsing { get; set; } = false;
         public bool ServeUnknownFileTypes { get; set; } = false;

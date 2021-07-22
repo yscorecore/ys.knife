@@ -10,7 +10,7 @@ namespace YS.Knife.Data.Mappers
         Type TargetValueType { get; }
         LambdaExpression GetBindExpression();
         IObjectMapper SubMapper { get; }
-        
+
         LambdaExpression SourceExpression { get; }
     }
     public interface IObjectMapper
@@ -26,7 +26,7 @@ namespace YS.Knife.Data.Mappers
 
     abstract class MapperExpression : IMapperExpression
     {
-        public MapperExpression(LambdaExpression sourceExpression,Type sourceValueType,Type targetValueType)
+        public MapperExpression(LambdaExpression sourceExpression, Type sourceValueType, Type targetValueType)
         {
             this.SourceExpression = sourceExpression ?? throw new ArgumentNullException(nameof(sourceExpression));
             this.SourceValueType = sourceValueType ?? throw new ArgumentNullException(nameof(sourceValueType));
@@ -40,11 +40,11 @@ namespace YS.Knife.Data.Mappers
         public IObjectMapper SubMapper { get; set; }
     }
 
-    abstract class MapperExpression<TSourceValue, TTargetValue>:MapperExpression
+    abstract class MapperExpression<TSourceValue, TTargetValue> : MapperExpression
     {
-        public MapperExpression(LambdaExpression sourceExpression):base(sourceExpression,typeof(TSourceValue),typeof(TTargetValue))
+        public MapperExpression(LambdaExpression sourceExpression) : base(sourceExpression, typeof(TSourceValue), typeof(TTargetValue))
         {
         }
-       
+
     }
 }

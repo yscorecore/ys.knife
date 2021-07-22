@@ -233,7 +233,7 @@ namespace YS.Knife.Data.Query
                     return (false, null);
                 }
             }
-            else if (IsNumberStartChar(current,context))
+            else if (IsNumberStartChar(current, context))
             {
                 //number
                 return (true, ParseNumberValue(context));
@@ -326,9 +326,9 @@ namespace YS.Knife.Data.Query
                         break;
                     }
                 }
-                if (!hasDigit) 
+                if (!hasDigit)
                 {
-                   throw  ParseErrors.InvalidValue(context);
+                    throw ParseErrors.InvalidValue(context);
                 }
                 var numString = context.Text.Substring(startIndex, context.Index - startIndex);
                 try
@@ -407,7 +407,7 @@ namespace YS.Knife.Data.Query
                     //keyword
                     return ParseKeywordValue(context);
                 }
-                else if (IsNumberStartChar(current,context))
+                else if (IsNumberStartChar(current, context))
                 {
                     //number
                     return ParseNumberValue(context);
@@ -471,7 +471,7 @@ namespace YS.Knife.Data.Query
             }
             return names;
 
-           
+
         }
 
         public static FilterInfo ParseFilterInfo(this ParseContext context)
@@ -648,7 +648,7 @@ namespace YS.Knife.Data.Query
                     var (second, secondNumber) = TryParseUnsignInt32(context);
                     if (second)
                     {
-                        return new LimitInfo { Offset= firstNumber, Limit = secondNumber };
+                        return new LimitInfo { Offset = firstNumber, Limit = secondNumber };
                     }
                     else
                     {

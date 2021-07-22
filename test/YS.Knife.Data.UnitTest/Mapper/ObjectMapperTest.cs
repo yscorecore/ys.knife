@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Mappers;
-using FluentAssertions;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
@@ -90,7 +90,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
                 NullIntProp = 1
             };
             var mapper = new ObjectMapper<Model, DtoModel>();
-            mapper.Append(p => p.IntProp, p => p.NullIntProp ??0);
+            mapper.Append(p => p.IntProp, p => p.NullIntProp ?? 0);
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { IntProp = 1 });
         }
@@ -286,18 +286,18 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
-        
+
         #region ShouldMapIntPropToNullableInt
 
         [TestMethod]
         public void ShouldMapIntPropToNullableInt()
         {
-            var data = new Model2 {IntProp = 123};
+            var data = new Model2 { IntProp = 123 };
 
             var mapper = new ObjectMapper<Model2, Dto2>();
-            mapper.Append(p=>p.IntProp,p=>(int?)p.IntProp);
+            mapper.Append(p => p.IntProp, p => (int?)p.IntProp);
             var target = data.Map(mapper);
-            target.Should().BeEquivalentTo(new Dto2() {IntProp = 123});
+            target.Should().BeEquivalentTo(new Dto2() { IntProp = 123 });
         }
 
         class Dto2
@@ -326,7 +326,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             public string SubStrProp { get; set; }
             public int IntProp { get; set; }
         }
-        
+
         class Model
         {
             public string StrProp { get; set; }

@@ -8,7 +8,7 @@ namespace YS.Knife.Data.Query.Functions.Collections
     {
         protected override int MinArgLength => 1;
 
-        protected override int MaxArgLength =>1;
+        protected override int MaxArgLength => 1;
 
         protected override FunctionResult OnExecute(List<LimitInfo> args, ExecuteContext context)
         {

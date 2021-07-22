@@ -154,7 +154,7 @@ namespace YS.Knife.Data.Filter.Operators
                 throw ExpressionErrors.ConvertValueError(value, valueType, ex);
             }
         }
-       
+
 
     }
 }

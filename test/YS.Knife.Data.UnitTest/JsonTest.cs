@@ -21,7 +21,7 @@ namespace YS.Knife.Data.UnitTest
             var student = new Student { Name = "zs", Secret = "secret", Age = 18, Money = 100 };
             var text = Json.Serialize(student);
             var newStudent = Json.DeSerialize<Student>(text);
-            newStudent.Should().BeEquivalentTo(new Student{ Name = "zs", Secret = "********", Age = 18, Money = 0 });
+            newStudent.Should().BeEquivalentTo(new Student { Name = "zs", Secret = "********", Age = 18, Money = 0 });
         }
         public class Student
         {

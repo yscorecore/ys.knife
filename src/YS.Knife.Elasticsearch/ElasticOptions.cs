@@ -14,7 +14,7 @@ namespace YS.Knife.Elasticsearch
 
         public List<string> Urls { get; set; } = new List<string> { "http://localhost:9200" };
         [RegularExpression("^\\w+$")]
-        [Required(AllowEmptyStrings =false)]
+        [Required(AllowEmptyStrings = false)]
         public string DefaultIndex { get; set; } = "defaultindex";
     }
 }

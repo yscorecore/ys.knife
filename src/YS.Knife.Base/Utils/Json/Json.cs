@@ -48,7 +48,7 @@ namespace YS.Knife
 
         public static void DumpToFile(this object obj, string filePath, bool withIndented = true)
         {
-           File.WriteAllText(filePath, obj.Dump(withIndented));
+            File.WriteAllText(filePath, obj.Dump(withIndented));
         }
 
     }

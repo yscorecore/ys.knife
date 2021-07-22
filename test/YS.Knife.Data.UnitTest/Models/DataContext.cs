@@ -9,5 +9,5 @@ using Microsoft.EntityFrameworkCore;
 
 namespace YS.Knife.Data.UnitTest.Models
 {
-    
+
 }

@@ -16,15 +16,15 @@ namespace YS.Knife.Data.Query.Functions
                   type => Activator.CreateInstance(type) as IFilterFunction,
                   StringComparer.InvariantCultureIgnoreCase);
 
-        internal static FunctionResult ExecuteFunction(string functionName,object[] args, ExecuteContext context)
+        internal static FunctionResult ExecuteFunction(string functionName, object[] args, ExecuteContext context)
         {
             if (AllFunctions.TryGetValue(functionName, out IFilterFunction func))
             {
-                return func.Execute(args,context);
+                return func.Execute(args, context);
             }
             else
             {
-                throw FunctionErrors.NotSupportFunction(functionName);   
+                throw FunctionErrors.NotSupportFunction(functionName);
             }
         }
         internal static object[] ParseFunctionArgument(string functionName, ParseContext parseContext)

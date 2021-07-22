@@ -95,7 +95,7 @@ namespace YS.Knife.Data.Mappers
                 var genericMethod = method.MakeGenericMethod(targetProperty.PropertyType, sourceProperty.PropertyType);
                 var targetLambda = CreateTargetLambda(targetProperty);
                 var sourceLambda = CreateSourceLambda(sourceProperty);
-                genericMethod.Invoke(this._mapper, new object[] {targetLambda, sourceLambda});
+                genericMethod.Invoke(this._mapper, new object[] { targetLambda, sourceLambda });
             }
 
             private void AppendComplexObject(PropertyInfo targetProperty,
@@ -107,38 +107,38 @@ namespace YS.Knife.Data.Mappers
                 var sourceLambda = CreateSourceLambda(sourceProperty);
                 var innerMapper =
                     CreateDefault(sourceProperty.PropertyType, targetProperty.PropertyType);
-                genericMethod.Invoke(this._mapper, new object[] {targetLambda, sourceLambda, innerMapper});
+                genericMethod.Invoke(this._mapper, new object[] { targetLambda, sourceLambda, innerMapper });
             }
 
             private void AppendEnumerableNewComplexObject(PropertyInfo targetProperty,
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
-                
-                var sourceIsQueryable =sourceProperty.PropertyType.IsQueryable();
+
+                var sourceIsQueryable = sourceProperty.PropertyType.IsQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryableNewObject]
                     : AllAppendMethods[AppendEnumerableNewObject];
-                
+
                 var targetLambdaResultType = typeof(IEnumerable<>).MakeGenericType(targetItemType);
                 var sourceLambdaResultType = sourceIsQueryable
                     ? typeof(IQueryable<>).MakeGenericType(sourceItemType)
                     : typeof(IEnumerable<>).MakeGenericType(sourceItemType);
                 var genericMethod = method.MakeGenericMethod(
                     targetItemType,
-                    
+
                     sourceItemType);
-                var targetLambda = CreateTargetLambda(targetProperty,targetLambdaResultType);
-                var sourceLambda = CreateSourceLambda(sourceProperty,sourceLambdaResultType);
+                var targetLambda = CreateTargetLambda(targetProperty, targetLambdaResultType);
+                var sourceLambda = CreateSourceLambda(sourceProperty, sourceLambdaResultType);
                 var innerMapper =
                     CreateDefault(sourceItemType, targetItemType);
-                genericMethod.Invoke(this._mapper, new object[] {targetLambda, sourceLambda, innerMapper});
+                genericMethod.Invoke(this._mapper, new object[] { targetLambda, sourceLambda, innerMapper });
             }
 
 
             private void AppendEnumerableAssign(PropertyInfo targetProperty,
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
-                var sourceIsQueryable =sourceProperty.PropertyType.IsQueryable();
+                var sourceIsQueryable = sourceProperty.PropertyType.IsQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryablePropertyAssign]
                     : AllAppendMethods[AppendEnumerablePropertyAssign];
@@ -149,18 +149,18 @@ namespace YS.Knife.Data.Mappers
 
                 var genericMethod = method.MakeGenericMethod(
                     targetItemType,
-             
+
                     sourceItemType);
-                var targetLambda = CreateTargetLambda(targetProperty,targetLambdaResultType);
-                var sourceLambda = CreateSourceLambda(sourceProperty,sourceLambdaResultType);
-                genericMethod.Invoke(this._mapper, new object[] {targetLambda, sourceLambda});
+                var targetLambda = CreateTargetLambda(targetProperty, targetLambdaResultType);
+                var sourceLambda = CreateSourceLambda(sourceProperty, sourceLambdaResultType);
+                genericMethod.Invoke(this._mapper, new object[] { targetLambda, sourceLambda });
             }
 
             private LambdaExpression CreateSourceLambda(PropertyInfo sourceProperty)
             {
-                return  CreateSourceLambda(sourceProperty, sourceProperty.PropertyType);
+                return CreateSourceLambda(sourceProperty, sourceProperty.PropertyType);
             }
-            private LambdaExpression CreateSourceLambda(PropertyInfo sourceProperty,Type lambdaResultType)
+            private LambdaExpression CreateSourceLambda(PropertyInfo sourceProperty, Type lambdaResultType)
             {
                 var paramExp = Expression.Parameter(typeof(TSource));
                 var propertyExp = Expression.Property(paramExp, sourceProperty);
@@ -172,7 +172,7 @@ namespace YS.Knife.Data.Mappers
             {
                 return CreateTargetLambda(targetProperty, targetProperty.PropertyType);
             }
-            private LambdaExpression CreateTargetLambda(PropertyInfo targetProperty,Type lambdaResultType)
+            private LambdaExpression CreateTargetLambda(PropertyInfo targetProperty, Type lambdaResultType)
             {
                 var paramExp = Expression.Parameter(typeof(TTarget));
                 var propertyExp = Expression.Property(paramExp, targetProperty);

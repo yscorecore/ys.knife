@@ -22,7 +22,7 @@ namespace YS.Knife.Data.Query
             this.Items.AddRange(items);
         }
 
-        public List<OrderItem> Items { get;  set; } = new List<OrderItem>();
+        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
 
 
 
@@ -38,9 +38,9 @@ namespace YS.Knife.Data.Query
         {
             return Parse(orderText, CultureInfo.CurrentCulture);
         }
-        public static OrderInfo Parse(string orderText,CultureInfo cultureInfo)
+        public static OrderInfo Parse(string orderText, CultureInfo cultureInfo)
         {
-            return  new QueryExpressionParser(cultureInfo).ParseOrder(orderText);
+            return new QueryExpressionParser(cultureInfo).ParseOrder(orderText);
         }
 
         public bool HasItems()

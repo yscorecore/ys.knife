@@ -9,7 +9,7 @@ namespace YS.Knife.Data.Query.Functions
         public LambdaExpression LambdaExpression { get; set; }
         public Type LambdaValueType { get; set; }
 
-        public IMemberExpressionProvider MemberProvider{get;set;}
+        public IMemberExpressionProvider MemberProvider { get; set; }
 
     }
 }

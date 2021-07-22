@@ -27,16 +27,16 @@ namespace YS.Knife.Data.Mappers
             }
         }
 
-       public  static Expression ReplaceFirstParam(this LambdaExpression expression, Expression newParameter)
+        public static Expression ReplaceFirstParam(this LambdaExpression expression, Expression newParameter)
         {
             var parameterToRemove = expression.Parameters.ElementAt(0);
             var replacer = new ParameterReplacer(parameterToRemove, newParameter);
             return replacer.Visit(expression.Body);
         }
 
-       public static Expression Connect(this Expression parent, LambdaExpression child)
-       {
-           return child.ReplaceFirstParam(parent);
-       }
+        public static Expression Connect(this Expression parent, LambdaExpression child)
+        {
+            return child.ReplaceFirstParam(parent);
+        }
     }
 }

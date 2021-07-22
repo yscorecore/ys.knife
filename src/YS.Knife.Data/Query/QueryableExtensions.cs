@@ -2,9 +2,9 @@
 using System.ComponentModel;
 using System.Linq.Expressions;
 using YS.Knife.Data;
-using YS.Knife.Data.Query;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query;
 
 namespace System.Linq
 {
@@ -49,7 +49,7 @@ namespace System.Linq
         {
             return null;
             // ignore limit info
-           // return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
+            // return source.ListAll(queryInfo?.Filter, queryInfo?.Order, queryInfo?.Select);
         }
         public static List<T> ListAll<T>(this IQueryable<T> source, FilterInfo filter, OrderInfo order, SelectInfo select)
             where T : class, new()

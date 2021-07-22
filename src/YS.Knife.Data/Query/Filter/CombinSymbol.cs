@@ -2,8 +2,8 @@
 {
     public enum CombinSymbol
     {
-        AndItems=1,
-        OrItems=2,
-        SingleItem=0,
+        AndItems = 1,
+        OrItems = 2,
+        SingleItem = 0,
     }
 }

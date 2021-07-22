@@ -8,8 +8,8 @@ namespace YS.Knife.Data.Query
     {
         bool HasNext { get; }
     }
-    public interface ISliceData<TItem,TKey> : ISliceData
-    { 
+    public interface ISliceData<TItem, TKey> : ISliceData
+    {
         List<TItem> Items { get; }
 
         string Next { get; }

@@ -14,8 +14,8 @@ namespace YS.Knife.Data.Query.Functions
         public abstract object[] ParseArguments(ParseContext parseContext);
 
     }
-    public abstract class BaseFunction<TArg> : BaseFunction 
-    { 
+    public abstract class BaseFunction<TArg> : BaseFunction
+    {
         protected abstract int MinArgLength { get; }
         protected abstract int MaxArgLength { get; }
         public sealed override FunctionResult Execute(object[] args, ExecuteContext context)
@@ -63,7 +63,7 @@ namespace YS.Knife.Data.Query.Functions
             }
             context.SkipWhiteSpaceAndFirstChar(')');
 
-            if (args.Count < MinArgLength) 
+            if (args.Count < MinArgLength)
             {
                 throw ParseErrors.FunctionArgumentLessThan(context, this.Name, MinArgLength);
             }

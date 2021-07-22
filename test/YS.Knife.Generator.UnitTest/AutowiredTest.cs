@@ -1,4 +1,4 @@
-using FluentAssertions;
+﻿using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YS.Knife.Generator.UnitTest
@@ -10,7 +10,7 @@ namespace YS.Knife.Generator.UnitTest
         public void ShouldGenerateCtor()
         {
             //var mainClass = new MainClass( new DependClass(new DependClass2()));
-           //  mainClass.Should().NotBeNull();
+            //  mainClass.Should().NotBeNull();
         }
     }
 }

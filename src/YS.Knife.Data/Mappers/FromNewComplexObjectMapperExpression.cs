@@ -5,20 +5,20 @@ using System.Runtime.InteropServices.ComTypes;
 
 namespace YS.Knife.Data.Mappers
 {
-    
-    class FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue>: MapperExpression<TSourceValue,TTargetValue>
+
+    class FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue> : MapperExpression<TSourceValue, TTargetValue>
         where TSourceValue : class
         where TTargetValue : class, new()
     {
 
         public FromNewComplexObjectMapperExpression(LambdaExpression sourceExpression, ObjectMapper<TSourceValue, TTargetValue> objectMapper)
-            :base(sourceExpression)
+            : base(sourceExpression)
         {
-            
-            this.SubMapper = objectMapper??throw new ArgumentNullException(nameof(objectMapper));
+
+            this.SubMapper = objectMapper ?? throw new ArgumentNullException(nameof(objectMapper));
         }
 
-        public override bool IsCollection { get=>false; }
+        public override bool IsCollection { get => false; }
 
 
         public override LambdaExpression GetBindExpression()
@@ -31,10 +31,10 @@ namespace YS.Knife.Data.Mappers
 
 
 
-        public static FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue> Create<TSource>(Expression<Func<TSource, TSourceValue>> sourceExpression,ObjectMapper<TSourceValue, TTargetValue> objectMapper)
-            where TSource:class
+        public static FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue> Create<TSource>(Expression<Func<TSource, TSourceValue>> sourceExpression, ObjectMapper<TSourceValue, TTargetValue> objectMapper)
+            where TSource : class
         {
-            return new FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue>(sourceExpression,objectMapper);
+            return new FromNewComplexObjectMapperExpression<TSourceValue, TTargetValue>(sourceExpression, objectMapper);
         }
     }
 }

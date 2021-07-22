@@ -27,7 +27,7 @@ namespace YS.Knife.Data.Filter
         [DataRow(".10=+0.1", 0.1, Operator.Equals, 0.1)]
         [DataRow("\"\"=\"\"", "", Operator.Equals, "")]
         [DataRow("\"a\"=\"a\"", "a", Operator.Equals, "a")]
-        [DataRow("\"abc\"=\"abc\"", "abc", Operator.Equals,"abc")]
+        [DataRow("\"abc\"=\"abc\"", "abc", Operator.Equals, "abc")]
 
         public void ShouldParseConstValue(string text, object expectedLeftValue, Operator expectedFilterType, object expectedRightValue)
         {
@@ -222,7 +222,7 @@ namespace YS.Knife.Data.Filter
             Parse(expression);
         }
 
-        
+
         private void TestFilterExpression(string expression, string expectedFilterExpression)
         {
             var filter = Parse(expression);

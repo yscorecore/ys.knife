@@ -14,7 +14,7 @@ namespace YS.Knife.Data.Query
         public FilterInfo ParseFilter(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) { return null; }
-            var context = new ParseContext(text,this.CurrentCulture);
+            var context = new ParseContext(text, this.CurrentCulture);
             var filterInfo = context.ParseFilterInfo();
             context.SkipWhiteSpace();
             if (context.NotEnd())
@@ -26,7 +26,7 @@ namespace YS.Knife.Data.Query
         public OrderInfo ParseOrder(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return null;
-            var context = new ParseContext(text,this.CurrentCulture);
+            var context = new ParseContext(text, this.CurrentCulture);
             OrderInfo orderInfo = context.ParseOrderInfo();
             context.SkipWhiteSpace();
             if (context.NotEnd())
@@ -37,7 +37,7 @@ namespace YS.Knife.Data.Query
         }
         public List<ValuePath> ParsePropertyPaths(string text)
         {
-            var context = new ParseContext(text,this.CurrentCulture);
+            var context = new ParseContext(text, this.CurrentCulture);
             context.SkipWhiteSpace();
             var paths = context.ParsePropertyPaths();
             if (context.NotEnd())
@@ -49,7 +49,7 @@ namespace YS.Knife.Data.Query
         public SelectInfo ParseSelectInfo(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return null;
-            var context = new ParseContext(text,this.CurrentCulture);
+            var context = new ParseContext(text, this.CurrentCulture);
             SelectInfo selectInfo = context.ParseSelectInfo();
             context.SkipWhiteSpace();
             if (context.NotEnd())

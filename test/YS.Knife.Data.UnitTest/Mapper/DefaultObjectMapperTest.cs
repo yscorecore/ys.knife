@@ -14,11 +14,11 @@ namespace YS.Knife.Data.UnitTest.Mapper
         [TestMethod]
         public void ShouldMapStringProp()
         {
-            var data = new Model {StrProp = "str"};
+            var data = new Model { StrProp = "str" };
 
 
             var target = data.Map(ObjectMapper<Model, Dto>.Default);
-            target.Should().BeEquivalentTo(new Dto() {StrProp = "str"});
+            target.Should().BeEquivalentTo(new Dto() { StrProp = "str" });
         }
 
         class Dto
@@ -38,19 +38,19 @@ namespace YS.Knife.Data.UnitTest.Mapper
         [TestMethod]
         public void ShouldMapComplexObjectWhenInnerPropIsNull()
         {
-            var data = new Model3 {Inner = null};
+            var data = new Model3 { Inner = null };
 
 
             var target = data.Map(ObjectMapper<Model3, Dto3>.Default);
-            target.Should().BeEquivalentTo(new Dto3() {Inner = null});
+            target.Should().BeEquivalentTo(new Dto3() { Inner = null });
         }
 
         [TestMethod]
         public void ShouldMapComplexObjectWhenInnerPropHasValue()
         {
-            var data = new Model3 {Inner = new InnerModel3() {InnerStrProp = "str"}};
+            var data = new Model3 { Inner = new InnerModel3() { InnerStrProp = "str" } };
             var target = data.Map(ObjectMapper<Model3, Dto3>.Default);
-            target.Should().BeEquivalentTo(new Dto3() {Inner = new InnerDto3() {InnerStrProp = "str"}});
+            target.Should().BeEquivalentTo(new Dto3() { Inner = new InnerDto3() { InnerStrProp = "str" } });
         }
 
         class Dto3
@@ -129,16 +129,16 @@ namespace YS.Knife.Data.UnitTest.Mapper
         {
             var data = new Model5
             {
-                InnerList = new List<int>{1,2,3}
+                InnerList = new List<int> { 1, 2, 3 }
             };
-            var mapper = new ObjectMapper<Model5,Dto5>();
-           
-            mapper.AppendCollection(p=>p.InnerList,p=>p.InnerList.Select(item=>(int?)item).AsQueryable());
+            var mapper = new ObjectMapper<Model5, Dto5>();
+
+            mapper.AppendCollection(p => p.InnerList, p => p.InnerList.Select(item => (int?)item).AsQueryable());
 
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new Dto5()
             {
-                InnerList = new int?[]{1,2,3}
+                InnerList = new int?[] { 1, 2, 3 }
             });
         }
 
@@ -148,7 +148,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             public int?[] InnerList { get; set; }
         }
 
-      
+
 
         class Model5
         {
@@ -156,7 +156,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
         }
 
         #endregion
-        
+
         #region ShouldMapAssignList
         [TestMethod]
         public void ShouldMapAssignList()
@@ -186,7 +186,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
         {
             public string StrProp { get; set; }
         }
-        class Data6:IData6
+        class Data6 : IData6
         {
             public Data6(string val)
             {
@@ -195,13 +195,13 @@ namespace YS.Knife.Data.UnitTest.Mapper
             public string StrProp { get; set; }
         }
 
-      
+
 
         class Model6
         {
             public List<Data6> DataList { get; set; }
         }
-        
+
         #endregion
     }
 }

@@ -166,7 +166,7 @@ namespace YS.Knife.Data.Filter
 
 
         [TestClass]
-        public class EfcoreTest 
+        public class EfcoreTest
         {
 
             private static DataContext dataContext1;
@@ -261,15 +261,15 @@ namespace YS.Knife.Data.Filter
                     .Select(p => new StudentDto
                     {
                         TAge = p.Age,
-                        TScores = p.Scores.AsQueryable().OrderBy(p=>(double)p.Score).Skip(1) .Take(2).Select(t => new ScoreDto { TClassName = t.ClassName, TScore = t.Score }).ToList()
+                        TScores = p.Scores.AsQueryable().OrderBy(p => (double)p.Score).Skip(1).Take(2).Select(t => new ScoreDto { TClassName = t.ClassName, TScore = t.Score }).ToList()
 
                     });
-               
+
                 Console.WriteLine(query.ToQueryString());
-                    
+
             }
 
-            
+
             private string FilterDtoStudents(string filterExpressionForDto)
             {
                 var filter = FilterInfo.Parse(filterExpressionForDto);
@@ -287,7 +287,7 @@ namespace YS.Knife.Data.Filter
                 studentMapper.AppendCollection(p => p.TScores, p => p.Scores, scoreMapper);
 
                 var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression(studentMapper, filter);
-                var ids = dataContext1.Students.Where(exp).OrderBy(p=>p.Id)
+                var ids = dataContext1.Students.Where(exp).OrderBy(p => p.Id)
                         .Select(p => p.Id);
                 Console.WriteLine(ids.ToQueryString());
                 return string.Join(",", ids);
