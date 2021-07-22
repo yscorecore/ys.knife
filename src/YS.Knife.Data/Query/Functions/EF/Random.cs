@@ -10,6 +10,9 @@ namespace YS.Knife.Data.Query.Functions.EF
     {
         // select * from users orderby(p=>EF.Functions.Random())
         // ef6 support random function
-
+        public Random()
+        {
+            
+        }
     }
 }

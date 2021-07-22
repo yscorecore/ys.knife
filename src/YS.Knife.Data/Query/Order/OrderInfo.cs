@@ -50,7 +50,7 @@ namespace YS.Knife.Data.Query
 
         public override string ToString()
         {
-            return string.Join(",", (this.Items ?? Enumerable.Empty<OrderItem>()).Where(item => item != null));
+            return string.Join(",", this.Items.TrimNotNull());
         }
 
         public OrderInfo Add(OrderItem orderItem)

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using YS.Knife.Data.Query.Functions.Order;
 
 namespace YS.Knife.Data.Query
@@ -14,10 +12,10 @@ namespace YS.Knife.Data.Query
 
         public override string ToString()
         {
-            if (NavigatePaths?.Where(p => p != null).Count() > 0)
+            var paths = NavigatePaths.TrimNotNull();
+            if (paths.Count() > 0)
             {
-                var names = (NavigatePaths ?? Enumerable.Empty<ValuePath>()).Where(p => p != null).Select(p => p.ToString());
-                string path = string.Join(".", names);
+                string path = string.Join(".", paths);
                 return OrderType == OrderType.Desc ? $"{path}.desc()" : $"{path}.asc()";
             }
             return string.Empty;

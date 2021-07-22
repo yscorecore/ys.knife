@@ -2,9 +2,8 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Utils
 {
-
     [TestClass]
     public class JsonTest
     {
@@ -23,6 +22,14 @@ namespace YS.Knife.Data.UnitTest
             var newStudent = Json.DeSerialize<Student>(text);
             newStudent.Should().BeEquivalentTo(new Student { Name = "zs", Secret = "********", Age = 18, Money = 0 });
         }
+
+        [TestMethod]
+        public void ShouldReadOriginPropertyWhenProvided()
+        {
+            string jsonText = "{\"Money\":123}";
+            var newStudent = Json.DeSerialize<Student>(jsonText);
+            newStudent.Should().BeEquivalentTo(new Student { Money = 123 });
+        }
         public class Student
         {
             public string Name { get; set; }
@@ -33,5 +40,4 @@ namespace YS.Knife.Data.UnitTest
             public double Money { get; set; }
         }
     }
-
 }

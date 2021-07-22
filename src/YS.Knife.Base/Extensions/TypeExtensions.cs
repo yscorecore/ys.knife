@@ -52,7 +52,7 @@ namespace YS.Knife
             );
         }
 
-        public static bool IsEnumerable(this Type type) => GetEnumerableItemType(type) != null;
-        public static bool IsQueryable(this Type type) => GetQueryableItemType(type) != null;
+        public static bool IsGenericEnumerable(this Type type) => GetEnumerableItemType(type) != null;
+        public static bool IsGenericQueryable(this Type type) => GetQueryableItemType(type) != null;
     }
 }

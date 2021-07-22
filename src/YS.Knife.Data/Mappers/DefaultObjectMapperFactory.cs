@@ -70,8 +70,8 @@ namespace YS.Knife.Data.Mappers
                     return false;
                 }
 
-                return targetProperty.PropertyType.IsEnumerable() &&
-                      sourceProperty.PropertyType.IsEnumerable();
+                return targetProperty.PropertyType.IsGenericEnumerable() &&
+                      sourceProperty.PropertyType.IsGenericEnumerable();
             }
 
             private static bool CanAssignableFrom(Type targetType, Type sourceType)
@@ -114,7 +114,7 @@ namespace YS.Knife.Data.Mappers
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
 
-                var sourceIsQueryable = sourceProperty.PropertyType.IsQueryable();
+                var sourceIsQueryable = sourceProperty.PropertyType.IsGenericQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryableNewObject]
                     : AllAppendMethods[AppendEnumerableNewObject];
@@ -138,7 +138,7 @@ namespace YS.Knife.Data.Mappers
             private void AppendEnumerableAssign(PropertyInfo targetProperty,
                 PropertyInfo sourceProperty, Type targetItemType, Type sourceItemType)
             {
-                var sourceIsQueryable = sourceProperty.PropertyType.IsQueryable();
+                var sourceIsQueryable = sourceProperty.PropertyType.IsGenericQueryable();
                 var method = sourceIsQueryable
                     ? AllAppendMethods[AppendQueryablePropertyAssign]
                     : AllAppendMethods[AppendEnumerablePropertyAssign];

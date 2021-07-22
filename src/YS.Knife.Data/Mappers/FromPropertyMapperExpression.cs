@@ -16,8 +16,8 @@ namespace YS.Knife.Data.Mappers
         public override bool IsCollection
         {
             get => SourceValueType != typeof(string) && TargetValueType != typeof(string) &&
-                   SourceValueType.IsEnumerable() &&
-                   TargetValueType.IsEnumerable();
+                   SourceValueType.IsGenericEnumerable() &&
+                   TargetValueType.IsGenericEnumerable();
         }
 
         public override LambdaExpression GetBindExpression()

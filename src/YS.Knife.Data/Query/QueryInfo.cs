@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using YS.Knife.Data.Query;
 
@@ -15,15 +16,15 @@ namespace YS.Knife.Data
 
     public class PageQueryInfo : QueryInfo, ILimitInfo
     {
-        //[DataAnnotations.Range(0, 10)]
+        [Range(0, int.MaxValue)]
         public int Offset { get; set; }
-
+        [Range(1, 10000)]
         public int Limit { get; set; }
     }
     public class SliceQueryInfo<T> : QueryInfo, ISliceInfo
     {
         public string Start { get; set; }
-
+        [Range(1, 10000)]
         public int Limit { get; set; }
     }
 }

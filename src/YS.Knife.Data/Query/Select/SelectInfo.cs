@@ -18,7 +18,7 @@ namespace YS.Knife.Data.Query
         public override string ToString()
         {
             if (Items == null) return string.Empty;
-            return string.Join(',', Items.Where(p => p != null).Select(p => p.ToString()));
+            return string.Join(',', Items.TrimNotNull().Select(p => p.ToString()));
         }
 
         public static SelectInfo Parse(string text)

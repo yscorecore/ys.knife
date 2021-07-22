@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+
+    <RootNamespace>YS.Knife</RootNamespace>
+
+    <ApplicationIcon />
+
+    <OutputType>Library</OutputType>
+
+    <StartupObject />
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Base\YS.Knife.Base.csproj" />
+  </ItemGroup>
+
+</Project>
