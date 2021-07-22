@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace YS.Knife.Data
+namespace YS.Knife
 {
     public static class Json
     {
