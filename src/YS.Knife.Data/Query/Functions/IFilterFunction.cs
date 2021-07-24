@@ -11,11 +11,16 @@ namespace YS.Knife.Data.Query.Functions
         string Name { get; }
         FunctionResult Execute(object[] args, ExecuteContext context);
         object[] ParseArguments(ParseContext parseContext);
-        public static readonly Dictionary<string, IFilterFunction> AllFunctions =
-              AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IFilterFunction>().ToDictionary(type => type.Name,
-                  type => Activator.CreateInstance(type) as IFilterFunction,
-                  StringComparer.InvariantCultureIgnoreCase);
+        public static readonly Dictionary<string, IFilterFunction> AllFunctions = new Dictionary<string, IFilterFunction>(StringComparer.InvariantCultureIgnoreCase);
 
+        static IFilterFunction()
+        {
+            foreach (var func in AppDomain.CurrentDomain.FindInstanceTypesByBaseType<IFilterFunction>())
+            {
+                var instance = Activator.CreateInstance(func) as IFilterFunction;
+                AllFunctions[instance.Name] = instance;
+            }
+        }
         internal static FunctionResult ExecuteFunction(string functionName, object[] args, ExecuteContext context)
         {
             if (AllFunctions.TryGetValue(functionName, out IFilterFunction func))
