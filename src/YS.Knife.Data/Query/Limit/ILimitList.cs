@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     public interface ILimitList
     {

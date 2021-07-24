@@ -32,13 +32,12 @@ namespace YS.Knife.Entity.Model
         /// <summary>
         /// 表示更新时间
         /// </summary>
-        DateTime? UpdateTime { get; set; }
+        DateTimeOffset? UpdateTime { get; set; }
         /// <summary>
         /// 表示更新用户
         /// </summary>
         string UpdateUser { get; set; }
     }
-
     /// <summary>
     /// 表示审核跟踪
     /// </summary>
@@ -124,15 +123,16 @@ namespace YS.Knife.Entity.Model
     {
         T TenantId { get; set; }
     }
-
-
-
-
-
-
-
-
-
-
-
+    public class BaseEntity<TKey> : IId<TKey>, ICreateTrack, IUpdateTrack
+    {
+        public TKey Id { get; set; }
+        public string CreateUser { get; set; }
+        public DateTimeOffset CreateTime { get; set; }
+        public DateTimeOffset? UpdateTime { get; set; }
+        public string UpdateUser { get; set; }
+    }
+    public class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantData<TKey>
+    {
+        public TKey TenantId { get; set; }
+    }
 }

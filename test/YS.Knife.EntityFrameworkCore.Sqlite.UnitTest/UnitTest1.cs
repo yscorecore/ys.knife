@@ -1,8 +1,8 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
     [TestClass]

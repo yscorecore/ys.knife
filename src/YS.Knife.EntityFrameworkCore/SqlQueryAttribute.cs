@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Microsoft.EntityFrameworkCore;
-using YS.Knife.Aop;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
+using YS.Knife.Aop;
 
 namespace YS.Knife.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
     public class SqlQueryAttribute : BaseAopAttribute
     {
-        private static MethodInfo SetMethod = typeof(DbContext).GetMethod(nameof(DbContext.Set),Type.EmptyTypes);
+        private static MethodInfo SetMethod = typeof(DbContext).GetMethod(nameof(DbContext.Set), Type.EmptyTypes);
 
         private static MethodInfo FromRowSqlMethod = typeof(RelationalQueryableExtensions).GetMethod(nameof(RelationalQueryableExtensions.FromSqlRaw));
         public SqlQueryAttribute(string sql)
@@ -50,9 +50,9 @@ namespace YS.Knife.EntityFrameworkCore
         private object GetDbSet(DbContext dbContext, Type entityType)
         {
             var method = SetMethod.MakeGenericMethod(entityType);
-            return method.Invoke(dbContext,Array.Empty<object>());
+            return method.Invoke(dbContext, Array.Empty<object>());
         }
-        private object ExecuteSql(Type entityType,object dbSet, object[] args)
+        private object ExecuteSql(Type entityType, object dbSet, object[] args)
         {
             var method = FromRowSqlMethod.MakeGenericMethod(entityType);
             return method.Invoke(null, new object[] { dbSet, this.Sql, args });

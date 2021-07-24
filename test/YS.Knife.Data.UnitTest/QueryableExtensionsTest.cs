@@ -54,12 +54,12 @@ namespace YS.Knife.Data.UnitTest
 
         // private IQueryable<User2> UserMapper(IQueryable<User> users)
         // {
-        //     return users.Select(p => new User2()
+        //     return users.DoSelect(p => new User2()
         //     {
         //          Id = p.Id,
         //          Name = p.Name,
         //          Age = p.Age,
-        //          FirstAddressCity = p.Addresses.Select(c=>c.City).FirstOrDefault()
+        //          FirstAddressCity = p.Addresses.DoSelect(c=>c.City).FirstOrDefault()
         //     });
         // }
 

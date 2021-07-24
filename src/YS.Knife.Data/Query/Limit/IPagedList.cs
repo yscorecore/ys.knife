@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-
-namespace YS.Knife.Data
+﻿namespace YS.Knife.Data.Query
 {
-    public interface IPagedData:ILimitList
+    public interface IPagedList : ILimitList
     {
         int TotalCount { get; }
         bool CanToPage => this.Limit > 0 && this.Offset % this.Limit == 0;
@@ -10,7 +8,7 @@ namespace YS.Knife.Data
         int PageIndex => this.Limit > 0 ? this.Offset / this.Limit + 1 : 1;
     }
 
-    public interface IPagedData<TData> : IPagedData, ILimitList<TData>
+    public interface IPagedList<TData> : IPagedList, ILimitList<TData>
     {
 
     }

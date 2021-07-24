@@ -25,7 +25,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
 
         public List<Blog> AllBlogs()
         {
-            
+
             return blogStore.Query(null).ToList();
         }
 

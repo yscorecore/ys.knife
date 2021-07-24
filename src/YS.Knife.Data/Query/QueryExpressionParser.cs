@@ -37,6 +37,8 @@ namespace YS.Knife.Data.Query
         }
         public List<ValuePath> ParsePropertyPaths(string text)
         {
+
+            if (string.IsNullOrWhiteSpace(text)) return null;
             var context = new ParseContext(text, this.CurrentCulture);
             context.SkipWhiteSpace();
             var paths = context.ParsePropertyPaths();

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
@@ -65,7 +66,7 @@ namespace YS.Knife.Data.Filter
         {
             //var filter = FilterInfo.CreateItem(fieldName, filterType, value);
             //var ids = CreateTestUsers().WhereCondition(filter)
-            //        .Select(p => p.Id);
+            //        .DoSelect(p => p.Id);
             //Assert.AreEqual(expectedIds, string.Join(",", ids));
         }
         [DataTestMethod]
@@ -83,7 +84,7 @@ namespace YS.Knife.Data.Filter
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.Exists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
-            //var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
             //Assert.AreEqual("001,002,004", string.Join(",", ids));
         }
 
@@ -92,7 +93,7 @@ namespace YS.Knife.Data.Filter
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.NotExists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
-            //var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
             //Assert.AreEqual("003,005", string.Join(",", ids));
         }
 
@@ -101,7 +102,7 @@ namespace YS.Knife.Data.Filter
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.All, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
-            //var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
             //Assert.AreEqual("001,004", string.Join(",", ids));
         }
         [TestMethod]
@@ -109,7 +110,7 @@ namespace YS.Knife.Data.Filter
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.NotAll, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
-            //var ids = datas.WhereCondition(filter).Select(p => p.Id);
+            //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
             //Assert.AreEqual("002,003,005", string.Join(",", ids));
         }
         public IQueryable<User> CreateUsersWithAddress()

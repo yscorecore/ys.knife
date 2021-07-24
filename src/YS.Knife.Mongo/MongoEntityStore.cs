@@ -73,8 +73,6 @@ namespace YS.Knife.Mongo
         {
             var querable = Context.Session != null ? Collection.AsQueryable(Context.Session) : Collection.AsQueryable();
             return conditions != null ? querable.Where(conditions) : querable;
-
-
         }
 
         public void Update(TEntity entity)

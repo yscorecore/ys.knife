@@ -6,9 +6,9 @@ namespace YS.Knife.EntityFrameworkCore
     {
         DbContext DbContext { get; }
     }
-    internal interface IDbContextConsumer<T>: IDbContextConsumer
+    internal interface IDbContextConsumer<T> : IDbContextConsumer
         where T : DbContext
     {
-       
+
     }
 }

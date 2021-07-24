@@ -121,7 +121,7 @@ namespace YS.Knife.Data.Select
         //{
         //    var jsonText = "{\"select\":\"a,b,c\"}";
         //    var selectWrap = Json.DeSerialize<SelectWrap>(jsonText);
-        //    selectWrap.Select.Should().BeEquivalentTo(SelectInfo.Parse("a,b,c"));
+        //    selectWrap.DoSelect.Should().BeEquivalentTo(SelectInfo.Parse("a,b,c"));
         //}
         class SelectWrap
         {

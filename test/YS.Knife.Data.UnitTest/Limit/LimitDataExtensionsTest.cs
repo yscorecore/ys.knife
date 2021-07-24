@@ -9,7 +9,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListSourceWhenAsListSource()
         {
             var listSource = Enumerable.Range(1, 100).AsQueryable()
-                .ToPagedData(50, 15).ToListSource();
+                .ToPagedList(50, 15).ToListSource();
             Assert.AreEqual(true, listSource.ContainsListCollection);
             Assert.AreEqual(15, listSource.GetList().Count);
         }
@@ -17,7 +17,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitData()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(50, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(50, 15);
             Assert.AreEqual(true, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);
@@ -31,7 +31,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenAtStart()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(0, 10);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(0, 10);
             Assert.AreEqual(true, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(10, data.Limit);
@@ -44,7 +44,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenAtEnd()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(90, 10);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(90, 10);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(10, data.Limit);
@@ -58,7 +58,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenOverlopRange()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(95, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(95, 15);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);
@@ -71,7 +71,7 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenOutRange()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(120, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(120, 15);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);

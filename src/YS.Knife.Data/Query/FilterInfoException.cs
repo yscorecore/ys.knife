@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     public class FilterInfoException : ApplicationException
     {

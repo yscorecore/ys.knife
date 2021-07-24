@@ -11,8 +11,6 @@ namespace YS.Knife.Data.Mappers
         where TSource : class
         where TTarget : class, new()
     {
-
-
         public static ObjectMapper<TSource, TTarget> Default { get; } =
             DefaultObjectMapperFactory.CreateDefault<TSource, TTarget>();
 

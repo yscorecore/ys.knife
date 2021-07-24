@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Filter

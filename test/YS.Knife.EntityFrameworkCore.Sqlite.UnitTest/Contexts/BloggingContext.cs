@@ -12,12 +12,12 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
         }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }
-       // public DbSet<PostCount> PostCounts { get; set; }
+        // public DbSet<PostCount> PostCounts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-          
+
         }
     }
     [Keyless]

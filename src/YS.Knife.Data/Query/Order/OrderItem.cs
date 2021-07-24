@@ -20,7 +20,7 @@ namespace YS.Knife.Data.Query
             }
             return string.Empty;
         }
-        public static OrderItem FromValuePaths(List<ValuePath> paths)
+        internal static OrderItem FromValuePaths(List<ValuePath> paths)
         {
             var last = paths?.LastOrDefault();
 

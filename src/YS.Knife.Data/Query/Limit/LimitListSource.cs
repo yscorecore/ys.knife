@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.ComponentModel;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     public class LimitListSource<T> : IListSource
     {

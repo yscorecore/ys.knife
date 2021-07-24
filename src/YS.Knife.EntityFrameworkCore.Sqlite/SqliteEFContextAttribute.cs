@@ -20,6 +20,6 @@ namespace Microsoft.EntityFrameworkCore
                 op.UseQuerySplittingBehavior(QuerySplittingBehavior);
             });
         }
-      
+
     }
 }

@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     [Serializable]
-    public class PagedData<TData> : IPagedData<TData>
+    public class PagedList<TData> : IPagedList<TData>
     {
-        public PagedData()
+        public PagedList()
         {
         }
-        public PagedData(IEnumerable<TData> limitListData, int offset, int limit, int totalCount)
+        public PagedList(IEnumerable<TData> limitListData, int offset, int limit, int totalCount)
         {
             this.Limit = limit;
             this.Offset = offset;

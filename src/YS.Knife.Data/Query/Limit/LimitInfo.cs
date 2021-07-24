@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     [Serializable]
     [TypeConverter(typeof(LimitIntoTypeConverter))]

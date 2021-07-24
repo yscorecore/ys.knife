@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
     [Serializable]
     public class LimitList<TData> : ILimitList<TData>

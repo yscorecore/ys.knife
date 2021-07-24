@@ -669,6 +669,7 @@ namespace YS.Knife.Data.Query
             (bool, int) TryParseUnsignInt32(ParseContext context)
             {
                 int startIndex = context.Index;
+                context.SkipWhiteSpace();
                 while (context.NotEnd() && char.IsDigit(context.Current()))
                 {
                     context.Index++;
