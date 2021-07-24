@@ -4,10 +4,10 @@ using System.Text;
 
 namespace YS.Knife.Data.Query
 {
-    public interface ISliceInfo
+    public interface ISliceInfo<TCursor>
     {
-        string Start { get; }
+        TCursor Start { get; }
 
-        int Limit { get; }
+        int Length { get; }
     }
 }

@@ -9,7 +9,7 @@ namespace YS.Knife.Data.UnitTest
         public void ShouldGetListSourceWhenAsListSource()
         {
             var listSource = Enumerable.Range(1, 100).AsQueryable()
-                .ToLimitData(50, 15).ToListSource();
+                .ToPagedData(50, 15).ToListSource();
             Assert.AreEqual(true, listSource.ContainsListCollection);
             Assert.AreEqual(15, listSource.GetList().Count);
         }
@@ -17,66 +17,66 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldGetExpectedLimitData()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(50, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(50, 15);
             Assert.AreEqual(true, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);
             Assert.AreEqual(50, data.Offset);
-            Assert.AreEqual(15, data.ListData.Count);
-            Assert.AreEqual(51, data.ListData.First());
-            Assert.AreEqual(65, data.ListData.Last());
+            Assert.AreEqual(15, data.Items.Count);
+            Assert.AreEqual(51, data.Items.First());
+            Assert.AreEqual(65, data.Items.Last());
 
         }
 
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenAtStart()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(0, 10);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(0, 10);
             Assert.AreEqual(true, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(10, data.Limit);
             Assert.AreEqual(0, data.Offset);
-            Assert.AreEqual(10, data.ListData.Count);
-            Assert.AreEqual(1, data.ListData.First());
-            Assert.AreEqual(10, data.ListData.Last());
+            Assert.AreEqual(10, data.Items.Count);
+            Assert.AreEqual(1, data.Items.First());
+            Assert.AreEqual(10, data.Items.Last());
 
         }
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenAtEnd()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(90, 10);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(90, 10);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(10, data.Limit);
             Assert.AreEqual(90, data.Offset);
-            Assert.AreEqual(10, data.ListData.Count);
-            Assert.AreEqual(91, data.ListData.First());
-            Assert.AreEqual(100, data.ListData.Last());
+            Assert.AreEqual(10, data.Items.Count);
+            Assert.AreEqual(91, data.Items.First());
+            Assert.AreEqual(100, data.Items.Last());
 
         }
 
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenOverlopRange()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(95, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(95, 15);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);
             Assert.AreEqual(95, data.Offset);
-            Assert.AreEqual(5, data.ListData.Count);
-            Assert.AreEqual(96, data.ListData.First());
-            Assert.AreEqual(100, data.ListData.Last());
+            Assert.AreEqual(5, data.Items.Count);
+            Assert.AreEqual(96, data.Items.First());
+            Assert.AreEqual(100, data.Items.Last());
         }
 
         [TestMethod]
         public void ShouldGetExpectedLimitDataWhenOutRange()
         {
-            var data = Enumerable.Range(1, 100).AsQueryable().ToLimitData(120, 15);
+            var data = Enumerable.Range(1, 100).AsQueryable().ToPagedData(120, 15);
             Assert.AreEqual(false, data.HasNext);
             Assert.AreEqual(100, data.TotalCount);
             Assert.AreEqual(15, data.Limit);
             Assert.AreEqual(120, data.Offset);
-            Assert.AreEqual(0, data.ListData.Count);
+            Assert.AreEqual(0, data.Items.Count);
         }
 
     }

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace YS.Knife.Data.Query
+namespace YS.Knife.Data
 {
     public interface ILimitInfo
     {

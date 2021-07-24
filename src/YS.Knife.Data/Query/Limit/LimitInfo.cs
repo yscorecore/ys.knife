@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Query
+namespace YS.Knife.Data
 {
     [Serializable]
     [TypeConverter(typeof(LimitIntoTypeConverter))]
@@ -15,6 +15,8 @@ namespace YS.Knife.Data.Query
         }
         public LimitInfo(int offset, int limit)
         {
+            if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset));
+            if (limit < 0) throw new ArgumentOutOfRangeException(nameof(limit));
             this.Offset = offset;
             this.Limit = limit;
         }

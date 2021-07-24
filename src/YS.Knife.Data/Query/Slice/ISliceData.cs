@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace YS.Knife.Data.Query
 {
@@ -8,7 +6,7 @@ namespace YS.Knife.Data.Query
     {
         bool HasNext { get; }
     }
-    public interface ISliceData<TItem, TKey> : ISliceData
+    public interface ISliceData<TItem, TCursor> : ISliceData
     {
         List<TItem> Items { get; }
 

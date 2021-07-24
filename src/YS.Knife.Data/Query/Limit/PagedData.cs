@@ -5,17 +5,17 @@ using System.Linq;
 namespace YS.Knife.Data
 {
     [Serializable]
-    public class LimitData<TData> : ILimitData<TData>
+    public class PagedData<TData> : IPagedData<TData>
     {
-        public LimitData()
+        public PagedData()
         {
         }
-        public LimitData(IEnumerable<TData> limitListData, int offset, int limit, int totalCount)
+        public PagedData(IEnumerable<TData> limitListData, int offset, int limit, int totalCount)
         {
             this.Limit = limit;
             this.Offset = offset;
             this.TotalCount = totalCount;
-            this.ListData = (limitListData ?? Enumerable.Empty<TData>()).ToList();
+            this.Items = (limitListData ?? Enumerable.Empty<TData>()).ToList();
         }
 
 
@@ -30,7 +30,7 @@ namespace YS.Knife.Data
         public int Limit { get; set; }
 
 
-        public List<TData> ListData { get; set; }
+        public List<TData> Items { get; set; }
 
         public int Offset { get; set; }
 

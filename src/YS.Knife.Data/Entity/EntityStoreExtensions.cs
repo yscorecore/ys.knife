@@ -339,7 +339,7 @@ namespace YS.Knife.Entity
         //#endregion
 
         //#region ListLimit
-        //public static LimitData<T> ListLimit<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, int offset, int limit)
+        //public static PagedData<T> ListLimit<T>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, int offset, int limit)
         // where T : class
         //{
         //    if (orderItems == null) throw new ArgumentNullException(nameof(orderItems));
@@ -348,10 +348,10 @@ namespace YS.Knife.Entity
         //    if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)}必须为正数或零");
         //    var query = store.Query(conditions);
         //    var sortedQuery = query.Order(orderItems);
-        //    return new LimitData<T>(sortedQuery, offset, limit);
+        //    return new PagedData<T>(sortedQuery, offset, limit);
         //}
 
-        //public static LimitData<TR> ListLimit<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<TR>> selector, int offset, int limit)
+        //public static PagedData<TR> ListLimit<T, TR>(this IEntityStore<T> store, Expression<Func<T, bool>> conditions, IEnumerable<OrderItem> orderItems, Func<IQueryable<T>, IQueryable<TR>> selector, int offset, int limit)
         //      where T : class
         //{
         //    if (selector == null) throw new ArgumentNullException(nameof(selector));
@@ -361,7 +361,7 @@ namespace YS.Knife.Entity
         //    if (offset < 0) throw new ArgumentOutOfRangeException(nameof(offset), $"{nameof(offset)}必须为正数或零");
         //    var query = store.Query(conditions);
         //    var sortedQuery = selector(query).Order(orderItems);
-        //    return new LimitData<TR>(sortedQuery, offset, limit);
+        //    return new PagedData<TR>(sortedQuery, offset, limit);
         //}
         //#endregion
         #region DeleteByCondition

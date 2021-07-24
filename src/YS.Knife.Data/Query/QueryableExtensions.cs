@@ -10,25 +10,7 @@ namespace System.Linq
 {
     public static class QueryableExtensions
     {
-        #region Limit
-        public static IListSource ToListSource<T>(this ILimitData<T> limitData)
-        {
-            return new LimitDataListSource<T>(limitData);
-        }
-        public static LimitData<T> ToLimitData<T>(this IQueryable<T> source, int offset, int limit)
-        {
-            return source.ToLimitData(new LimitInfo(offset, limit));
-        }
-        public static LimitData<T> ToLimitData<T>(this IQueryable<T> source, LimitInfo limitInfo)
-        {
-            _ = limitInfo ?? throw new ArgumentNullException(nameof(limitInfo));
-            var limit = limitInfo.Limit;
-            var offset = limitInfo.Offset;
-            var totalCount = source.Count();
-            var limitListData = source.Skip(offset).Take(limit).ToList();
-            return new LimitData<T>(limitListData, offset, limit, totalCount);
-        }
-        #endregion
+       
 
         #region Where
         public static IQueryable<TSource> Where<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo targetFilter, ObjectMapper<TSource, TTarget> mapper)
