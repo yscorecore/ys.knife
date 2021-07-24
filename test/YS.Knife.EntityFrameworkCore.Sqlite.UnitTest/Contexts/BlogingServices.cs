@@ -8,9 +8,13 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
     public class BlogingServices : IBlogingServices
     {
         readonly IEntityStore<Blog> blogStore;
-        public BlogingServices(IEntityStore<Blog> store)
+        readonly IBlogSql blogSql;
+
+
+        public BlogingServices(IEntityStore<Blog> store, IBlogSql blogSql)
         {
             this.blogStore = store;
+            this.blogSql = blogSql;
         }
         [Transaction]
         public void AddTwoBlog()
@@ -21,7 +25,13 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
 
         public List<Blog> AllBlogs()
         {
+            
             return blogStore.Query(null).ToList();
+        }
+
+        public List<Blog> TopBlogs(int limit)
+        {
+            return blogSql.QueryBySql(limit).ToList();
         }
     }
 

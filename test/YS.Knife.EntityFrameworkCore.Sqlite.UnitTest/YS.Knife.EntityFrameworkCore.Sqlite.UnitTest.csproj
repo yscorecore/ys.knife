@@ -18,11 +18,14 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\YS.Knife.Data\YS.Knife.Data.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.Data\YS.Knife.Data.csproj">
+      <TreatAsUsed>true</TreatAsUsed>
+    </ProjectReference>
     <ProjectReference Include="..\..\src\YS.Knife.EntityFrameworkCore.Sqlite\YS.Knife.EntityframeworkCore.Sqlite.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
   </ItemGroup>
@@ -31,6 +34,21 @@
     <Resource Include="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Update="Bogus">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Update="FluentAssertions">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Update="Moq">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
+    <PackageReference Update="MSTest.TestAdapter">
+      <TreatAsUsed>true</TreatAsUsed>
+    </PackageReference>
   </ItemGroup>
 
  

@@ -6,5 +6,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
     {
         void AddTwoBlog();
         List<Blog> AllBlogs();
+
+        List<Blog> TopBlogs(int limit);
     }
 }

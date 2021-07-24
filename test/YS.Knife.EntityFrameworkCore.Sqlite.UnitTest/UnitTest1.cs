@@ -1,9 +1,7 @@
-﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using YS.Knife.Data.Mappers;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
-
+using Microsoft.EntityFrameworkCore;
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
     [TestClass]
@@ -33,6 +31,16 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
             var all = service.AllBlogs();
             Assert.AreEqual(2, all.Count);
         }
-
+        [TestMethod]
+        public void ShouldListTopBlogsBySql()
+        {
+            var context = this.GetService<BloggingContext>();
+            context.Database.EnsureDeleted();
+            context.Database.EnsureCreated();
+            var service = this.GetService<IBlogingServices>();
+            service.AddTwoBlog();
+            var all = service.TopBlogs(1);
+            Assert.AreEqual(1, all.Count);
+        }
     }
 }
