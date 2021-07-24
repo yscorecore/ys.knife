@@ -16,6 +16,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             builder.UseNpgsql(connectionString, (op) =>
             {
+                op.UseQuerySplittingBehavior(QuerySplittingBehavior);
                 op.EnableRetryOnFailure();
             });
         }

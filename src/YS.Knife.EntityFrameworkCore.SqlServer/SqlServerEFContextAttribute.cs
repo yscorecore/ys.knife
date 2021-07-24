@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -16,6 +17,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             builder.UseSqlServer(connectionString, (op) =>
             {
+                op.UseQuerySplittingBehavior(QuerySplittingBehavior);
                 op.EnableRetryOnFailure();
             });
         }

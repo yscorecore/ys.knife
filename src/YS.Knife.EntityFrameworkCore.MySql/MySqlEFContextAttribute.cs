@@ -15,6 +15,7 @@ namespace Microsoft.EntityFrameworkCore
         {
             builder.UseMySql(connectionString, (op) =>
             {
+                op.UseQuerySplittingBehavior(QuerySplittingBehavior);
                 op.EnableRetryOnFailure();
             });
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace Microsoft.EntityFrameworkCore
 {
@@ -16,8 +17,9 @@ namespace Microsoft.EntityFrameworkCore
         {
             builder.UseSqlite(connectionString, (op) =>
             {
-
+                op.UseQuerySplittingBehavior(QuerySplittingBehavior);
             });
         }
+      
     }
 }

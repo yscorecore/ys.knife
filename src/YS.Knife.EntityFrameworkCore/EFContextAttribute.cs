@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using YS.Knife;
 using YS.Knife.EntityFrameworkCore;
 
@@ -30,6 +31,10 @@ namespace Microsoft.EntityFrameworkCore
         public Type[] InterceptorTypes { get; }
 
         public bool RegisterEntityStore { get; set; } = true;
+
+        // template a single query, some bug issue in collection type
+        // https://github.com/dotnet/efcore/issues/22868
+        protected QuerySplittingBehavior QuerySplittingBehavior { get; set; } = QuerySplittingBehavior.SingleQuery;
 
 
         private void CheckInterceptorTypes(Type[] interceptorTypes)

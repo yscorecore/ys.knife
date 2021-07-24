@@ -2,6 +2,7 @@
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
     [TestClass]
@@ -42,5 +43,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
             var all = service.TopBlogs(1);
             Assert.AreEqual(1, all.Count);
         }
+
+
     }
 }
