@@ -35,19 +35,19 @@ namespace YS.Knife.Data.Query
             }
             return orderInfo;
         }
-        public List<ValuePath> ParsePropertyPaths(string text)
+        public ValueInfo ParseValue(string text)
         {
-
             if (string.IsNullOrWhiteSpace(text)) return null;
             var context = new ParseContext(text, this.CurrentCulture);
             context.SkipWhiteSpace();
-            var paths = context.ParsePropertyPaths();
+            var value = context.ParseValueInfo();
             if (context.NotEnd())
             {
                 throw ParseErrors.InvalidText(context);
             }
-            return paths;
+            return value;
         }
+     
         public SelectInfo ParseSelectInfo(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return null;

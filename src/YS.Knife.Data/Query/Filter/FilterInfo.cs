@@ -128,15 +128,12 @@ namespace YS.Knife.Data
         }
         public static FilterInfo CreateItem(string fieldPaths, Operator filterType, object value)
         {
-            var parser = new QueryExpressionParser(CultureInfo.CurrentCulture);
-
             return new FilterInfo()
             {
                 OpType = CombinSymbol.SingleItem,
                 Operator = filterType,
-                Left = new ValueInfo { IsConstant = false, NavigatePaths = parser.ParsePropertyPaths(fieldPaths) },
+                Left = ValueInfo.Parse(fieldPaths),
                 Right = new ValueInfo { IsConstant = true, ConstantValue = value }
-
             };
         }
 
@@ -205,21 +202,13 @@ namespace YS.Knife.Data
             }
         }
 
-        public static ValueInfo FromProperty(string propertyName)
+        public static ValueInfo Parse(string valueExpression) => Parse(valueExpression, CultureInfo.CurrentCulture);
+
+        public static ValueInfo Parse(string valueExpression, CultureInfo cultureInfo)
         {
-            return new ValueInfo
-            {
-                IsConstant = false,
-                NavigatePaths = new List<ValuePath>
-                {
-                    new ValuePath
-                    {
-                        IsFunction=false,
-                        Name= propertyName
-                    }
-                }
-            };
+            return new QueryExpressionParser(cultureInfo).ParseValue(valueExpression);
         }
+      
         public static ValueInfo FromConstantValue(object value)
         {
             return new ValueInfo

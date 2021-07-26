@@ -6,6 +6,7 @@ using System.Text;
 
 namespace YS.Knife.Data.Filter
 {
+    [Obsolete]
     public class FilterValueDesc
     {
         public object ConstValue { get; set; }

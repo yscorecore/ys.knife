@@ -21,7 +21,7 @@ namespace YS.Knife.Data.Query.Expressions
             });
         }
 
-        public static IMemberVisitor GetMapperProvider(IObjectMapper objectMapper)
+        public static IMemberVisitor GetMapperVisitor(IObjectMapper objectMapper)
         {
             return new ObjectMapperMemberVisitor(objectMapper);
         }
