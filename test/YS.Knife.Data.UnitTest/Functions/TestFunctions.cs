@@ -7,8 +7,8 @@ using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Query.Functions
 {
-   
-    public  class TestFunctions
+
+    public class TestFunctions
     {
         class Func : ValueInfoFunction
         {
