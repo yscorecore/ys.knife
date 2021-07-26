@@ -159,7 +159,7 @@ namespace YS.Knife.Data.Query.Expressions
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             Action action = () => constLambda.GetLambda(targetType);
-            action.Should().Throw<FieldInfo2ExpressionException>()
+            action.Should().Throw<QueryExpressionException>()
                 .WithMessage($"convert value * to target type '{targetType.FullName}' error.");
         }
 

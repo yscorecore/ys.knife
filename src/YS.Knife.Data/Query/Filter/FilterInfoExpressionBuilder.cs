@@ -23,7 +23,7 @@ namespace YS.Knife.Data.Filter
            where TTarget : class, new()
         {
             _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            var memberExpressionProvider = IMemberVisitor.GetMapperProvider(mapper);
+            var memberExpressionProvider = IMemberVisitor.GetMapperVisitor(mapper);
             return CreateFilterLambdaExpression<TSource>(targetFilter, memberExpressionProvider);
         }
 
