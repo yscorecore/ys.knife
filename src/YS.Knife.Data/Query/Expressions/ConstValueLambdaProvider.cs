@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using YS.Knife.Data.Filter;
@@ -77,6 +77,18 @@ namespace YS.Knife.Data.Query.Expressions
                 // support unix time stamp
                 long longValue = (long)ChangeType(value, typeof(long));
                 var dateTimeOffset = DateTimeOffset.FromUnixTimeMilliseconds(longValue);
+                if (originType == typeof(DateTimeOffset))
+                {
+                    return dateTimeOffset;
+                }
+                else
+                {
+                    return dateTimeOffset.DateTime;
+                }
+            }
+            if (value is string str)
+            {
+                var dateTimeOffset = DateTimeOffset.Parse(str);
                 if (originType == typeof(DateTimeOffset))
                 {
                     return dateTimeOffset;
