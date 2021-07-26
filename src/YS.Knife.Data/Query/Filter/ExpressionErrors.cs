@@ -17,7 +17,7 @@ namespace YS.Knife.Data.Filter
         }
         public static FieldInfo2ExpressionException ConvertValueError(object value, Type targetType, Exception exception = null)
         {
-            return new FieldInfo2ExpressionException($"convert value '{value}' to target type '{targetType.Name}' error.", exception);
+            return new FieldInfo2ExpressionException($"convert value '{value}' to target type '{targetType.FullName}' error.", exception);
         }
 
         public static FieldInfo2ExpressionException CompareBothNullError()

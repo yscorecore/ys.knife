@@ -1,12 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
+using YS.Knife.Data.Query.Expressions;
 using YS.Knife.Data.Query.Functions;
+
+namespace YS.Knife.Data.Query.Expressions
+{
+}
 
 namespace YS.Knife.Data.Filter
 {
@@ -20,31 +23,31 @@ namespace YS.Knife.Data.Filter
            where TTarget : class, new()
         {
             _ = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            var memberExpressionProvider = IMemberExpressionProvider.GetMapperProvider(mapper);
+            var memberExpressionProvider = IMemberVisitor.GetMapperProvider(mapper);
             return CreateFilterLambdaExpression<TSource>(targetFilter, memberExpressionProvider);
         }
 
         public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(
             FilterInfo filter)
         {
-            var memberExpressionProvider = IMemberExpressionProvider.GetObjectProvider(typeof(T));
+            var memberExpressionProvider = IMemberVisitor.GetObjectVisitor(typeof(T));
             return CreateFilterLambdaExpression<T>(filter, memberExpressionProvider);
 
         }
-        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        public Expression<Func<T, bool>> CreateFilterLambdaExpression<T>(FilterInfo filterInfo, IMemberVisitor memberVisitor)
         {
             var p = Expression.Parameter(typeof(T), "p");
-            var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
+            var expression = CreateFilterExpression(p, filterInfo, memberVisitor);
             return Expression.Lambda<Func<T, bool>>(expression, p);
         }
-        public LambdaExpression CreateFilterLambdaExpression(Type objectType, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        public LambdaExpression CreateFilterLambdaExpression(Type objectType, FilterInfo filterInfo, IMemberVisitor memberVisitor)
         {
             var p = Expression.Parameter(objectType, "p");
-            var expression = CreateFilterExpression(p, filterInfo, memberExpressionProvider);
+            var expression = CreateFilterExpression(p, filterInfo, memberVisitor);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(objectType, typeof(bool)), expression, p);
 
         }
-        internal Expression CreateFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        internal Expression CreateFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberVisitor memberVisitor)
         {
             if (filterInfo == null)
             {
@@ -52,41 +55,41 @@ namespace YS.Knife.Data.Filter
             }
             else
             {
-                return CreateCombinGroupsFilterExpression(p, filterInfo, memberExpressionProvider);
+                return CreateCombinGroupsFilterExpression(p, filterInfo, memberVisitor);
             }
         }
-        private Expression CreateCombinGroupsFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateCombinGroupsFilterExpression(ParameterExpression p, FilterInfo filterInfo, IMemberVisitor memberVisitor)
         {
             return filterInfo.OpType switch
             {
-                CombinSymbol.AndItems => CreateAndConditionFilterExpression(p, filterInfo, memberExpressionProvider),
-                CombinSymbol.OrItems => CreateOrConditionFilterExpression(p, filterInfo, memberExpressionProvider),
-                _ => CreateSingleItemFilterExpression(p, filterInfo, memberExpressionProvider)
+                CombinSymbol.AndItems => CreateAndConditionFilterExpression(p, filterInfo, memberVisitor),
+                CombinSymbol.OrItems => CreateOrConditionFilterExpression(p, filterInfo, memberVisitor),
+                _ => CreateSingleItemFilterExpression(p, filterInfo, memberVisitor)
             };
         }
-        private Expression CreateOrConditionFilterExpression(ParameterExpression p, FilterInfo orGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateOrConditionFilterExpression(ParameterExpression p, FilterInfo orGroupFilterInfo, IMemberVisitor memberVisitor)
         {
             Expression current = Expression.Constant(false);
             foreach (FilterInfo item in orGroupFilterInfo.Items.TrimNotNull())
             {
-                var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
+                var next = CreateCombinGroupsFilterExpression(p, item, memberVisitor);
                 current = Expression.OrElse(current, next);
             }
             return current;
         }
-        private Expression CreateAndConditionFilterExpression(ParameterExpression p, FilterInfo andGroupFilterInfo, IMemberExpressionProvider memberExpressionProvider)
+        private Expression CreateAndConditionFilterExpression(ParameterExpression p, FilterInfo andGroupFilterInfo, IMemberVisitor memberVisitor)
         {
 
             Expression current = Expression.Constant(true);
             foreach (FilterInfo item in andGroupFilterInfo.Items.TrimNotNull())
             {
-                var next = CreateCombinGroupsFilterExpression(p, item, memberExpressionProvider);
+                var next = CreateCombinGroupsFilterExpression(p, item, memberVisitor);
                 current = Expression.AndAlso(current, next);
             }
             return current;
         }
         private Expression CreateSingleItemFilterExpression(ParameterExpression p, FilterInfo singleItemFilter
-          , IMemberExpressionProvider memberExpressionProvider)
+          , IMemberVisitor memberVisitor)
         {
             /*** 
             a.b.c = null    >  a==null || a.b==null || a.b.c == null
@@ -125,12 +128,12 @@ namespace YS.Knife.Data.Filter
              * 
              * */
 
-            var left = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Left);
-            var right = CreateFilterValueDesc(p, memberExpressionProvider, singleItemFilter.Right);
+            var left = CreateFilterValueDesc(p, memberVisitor, singleItemFilter.Left);
+            var right = CreateFilterValueDesc(p, memberVisitor, singleItemFilter.Right);
             return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.Operator, right);
         }
 
-        public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberExpressionProvider memberProvider, ValueInfo valueInfo)
+        public FilterValueDesc CreateFilterValueDesc(Expression p, IMemberVisitor memberProvider, ValueInfo valueInfo)
         {
             if (valueInfo == null || valueInfo.IsConstant)
             {
@@ -151,7 +154,7 @@ namespace YS.Knife.Data.Filter
             FilterValueDesc CreatePathValueExpression(List<ValuePath> pathInfos)
             {
 
-                IMemberExpressionProvider currentMemberProvider = memberProvider;
+                IMemberVisitor currentMemberProvider = memberProvider;
                 Type currentExpressionType = currentMemberProvider.CurrentType;
                 Expression currentExpression = p;
                 foreach (var pathInfo in pathInfos)
@@ -161,7 +164,7 @@ namespace YS.Knife.Data.Filter
                         var functionResult = IFilterFunction.ExecuteFunction(pathInfo.Name, pathInfo.FunctionArgs, new ExecuteContext
                         {
                             CurrentExpression = currentExpression,
-                            MemberExpressionProvider = currentMemberProvider,
+                            MemberVisitor = currentMemberProvider,
                             CurrentType = currentExpressionType,
                         });
                         currentExpressionType = functionResult.LambdaValueType;
@@ -192,178 +195,6 @@ namespace YS.Knife.Data.Filter
             }
         }
 
-
-
-
-
-
-
-
-
-        public interface IFilterMemberInfo
-        {
-
-            public Type ExpressionValueType { get; }
-
-            public LambdaExpression SelectExpression { get; }
-
-            public IMemberExpressionProvider SubProvider { get; }
-
-
-        }
-        class FilterMemberInfo : IFilterMemberInfo
-        {
-            public Type ExpressionValueType { get; set; }
-
-            public LambdaExpression SelectExpression { get; set; }
-
-            public IMemberExpressionProvider SubProvider { get; set; }
-        }
-        public interface IMemberExpressionProvider
-        {
-            static ConcurrentDictionary<Type, IMemberExpressionProvider> ObjectMemberProviderCache =
-               new ConcurrentDictionary<Type, IMemberExpressionProvider>();
-            public Type CurrentType { get; }
-            public IFilterMemberInfo GetSubMemberInfo(string memberName);
-
-            public static IMemberExpressionProvider GetObjectProvider(Type type)
-            {
-                return ObjectMemberProviderCache.GetOrAdd(type, (ty) =>
-                {
-                    var objectProviderType = typeof(ObjectMemberProvider<>).MakeGenericType(ty);
-                    return Activator.CreateInstance(objectProviderType) as IMemberExpressionProvider;
-                });
-            }
-
-            public static IMemberExpressionProvider GetMapperProvider(IObjectMapper objectMapper)
-            {
-                return new ObjectMapperProvider(objectMapper);
-            }
-        }
-
-        class ObjectMemberProvider<T> : IMemberExpressionProvider
-        {
-            static Dictionary<string, IFilterMemberInfo> AllMembers = new Dictionary<string, IFilterMemberInfo>(StringComparer.InvariantCultureIgnoreCase);
-
-            static ObjectMemberProvider()
-            {
-                // if some member name equal when ignore case, next will over the pre one
-                foreach (var field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public))
-                {
-
-                    AllMembers[field.Name] = new ObjectFieldFilterMemberInfo(typeof(T), field);
-                }
-                foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
-                {
-                    if (property.GetIndexParameters().Length == 0)
-                    {
-                        AllMembers[property.Name] = new ObjectPropertyFilterMemberInfo(typeof(T), property);
-                    }
-
-                }
-            }
-
-            public Type CurrentType => typeof(T);
-
-            public IFilterMemberInfo GetSubMemberInfo(string memberName)
-            {
-                if (AllMembers.TryGetValue(memberName, out var filterMember))
-                {
-                    return filterMember;
-                }
-                return default;
-            }
-
-            class ObjectPropertyFilterMemberInfo : IFilterMemberInfo
-            {
-                private readonly PropertyInfo propertyInfo;
-
-                public ObjectPropertyFilterMemberInfo(Type hostType, PropertyInfo propertyInfo)
-                {
-                    this.propertyInfo = propertyInfo;
-                    var param0 = Expression.Parameter(hostType);
-                    this.SelectExpression = Expression.Lambda(Expression.Property(param0, propertyInfo), param0);
-                }
-                public Type ExpressionValueType => propertyInfo.PropertyType;
-
-                public LambdaExpression SelectExpression { get; }
-
-                public IMemberExpressionProvider SubProvider { get => IMemberExpressionProvider.GetObjectProvider(ExpressionValueType); }
-            }
-            class ObjectFieldFilterMemberInfo : IFilterMemberInfo
-            {
-                private readonly FieldInfo fieldInfo;
-
-                public ObjectFieldFilterMemberInfo(Type hostType, FieldInfo fieldInfo)
-                {
-                    this.fieldInfo = fieldInfo;
-                    var param0 = Expression.Parameter(hostType);
-                    this.SelectExpression = Expression.Lambda(Expression.Field(param0, fieldInfo), param0);
-                }
-                public Type ExpressionValueType => fieldInfo.FieldType;
-
-                public LambdaExpression SelectExpression { get; }
-
-                public IMemberExpressionProvider SubProvider { get => IMemberExpressionProvider.GetObjectProvider(ExpressionValueType); }
-            }
-        }
-
-        class ObjectMapperProvider : IMemberExpressionProvider
-        {
-            private readonly IObjectMapper objectMapper;
-
-            public ObjectMapperProvider(IObjectMapper objectMapper)
-            {
-                this.objectMapper = objectMapper;
-            }
-            public Type CurrentType => objectMapper.SourceType;
-
-            public IFilterMemberInfo GetSubMemberInfo(string memberName)
-            {
-                var fieldExpression = objectMapper.GetFieldExpression(memberName, StringComparison.InvariantCultureIgnoreCase);
-                if (fieldExpression != null)
-                {
-                    return new MapperMemberInfo(fieldExpression);
-                }
-                return default;
-
-            }
-            class MapperMemberInfo : IFilterMemberInfo
-            {
-                private readonly IMapperExpression mapperExpression;
-
-                public MapperMemberInfo(IMapperExpression mapperExpression)
-                {
-                    this.mapperExpression = mapperExpression;
-                }
-
-                public Type ExpressionValueType => mapperExpression.SourceValueType;
-
-                public LambdaExpression SelectExpression => mapperExpression.SourceExpression;
-
-                public IMemberExpressionProvider SubProvider
-                {
-                    get
-                    {
-                        if (mapperExpression.SubMapper != null)
-                        {
-                            return new ObjectMapperProvider(mapperExpression.SubMapper);
-                        }
-                        else
-                        {
-                            return IMemberExpressionProvider.GetObjectProvider(ExpressionValueType);
-                        }
-
-                    }
-                }
-            }
-        }
-        enum FieldRequiredKind
-        {
-            None,
-            Must,
-            Optional,
-        }
 
 
         class Errors

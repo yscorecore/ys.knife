@@ -32,7 +32,7 @@ namespace YS.Knife.Data.Mappers
         LambdaExpression IObjectMapper.BuildExpression() => this.BuildExpression();
         Delegate IObjectMapper.BuildConvertFunc() => this.BuildConvertFunc();
 
-        IMapperExpression IObjectMapper.GetFieldExpression(string targetField, StringComparison stringComparison = StringComparison.InvariantCultureIgnoreCase)
+        IMapperExpression IObjectMapper.GetFieldExpression(string targetField, StringComparison stringComparison)
         {
             foreach (var kv in this._propMappers)
             {
