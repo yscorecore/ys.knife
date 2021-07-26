@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter
+namespace YS.Knife.Data.Query
 {
     static class ExpressionErrors
     {

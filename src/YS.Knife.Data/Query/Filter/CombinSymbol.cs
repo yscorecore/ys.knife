@@ -1,4 +1,4 @@
-﻿namespace YS.Knife.Data
+﻿namespace YS.Knife.Data.Query
 {
     public enum CombinSymbol
     {

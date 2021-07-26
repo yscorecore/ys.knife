@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
-using YS.Knife.Data;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;

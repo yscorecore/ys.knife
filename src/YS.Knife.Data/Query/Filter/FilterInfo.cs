@@ -6,13 +6,13 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data
+namespace YS.Knife.Data.Query
 {
-
     [TypeConverter(typeof(FilterInfoTypeConverter))]
     [Serializable]
     [DebuggerDisplay("{ToString()}")]
@@ -20,26 +20,10 @@ namespace YS.Knife.Data
     {
         internal const string Operator_And = "and";
         internal const string Operator_Or = "or";
-        internal static readonly Dictionary<Operator, string> OperatorTypeNameDictionary =
-            new Dictionary<Operator, string>
-            {
-                [Operator.Equals] = "==",
-                [Operator.NotEquals] = "!=",
-                [Operator.GreaterThan] = ">",
-                [Operator.LessThanOrEqual] = "<=",
-                [Operator.LessThan] = "<",
-                [Operator.GreaterThanOrEqual] = ">=",
-                [Operator.Between] = "bt",
-                [Operator.NotBetween] = "nbt",
-                [Operator.In] = "in",
-                [Operator.NotIn] = "nin",
-                [Operator.StartsWith] = "sw",
-                [Operator.NotStartsWith] = "nsw",
-                [Operator.EndsWith] = "ew",
-                [Operator.NotEndsWith] = "new",
-                [Operator.Contains] = "ct",
-                [Operator.NotContains] = "nct",
-            };
+        private static readonly Dictionary<Operator, string> OperatorTypeCodeDictionary =
+            typeof(Operator).GetFields(BindingFlags.Public| BindingFlags.Static).ToDictionary(
+                p => (Operator)p.GetValue(null),
+                p => p.GetCustomAttributes<OperatorCodeAttribute>().Select(p=>p.Code).First());
 
         public ValueInfo Left { get; set; }
         public ValueInfo Right { get; set; }
@@ -54,16 +38,16 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == CombinSymbol.AndItems)
+            if (OpType == CombinSymbol.AndItems)
             {
                 if (other.OpType == CombinSymbol.AndItems)
                 {
-                    this.Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo>());
+                    Items.AddRange(other.Items ?? Enumerable.Empty<FilterInfo>());
                     return this;
                 }
                 else
                 {
-                    this.Items.Add(other);
+                    Items.Add(other);
                     return this;
                 }
             }
@@ -79,15 +63,15 @@ namespace YS.Knife.Data
                 return this;
             }
 
-            if (this.OpType == CombinSymbol.OrItems)
+            if (OpType == CombinSymbol.OrItems)
             {
                 if (other.OpType == CombinSymbol.OrItems)
                 {
-                    this.Items.AddRange(other.Items);
+                    Items.AddRange(other.Items);
                 }
                 else
                 {
-                    this.Items.Add(other);
+                    Items.Add(other);
                 }
 
                 return this;
@@ -116,7 +100,7 @@ namespace YS.Knife.Data
             }
             string FilterTypeToString(Operator filterType)
             {
-                return OperatorTypeNameDictionary[filterType];
+                return OperatorTypeCodeDictionary[filterType];
             }
         }
 
@@ -148,6 +132,18 @@ namespace YS.Knife.Data
         }
 
     }
+
+    public class FilterInfoTypeConverter : StringConverter
+    {
+        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
+        {
+            return value is string ? FilterInfo.Parse(value as string, culture) : base.ConvertFrom(context, culture, value);
+        }
+    }
+}
+
+namespace YS.Knife.Data
+{
     [DebuggerDisplay("{ToString()}")]
     public class ValueInfo
     {
@@ -208,7 +204,7 @@ namespace YS.Knife.Data
         {
             return new QueryExpressionParser(cultureInfo).ParseValue(valueExpression);
         }
-      
+
         public static ValueInfo FromConstantValue(object value)
         {
             return new ValueInfo
@@ -230,7 +226,7 @@ namespace YS.Knife.Data
         {
             if (IsFunction)
             {
-                List<string> args = new List<string>();
+                var args = new List<string>();
                 if (FunctionArgs != null)
                 {
                     args.AddRange(FunctionArgs.Where(p => p != null).Select(p => p?.ToString()));
@@ -248,11 +244,5 @@ namespace YS.Knife.Data
 
 
 
-    public class FilterInfoTypeConverter : StringConverter
-    {
-        public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
-        {
-            return value is string ? FilterInfo.Parse(value as string, culture) : base.ConvertFrom(context, culture, value);
-        }
-    }
+
 }

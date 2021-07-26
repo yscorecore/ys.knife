@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using YS.Knife.Data;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query;
 
 namespace System.Linq
 {
