@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq.Expressions;
 using System.Text;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
