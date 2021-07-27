@@ -12,18 +12,28 @@ namespace YS.Knife.Data.Query.Expressions
         static ObjectMemberVisitor()
         {
             // if some member name equal when ignore case, next will over the pre one
-            foreach (var field in typeof(T).GetFields(BindingFlags.Instance | BindingFlags.Public))
-            {
+            LoadTypeMembers(typeof(T), false);
 
-                AllMembers[field.Name] = new ObjectFieldFilterMemberInfo(typeof(T), field);
+            if (typeof(T).IsNullableType())
+            {
+                LoadTypeMembers(Nullable.GetUnderlyingType(typeof(T)), true);
             }
-            foreach (var property in typeof(T).GetProperties(BindingFlags.Instance | BindingFlags.Public))
-            {
-                if (property.GetIndexParameters().Length == 0)
-                {
-                    AllMembers[property.Name] = new ObjectPropertyFilterMemberInfo(typeof(T), property);
-                }
 
+            static void LoadTypeMembers(Type hostType, bool fromNullableValue)
+            {
+                foreach (var field in hostType.GetFields(BindingFlags.Instance | BindingFlags.Public))
+                {
+
+                    AllMembers[field.Name] = new ObjectFieldFilterMemberInfo(typeof(T), field, fromNullableValue);
+                }
+                foreach (var property in hostType.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+                {
+                    if (property.GetIndexParameters().Length == 0)
+                    {
+                        AllMembers[property.Name] = new ObjectPropertyFilterMemberInfo(typeof(T), property, fromNullableValue);
+                    }
+
+                }
             }
         }
 
@@ -42,11 +52,12 @@ namespace YS.Knife.Data.Query.Expressions
         {
             private readonly PropertyInfo propertyInfo;
 
-            public ObjectPropertyFilterMemberInfo(Type hostType, PropertyInfo propertyInfo)
+            public ObjectPropertyFilterMemberInfo(Type hostType, PropertyInfo propertyInfo, bool fromNullableValue)
             {
                 this.propertyInfo = propertyInfo;
                 var param0 = Expression.Parameter(hostType);
-                this.SelectExpression = Expression.Lambda(Expression.Property(param0, propertyInfo), param0);
+                Expression expression = fromNullableValue ? Expression.Property(param0, "Value") : param0;
+                this.SelectExpression = Expression.Lambda(Expression.Property(expression, propertyInfo), param0);
             }
             public Type ExpressionValueType => propertyInfo.PropertyType;
 
@@ -58,11 +69,12 @@ namespace YS.Knife.Data.Query.Expressions
         {
             private readonly FieldInfo fieldInfo;
 
-            public ObjectFieldFilterMemberInfo(Type hostType, FieldInfo fieldInfo)
+            public ObjectFieldFilterMemberInfo(Type hostType, FieldInfo fieldInfo, bool fromNullableValue)
             {
                 this.fieldInfo = fieldInfo;
                 var param0 = Expression.Parameter(hostType);
-                this.SelectExpression = Expression.Lambda(Expression.Field(param0, fieldInfo), param0);
+                Expression expression = fromNullableValue ? Expression.Property(param0, "Value") : param0;
+                this.SelectExpression = Expression.Lambda(Expression.Field(expression, fieldInfo), param0);
             }
             public Type ExpressionValueType => fieldInfo.FieldType;
 

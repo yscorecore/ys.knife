@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -20,7 +20,7 @@ namespace YS.Knife.Data.Query.Expressions
             var lambda = constLambda.GetLambda();
             lambda.ToString().Should().Be(expectedExpression);
         }
-        
+
         [DataTestMethod]
         [DataRow(null, typeof(bool), "p => False")]
         [DataRow(false, typeof(bool), "p => False")]
@@ -63,7 +63,7 @@ namespace YS.Knife.Data.Query.Expressions
         [DataRow("1", typeof(decimal?), "p => 1")]
         [DataRow("1", typeof(float?), "p => 1")]
         [DataRow("1", typeof(uint?), "p => 1")]
-             public void ShouldGetExpectedExpressionWhenValueAsBasicType(object value, Type targetType,
+        public void ShouldGetExpectedExpressionWhenValueAsBasicType(object value, Type targetType,
             string expectedExpression)
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
@@ -98,7 +98,7 @@ namespace YS.Knife.Data.Query.Expressions
         }
         [DataTestMethod]
         [DataRow(null, typeof(Guid), "p => 00000000-0000-0000-0000-000000000000")]
-        [DataRow("10000000-1000-1000-1000-100000000000", typeof(Guid), "p => 10000000-1000-1000-1000-100000000000")] 
+        [DataRow("10000000-1000-1000-1000-100000000000", typeof(Guid), "p => 10000000-1000-1000-1000-100000000000")]
         [DataRow(null, typeof(Guid?), "p => null")]
         [DataRow("10000000-1000-1000-1000-100000000000", typeof(Guid?), "p => 10000000-1000-1000-1000-100000000000")]
         public void ShouldGetExpectedExpressionWhenValueAsGuidType(object value, Type targetType,
@@ -110,30 +110,32 @@ namespace YS.Knife.Data.Query.Expressions
             lambda.ToString().Should().Be(expectedExpression);
         }
         [DataTestMethod]
-        [DataRow(null, typeof(DateTime), "p => 01/01/0001 00:00:00")]
-        [DataRow("2021-07-25", typeof(DateTime), "p => 07/25/2021 00:00:00")] 
-        [DataRow("2021-07-25 16:10:00.001", typeof(DateTime), "p => 07/25/2021 16:10:00")]
-        [DataRow("2021-07-25T16:10:00", typeof(DateTime), "p => 07/25/2021 16:10:00")]
-        [DataRow("2021-07-25T16:10:00 +08:00", typeof(DateTime), "p => 07/25/2021 16:10:00")]
-        [DataRow("2021-07-25T16:10:00 +00:00", typeof(DateTime), "p => 07/26/2021 00:10:00")]
-        [DataRow(3000, typeof(DateTime), "p => 01/01/1970 00:00:03")]
-        [DataRow(3000L, typeof(DateTime), "p => 01/01/1970 00:00:03")]
-        [DataRow(3000.11, typeof(DateTime), "p => 01/01/1970 00:00:03")]
+        [DataRow(null, typeof(DateTime), "0001-01-01 00:00:00.000")]
+        [DataRow("1970-01-01", typeof(DateTime), "1970-01-01 00:00:00.000")]
+        [DataRow("1970-01-01 +00:00", typeof(DateTime), "1970-01-01 00:00:00.000")]
+        [DataRow("1970-01-01 00:00:03.001 +00:00", typeof(DateTime), "1970-01-01 00:00:03.001")]
+        [DataRow("1970-01-01T00:00:03.001 +00:00", typeof(DateTime), "1970-01-01 00:00:03.001")]
+        [DataRow("1970-01-01T00:00:03.001 +08:00", typeof(DateTime), "1970-01-01 00:00:03.001")]
+        [DataRow(3001, typeof(DateTime), "1970-01-01 00:00:03.001")]
+        [DataRow(3001L, typeof(DateTime), "1970-01-01 00:00:03.001")]
+        [DataRow(3000.91, typeof(DateTime), "1970-01-01 00:00:03.001")]
         public void ShouldGetExpectedExpressionWhenValueAsDateTimeType(object value, Type targetType,
             string expectedExpression)
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
-            lambda.ReturnType.Should().Be(targetType);
-            lambda.ToString().Should().Be(expectedExpression);
+            var datetime = lambda.Compile().DynamicInvoke(new object[] { null });
+            datetime.Should().BeOfType<DateTime>()
+                .Which.ToString("yyyy-MM-dd HH:mm:ss.fff").Should().Be(expectedExpression)
+                ;
         }
-        
+
         [DataTestMethod]
         [DataRow(null, typeof(DateTimeOffset), -62135596800000L)]
-        [DataRow("1970-01-01 +00:00", typeof(DateTimeOffset), 0)] 
+        [DataRow("1970-01-01 +00:00", typeof(DateTimeOffset), 0)]
         [DataRow("1970-01-01 00:00:03.001 +00:00", typeof(DateTimeOffset), 3001)]
         [DataRow("1970-01-01T00:00:03.001 +00:00", typeof(DateTimeOffset), 3001)]
-        [DataRow("1970-01-01T00:00:03.001 +08:00", typeof(DateTimeOffset), 3001-8*60*60*1000)]
+        [DataRow("1970-01-01T00:00:03.001 +08:00", typeof(DateTimeOffset), 3001 - 8 * 60 * 60 * 1000)]
         [DataRow(3001, typeof(DateTimeOffset), 3001)]
         [DataRow(3001L, typeof(DateTimeOffset), 3001)]
         [DataRow(3000.91, typeof(DateTimeOffset), 3001)]
@@ -142,22 +144,22 @@ namespace YS.Knife.Data.Query.Expressions
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
-            lambda.ReturnType.Should().Be(targetType);
-            var datetimeOffset =  lambda.Compile().DynamicInvoke(new object[]{null});
+            
+            var datetimeOffset = lambda.Compile().DynamicInvoke(new object[] { null });
             datetimeOffset.Should().BeOfType<DateTimeOffset>()
                 .Which.ToUnixTimeMilliseconds().Should().Be(timeStamp);
         }
-       
-        
+
+
         [DataTestMethod]
         [DataRow("ab", typeof(int))]
         [DataRow("c", typeof(TestEnum))]
-        [DataRow("", typeof(DateTime))]
+        [DataRow("abc", typeof(DateTime))]
         public void ShouldThrowExceptionWhenValueCanNotConvertToTargetType(object value, Type targetType)
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             Action action = () => constLambda.GetLambda(targetType);
-            action.Should().Throw<FieldInfo2ExpressionException>()
+            action.Should().Throw<QueryExpressionException>()
                 .WithMessage($"convert value * to target type '{targetType.FullName}' error.");
         }
 

@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
-using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Functions;
 using YS.Knife.Data.Query.Functions.Collections;
 
@@ -122,12 +122,10 @@ namespace YS.Knife.Data.Query
         };
 
         internal static readonly Dictionary<string, Operator> FilterTypeCodes =
-           FilterInfo.OperatorTypeNameDictionary.Select(p => Tuple.Create(p.Value, p.Key))
-           .Concat(new[] {
-                Tuple.Create("=",Operator.Equals),
-                Tuple.Create("<>",Operator.NotEquals)
+          typeof(Operator).GetFields(BindingFlags.Public | BindingFlags.Static)
+            .SelectMany(p => p.GetCustomAttributes<OperatorCodeAttribute>().Select(c => (c.Code, (Operator)p.GetValue(null))))
+            .ToDictionary(p => p.Code, p => p.Item2, StringComparer.InvariantCultureIgnoreCase);
 
-           }).ToDictionary(p => p.Item1, p => p.Item2);
         private static readonly Func<char, bool> IsValidNameFirstChar = ch => char.IsLetter(ch) || ch == '_';
         private static readonly Func<char, bool> IsValidNameChar = ch => char.IsLetterOrDigit(ch) || ch == '_';
         private static readonly Func<char, bool> IsWhiteSpace = ch => ch == ' ' || ch == '\t';

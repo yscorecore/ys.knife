@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter
+namespace YS.Knife.Data.Query
 {
     static class ExpressionErrors
     {
@@ -15,7 +14,7 @@ namespace YS.Knife.Data.Filter
         {
             return new FieldInfo2ExpressionException($"create filter expression error: {exception.Message}", exception);
         }
-        public static FieldInfo2ExpressionException ConvertValueError(object value, Type targetType, Exception exception = null)
+        public static Exception ConvertValueError(object value, Type targetType, Exception exception = null)
         {
             return new FieldInfo2ExpressionException($"convert value '{value}' to target type '{targetType.FullName}' error.", exception);
         }

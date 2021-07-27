@@ -46,7 +46,7 @@ namespace YS.Knife.Entity.Model
         /// <summary>
         /// 表示审核时间
         /// </summary>
-        DateTime? AuditTime { get; set; }
+        DateTimeOffset? AuditTime { get; set; }
         /// <summary>
         /// 表示审核用户
         /// </summary>
@@ -69,7 +69,7 @@ namespace YS.Knife.Entity.Model
         /// <summary>
         /// 表示删除时间
         /// </summary>
-        DateTime? DeleteTime { get; set; }
+        DateTimeOffset? DeleteTime { get; set; }
 
     }
     /// <summary>
@@ -84,7 +84,7 @@ namespace YS.Knife.Entity.Model
         /// <summary>
         /// 表示恢复删除的时间
         /// </summary>
-        DateTime? ResumeTime { get; set; }
+        DateTimeOffset? ResumeTime { get; set; }
     }
     /// <summary>
     /// 表示RowVersion

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter.Operators
 {

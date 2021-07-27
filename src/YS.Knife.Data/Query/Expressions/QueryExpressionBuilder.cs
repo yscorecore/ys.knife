@@ -45,11 +45,11 @@ namespace YS.Knife.Data.Query.Expressions
                   where TSource : class
            where TTarget : class, new()
         {
-            return null;
+            return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetMapperVisitor(mapper));
         }
         public IFuncLambdaProvider CreateValueLambda<TSource>(List<ValuePath> valuePaths)
         {
-            return null;
+            return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetObjectVisitor(typeof(TSource)));
 
         }
     }
