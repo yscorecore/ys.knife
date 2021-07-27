@@ -9,5 +9,12 @@
 
     <ItemGroup>
         <ProjectReference Include="..\YS.Knife.Core\YS.Knife.Core.csproj" />
+        <ProjectReference Include="..\YS.Knife.Rest.Api\YS.Knife.Rest.Api.csproj" />
+    </ItemGroup>
+
+
+
+    <ItemGroup>
+      <Folder Include="NewFolder\" />
     </ItemGroup>
 </Project>
