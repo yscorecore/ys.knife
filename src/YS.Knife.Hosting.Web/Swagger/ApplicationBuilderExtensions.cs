@@ -25,6 +25,15 @@ namespace YS.Knife.Hosting.Web.Swagger
                     var documentName = swaggerOptions.GetDocumentNameOrEntryAssemblyName();
                     string swaggerPath = api.RouteTemplate.Replace("{documentName}", UrlEncoder.Default.Encode(documentName), StringComparison.InvariantCultureIgnoreCase);
                     c.SwaggerEndpoint(swaggerPath, documentName);
+                    if (!string.IsNullOrEmpty(ui.CssUrl))
+                    {
+                        c.InjectStylesheet(ui.CssUrl);
+                    }
+                    if (!string.IsNullOrEmpty(ui.JavascriptUrl))
+                    {
+                        c.InjectJavascript(ui.JavascriptUrl);
+                    }
+                   
                 });
             }
         }
