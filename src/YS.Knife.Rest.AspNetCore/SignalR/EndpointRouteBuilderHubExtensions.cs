@@ -9,7 +9,7 @@ using YS.Knife.Rest.AspNetCore;
 
 namespace Microsoft.AspNetCore.Builder
 {
-    public static class EndpointRouteBuilderGrpcExtensions
+    public static class EndpointRouteBuilderHubExtensions
     {
         public static void MapAllHubServices(this IEndpointRouteBuilder endpoints)
         {
@@ -19,7 +19,7 @@ namespace Microsoft.AspNetCore.Builder
             }
 
             var hubTypes = AppDomain.CurrentDomain.FindInstanceTypesByAttribute<HubAttribute>();
-            var genMethod = typeof(EndpointRouteBuilderGrpcExtensions)
+            var genMethod = typeof(EndpointRouteBuilderHubExtensions)
                     .GetMethod(nameof(MapHub), BindingFlags.Static | BindingFlags.Instance | BindingFlags.NonPublic);
             foreach (var hubType in hubTypes)
             {
