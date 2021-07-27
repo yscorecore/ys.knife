@@ -10,11 +10,18 @@ namespace YS.Knife.Rest.AspNetCore
 {
     public class GenericControllerFeatureProvider : IApplicationFeatureProvider<ControllerFeature>
     {
+        public IRegisterContext RegisterContext { get; }
+
+        public GenericControllerFeatureProvider(IRegisterContext registerContext)
+        {
+            RegisterContext = registerContext;
+        }
         public void PopulateFeature(IEnumerable<ApplicationPart> parts, ControllerFeature feature)
         {
             var attributes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(p => p.GetTypes())
                 .Where(p => !p.IsAbstract && p.IsGenericType && typeof(ControllerBase).IsAssignableFrom(p) &&
                             p.IsDefined(typeof(GenericControllerAttribute), true))
+                .Where(p=>!RegisterContext.HasFiltered(p))
                 .Select(p => p.GetCustomAttribute<GenericControllerAttribute>());
             foreach (var genericAttribute in attributes)
             {

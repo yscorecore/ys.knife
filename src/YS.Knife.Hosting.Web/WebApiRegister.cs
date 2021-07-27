@@ -41,8 +41,9 @@ namespace YS.Knife.Hosting.Web
             }
             mvcBuilder.ConfigureApplicationPartManager((manager =>
             {
+                
                 // generic controller
-                manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
+                manager.FeatureProviders.Add(new GenericControllerFeatureProvider(context));
             }));
         }
 
