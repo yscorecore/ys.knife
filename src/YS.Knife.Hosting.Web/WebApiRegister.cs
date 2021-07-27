@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using YS.Knife.Hosting.Web.Filters;
+using YS.Knife.Rest.AspNetCore;
 
 namespace YS.Knife.Hosting.Web
 {
@@ -36,7 +37,13 @@ namespace YS.Knife.Hosting.Web
             foreach (var mvcPart in controllerAssemblies)
             {
                 mvcBuilder.AddApplicationPart(mvcPart);
+                
             }
+            mvcBuilder.ConfigureApplicationPartManager((manager =>
+            {
+                // generic controller
+                manager.FeatureProviders.Add(new GenericControllerFeatureProvider());
+            }));
         }
 
         private void RegisterHttpContext(IServiceCollection services)
