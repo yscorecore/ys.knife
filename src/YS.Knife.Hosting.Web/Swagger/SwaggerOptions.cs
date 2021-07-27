@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace YS.Knife.Hosting.Web.Swagger
@@ -58,6 +59,12 @@ namespace YS.Knife.Hosting.Web.Swagger
         /// </summary>
         /// <remarks>the swagger ui request url will be {UIRoutePrefix}/index.html </remarks>
         public string RoutePrefix { get; set; } = "swagger";
+
+        [Url]
+        public string CssUrl { get; set; }
+
+        [Url]
+        public string JavascriptUrl { get; set; }
     }
 
     public static class SwaggerOptionsExtensions
