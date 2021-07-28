@@ -8,7 +8,7 @@ namespace YS.Knife.Rest.Api
 {
     public class CodeResult
     {
-       
+
         public string Code { get; set; }
         public string Message { get; set; }
         public static CodeResult FromCode(string code, string message)
@@ -20,13 +20,13 @@ namespace YS.Knife.Rest.Api
             };
         }
 
-        public static CodeResult<T> FromData<T>(string code,string message, T data)
+        public static CodeResult<T> FromData<T>(string code, string message, T data)
         {
             return new CodeResult<T>
             {
-                 Code=code,
-                 Message=message,
-                 Data=data
+                Code = code,
+                Message = message,
+                Data = data
             };
         }
         public static CodeResult<T> FromData<T>(T data)
@@ -35,9 +35,9 @@ namespace YS.Knife.Rest.Api
         }
     }
 
-    public class CodeResult<T>:CodeResult
+    public class CodeResult<T> : CodeResult
     {
-       
+
         public T Data { get; set; }
     }
 }

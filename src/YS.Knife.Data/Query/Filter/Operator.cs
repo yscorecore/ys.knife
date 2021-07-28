@@ -94,7 +94,7 @@ namespace YS.Knife.Data.Query
         [OperatorCode("nct")]
         [OperatorCode("not_contains")]
         NotContains = ~Contains,
-      
+
 
     }
 

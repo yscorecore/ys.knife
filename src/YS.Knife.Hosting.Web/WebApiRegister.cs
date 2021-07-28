@@ -37,11 +37,11 @@ namespace YS.Knife.Hosting.Web
             foreach (var mvcPart in controllerAssemblies)
             {
                 mvcBuilder.AddApplicationPart(mvcPart);
-                
+
             }
             mvcBuilder.ConfigureApplicationPartManager((manager =>
             {
-                
+
                 // generic controller
                 manager.FeatureProviders.Add(new GenericControllerFeatureProvider(context));
             }));

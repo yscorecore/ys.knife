@@ -47,7 +47,7 @@ namespace YS.Knife.Data.Query
             }
             return value;
         }
-     
+
         public SelectInfo ParseSelectInfo(string text)
         {
             if (string.IsNullOrWhiteSpace(text)) return null;
