@@ -129,55 +129,54 @@ namespace YS.Knife.Hosting
 
         private void InjectInternalConfigurations(HostBuilderContext _, IConfigurationBuilder configurationBuilder)
         {
-            Dictionary<string, string> configurationDatas = new Dictionary<string, string>();
-            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
-                               BindingFlags.Static;
+            Dictionary<string, string> configurationData = new Dictionary<string, string>();
+            const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic |
+                                              BindingFlags.Static;
             var fields = this.GetType().GetFields(bindingFlags)
                 .Where(p => Attribute.IsDefined(p, typeof(InjectConfigurationAttribute)));
-            this.AppendFieldsConfigurationData(fields, configurationDatas);
+            this.AppendFieldsConfigurationData(fields, configurationData);
             // props
             var props = this.GetType().GetProperties(bindingFlags)
                 .Where(p => Attribute.IsDefined(p, typeof(InjectConfigurationAttribute)));
-            this.AppendPropertiesConfigurationData(props, configurationDatas);
+            this.AppendPropertiesConfigurationData(props, configurationData);
 
-            if (configurationDatas.Count > 0)
+            if (configurationData.Count > 0)
             {
-                configurationBuilder.AddInMemoryCollection(configurationDatas);
+                configurationBuilder.AddInMemoryCollection(configurationData);
             }
         }
 
-        private void AppendFieldsConfigurationData(IEnumerable<FieldInfo> fieldInfos, Dictionary<string, string> datas)
+        private void AppendFieldsConfigurationData(IEnumerable<FieldInfo> fieldInfos, Dictionary<string, string> data)
         {
             foreach (var field in fieldInfos)
             {
                 var attr = field.GetCustomAttribute<InjectConfigurationAttribute>();
-                AppendConfigurationDataValue(datas, attr.ConfigurationKey, field.GetValue(this));
+                AppendConfigurationDataValue(data, attr.ConfigurationKey, field.GetValue(this));
             }
         }
 
         private void AppendPropertiesConfigurationData(IEnumerable<PropertyInfo> properties,
-            Dictionary<string, string> datas)
+            Dictionary<string, string> data)
         {
             foreach (var prop in properties)
             {
                 var attr = prop.GetCustomAttribute<InjectConfigurationAttribute>();
-                AppendConfigurationDataValue(datas, attr.ConfigurationKey, prop.GetValue(this));
+                AppendConfigurationDataValue(data, attr.ConfigurationKey, prop.GetValue(this));
             }
         }
 
-        private void AppendConfigurationDataValue(Dictionary<string, string> datas, string key, object value)
+        private void AppendConfigurationDataValue(Dictionary<string, string> data, string key, object value)
         {
-            if (value is null) return;
             if (value is IDictionary dic)
             {
                 foreach (var subKey in dic.Keys)
                 {
                     string childKey = $"{key}:{subKey}";
-                    AppendConfigurationDataValue(datas, childKey, dic[subKey]);
+                    AppendConfigurationDataValue(data, childKey, dic[subKey]);
                 }
             }
 
-            datas[key] = value.ToString();
+            data[key] = value.ToString();
         }
 
         protected virtual void OnConfigureLogging(HostBuilderContext context, ILoggingBuilder loggingBuilder)
@@ -200,7 +199,7 @@ namespace YS.Knife.Hosting
             }
             else
             {
-                var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+                var logger = this.host.Services.GetKnifeLogger();
                 logger.LogInformation($"knife host is running in stage mode, the stage name is '{options?.Stage}'.");
                 this.host.RunStage(options.Stage);
             }
@@ -208,7 +207,7 @@ namespace YS.Knife.Hosting
 
         private void PrintDebugInfo()
         {
-            var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+            var logger = this.host.Services.GetKnifeLogger();
             var hostEnv = this.host.Services.GetService<IHostEnvironment>();
             if (hostEnv.IsDevelopment())
             {
@@ -226,7 +225,7 @@ namespace YS.Knife.Hosting
             content.AppendLine("===================Configuration Values===============");
             content.AppendLine(configRoot.GetDebugView());
             content.AppendLine("======================================================");
-            logger.LogInformation(content.ToString());
+            logger.LogDebug(content.ToString());
         }
 
         private void LogDependencyInjectionServicesInfo(ILogger logger)
@@ -237,7 +236,7 @@ namespace YS.Knife.Hosting
             content.AppendLine("====================Injection Services================");
             content.AppendLine(GetDebugView(serviceCollection));
             content.AppendLine("======================================================");
-            logger.LogInformation(content.ToString());
+            logger.LogDebug(content.ToString());
         }
 
         private string GetDebugView(IServiceCollection serviceCollection)
@@ -283,9 +282,9 @@ namespace YS.Knife.Hosting
             }
             else
             {
-                var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+                var logger = this.host.Services.GetKnifeLogger();
                 logger.LogInformation($"knife host is running in stage mode, the stage name is '{options?.Stage}'.");
-                this.host.RunStage(options.Stage);
+                this.host.RunStage(options.Stage, token);
             }
         }
 
