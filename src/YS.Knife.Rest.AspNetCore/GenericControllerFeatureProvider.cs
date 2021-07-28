@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -21,7 +21,7 @@ namespace YS.Knife.Rest.AspNetCore
             var attributes = AppDomain.CurrentDomain.GetAssemblies().SelectMany(p => p.GetTypes())
                 .Where(p => !p.IsAbstract && p.IsGenericType && typeof(ControllerBase).IsAssignableFrom(p) &&
                             p.IsDefined(typeof(GenericControllerAttribute), true))
-                .Where(p=>!RegisterContext.HasFiltered(p))
+                .Where(p => !RegisterContext.HasFiltered(p))
                 .Select(p => p.GetCustomAttribute<GenericControllerAttribute>());
             foreach (var genericAttribute in attributes)
             {

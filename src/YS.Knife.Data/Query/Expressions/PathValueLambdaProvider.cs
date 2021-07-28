@@ -38,7 +38,7 @@ namespace YS.Knife.Data.Query.Expressions
                 return Expression.Lambda(typeof(Func<,>).MakeGenericType(SourceType, targetType), targetBody, parameter);
             }
         }
-        private (Type ReturnType,Expression Body) CreateLambdaBody(ParameterExpression p, List<ValuePath> pathInfos, IMemberVisitor memberProvider)
+        private (Type ReturnType, Expression Body) CreateLambdaBody(ParameterExpression p, List<ValuePath> pathInfos, IMemberVisitor memberProvider)
         {
             IMemberVisitor currentMemberProvider = memberProvider;
             Type currentExpressionType = currentMemberProvider.CurrentType;
@@ -76,6 +76,6 @@ namespace YS.Knife.Data.Query.Expressions
             return (currentExpressionType, currentExpression);
         }
 
-      
+
     }
 }

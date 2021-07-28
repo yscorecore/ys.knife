@@ -24,12 +24,13 @@ namespace YS.Knife.Hosting
         {
         }
 
-        protected override void OnConfigureCustomServices(HostBuilderContext builder, IServiceCollection serviceCollection)
+
+        protected override void OnConfigureInternalServices(HostBuilderContext builder,
+            IServiceCollection serviceCollection)
         {
-            base.OnConfigureCustomServices(builder, serviceCollection);
+            base.OnConfigureInternalServices(builder, serviceCollection);
             serviceCollection.AddSingleton(typeof(KnifeWebHost), this);
         }
-
         protected virtual void OnPreConfigureWebApp(IApplicationBuilder app, IWebHostEnvironment env)
         {
 

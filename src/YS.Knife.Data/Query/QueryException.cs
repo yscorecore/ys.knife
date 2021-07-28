@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace YS.Knife.Data.Query
 {
-   
+
     [Serializable]
     public class QueryException : ApplicationException
     {

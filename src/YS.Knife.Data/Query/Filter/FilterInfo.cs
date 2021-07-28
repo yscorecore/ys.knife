@@ -5,8 +5,8 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using YS.Knife.Data.Query;
@@ -21,9 +21,9 @@ namespace YS.Knife.Data.Query
         internal const string Operator_And = "and";
         internal const string Operator_Or = "or";
         private static readonly Dictionary<Operator, string> OperatorTypeCodeDictionary =
-            typeof(Operator).GetFields(BindingFlags.Public| BindingFlags.Static).ToDictionary(
+            typeof(Operator).GetFields(BindingFlags.Public | BindingFlags.Static).ToDictionary(
                 p => (Operator)p.GetValue(null),
-                p => p.GetCustomAttributes<OperatorCodeAttribute>().Select(p=>p.Code).First());
+                p => p.GetCustomAttributes<OperatorCodeAttribute>().Select(p => p.Code).First());
 
         public ValueInfo Left { get; set; }
         public ValueInfo Right { get; set; }

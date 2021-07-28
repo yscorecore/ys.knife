@@ -17,7 +17,7 @@ namespace YS.Knife.Rest.AspNetCore
             if (context.Exception is CodeException codeException)
             {
                 context.Result = new ObjectResult(
-                    CodeResult.FromData(codeException.Code,codeException.Message,codeException.Data));
+                    CodeResult.FromData(codeException.Code, codeException.Message, codeException.Data));
             }
             else
             {
@@ -29,7 +29,7 @@ namespace YS.Knife.Rest.AspNetCore
 
         public void OnResultExecuted(ResultExecutedContext context)
         {
-          
+
         }
 
         public void OnResultExecuting(ResultExecutingContext context)
@@ -41,7 +41,7 @@ namespace YS.Knife.Rest.AspNetCore
             else if (context.Result is EmptyResult)
             {
                 context.Result = new ObjectResult(CodeResult.FromCode("0", "success"));
-               
+
             }
         }
     }
