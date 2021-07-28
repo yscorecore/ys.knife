@@ -1,14 +1,33 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
-        <OutputType>Library</OutputType>
+        <TargetFramework>net5.0</TargetFramework>
 <!--        <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/generated</CompilerGeneratedFilesOutputPath>-->
 <!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Properties\Resources.Designer.cs">
+        <DesignTime>True</DesignTime>
+        <AutoGen>True</AutoGen>
+        <DependentUpon>Resources.resx</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Update="Properties\Resources.resx">
+        <Generator>ResXFileCodeGenerator</Generator>
+        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-2.final" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-2.final" />
     </ItemGroup>
 <!--    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">-->
 <!--        <ItemGroup>-->

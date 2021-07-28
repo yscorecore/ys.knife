@@ -1,0 +1,10 @@
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        [AutoNotify]
+        private int _age;
+
+    }
+}
