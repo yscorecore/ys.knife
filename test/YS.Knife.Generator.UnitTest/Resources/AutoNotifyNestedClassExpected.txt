@@ -1,0 +1,44 @@
+using System.ComponentModel;
+namespace ConsoleApp2
+{
+    partial class Class4
+    {
+        partial class Class5 : System.ComponentModel.INotifyPropertyChanged
+        {
+            public event PropertyChangedEventHandler PropertyChanged;
+
+            public int Age 
+            {
+                get 
+                {
+                    return this._age;
+                }
+                set
+                {
+                    if(this._age != value)
+                    {
+                        this._age = value;
+                        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age)));
+                    }
+                }
+            }
+
+            public int Age2 
+            {
+                get 
+                {
+                    return this._age2;
+                }
+                set
+                {
+                    if(this._age2 != value)
+                    {
+                        this._age2 = value;
+                        this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age2)));
+                    }
+                }
+            }
+
+        }
+    }
+}
