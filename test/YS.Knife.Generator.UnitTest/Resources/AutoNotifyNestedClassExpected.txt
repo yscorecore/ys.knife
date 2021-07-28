@@ -23,6 +23,7 @@ namespace ConsoleApp2
                 }
             }
 
+
             public int Age2 
             {
                 get 
