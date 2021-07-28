@@ -144,7 +144,7 @@ namespace YS.Knife.Data.Query.Expressions
         {
             var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
-            
+
             var datetimeOffset = lambda.Compile().DynamicInvoke(new object[] { null });
             datetimeOffset.Should().BeOfType<DateTimeOffset>()
                 .Which.ToUnixTimeMilliseconds().Should().Be(timeStamp);

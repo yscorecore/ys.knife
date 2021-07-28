@@ -33,7 +33,7 @@ namespace YS.Knife.Hosting.Web.Swagger
                     {
                         c.InjectJavascript(ui.JavascriptUrl);
                     }
-                   
+
                 });
             }
         }

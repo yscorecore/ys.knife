@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -34,14 +35,12 @@ namespace YS.Knife.Hosting
 
         private void CurrentDomain_AssemblyLoad(object sender, AssemblyLoadEventArgs args)
         {
-
             var handlers = args.LoadedAssembly.FindInstanceTypesByBaseType<IAssemblyLoadedHander>();
             foreach (var assemblyLoadedHander in handlers)
             {
                 var handler = Activator.CreateInstance(assemblyLoadedHander) as IAssemblyLoadedHander;
                 handler.AfterAssemblyLoaded();
             }
-
         }
 
         private readonly IHost host;
@@ -81,14 +80,22 @@ namespace YS.Knife.Hosting
                     serviceCollection.AddAllKnifeServices(builder.Configuration, ShouldFilterType);
 
                     this.OnConfigureCustomServices(builder, serviceCollection);
+                    this.OnConfigureInternalServices(builder, serviceCollection);
                     this.InjectInternalServices(builder, serviceCollection);
                 });
         }
 
-        protected virtual void OnConfigureCustomServices(HostBuilderContext builder,
+
+        protected virtual void OnConfigureInternalServices(HostBuilderContext builder,
             IServiceCollection serviceCollection)
         {
             serviceCollection.AddSingleton(typeof(KnifeHost), this);
+            serviceCollection.AddSingleton(typeof(IServiceCollection), serviceCollection);
+        }
+
+        private void OnConfigureCustomServices(HostBuilderContext builder,
+            IServiceCollection serviceCollection)
+        {
         }
 
         protected virtual bool ShouldFilterType(Type type)
@@ -185,8 +192,8 @@ namespace YS.Knife.Hosting
 
         public void Run()
         {
+            this.PrintDebugInfo();
             var options = this.host.Services.GetService<KnifeOptions>();
-
             if (string.IsNullOrEmpty(options?.Stage))
             {
                 this.host.Run();
@@ -198,6 +205,74 @@ namespace YS.Knife.Hosting
                 this.host.RunStage(options.Stage);
             }
         }
+
+        private void PrintDebugInfo()
+        {
+            var logger = this.host.Services.GetService<ILogger<KnifeHost>>();
+            var hostEnv = this.host.Services.GetService<IHostEnvironment>();
+            if (hostEnv.IsDevelopment())
+            {
+                // only in development mode
+                LogConfigurationDebugInfo(logger);
+                LogDependencyInjectionServicesInfo(logger);
+            }
+        }
+
+        private void LogConfigurationDebugInfo(ILogger logger)
+        {
+            var configRoot = this.host.Services.GetRequiredService<IConfiguration>() as IConfigurationRoot;
+            if (configRoot == null) return;
+            StringBuilder content = new StringBuilder();
+            content.AppendLine("===================Configuration Values===============");
+            content.AppendLine(configRoot.GetDebugView());
+            content.AppendLine("======================================================");
+            logger.LogInformation(content.ToString());
+        }
+
+        private void LogDependencyInjectionServicesInfo(ILogger logger)
+        {
+            var serviceCollection = this.host.Services.GetRequiredService<IServiceCollection>();
+            if (serviceCollection == null) return;
+            StringBuilder content = new StringBuilder();
+            content.AppendLine("====================Injection Services================");
+            content.AppendLine(GetDebugView(serviceCollection));
+            content.AppendLine("======================================================");
+            logger.LogInformation(content.ToString());
+        }
+
+        private string GetDebugView(IServiceCollection serviceCollection)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine($"a total of {serviceCollection.Count} services were injected.");
+            var sequence = NewSequence();
+            foreach (var sp in serviceCollection)
+            {
+                if (sp.ImplementationType != null)
+                {
+                    stringBuilder.AppendLine(
+                        $"[{sequence():000}] [{sp.Lifetime}] {sp.ServiceType} from type {sp.ImplementationType}");
+                }
+                else if (sp.ImplementationInstance != null)
+                {
+                    stringBuilder.AppendLine(
+                        $"[{sequence():000}] [{sp.Lifetime}] {sp.ServiceType} from instance");
+                }
+                else if (sp.ImplementationFactory != null)
+                {
+                    stringBuilder.AppendLine(
+                        $"[{sequence():000}] [{sp.Lifetime}] {sp.ServiceType} from factory {sp.ImplementationFactory.Method}");
+                }
+            }
+
+            return stringBuilder.ToString();
+
+            Func<int> NewSequence()
+            {
+                int value = 1;
+                return () => value++;
+            }
+        }
+
         public async Task RunAsync(CancellationToken token = default)
         {
             var options = this.host.Services.GetService<KnifeOptions>();

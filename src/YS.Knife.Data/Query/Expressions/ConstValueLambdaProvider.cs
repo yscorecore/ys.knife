@@ -75,7 +75,7 @@ namespace YS.Knife.Data.Query.Expressions
                     return converter.ConvertFrom(value);
                 }
             }
-            catch (QueryExpressionException) 
+            catch (QueryExpressionException)
             {
                 throw;
             }
@@ -85,7 +85,7 @@ namespace YS.Knife.Data.Query.Expressions
             }
         }
 
-      
+
 
         private static object GetDateTimeByTargetType(Type targetType, DateTimeOffset dateTimeOffset)
         {
