@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace YS.Knife
 {
@@ -68,25 +68,25 @@ namespace YS.Knife
                 }
             }
 
-          
+
             // group the fields by class, and generate the source
             foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
             {
                 var nameChains = GetClassNameChains(group.Key);
-                
+
                 string classSource = ProcessClass(nameChains, group.ToList(), attributeSymbol, notifySymbol, context);
-                
-                context.AddSource($"{string.Join(".",nameChains.Select(p=>p.Name))}.AutoNotify.cs", classSource);
+
+                context.AddSource($"{string.Join(".", nameChains.Select(p => p.Name))}.AutoNotify.cs", classSource);
             }
         }
         private IList<INamedTypeSymbol> GetClassNameChains(INamedTypeSymbol classSymbol)
         {
             var namespaceSymbol = classSymbol.ContainingNamespace;
             List<INamedTypeSymbol> paths = new List<INamedTypeSymbol>();
-            while (classSymbol!=null)
+            while (classSymbol != null)
             {
 
-                paths.Insert(0,classSymbol);
+                paths.Insert(0, classSymbol);
                 if (classSymbol.ContainingSymbol.Equals(namespaceSymbol, SymbolEqualityComparer.Default))
                 {
                     break;
@@ -96,7 +96,7 @@ namespace YS.Knife
                     classSymbol = classSymbol.ContainingSymbol as INamedTypeSymbol;
                 }
 
-                
+
             }
             return paths.AsReadOnly();
         }
@@ -105,24 +105,27 @@ namespace YS.Knife
         private string ProcessClass(IList<INamedTypeSymbol> classSymbols, List<IFieldSymbol> fields, ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
         {
             var classSymbol = classSymbols.Last();
-            string namespaceName = classSymbol.ContainingNamespace.ToDisplayString();
 
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
-            codeBuilder.AppendThenIncrease($@"using System.ComponentModel;
-namespace {namespaceName}
-{{");
+            codeBuilder.AppendCodeLines($@"using System.ComponentModel;");
+            if (!classSymbol.ContainingNamespace.IsGlobalNamespace)
+            {
+                codeBuilder.AppendCodeLines($"namespace {classSymbol.ContainingNamespace.ToDisplayString()}");
+                codeBuilder.BeginSegment();
+            }
+
             foreach (var parentClass in classSymbols)
             {
                 if (parentClass != classSymbol)
                 {
-                    codeBuilder.AppendThenIncrease($@"partial class {parentClass.Name}
-{{");
+                    codeBuilder.AppendCodeLines($@"partial class {parentClass.Name}");
+                    codeBuilder.BeginSegment();
                 }
             }
 
 
-            codeBuilder.AppendThenIncrease($@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}
-{{");
+            codeBuilder.AppendCodeLines($@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}");
+            codeBuilder.BeginSegment();
 
             if (!classSymbol.Interfaces.Contains(notifySymbol))
             {
@@ -134,14 +137,8 @@ namespace {namespaceName}
             {
                 ProcessField(codeBuilder, fieldSymbol, attributeSymbol);
             }
-            codeBuilder.DecreaseDepth();
-            for (int i = 0; i <= classSymbols.Count; i++)
-            {
-                codeBuilder.AppendThenDecrease("}");
-            }
-
+            codeBuilder.EndAllSegments();
             return codeBuilder.ToString();
-          
         }
 
         private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)

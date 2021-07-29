@@ -118,16 +118,22 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="AutoNotifyHapplyCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AutoNotifyHapplyCase.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  <data name="AutoNotifyHappyCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AutoNotifyHappyCase.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
-  <data name="AutoNotifyHapplyExpected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\AutoNotifyHapplyExpected.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+  <data name="AutoNotifyHappyExpected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\AutoNotifyHappyExpected.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
   <data name="AutoNotifyNestedClass" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\AutoNotifyNestedClass.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
   <data name="AutoNotifyNestedClassExpected" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\resources\autonotifynestedclassexpected.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    <value>..\Resources\AutoNotifyNestedClassExpected.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
   </data>
+    <data name="AutoNotifyEmptyNameSpaceCase" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>..\Resources\AutoNotifyEmptyNameSpaceCase.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    </data>
+    <data name="AutoNotifyEmptyNameSpaceCaseExpected" type="System.Resources.ResXFileRef, System.Windows.Forms">
+        <value>..\Resources\AutoNotifyEmptyNameSpaceCaseExpected.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;gb2312</value>
+    </data>
 </root>

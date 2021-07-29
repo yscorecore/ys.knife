@@ -1,0 +1,7 @@
+using YS.Knife;
+partial class Class1
+{
+    [AutoNotify]
+    private int _age;
+
+}

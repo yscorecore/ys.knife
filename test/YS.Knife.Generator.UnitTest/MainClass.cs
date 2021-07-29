@@ -10,7 +10,7 @@ namespace YS.Knife.Generator.UnitTest
 
     public partial class DependClass
     {
-        
+
         private readonly DependClass2 _depend;
     }
 

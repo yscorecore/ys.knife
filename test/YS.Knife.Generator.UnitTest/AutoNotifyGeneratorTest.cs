@@ -13,14 +13,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace YS.Knife.Generator.UnitTest
 {
-   [TestClass]
+    [TestClass]
     public class AutoNotifyGeneratorTest
     {
         [TestMethod]
-        public void ShouldGenerateHapplyCase()
+        public void ShouldGenerateHappyCase()
         {
-          
-            var comp = CreateCompilation(Properties.Resources.AutoNotifyHapplyCase);
+            var comp = CreateCompilation(Properties.Resources.AutoNotifyHappyCase);
             var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
 
             var newFile = newComp.SyntaxTrees
@@ -28,7 +27,7 @@ namespace YS.Knife.Generator.UnitTest
 
             newFile.FilePath.Should().EndWith("Class1.AutoNotify.cs");
 
-            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyHapplyExpected.Trim());
+            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyHappyExpected.Trim());
         }
 
         [TestMethod]
@@ -45,6 +44,21 @@ namespace YS.Knife.Generator.UnitTest
 
             newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyNestedClassExpected.Trim());
         }
+        [TestMethod]
+        public void ShouldGenerateEmptyNamespaceCase()
+        {
+
+            var comp = CreateCompilation(Properties.Resources.AutoNotifyEmptyNameSpaceCase);
+            var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
+
+            var newFile = newComp.SyntaxTrees
+                .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.cs"));
+
+            newFile.FilePath.Should().EndWith("Class1.AutoNotify.cs");
+
+            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyEmptyNameSpaceCaseExpected.Trim());
+        }
+
 
         private static Compilation CreateCompilation(string source)
           => CSharpCompilation.Create("compilation",

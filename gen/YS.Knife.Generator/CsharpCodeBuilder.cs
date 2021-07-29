@@ -11,11 +11,11 @@ namespace YS.Knife
         private StringBuilder stringBuilder = new StringBuilder();
 
         private int depthOfNesting = 0;
-        public void IncreaseDepth()
+        private void IncreaseDepth()
         {
             this.depthOfNesting++;
         }
-        public void DecreaseDepth()
+        private void DecreaseDepth()
         {
             this.depthOfNesting = Math.Max(0, this.depthOfNesting - 1);
         }
@@ -43,16 +43,26 @@ namespace YS.Knife
                 while (true);
             }
         }
-        public void AppendThenIncrease(string text)
+        public void BeginSegment()
         {
-            this.AppendCodeLines(text);
+            this.AppendCodeLines("{");
             this.IncreaseDepth();
         }
-        public void AppendThenDecrease(string text)
+        public void EndSegment()
         {
-            this.AppendCodeLines(text);
             this.DecreaseDepth();
+            this.AppendCodeLines("}");
         }
+        public void EndAllSegments()
+        {
+            while (depthOfNesting > 0)
+            {
+                this.DecreaseDepth();
+                this.AppendCodeLines("}");
+            }
+
+        }
+
         public void AppendLine()
         {
             stringBuilder.AppendLine();
