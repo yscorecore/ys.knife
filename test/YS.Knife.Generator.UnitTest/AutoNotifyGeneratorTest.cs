@@ -23,9 +23,9 @@ namespace YS.Knife.Generator.UnitTest
             var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
 
             var newFile = newComp.SyntaxTrees
-              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.cs"));
+              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
 
-            newFile.FilePath.Should().EndWith("Class1.AutoNotify.cs");
+            newFile.FilePath.Should().EndWith("Class1.AutoNotify.g.cs");
 
             newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyHappyExpected.Trim());
         }
@@ -38,9 +38,9 @@ namespace YS.Knife.Generator.UnitTest
             var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
 
             var newFile = newComp.SyntaxTrees
-              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.cs"));
+              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
 
-            newFile.FilePath.Should().EndWith("Class4.Class5.AutoNotify.cs");
+            newFile.FilePath.Should().EndWith("Class4.Class5.AutoNotify.g.cs");
 
             newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyNestedClassExpected.Trim());
         }
@@ -52,11 +52,11 @@ namespace YS.Knife.Generator.UnitTest
             var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
 
             var newFile = newComp.SyntaxTrees
-                .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.cs"));
+                .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
 
-            newFile.FilePath.Should().EndWith("Class1.AutoNotify.cs");
+            newFile.FilePath.Should().EndWith("Class1.AutoNotify.g.cs");
 
-            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyEmptyNameSpaceCaseExpected.Trim());
+            TrimLines(newFile.GetText().ToString()).Should().Be(TrimLines(Properties.Resources.AutoNotifyEmptyNameSpaceCaseExpected));
         }
 
 
@@ -73,6 +73,12 @@ namespace YS.Knife.Generator.UnitTest
         {
             CreateDriver(generators).RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out diagnostics);
             return newCompilation;
+        }
+
+        private string TrimLines(string text)
+        {
+            return string.Join(Environment.NewLine,
+                text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(p=>p.Trim()).Where(string.IsNullOrEmpty));
         }
     }
 }

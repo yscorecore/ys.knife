@@ -7,7 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" />
+      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>
@@ -28,6 +28,7 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-2.final" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-2.final" />
+        <PackageReference Include="PrimaryConstructor" Version="1.3.2" />
     </ItemGroup>
 <!--    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">-->
 <!--        <ItemGroup>-->

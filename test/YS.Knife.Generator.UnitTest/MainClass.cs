@@ -1,9 +1,11 @@
 ﻿using System;
-
+using PrimaryConstructor;
 namespace YS.Knife.Generator.UnitTest
 {
+    [PrimaryConstructor]
     public partial class MainClass
     {
+        [AutoNotify]
         //[YS.Knife.Autowired]
         private readonly DependClass _depend;
     }
