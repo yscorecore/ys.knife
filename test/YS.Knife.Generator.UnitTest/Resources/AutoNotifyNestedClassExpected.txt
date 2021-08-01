@@ -3,7 +3,7 @@ namespace ConsoleApp2
 {
     partial class Class4
     {
-        partial class Class5 : System.ComponentModel.INotifyPropertyChanged
+        partial class Class5 : INotifyPropertyChanged
         {
             public event PropertyChangedEventHandler PropertyChanged;
 

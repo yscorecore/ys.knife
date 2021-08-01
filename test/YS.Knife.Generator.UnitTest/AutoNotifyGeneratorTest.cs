@@ -63,22 +63,26 @@ namespace YS.Knife.Generator.UnitTest
         private static Compilation CreateCompilation(string source)
           => CSharpCompilation.Create("compilation",
             new[] { CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.CSharp10)) },
-            new[] { MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location), MetadataReference.CreateFromFile(typeof(INotifyPropertyChanged).GetTypeInfo().Assembly.Location) },
+            new[] { 
+                MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
+                MetadataReference.CreateFromFile(typeof(AutoNotifyAttribute).GetTypeInfo().Assembly.Location)
+            },
             new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
         private static GeneratorDriver CreateDriver(params ISourceGenerator[] generators)
           => CSharpGeneratorDriver.Create(generators);
 
-        private static Compilation RunGenerators(Compilation compilation, out ImmutableArray<Diagnostic> diagnostics, params ISourceGenerator[] generators)
-        {
-            CreateDriver(generators).RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out diagnostics);
-            return newCompilation;
-        }
-
-        private string TrimLines(string text)
-        {
-            return string.Join(Environment.NewLine,
-                text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(p=>p.Trim()).Where(string.IsNullOrEmpty));
-        }
+    private static Compilation RunGenerators(Compilation compilation, out ImmutableArray<Diagnostic> diagnostics, params ISourceGenerator[] generators)
+    {
+        CreateDriver(generators).RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out diagnostics);
+        return newCompilation;
     }
+
+    private string TrimLines(string text)
+    {
+        return string.Join(Environment.NewLine,
+            text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(string.IsNullOrEmpty));
+    }
+}
 }

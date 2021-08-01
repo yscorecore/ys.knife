@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Text;
 
 namespace YS.Knife
 {
@@ -31,7 +29,14 @@ namespace YS.Knife
             Compilation compilation = context.Compilation;
 
             // get the newly bound attribute, and INotifyPropertyChanged
+
             INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("YS.Knife.AutoNotifyAttribute");
+
+            if (attributeSymbol == null)
+            {
+                context.ReportDiagnostic(KnifeDiagnostic.NotRefKnifeGeneratorAssembly());
+            }
+            
             INamedTypeSymbol notifySymbol =
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
@@ -45,7 +50,7 @@ namespace YS.Knife
                     // Get the symbol being decleared by the field, and keep it if its annotated
                     IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(variable) as IFieldSymbol;
                     if (fieldSymbol.CanBeReferencedByName && !fieldSymbol.IsStatic && fieldSymbol.GetAttributes().Any(ad =>
-                        ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default)))
+                        ad.AttributeClass.SafeEquals(attributeSymbol)))
                     {
                         fieldSymbols.Add(fieldSymbol);
                     }
@@ -148,7 +153,7 @@ namespace YS.Knife
 
             // get the AutoNotify attribute from the field, and any associated data
             AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad =>
-                ad.AttributeClass.Equals(attributeSymbol, SymbolEqualityComparer.Default));
+                ad.AttributeClass.SafeEquals(attributeSymbol));
             TypedConstant overridenNameOpt =
                 attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
