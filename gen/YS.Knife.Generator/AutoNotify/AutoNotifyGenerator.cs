@@ -16,37 +16,18 @@ namespace YS.Knife
         {
             context.RegisterForSyntaxNotifications(() => new AutoNotifySyntaxReceiver());
         }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("MicrosoftCodeAnalysisCorrectness",
-            "RS1024:Compare symbols correctly", Justification = "<Pending>")]
+      
         public void Execute(GeneratorExecutionContext context)
         {
-
-
-
-            // retreive the populated receiver 
             if (!(context.SyntaxReceiver is AutoNotifySyntaxReceiver receiver))
                 return;
 
-            Compilation compilation = context.Compilation;
+            var codeWriter = new CodeWriter(context);
 
-            // get the newly bound attribute, and INotifyPropertyChanged
-
-            INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("YS.Knife.AutoNotifyAttribute");
-
-            if (attributeSymbol == null)
-            {
-                context.ReportDiagnostic(KnifeDiagnostic.NotRefKnifeGeneratorAssembly());
-            }
-
-            INamedTypeSymbol notifySymbol =
-                compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
-
-            var fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
             var classSymbols = new HashSet<string>();
             foreach (var clazz in receiver.CandidateClasses)
             {
-                SemanticModel model = compilation.GetSemanticModel(clazz.SyntaxTree);
+                SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(clazz);
 
                 var clazzSymbolAualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -62,58 +43,33 @@ namespace YS.Knife
 
 
                 var fieldList = clazzSymbol.GetMembers().OfType<IFieldSymbol>()
-                        .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(attributeSymbol))
+                        .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(typeof(AutoNotifyAttribute)))
                         .ToList();
                 if (fieldList.Count == 0)
                 {
                     continue;
                 }
-                var nameChains = GetClassNameChains(clazzSymbol);
 
-                string classSource = ProcessClass(nameChains, fieldList, attributeSymbol, notifySymbol, context);
+                var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter.Compilation);
 
-                string fileNamePrefix = string.Join(".", nameChains.Select(p => p.Name));
-
-                fileNames.TryGetValue(fileNamePrefix, out var i);
-                var name = i == 0 ? fileNamePrefix : $"{fileNamePrefix}.{i + 1}";
-                fileNames[fileNamePrefix] = i + 1;
-
-                context.AddSource($"{name}.AutoNotify.g.cs", classSource);
-
-
-                compilation = context.Compilation.AddSyntaxTrees(
-                    CSharpSyntaxTree.ParseText(SourceText.From(classSource, Encoding.UTF8)));
+                codeWriter.WriteCodeFile(codeFile);
 
             }
 
         }
 
-        private IList<INamedTypeSymbol> GetClassNameChains(INamedTypeSymbol classSymbol)
-        {
-            var namespaceSymbol = classSymbol.ContainingNamespace;
-            List<INamedTypeSymbol> paths = new List<INamedTypeSymbol>();
-            while (classSymbol != null)
-            {
-                paths.Insert(0, classSymbol);
-                if (classSymbol.ContainingSymbol.Equals(namespaceSymbol, SymbolEqualityComparer.Default))
-                {
-                    break;
-                }
-                else
-                {
-                    classSymbol = classSymbol.ContainingSymbol as INamedTypeSymbol;
-                }
-            }
-
-            return paths.AsReadOnly();
-        }
+      
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("MicrosoftCodeAnalysisCorrectness",
             "RS1024:Compare symbols correctly", Justification = "<Pending>")]
-        private string ProcessClass(IList<INamedTypeSymbol> classSymbols, List<IFieldSymbol> fields,
-            ISymbol attributeSymbol, ISymbol notifySymbol, GeneratorExecutionContext context)
+        private CodeFile ProcessClass( INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, Compilation compilation)
         {
-            var classSymbol = classSymbols.Last();
+
+            INamedTypeSymbol notifySymbol =
+               compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
+
+            var classSymbols = classSymbol.GetParentClassChains();
+
 
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
 
@@ -169,24 +125,28 @@ namespace YS.Knife
             // create properties for each field 
             foreach (IFieldSymbol fieldSymbol in fields)
             {
-                ProcessField(codeBuilder, fieldSymbol, attributeSymbol);
+                ProcessField(codeBuilder, fieldSymbol);
             }
 
             codeBuilder.EndAllSegments();
-            return codeBuilder.ToString();
+            return new CodeFile
+            {
+                 BasicName = string.Join(".", classSymbols.Select(p => p.Name)),
+                 Content= codeBuilder.ToString(),
+            };
 
 
         }
 
-        private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
+        private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol)
         {
             // get the name and type of the field
             string fieldName = fieldSymbol.Name;
             ITypeSymbol fieldType = fieldSymbol.Type;
 
+            AttributeData attributeData = fieldSymbol.GetAttributes().Single(p => p.AttributeClass.SafeEquals(typeof(AutoNotifyAttribute)));
             // get the AutoNotify attribute from the field, and any associated data
-            AttributeData attributeData = fieldSymbol.GetAttributes().Single(ad =>
-                ad.AttributeClass.SafeEquals(attributeSymbol));
+            
             TypedConstant overridenNameOpt =
                 attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
@@ -240,24 +200,23 @@ public {fieldType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}
         class AutoNotifySyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
-            //public List<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
+            public IList<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
 
             /// <summary>
             /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
             /// </summary>
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
-                // any field with at least one attribute is a candidate for property generation
-                //if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
-                //    && fieldDeclarationSyntax.AttributeLists.Count > 0)
-                //{
-                //    CandidateFields.Add(fieldDeclarationSyntax);
-                //}
-
-
                 if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
                 {
                     CandidateClasses.Add(classDeclarationSyntax);
+                }
+                if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
+                    && fieldDeclarationSyntax.AttributeLists.Any() && 
+                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword)&&
+                     !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                {
+                    CandidateFields.Add(fieldDeclarationSyntax);
                 }
             }
         }
