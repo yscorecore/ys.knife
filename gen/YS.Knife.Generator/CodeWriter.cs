@@ -14,7 +14,7 @@ namespace YS.Knife
             Context = context;
             this.Compilation = context.Compilation;
         }
-        public string CodeFileSuffix { get; set; } = "AutoNotify.g.cs";
+        public string CodeFileSuffix { get; set; } = "g.cs";
         public Compilation Compilation { get; private set; }
         private GeneratorExecutionContext Context { get; }
 

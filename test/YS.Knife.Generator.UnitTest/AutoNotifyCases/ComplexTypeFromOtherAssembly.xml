@@ -17,7 +17,7 @@ namespace ConsoleApp2
         </code>
     </input>
     <output>
-        <code file="Class1.AutoNotify.g.cs">
+        <code file="Class1.g.cs">
             <![CDATA[
 using System.ComponentModel;
 using YS.Knife.Generator.UnitTest.AutoNotifyModels;

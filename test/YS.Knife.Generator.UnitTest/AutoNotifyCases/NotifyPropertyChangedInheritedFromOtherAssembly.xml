@@ -20,7 +20,7 @@ namespace ConsoleApp2
     <output>
        
 
-        <code file="Class2.AutoNotify.g.cs">
+        <code file="Class2.g.cs">
             <![CDATA[
 using System;
 using System.ComponentModel;

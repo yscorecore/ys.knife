@@ -16,7 +16,7 @@ partial class Class1
         </code>
     </input>
     <output>
-        <code file="Class1.AutoNotify.g.cs">
+        <code file="Class1.g.cs">
             <![CDATA[
 using System;
 using System.ComponentModel;
