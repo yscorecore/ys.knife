@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace YS.Knife
 {
@@ -20,7 +22,7 @@ namespace YS.Knife
         public void Execute(GeneratorExecutionContext context)
         {
 
-           
+
 
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is AutoNotifySyntaxReceiver receiver))
@@ -36,7 +38,7 @@ namespace YS.Knife
             {
                 context.ReportDiagnostic(KnifeDiagnostic.NotRefKnifeGeneratorAssembly());
             }
-            
+
             INamedTypeSymbol notifySymbol =
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
@@ -65,12 +67,18 @@ namespace YS.Knife
                 string classSource = ProcessClass(nameChains, group.ToList(), attributeSymbol, notifySymbol, context);
 
                 string fileNamePrefix = string.Join(".", nameChains.Select(p => p.Name));
-                
+
                 fileNames.TryGetValue(fileNamePrefix, out var i);
                 var name = i == 0 ? fileNamePrefix : $"{fileNamePrefix}.{i + 1}";
                 fileNames[fileNamePrefix] = i + 1;
-                
+
                 context.AddSource($"{name}.AutoNotify.g.cs", classSource);
+
+                CSharpParseOptions options =
+               (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
+
+                context.Compilation.AddSyntaxTrees(
+                    CSharpSyntaxTree.ParseText(SourceText.From(classSource, Encoding.UTF8), options));
             }
         }
 
@@ -118,8 +126,8 @@ namespace YS.Knife
                 }
             }
 
+            
 
-           
 
             if (!classSymbol.AllInterfaces.Contains(notifySymbol))
             {

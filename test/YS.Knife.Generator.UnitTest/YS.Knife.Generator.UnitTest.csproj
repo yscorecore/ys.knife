@@ -7,28 +7,51 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
+      <None Remove="AutoNotifyCases\EmptyNameSpace.xml" />
+      <None Remove="AutoNotifyCases\HappyCase.xml" />
+      <None Remove="AutoNotifyCases\NestedType.xml" />
+      <None Remove="AutoNotifyCases\NotifyPropertyChangedDefined.xml" />
+      <None Remove="AutoNotifyCases\NotifyPropertyChangedInherited.xml" />
+      <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
+      <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Properties\Resources.Designer.cs">
-        <DesignTime>True</DesignTime>
-        <AutoGen>True</AutoGen>
-        <DependentUpon>Resources.resx</DependentUpon>
-      </Compile>
+      <Content Include="AutoNotifyCases\EmptyNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\NotifyPropertyChangedInherited.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\HappyCase.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\SameNameInMultipleNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\NotifyPropertyChangedDefined.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\NestedType.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Update="Properties\Resources.resx">
-        <Generator>ResXFileCodeGenerator</Generator>
-        <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      </EmbeddedResource>
+      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-2.final" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-2.final" />
         <PackageReference Include="PrimaryConstructor" Version="1.3.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Properties\" />
     </ItemGroup>
 <!--    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">-->
 <!--        <ItemGroup>-->

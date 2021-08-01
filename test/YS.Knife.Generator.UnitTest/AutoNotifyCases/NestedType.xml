@@ -1,3 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    public  class Class4
+    {
+        partial class Class5
+        {
+            [AutoNotify]
+            private int _age;
+            [AutoNotify]
+            private int _age2;
+        }
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class4.Class5.AutoNotify.g.cs">
+            <![CDATA[
 using System.ComponentModel;
 namespace ConsoleApp2
 {
@@ -43,3 +68,7 @@ namespace ConsoleApp2
         }
     }
 }
+            ]]>
+        </code>
+    </output>
+</case>

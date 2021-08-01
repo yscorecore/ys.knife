@@ -1,5 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+
+partial class Class1
+{
+    [AutoNotify]
+    private int _age;
+
+}
+
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.AutoNotify.g.cs">
+            <![CDATA[
 using System.ComponentModel;
-partial class Class1 : System.ComponentModel.INotifyPropertyChanged
+partial class Class1 : INotifyPropertyChanged
 {
     public event PropertyChangedEventHandler PropertyChanged;
 
@@ -18,5 +38,9 @@ partial class Class1 : System.ComponentModel.INotifyPropertyChanged
             }
         }
     }
-aaaaa
+
 }
+            ]]>
+        </code>
+    </output>
+</case>

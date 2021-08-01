@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Xml.Linq;
+using System.Xml.XPath;
 using FluentAssertions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -16,73 +15,54 @@ namespace YS.Knife.Generator.UnitTest
     [TestClass]
     public class AutoNotifyGeneratorTest
     {
-        [TestMethod]
-        public void ShouldGenerateHappyCase()
+        [DataTestMethod]
+        [DataRow("AutoNotifyCases/HappyCase.xml")]
+        [DataRow("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
+        [DataRow("AutoNotifyCases/NotifyPropertyChangedInherited.xml")]
+        [DataRow("AutoNotifyCases/NestedType.xml")]
+        [DataRow("AutoNotifyCases/EmptyNamespace.xml")]
+        [DataRow("AutoNotifyCases/SameNameInMultipleNamespace.xml")]
+        //[DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
+        public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
-            var comp = CreateCompilation(Properties.Resources.AutoNotifyHappyCase);
-            var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
+            XDocument xmlFile = XDocument.Load(testCaseFileName);
+            var codes = xmlFile.XPathSelectElements("case/input/code")
+                        .Select(prop => prop.Value);
+            var newComp = RunGenerators(CreateCompilation(codes.ToArray()), out _, new AutoNotifyGenerator());
 
-            var newFile = newComp.SyntaxTrees
-              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
+            var outputs = xmlFile.XPathSelectElements("case/output/code")
+                        .Select(prop => (File: prop.Attribute("file").Value, Content: prop.Value));
 
-            newFile.FilePath.Should().EndWith("Class1.AutoNotify.g.cs");
+            foreach (var output in outputs)
+            {
 
-            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyHappyExpected.Trim());
+                newComp.SyntaxTrees.Should()
+                    .ContainSingle(x => Path.GetFileName(x.FilePath).Equals(output.File), $"output file '{output.File}' not generated")
+                    .Which.GetText().ToString().NormalizeCode().Should().BeEquivalentTo(output.Content.NormalizeCode());
+            }
         }
 
-        [TestMethod]
-        public void ShouldGenerateNestedClassCase()
+        private static Compilation CreateCompilation(params string[] sources)
         {
+            var allSources = sources.Select(p => CSharpSyntaxTree.ParseText(p, new CSharpParseOptions(LanguageVersion.CSharp10))).ToArray();
+            return CSharpCompilation.Create("compilation",
+                allSources,
+                  new[] {
+                    MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(typeof(AutoNotifyAttribute).GetTypeInfo().Assembly.Location)
+                  },
+                  new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
-            var comp = CreateCompilation(Properties.Resources.AutoNotifyNestedClass);
-            var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
-
-            var newFile = newComp.SyntaxTrees
-              .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
-
-            newFile.FilePath.Should().EndWith("Class4.Class5.AutoNotify.g.cs");
-
-            newFile.GetText().ToString().Trim().Should().Be(Properties.Resources.AutoNotifyNestedClassExpected.Trim());
         }
-        [TestMethod]
-        public void ShouldGenerateEmptyNamespaceCase()
-        {
-
-            var comp = CreateCompilation(Properties.Resources.AutoNotifyEmptyNameSpaceCase);
-            var newComp = RunGenerators(comp, out _, new AutoNotifyGenerator());
-
-            var newFile = newComp.SyntaxTrees
-                .Single(x => Path.GetFileName(x.FilePath).EndsWith(".AutoNotify.g.cs"));
-
-            newFile.FilePath.Should().EndWith("Class1.AutoNotify.g.cs");
-
-            TrimLines(newFile.GetText().ToString()).Should().Be(TrimLines(Properties.Resources.AutoNotifyEmptyNameSpaceCaseExpected));
-        }
-
-
-        private static Compilation CreateCompilation(string source)
-          => CSharpCompilation.Create("compilation",
-            new[] { CSharpSyntaxTree.ParseText(source, new CSharpParseOptions(LanguageVersion.CSharp10)) },
-            new[] { 
-                MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
-                MetadataReference.CreateFromFile(typeof(AutoNotifyAttribute).GetTypeInfo().Assembly.Location)
-            },
-            new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 
         private static GeneratorDriver CreateDriver(params ISourceGenerator[] generators)
           => CSharpGeneratorDriver.Create(generators);
 
-    private static Compilation RunGenerators(Compilation compilation, out ImmutableArray<Diagnostic> diagnostics, params ISourceGenerator[] generators)
-    {
-        CreateDriver(generators).RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out diagnostics);
-        return newCompilation;
+        private static Compilation RunGenerators(Compilation compilation, out ImmutableArray<Diagnostic> diagnostics, params ISourceGenerator[] generators)
+        {
+            CreateDriver(generators).RunGeneratorsAndUpdateCompilation(compilation, out var newCompilation, out diagnostics);
+            return newCompilation;
+        }
     }
-
-    private string TrimLines(string text)
-    {
-        return string.Join(Environment.NewLine,
-            text.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Where(string.IsNullOrEmpty));
-    }
-}
 }
