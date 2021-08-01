@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace YS.Knife
 {
@@ -21,6 +22,26 @@ namespace YS.Knife
         {
             return symbol.GetAttributes().Any(ad =>
                         ad.AttributeClass.SafeEquals(attributeSymbol));
+        }
+
+        public static IEnumerable<ClassDeclarationSyntax> DistinctClasssSyntax(this IEnumerable<ClassDeclarationSyntax> sources )
+        {
+            return sources.Distinct(ClassDeclarationSyntaxComparer.Instance);
+        }
+
+        class ClassDeclarationSyntaxComparer : IEqualityComparer<ClassDeclarationSyntax>
+        {
+            public static ClassDeclarationSyntaxComparer Instance = new ClassDeclarationSyntaxComparer();
+
+            public bool Equals(ClassDeclarationSyntax x, ClassDeclarationSyntax y)
+            {
+             return  x.ToFullString() == y.ToFullString(); 
+            }
+
+            public int GetHashCode(ClassDeclarationSyntax obj)
+            {
+                return obj.ToFullString().GetHashCode();
+            }
         }
     }
 }

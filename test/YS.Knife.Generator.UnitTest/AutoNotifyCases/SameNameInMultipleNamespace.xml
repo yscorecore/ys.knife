@@ -33,6 +33,7 @@ namespace ConsoleApp3
     <output>
         <code file="Class1.AutoNotify.g.cs">
             <![CDATA[
+using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
@@ -62,6 +63,7 @@ namespace ConsoleApp2
         </code>
         <code file="Class1.2.AutoNotify.g.cs">
             <![CDATA[
+using System;
 using System.ComponentModel;
 namespace ConsoleApp3
 {

@@ -7,17 +7,37 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <None Remove="AutoNotifyCases\CombinAllPartials.xml" />
+      <None Remove="AutoNotifyCases\ComplexTypeFromCurrentSource.xml" />
+      <None Remove="AutoNotifyCases\ComplexTypeFromCurrentSourceAndOtherNamespace.xml" />
+      <None Remove="AutoNotifyCases\ComplexTypeFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\EmptyNameSpace.xml" />
       <None Remove="AutoNotifyCases\HappyCase.xml" />
       <None Remove="AutoNotifyCases\NestedType.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedDefined.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInherited.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
+      <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
     </ItemGroup>
 
     <ItemGroup>
+      <Content Include="AutoNotifyCases\ComplexTypeFromCurrentSourceAndOtherNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\ComplexTypeFromOtherAssembly.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="AutoNotifyCases\EmptyNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\ComplexTypeFromCurrentSource.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\CombinAllPartials.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml">

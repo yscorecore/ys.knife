@@ -6,10 +6,10 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class2: Class1
+    partial class Class1
     {
         [AutoNotify]
-        private int _val;
+        private int _age;
 
     }
 }
@@ -20,18 +20,15 @@ namespace ConsoleApp2
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class1: System.ComponentModel.INotifyPropertyChanged
+    partial class Class1
     {
-    
-        public event PropertyChangedEventHandler PropertyChanged;
         [AutoNotify]
-        private int _age;
+        private int _age2;
 
     }
 }
         ]]>
         </code>
-
     </input>
     <output>
         <code file="Class1.AutoNotify.g.cs">
@@ -40,8 +37,9 @@ using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
-    partial class Class1
+    partial class Class1 : INotifyPropertyChanged
     {
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public int Age 
         {
@@ -59,32 +57,19 @@ namespace ConsoleApp2
             }
         }
 
-    }
-}
-            ]]>
-        </code>
 
-        <code file="Class2.AutoNotify.g.cs">
-            <![CDATA[
-using System;
-using System.ComponentModel;
-namespace ConsoleApp2
-{
-    partial class Class2
-    {
-
-        public int Val 
+        public int Age2 
         {
             get 
             {
-                return this._val;
+                return this._age2;
             }
             set
             {
-                if(this._val != value)
+                if(this._age2 != value)
                 {
-                    this._val = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Val)));
+                    this._age2 = value;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age2)));
                 }
             }
         }

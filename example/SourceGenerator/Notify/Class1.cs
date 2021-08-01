@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using SourceGenerator.Others;
 using YS.Knife;
 
 namespace SourceGenerator.Notify
@@ -11,5 +12,7 @@ namespace SourceGenerator.Notify
     {
         [AutoNotify]
         private int value;
+        [AutoNotify]
+        private Person person;
     }
 }

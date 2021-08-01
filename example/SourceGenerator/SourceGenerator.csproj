@@ -11,6 +11,7 @@
     </ItemGroup>
     <ItemGroup>
       <Folder Include="generated\" />
+      <Folder Include="generated\YS.Knife.Generator\YS.Knife.AutoNotifyGenerator\" />
     </ItemGroup>
     <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">
         <ItemGroup>

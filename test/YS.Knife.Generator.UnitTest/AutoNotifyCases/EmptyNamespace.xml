@@ -18,6 +18,7 @@ partial class Class1
     <output>
         <code file="Class1.AutoNotify.g.cs">
             <![CDATA[
+using System;
 using System.ComponentModel;
 partial class Class1 : INotifyPropertyChanged
 {

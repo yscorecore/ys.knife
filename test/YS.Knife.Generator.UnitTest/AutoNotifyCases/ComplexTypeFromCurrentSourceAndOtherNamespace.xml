@@ -4,22 +4,34 @@
         <code>
             <![CDATA[
 using YS.Knife;
+namespace ConsoleApp3.Sub
+{
+    public class MyClass
+    {
+    }
+}
+        ]]>
+        </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
 namespace ConsoleApp2
 {
     partial class Class1
     {
         [AutoNotify]
-        private int _age;
+        private ConsoleApp3.Sub.MyClass _val;
 
     }
 }
         ]]>
         </code>
+
     </input>
     <output>
         <code file="Class1.AutoNotify.g.cs">
             <![CDATA[
-using System;
+using ConsoleApp3.Sub;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
@@ -27,18 +39,18 @@ namespace ConsoleApp2
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Age 
+        public MyClass Val 
         {
             get 
             {
-                return this._age;
+                return this._val;
             }
             set
             {
-                if(this._age != value)
+                if(this._val != value)
                 {
-                    this._age = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age)));
+                    this._val = value;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Val)));
                 }
             }
         }

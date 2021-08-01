@@ -17,18 +17,27 @@ namespace YS.Knife.Generator.UnitTest
     {
         [DataTestMethod]
         [DataRow("AutoNotifyCases/HappyCase.xml")]
+
+        [DataRow("AutoNotifyCases/CombinAllPartials.xml")]
         [DataRow("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
         [DataRow("AutoNotifyCases/NotifyPropertyChangedInherited.xml")]
+        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
         [DataRow("AutoNotifyCases/NestedType.xml")]
         [DataRow("AutoNotifyCases/EmptyNamespace.xml")]
         [DataRow("AutoNotifyCases/SameNameInMultipleNamespace.xml")]
-        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
+        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromOtherAssembly.xml")]
+        [DataRow("AutoNotifyCases/ComplexTypeFromCurrentSource.xml")]
+        [DataRow("AutoNotifyCases/ComplexTypeFromCurrentSourceAndOtherNamespace.xml")]
+        [DataRow("AutoNotifyCases/ComplexTypeFromOtherAssembly.xml")]
+
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             XDocument xmlFile = XDocument.Load(testCaseFileName);
             var codes = xmlFile.XPathSelectElements("case/input/code")
                         .Select(prop => prop.Value);
-            var newComp = RunGenerators(CreateCompilation(codes.ToArray()), out _, new AutoNotifyGenerator());
+            var newComp = RunGenerators(CreateCompilation(codes.ToArray()), out var warningAndErrors, new AutoNotifyGenerator());
+
+            warningAndErrors.Should().BeEmpty();
 
             var outputs = xmlFile.XPathSelectElements("case/output/code")
                         .Select(prop => (File: prop.Attribute("file").Value, Content: prop.Value));
@@ -40,6 +49,7 @@ namespace YS.Knife.Generator.UnitTest
                     .ContainSingle(x => Path.GetFileName(x.FilePath).Equals(output.File), $"output file '{output.File}' not generated")
                     .Which.GetText().ToString().NormalizeCode().Should().BeEquivalentTo(output.Content.NormalizeCode());
             }
+          
         }
 
         private static Compilation CreateCompilation(params string[] sources)
@@ -50,7 +60,8 @@ namespace YS.Knife.Generator.UnitTest
                   new[] {
                     MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location),
                     MetadataReference.CreateFromFile(typeof(INotifyPropertyChanged).GetTypeInfo().Assembly.Location),
-                    MetadataReference.CreateFromFile(typeof(AutoNotifyAttribute).GetTypeInfo().Assembly.Location)
+                    MetadataReference.CreateFromFile(typeof(AutoNotifyAttribute).GetTypeInfo().Assembly.Location),
+                    MetadataReference.CreateFromFile(Assembly.GetExecutingAssembly().Location)
                   },
                   new CSharpCompilationOptions(OutputKind.ConsoleApplication));
 

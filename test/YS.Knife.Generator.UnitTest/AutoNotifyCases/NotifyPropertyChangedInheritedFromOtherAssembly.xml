@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <case>
     <input>
+       
         <code>
             <![CDATA[
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class1 : System.ComponentModel.INotifyPropertyChanged
+    partial class Class2: YS.Knife.Generator.UnitTest.AutoNotifyModels.BaseClass
     {
-        public event PropertyChangedEventHandler PropertyChanged;
         [AutoNotify]
-        private int _age;
+        private int _val;
 
     }
 }
@@ -18,27 +18,29 @@ namespace ConsoleApp2
         </code>
     </input>
     <output>
-        <code file="Class1.AutoNotify.g.cs">
+       
+
+        <code file="Class2.AutoNotify.g.cs">
             <![CDATA[
 using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
-    partial class Class1
+    partial class Class2
     {
 
-        public int Age 
+        public int Val 
         {
             get 
             {
-                return this._age;
+                return this._val;
             }
             set
             {
-                if(this._age != value)
+                if(this._val != value)
                 {
-                    this._age = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age)));
+                    this._val = value;
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Val)));
                 }
             }
         }

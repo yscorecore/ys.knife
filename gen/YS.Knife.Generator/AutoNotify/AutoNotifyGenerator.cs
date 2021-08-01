@@ -43,11 +43,24 @@ namespace YS.Knife
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             var fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
-
+            var classSymbols = new HashSet<string>();
             foreach (var clazz in receiver.CandidateClasses)
             {
                 SemanticModel model = compilation.GetSemanticModel(clazz.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(clazz);
+
+                var clazzSymbolAualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                if (classSymbols.Contains(clazzSymbolAualifiedName))
+                {
+                    continue;
+                }
+                else
+                {
+                    classSymbols.Add(clazzSymbolAualifiedName);
+                }
+
+
+
                 var fieldList = clazzSymbol.GetMembers().OfType<IFieldSymbol>()
                         .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(attributeSymbol))
                         .ToList();
@@ -68,7 +81,7 @@ namespace YS.Knife
                 context.AddSource($"{name}.AutoNotify.g.cs", classSource);
 
 
-                compilation= context.Compilation.AddSyntaxTrees(
+                compilation = context.Compilation.AddSyntaxTrees(
                     CSharpSyntaxTree.ParseText(SourceText.From(classSource, Encoding.UTF8)));
 
             }
@@ -103,7 +116,26 @@ namespace YS.Knife
             var classSymbol = classSymbols.Last();
 
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
-            codeBuilder.AppendCodeLines($@"using System.ComponentModel;");
+
+            var allNamespaces = new HashSet<string>();
+
+            allNamespaces.Add("System.ComponentModel");
+
+            foreach (var field in fields)
+            {
+                if (!field.Type.ContainingNamespace.IsGlobalNamespace)
+                {
+                    allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
+                }
+            }
+            allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
+
+            foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
+            {
+                codeBuilder.AppendCodeLines($"using {usingNamespace};");
+            }
+
+            //codeBuilder.AppendCodeLines($@"using System.ComponentModel;");
             if (!classSymbol.ContainingNamespace.IsGlobalNamespace)
             {
                 codeBuilder.AppendCodeLines($"namespace {classSymbol.ContainingNamespace.ToDisplayString()}");
@@ -166,7 +198,7 @@ namespace YS.Knife
             }
 
             source.AppendCodeLines($@"
-public {fieldType} {propertyName} 
+public {fieldType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)} {propertyName} 
 {{
     get 
     {{
@@ -221,6 +253,8 @@ public {fieldType} {propertyName}
                 //{
                 //    CandidateFields.Add(fieldDeclarationSyntax);
                 //}
+
+
                 if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
                 {
                     CandidateClasses.Add(classDeclarationSyntax);
