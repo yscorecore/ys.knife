@@ -42,29 +42,22 @@ namespace YS.Knife
             INamedTypeSymbol notifySymbol =
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
-            // loop over the candidate fields, and keep the ones that are actually annotated
-            List<IFieldSymbol> fieldSymbols = new List<IFieldSymbol>();
-            foreach (FieldDeclarationSyntax field in receiver.CandidateFields)
-            {
-                SemanticModel model = compilation.GetSemanticModel(field.SyntaxTree);
-                foreach (VariableDeclaratorSyntax variable in field.Declaration.Variables)
-                {
-                    // Get the symbol being decleared by the field, and keep it if its annotated
-                    IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(variable) as IFieldSymbol;
-                    if (fieldSymbol.CanBeReferencedByName && !fieldSymbol.IsStatic && fieldSymbol.GetAttributes().Any(ad =>
-                        ad.AttributeClass.SafeEquals(attributeSymbol)))
-                    {
-                        fieldSymbols.Add(fieldSymbol);
-                    }
-                }
-            }
             var fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
-            // group the fields by class, and generate the source
-            foreach (IGrouping<INamedTypeSymbol, IFieldSymbol> group in fieldSymbols.GroupBy(f => f.ContainingType))
-            {
-                var nameChains = GetClassNameChains(group.Key);
 
-                string classSource = ProcessClass(nameChains, group.ToList(), attributeSymbol, notifySymbol, context);
+            foreach (var clazz in receiver.CandidateClasses)
+            {
+                SemanticModel model = compilation.GetSemanticModel(clazz.SyntaxTree);
+                var clazzSymbol = model.GetDeclaredSymbol(clazz);
+                var fieldList = clazzSymbol.GetMembers().OfType<IFieldSymbol>()
+                        .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(attributeSymbol))
+                        .ToList();
+                if (fieldList.Count == 0)
+                {
+                    continue;
+                }
+                var nameChains = GetClassNameChains(clazzSymbol);
+
+                string classSource = ProcessClass(nameChains, fieldList, attributeSymbol, notifySymbol, context);
 
                 string fileNamePrefix = string.Join(".", nameChains.Select(p => p.Name));
 
@@ -74,12 +67,12 @@ namespace YS.Knife
 
                 context.AddSource($"{name}.AutoNotify.g.cs", classSource);
 
-                CSharpParseOptions options =
-               (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
 
-                context.Compilation.AddSyntaxTrees(
-                    CSharpSyntaxTree.ParseText(SourceText.From(classSource, Encoding.UTF8), options));
+                compilation= context.Compilation.AddSyntaxTrees(
+                    CSharpSyntaxTree.ParseText(SourceText.From(classSource, Encoding.UTF8)));
+
             }
+
         }
 
         private IList<INamedTypeSymbol> GetClassNameChains(INamedTypeSymbol classSymbol)
@@ -126,7 +119,7 @@ namespace YS.Knife
                 }
             }
 
-            
+
 
 
             if (!classSymbol.AllInterfaces.Contains(notifySymbol))
@@ -214,7 +207,8 @@ public {fieldType} {propertyName}
         /// </summary>
         class AutoNotifySyntaxReceiver : ISyntaxReceiver
         {
-            public List<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
+            public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
+            //public List<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
 
             /// <summary>
             /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
@@ -222,10 +216,14 @@ public {fieldType} {propertyName}
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
                 // any field with at least one attribute is a candidate for property generation
-                if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
-                    && fieldDeclarationSyntax.AttributeLists.Count > 0)
+                //if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
+                //    && fieldDeclarationSyntax.AttributeLists.Count > 0)
+                //{
+                //    CandidateFields.Add(fieldDeclarationSyntax);
+                //}
+                if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
                 {
-                    CandidateFields.Add(fieldDeclarationSyntax);
+                    CandidateClasses.Add(classDeclarationSyntax);
                 }
             }
         }

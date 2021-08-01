@@ -22,7 +22,7 @@ namespace YS.Knife.Generator.UnitTest
         [DataRow("AutoNotifyCases/NestedType.xml")]
         [DataRow("AutoNotifyCases/EmptyNamespace.xml")]
         [DataRow("AutoNotifyCases/SameNameInMultipleNamespace.xml")]
-        //[DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
+        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             XDocument xmlFile = XDocument.Load(testCaseFileName);
