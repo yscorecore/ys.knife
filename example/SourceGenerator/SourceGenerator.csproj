@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+      <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/generated</CompilerGeneratedFilesOutputPath>
+      <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+  </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+    </ItemGroup>
+    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">
+        <ItemGroup>
+            <Generated Include="generated/**/*.cs" />
+            <Compile Remove="@(Generated)" />
+        </ItemGroup>
+        <Delete Files="@(Generated)" />
+    </Target>
+</Project>

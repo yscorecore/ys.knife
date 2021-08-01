@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -14,7 +14,7 @@ namespace YS.Knife
 
         public void Execute(GeneratorExecutionContext context)
         {
-            throw new System.NotImplementedException();
+           // throw new System.NotImplementedException();
         }
         
         internal class AutowiredSyntaxReceiver : ISyntaxReceiver

@@ -119,6 +119,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gen", "gen", "{BD09AD82-954
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Generator", "gen\YS.Knife.Generator\YS.Knife.Generator.csproj", "{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "example", "example", "{2DEDD185-BF2D-4A7B-BAD2-D96C53162E32}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SourceGenerator", "example\SourceGenerator\SourceGenerator.csproj", "{79EF7509-B12C-4344-9479-EDA83F92949D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -289,6 +293,10 @@ Global
 		{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549}.Release|Any CPU.Build.0 = Release|Any CPU
+		{79EF7509-B12C-4344-9479-EDA83F92949D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{79EF7509-B12C-4344-9479-EDA83F92949D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{79EF7509-B12C-4344-9479-EDA83F92949D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{79EF7509-B12C-4344-9479-EDA83F92949D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -348,6 +356,7 @@ Global
 		{90C8670D-A82C-4C3F-BE79-7C86E41ECFAA} = {EA3DC331-A292-4270-BD15-4D24746FC6AC}
 		{693D0F07-2EBC-46C6-9021-8D3DED08EE77} = {BFCF3AE8-5E78-43C2-9588-51A18F363E60}
 		{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549} = {BD09AD82-9547-4CF0-99EE-EE9627A54E8F}
+		{79EF7509-B12C-4344-9479-EDA83F92949D} = {2DEDD185-BF2D-4A7B-BAD2-D96C53162E32}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {9C196457-3BCC-4C84-9F50-2857429B7BD4}

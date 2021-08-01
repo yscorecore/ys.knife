@@ -12,24 +12,8 @@ namespace YS.Knife
     [Generator]
     public class AutoNotifyGenerator : ISourceGenerator
     {
-        private const string attributeText = @"
-using System;
-namespace YS.Knife
-{
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    sealed class AutoNotifyAttribute : Attribute
-    {
-        public AutoNotifyAttribute()
-        {
-        }
-        public string PropertyName { get; set; }
-    }
-}
-";
-
         public void Initialize(GeneratorInitializationContext context)
         {
-            // Register a syntax receiver that will be created for each generation pass
             context.RegisterForSyntaxNotifications(() => new AutoNotifySyntaxReceiver());
         }
 
@@ -37,20 +21,14 @@ namespace YS.Knife
             "RS1024:Compare symbols correctly", Justification = "<Pending>")]
         public void Execute(GeneratorExecutionContext context)
         {
-            // add the attribute text
-            context.AddSource("AutoNotifyAttribute", attributeText);
+
+           
 
             // retreive the populated receiver 
             if (!(context.SyntaxReceiver is AutoNotifySyntaxReceiver receiver))
                 return;
 
-            // we're going to create a new compilation that contains the attribute.
-            // TODO: we should allow source generators to provide source during initialize, so that this step isn't required.
-            CSharpParseOptions options =
-                (context.Compilation as CSharpCompilation).SyntaxTrees[0].Options as CSharpParseOptions;
-            Compilation compilation =
-                context.Compilation.AddSyntaxTrees(
-                    CSharpSyntaxTree.ParseText(SourceText.From(attributeText, Encoding.UTF8), options));
+            Compilation compilation = context.Compilation;
 
             // get the newly bound attribute, and INotifyPropertyChanged
             INamedTypeSymbol attributeSymbol = compilation.GetTypeByMetadataName("YS.Knife.AutoNotifyAttribute");
@@ -84,7 +62,7 @@ namespace YS.Knife
                 string fileNamePrefix = string.Join(".", nameChains.Select(p => p.Name));
                 
                 fileNames.TryGetValue(fileNamePrefix, out var i);
-                var name = i == 0 ? fileNamePrefix : $"{fileNamePrefix}{i + 1}";
+                var name = i == 0 ? fileNamePrefix : $"{fileNamePrefix}.{i + 1}";
                 fileNames[fileNamePrefix] = i + 1;
                 
                 context.AddSource($"{name}.AutoNotify.g.cs", classSource);
@@ -136,12 +114,18 @@ namespace YS.Knife
             }
 
 
-            codeBuilder.AppendCodeLines($@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString()}");
-            codeBuilder.BeginSegment();
+           
 
-            if (!classSymbol.Interfaces.Contains(notifySymbol))
+            if (!classSymbol.AllInterfaces.Contains(notifySymbol))
             {
+                codeBuilder.AppendCodeLines($@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
+                codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines("public event PropertyChangedEventHandler PropertyChanged;");
+            }
+            else
+            {
+                codeBuilder.AppendCodeLines($@"partial class {classSymbol.Name}");
+                codeBuilder.BeginSegment();
             }
 
             // create properties for each field 
@@ -152,6 +136,8 @@ namespace YS.Knife
 
             codeBuilder.EndAllSegments();
             return codeBuilder.ToString();
+
+
         }
 
         private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol, ISymbol attributeSymbol)
