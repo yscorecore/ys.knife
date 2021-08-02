@@ -18,7 +18,7 @@ namespace YS.Knife.Generator.UnitTest
                 typeof(AutowiredAttribute).GetTypeInfo().Assembly,
                 Assembly.GetExecutingAssembly()
             };
-            base.ShouldGenerateExpectCodeFile(testCaseFileName, assemblies);
+            base.ShouldGenerateExpectCodeFile(new AutowiredGenerator(), testCaseFileName, assemblies);
         }
     }
 }

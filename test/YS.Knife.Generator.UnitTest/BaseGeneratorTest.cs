@@ -13,13 +13,13 @@ namespace YS.Knife.Generator.UnitTest
 {
     public class BaseGeneratorTest
     {
-        protected void ShouldGenerateExpectCodeFile(string testCaseFileName, params Assembly[] assemblies)
+        protected void ShouldGenerateExpectCodeFile(ISourceGenerator generator, string testCaseFileName, params Assembly[] assemblies)
         {
             XDocument xmlFile = XDocument.Load(testCaseFileName);
             var codes = xmlFile.XPathSelectElements("case/input/code")
                 .Select(prop => prop.Value).ToArray();
             var newComp = RunGenerators(CreateCompilation(codes, assemblies), out var warningAndErrors,
-                new AutoNotifyGenerator());
+                generator);
 
             warningAndErrors.Should().BeEmpty();
 

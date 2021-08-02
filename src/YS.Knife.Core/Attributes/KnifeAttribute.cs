@@ -8,6 +8,7 @@ namespace YS.Knife
     {
         public KnifeAttribute(Type validateFromType)
         {
+
             this.ValidateFromType = validateFromType;
         }
         public Type ValidateFromType { get; private set; }

@@ -29,7 +29,7 @@ namespace YS.Knife.Generator.UnitTest
                 typeof(AutoNotifyAttribute).GetTypeInfo().Assembly,
                 Assembly.GetExecutingAssembly()
             };
-            base.ShouldGenerateExpectCodeFile(testCaseFileName, assemblies);
+            base.ShouldGenerateExpectCodeFile(new AutoNotifyGenerator(), testCaseFileName, assemblies);
         }
     }
 }

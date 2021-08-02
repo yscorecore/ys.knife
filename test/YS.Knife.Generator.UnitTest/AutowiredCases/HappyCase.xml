@@ -8,8 +8,8 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        [AutoNotify(PropertyName="abc")]
-        private int _age;
+        [Autowired]
+        private int value;
 
     }
 }
@@ -20,29 +20,14 @@ namespace ConsoleApp2
         <code file="Class1.g.cs">
             <![CDATA[
 using System;
-using System.ComponentModel;
 namespace ConsoleApp2
 {
-    partial class Class1 : INotifyPropertyChanged
+    partial class Class1
     {
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public int Age 
+        public Class1(int value)
         {
-            get 
-            {
-                return this._age;
-            }
-            set
-            {
-                if(this._age != value)
-                {
-                    this._age = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age)));
-                }
-            }
+            this.value = value;
         }
-
     }
 }
             ]]>
