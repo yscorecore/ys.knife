@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        [Autowired]
+        private int _;
+        [Autowired]
+        private string __;
+        [Autowired]
+        private string _name;
+        [Autowired]
+        private double ___;
+        [Autowired]
+        private int age;
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        public Class1(int args, string args1, string name, double args2, int age)
+        {
+            this._ = args;
+            this.__ = args1;
+            this._name = name;
+            this.___ = args2;
+            this.age = age;
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

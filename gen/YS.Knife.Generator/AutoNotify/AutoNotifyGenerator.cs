@@ -79,7 +79,7 @@ namespace YS.Knife
             {
                 if (parentClass != classSymbol)
                 {
-                    codeBuilder.AppendCodeLines($@"partial class {parentClass.Name}");
+                    codeBuilder.AppendCodeLines($@"partial class {parentClass.GetClassSymbolDisplayText()}");
                     codeBuilder.BeginSegment();
                 }
             }
@@ -88,7 +88,7 @@ namespace YS.Knife
             if (!classSymbol.AllInterfaces.Contains(notifySymbol))
             {
                 codeBuilder.AppendCodeLines(
-                    $@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
+                    $@"partial class {classSymbol.GetClassSymbolDisplayText()} : {notifySymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines("public event PropertyChangedEventHandler PropertyChanged;");
             }

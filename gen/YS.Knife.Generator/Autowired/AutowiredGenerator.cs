@@ -81,7 +81,7 @@ namespace YS.Knife
                 var classSymbols = classSymbol.GetParentClassChains();
                 foreach (var parentClass in classSymbols)
                 {
-                    codeBuilder.AppendCodeLines($@"partial class {parentClass.Name}");
+                    codeBuilder.AppendCodeLines($@"partial class {parentClass.GetClassSymbolDisplayText()}");
                     codeBuilder.BeginSegment();
                 }
             }
@@ -131,7 +131,7 @@ namespace YS.Knife
                         newName = baseName + index++;
                     }
 
-                    return baseName;
+                    return newName;
                 }
 
                 ImmutableArray<IParameterSymbol> GetBaseTypeParameters()

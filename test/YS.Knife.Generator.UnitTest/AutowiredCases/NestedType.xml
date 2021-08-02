@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    particl class BaseClass
+    {
+        partial class SecondClass
+        {
+            [Autowired]
+            private int value;
+    
+            partial class ThirdClass
+            {
+                [Autowired]
+                private int value;
+            }
+        }
+    }
+    
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="BaseClass.SecondClass.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class BaseClass
+    {
+        partial class SecondClass
+        {
+            public SecondClass(int value)
+            {
+                this.value = value;
+            }
+        }
+    }
+}
+            ]]>
+        </code>
+        <code file="BaseClass.SecondClass.ThirdClass.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class BaseClass
+    {
+        partial class SecondClass
+        {
+            partial class ThirdClass
+            {
+                public ThirdClass(int value)
+                {
+                    this.value = value;
+                }
+            }
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class Class1<T>
+    {
+        [Autowired]
+        private int value;
+
+    }
+    partial class Class2
+    {
+        partial class Class3<T>
+        {
+            [Autowired]
+            private int value;
+    
+        }
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class Class1<T>
+    {
+        public Class1(int value)
+        {
+            this.value = value;
+        }
+    }
+}
+            ]]>
+        </code>
+        <code file="Class2.Class3.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class Class2
+    {
+        partial class Class3<T>
+        {
+            public Class3(int value)
+            {
+                this.value = value;
+            }
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

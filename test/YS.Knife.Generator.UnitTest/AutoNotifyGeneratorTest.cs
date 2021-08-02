@@ -9,6 +9,7 @@ namespace YS.Knife.Generator.UnitTest
     {
         [DataTestMethod]
         [DataRow("AutoNotifyCases/HappyCase.xml")]
+        [DataRow("AutoNotifyCases/GenericType.xml")]
         [DataRow("AutoNotifyCases/CombinAllPartials.xml")]
         [DataRow("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
         [DataRow("AutoNotifyCases/NotifyPropertyChangedInherited.xml")]

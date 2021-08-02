@@ -16,29 +16,47 @@ namespace YS.Knife
                 return true;
             }
 
-            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == other?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) ==
+                   other?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         }
+
         public static bool SafeEquals(this INamedTypeSymbol symbol, string typeMetaName)
         {
             return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == $"global::{typeMetaName}";
         }
+
         public static bool SafeEquals(this INamedTypeSymbol symbol, Type type)
         {
             return SafeEquals(symbol, type.FullName);
         }
+
         public static bool HasAttribute(this ISymbol symbol, INamedTypeSymbol attributeSymbol)
         {
             return symbol.GetAttributes().Any(ad =>
-                        ad.AttributeClass.SafeEquals(attributeSymbol));
+                ad.AttributeClass.SafeEquals(attributeSymbol));
         }
+
         public static bool HasAttribute(this ISymbol symbol, string attributeMetaType)
         {
             return symbol.GetAttributes().Any(ad =>
-                        ad.AttributeClass.SafeEquals(attributeMetaType));
+                ad.AttributeClass.SafeEquals(attributeMetaType));
         }
+
         public static bool HasAttribute(this ISymbol symbol, Type attributeType)
         {
             return HasAttribute(symbol, attributeType.FullName);
+        }
+
+        public static string GetClassSymbolDisplayText(this INamedTypeSymbol classSymbol)
+        {
+            if (classSymbol.TypeArguments.Length > 0)
+            {
+                return $"{classSymbol.Name}<{string.Join(", ", classSymbol.TypeArguments.Select(p => p.Name))}>";
+            }
+            else
+            {
+                return classSymbol.Name;
+            }
         }
 
         public static IList<INamedTypeSymbol> GetParentClassChains(this INamedTypeSymbol classSymbol)
@@ -61,14 +79,15 @@ namespace YS.Knife
             return paths.AsReadOnly();
         }
 
-        public static IEnumerable<IFieldSymbol> GetAllInstanceFieldsByAttribute(this INamedTypeSymbol clazzSymbol, Type attributeType)
+        public static IEnumerable<IFieldSymbol> GetAllInstanceFieldsByAttribute(this INamedTypeSymbol clazzSymbol,
+            Type attributeType)
         {
             return clazzSymbol.GetMembers().OfType<IFieldSymbol>()
                 .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(attributeType));
-
         }
 
-        public static IEnumerable<INamedTypeSymbol> GetAllClassSymbolsIgnoreRepeated(this CodeWriter codeWriter, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntax)
+        public static IEnumerable<INamedTypeSymbol> GetAllClassSymbolsIgnoreRepeated(this CodeWriter codeWriter,
+            IEnumerable<ClassDeclarationSyntax> classDeclarationSyntax)
         {
             var classSymbols = new HashSet<string>();
             foreach (var clazz in classDeclarationSyntax)

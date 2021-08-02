@@ -10,8 +10,16 @@
         <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="generated\" />
-      <Folder Include="generated\YS.Knife.Generator\YS.Knife.AutoNotifyGenerator\" />
+      <Compile Remove="generated\YS.Knife.Generator\YS.Knife.AutoNotifyGenerator\**" />
+      <Compile Remove="generated\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <EmbeddedResource Remove="generated\YS.Knife.Generator\YS.Knife.AutoNotifyGenerator\**" />
+      <EmbeddedResource Remove="generated\**" />
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="generated\YS.Knife.Generator\YS.Knife.AutoNotifyGenerator\**" />
+      <None Remove="generated\**" />
     </ItemGroup>
     <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">
         <ItemGroup>

@@ -1,7 +1,14 @@
-namespace SourceGenerator.Notify
+﻿namespace SourceGenerator.Notify
 {
-    public class Generic
+    partial class Generic<T>
     {
-        
+        partial class MyClass
+        {
+            partial class MyClass2<B>
+            {
+                [YS.Knife.AutoNotify]
+                private string name;
+            }
+        }
     }
 }

@@ -10,6 +10,10 @@ namespace YS.Knife.Generator.UnitTest
     {
         [DataTestMethod]
         [DataRow("AutowiredCases/HappyCase.xml")]
+        [DataRow("AutowiredCases/GenericType.xml")]
+        [DataRow("AutowiredCases/NestedType.xml")]
+        [DataRow("AutowiredCases/CamelCase.xml")]
+        [DataRow("AutowiredCases/SameNameInDifferentNamespace.xml")]
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             var assemblies = new[]

@@ -6,7 +6,7 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class1
+    partial class Class1<T>
     {
         [AutoNotify(PropertyName="abc")]
         private int _age;
@@ -23,7 +23,7 @@ using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
-    partial class Class1 : INotifyPropertyChanged
+    partial class Class1<T> : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
