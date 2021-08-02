@@ -53,16 +53,6 @@ namespace YS.Knife
 
             allNamespaces.Add("System.ComponentModel");
 
-            foreach (var field in fields)
-            {
-                if (!field.Type.ContainingNamespace.IsGlobalNamespace)
-                {
-                    allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
-                }
-            }
-
-            allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
-
             foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
             {
                 codeBuilder.AppendCodeLines($"using {usingNamespace};");

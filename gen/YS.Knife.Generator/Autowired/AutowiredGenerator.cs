@@ -33,7 +33,6 @@ namespace YS.Knife
             if (fieldList.Count == 0) return null;
 
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
-            AppendUsing(builder);
             AppendNamespace(builder);
             AppendClassDefinition(builder);
             AppendPublicCtor(builder);
@@ -51,25 +50,6 @@ namespace YS.Knife
                     codeBuilder.AppendCodeLines($"namespace {classSymbol.ContainingNamespace.ToDisplayString()}");
                     codeBuilder.BeginSegment();
                 }
-            }
-
-            void AppendUsing(CsharpCodeBuilder codeBuilder)
-            {
-                //var allNamespaces = new HashSet<string>();
-                //foreach (var field in fieldList)
-                //{
-                //    if (!field.Type.ContainingNamespace.IsGlobalNamespace)
-                //    {
-                //        allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
-                //    }
-                //}
-
-                //allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
-
-                //foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
-                //{
-                //    codeBuilder.AppendCodeLines($"using {usingNamespace};");
-                //}
             }
 
             void AppendClassDefinition(CsharpCodeBuilder codeBuilder)
@@ -167,12 +147,12 @@ namespace YS.Knife
             {
                 if (symbol is IFieldSymbol fieldSymbol)
                 {
-                    return fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    return fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 }
 
                 if (symbol is IParameterSymbol parameterSymbol)
                 {
-                    return parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat);
+                    return parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 }
                 // never go here
                 throw new NotSupportedException();

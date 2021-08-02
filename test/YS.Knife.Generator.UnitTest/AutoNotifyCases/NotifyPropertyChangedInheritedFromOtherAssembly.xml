@@ -22,7 +22,6 @@ namespace ConsoleApp2
 
         <code file="Class2.g.cs">
             <![CDATA[
-using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {

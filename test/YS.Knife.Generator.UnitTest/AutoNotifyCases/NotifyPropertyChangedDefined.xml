@@ -20,7 +20,6 @@ namespace ConsoleApp2
     <output>
         <code file="Class1.g.cs">
             <![CDATA[
-using System;
 using System.ComponentModel;
 namespace ConsoleApp2
 {

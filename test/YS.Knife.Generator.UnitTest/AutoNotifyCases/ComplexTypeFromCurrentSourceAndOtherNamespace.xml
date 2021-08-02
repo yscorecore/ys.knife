@@ -31,7 +31,6 @@ namespace ConsoleApp2
     <output>
         <code file="Class1.g.cs">
             <![CDATA[
-using ConsoleApp3.Sub;
 using System.ComponentModel;
 namespace ConsoleApp2
 {
