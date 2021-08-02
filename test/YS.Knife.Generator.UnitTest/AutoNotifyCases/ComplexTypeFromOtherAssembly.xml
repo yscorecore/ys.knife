@@ -9,7 +9,7 @@ namespace ConsoleApp2
     partial class Class1
     {
         [AutoNotify]
-        private YS.Knife.Generator.UnitTest.AutoNotifyModels.BaseClass _value;
+        private YS.Knife.Generator.UnitTest.AutoNotifyGeneratorTest.BaseClass _value;
 
     }
 }
@@ -20,14 +20,14 @@ namespace ConsoleApp2
         <code file="Class1.g.cs">
             <![CDATA[
 using System.ComponentModel;
-using YS.Knife.Generator.UnitTest.AutoNotifyModels;
+using YS.Knife.Generator.UnitTest;
 namespace ConsoleApp2
 {
     partial class Class1 : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public BaseClass Value 
+        public global::YS.Knife.Generator.UnitTest.AutoNotifyGeneratorTest.BaseClass Value 
         {
             get 
             {

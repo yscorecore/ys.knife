@@ -32,5 +32,13 @@ namespace YS.Knife.Generator.UnitTest
             };
             base.ShouldGenerateExpectCodeFile(new AutoNotifyGenerator(), testCaseFileName, assemblies);
         }
+
+        public class BaseClass : INotifyPropertyChanged
+        {
+
+            public event PropertyChangedEventHandler PropertyChanged;
+
+
+        }
     }
 }

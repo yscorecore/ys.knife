@@ -111,8 +111,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Base", "src\YS.Kni
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Base.UnitTest", "test\YS.Knife.Base.UnitTest\YS.Knife.Base.UnitTest.csproj", "{693D0F07-2EBC-46C6-9021-8D3DED08EE77}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tool", "tool", "{92698FDD-2258-4E05-81EA-0FC9B61EE228}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gen", "gen", "{BD09AD82-9547-4CF0-99EE-EE9627A54E8F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Generator", "gen\YS.Knife.Generator\YS.Knife.Generator.csproj", "{EFCF976A-43C8-4CE0-BAC5-2C18C54E2549}"

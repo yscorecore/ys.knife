@@ -39,7 +39,7 @@ namespace ConsoleApp2
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public MyClass Val 
+        public global::ConsoleApp3.Sub.MyClass Val 
         {
             get 
             {

@@ -6,20 +6,24 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class1<T>
+    partial class Class1: Class2
     {
         [Autowired]
-        private int value;
+        private string value;
 
     }
+}
+        ]]>
+        </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
     partial class Class2
     {
-        partial class Class3<T>
-        {
-            [Autowired]
-            private int value;
-    
-        }
+        [Autowired]
+        private int __;
 
     }
 }
@@ -27,32 +31,30 @@ namespace ConsoleApp2
         </code>
     </input>
     <output>
-        <code file="Class1.g.cs">
-            <![CDATA[
-namespace ConsoleApp2
-{
-    partial class Class1<T>
-    {
-        public Class1(int value)
-        {
-            this.value = value;
-        }
-    }
-}
-            ]]>
-        </code>
-        <code file="Class2.Class3.g.cs">
+        <code file="Class2.g.cs">
             <![CDATA[
 namespace ConsoleApp2
 {
     partial class Class2
     {
-        partial class Class3<T>
+        public Class2(int args)
         {
-            public Class3(int value)
-            {
-                this.value = value;
-            }
+            this.__ = args;
+        }
+    }
+}
+            ]]>
+        </code>
+        <code file="Class1.g.cs">
+            <![CDATA[
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        public Class1(int args, string value)
+            : base(args: args)
+        {
+            this.value = value;
         }
     }
 }

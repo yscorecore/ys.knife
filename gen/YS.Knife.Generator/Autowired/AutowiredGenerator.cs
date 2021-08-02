@@ -23,19 +23,15 @@ namespace YS.Knife
 
             var codeWriter = new CodeWriter(context);
 
-            foreach (var clazzSymbol in codeWriter.GetAllClassSymbolsIgnoreRepeated(receiver.CandidateClasses))
-            {
-                var fieldList = clazzSymbol.GetAllInstanceFieldsByAttribute(typeof(AutowiredAttribute)).ToList();
-                if (fieldList.Any())
-                {
-                    var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter);
-                    codeWriter.WriteCodeFile(codeFile);
-                }
-            }
+            codeWriter.ForeachClassSyntax(receiver.CandidateClasses, ProcessClass);
+
         }
 
-        private CodeFile ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fieldList, CodeWriter codeWriter)
+        private CodeFile ProcessClass(INamedTypeSymbol classSymbol, CodeWriter codeWriter)
         {
+            var fieldList = classSymbol.GetAllInstanceFieldsByAttribute(typeof(AutowiredAttribute)).ToList();
+            if (fieldList.Count == 0) return null;
+
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
             AppendUsing(builder);
             AppendNamespace(builder);
@@ -44,7 +40,7 @@ namespace YS.Knife
             builder.EndAllSegments();
             return new CodeFile
             {
-                BasicName = string.Join(".", classSymbol.GetParentClassChains().Select(p => p.Name)),
+                BasicName = string.Join(".", classSymbol.GetContainerClassChains().Select(p => p.Name)),
                 Content = builder.ToString(),
             };
 
@@ -59,26 +55,26 @@ namespace YS.Knife
 
             void AppendUsing(CsharpCodeBuilder codeBuilder)
             {
-                var allNamespaces = new HashSet<string>();
-                foreach (var field in fieldList)
-                {
-                    if (!field.Type.ContainingNamespace.IsGlobalNamespace)
-                    {
-                        allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
-                    }
-                }
+                //var allNamespaces = new HashSet<string>();
+                //foreach (var field in fieldList)
+                //{
+                //    if (!field.Type.ContainingNamespace.IsGlobalNamespace)
+                //    {
+                //        allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
+                //    }
+                //}
 
-                allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
+                //allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
 
-                foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
-                {
-                    codeBuilder.AppendCodeLines($"using {usingNamespace};");
-                }
+                //foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
+                //{
+                //    codeBuilder.AppendCodeLines($"using {usingNamespace};");
+                //}
             }
 
             void AppendClassDefinition(CsharpCodeBuilder codeBuilder)
             {
-                var classSymbols = classSymbol.GetParentClassChains();
+                var classSymbols = classSymbol.GetContainerClassChains();
                 foreach (var parentClass in classSymbols)
                 {
                     codeBuilder.AppendCodeLines($@"partial class {parentClass.GetClassSymbolDisplayText()}");
@@ -89,21 +85,26 @@ namespace YS.Knife
             void AppendPublicCtor(CsharpCodeBuilder codeBuilder)
             {
                 var nameMapper = new Dictionary<string, ISymbol>();
-                // from current class
-                foreach (var fieldSymbol in fieldList)
-                {
-                    nameMapper[NewArgumentName(fieldSymbol, nameMapper)] = fieldSymbol;
-                }
-
                 // from parent class
                 foreach (var paramSymbol in GetBaseTypeParameters())
                 {
                     nameMapper[NewArgumentName(paramSymbol, nameMapper)] = paramSymbol;
                 }
-
+                // from current class
+                foreach (var fieldSymbol in fieldList)
+                {
+                    nameMapper[NewArgumentName(fieldSymbol, nameMapper)] = fieldSymbol;
+                }
                 string args = string.Join(", ", nameMapper.Select(p => $"{GetSymbolTypeDisplayName(p.Value)} {p.Key}"));
 
                 codeBuilder.AppendCodeLines($"public {classSymbol.Name}({args})");
+                if (nameMapper.Values.OfType<IParameterSymbol>().Any())
+                {
+                    string baseArgs = string.Join(", ", nameMapper.Where(p=>p.Value is IParameterSymbol).Select(p => $"{p.Value.Name}: {p.Key}"));
+                    codeBuilder.AppendCodeLines($"    : base({baseArgs})");
+                }
+
+
                 codeBuilder.BeginSegment();
                 // lines
                 foreach (var kv in nameMapper)

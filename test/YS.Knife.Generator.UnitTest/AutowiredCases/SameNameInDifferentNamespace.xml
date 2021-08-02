@@ -33,7 +33,6 @@ namespace ConsoleApp3
     <output>
         <code file="Class1.g.cs">
             <![CDATA[
-using System;
 namespace ConsoleApp2
 {
     partial class Class1
@@ -48,7 +47,6 @@ namespace ConsoleApp2
         </code>
         <code file="Class1.2.g.cs">
             <![CDATA[
-using System;
 namespace ConsoleApp3
 {
     partial class Class1

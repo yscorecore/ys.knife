@@ -4,29 +4,25 @@
         <code>
             <![CDATA[
 using YS.Knife;
-namespace ConsoleApp2
-{
-    partial class Class1
-    {
-        [Autowired]
-        private int value;
 
-    }
+partial class Class1
+{
+    [Autowired]
+    private int _age;
+
 }
+
         ]]>
         </code>
     </input>
     <output>
         <code file="Class1.g.cs">
             <![CDATA[
-namespace ConsoleApp2
+partial class Class1
 {
-    partial class Class1
+    public Class1(int age)
     {
-        public Class1(int value)
-        {
-            this.value = value;
-        }
+        this._age = age;
     }
 }
             ]]>

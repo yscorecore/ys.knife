@@ -44,7 +44,7 @@ namespace YS.Knife
             INamedTypeSymbol notifySymbol =
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
-            var classSymbols = classSymbol.GetParentClassChains();
+            var classSymbols = classSymbol.GetContainerClassChains();
 
 
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
@@ -133,7 +133,7 @@ namespace YS.Knife
             }
 
             source.AppendCodeLines($@"
-public {fieldType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)} {propertyName} 
+public {fieldType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {propertyName} 
 {{
     get 
     {{

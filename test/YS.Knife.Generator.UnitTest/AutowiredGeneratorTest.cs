@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -13,7 +15,10 @@ namespace YS.Knife.Generator.UnitTest
         [DataRow("AutowiredCases/GenericType.xml")]
         [DataRow("AutowiredCases/NestedType.xml")]
         [DataRow("AutowiredCases/CamelCase.xml")]
+        [DataRow("AutowiredCases/EmptyNamespace.xml")]
         [DataRow("AutowiredCases/SameNameInDifferentNamespace.xml")]
+        [DataRow("AutowiredCases/InheriteOtherClass.xml")]
+        [DataRow("AutowiredCases/CombinAllPartials.xml")]
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             var assemblies = new[]
@@ -24,5 +29,6 @@ namespace YS.Knife.Generator.UnitTest
             };
             base.ShouldGenerateExpectCodeFile(new AutowiredGenerator(), testCaseFileName, assemblies);
         }
+
     }
 }

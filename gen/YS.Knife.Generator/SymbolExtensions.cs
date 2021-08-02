@@ -59,7 +59,7 @@ namespace YS.Knife
             }
         }
 
-        public static IList<INamedTypeSymbol> GetParentClassChains(this INamedTypeSymbol classSymbol)
+        public static IList<INamedTypeSymbol> GetContainerClassChains(this INamedTypeSymbol classSymbol)
         {
             var namespaceSymbol = classSymbol.ContainingNamespace;
             List<INamedTypeSymbol> paths = new List<INamedTypeSymbol>();
@@ -94,14 +94,47 @@ namespace YS.Knife
             {
                 SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(clazz) as INamedTypeSymbol;
-
-                var clazzSymbolAualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                if (!classSymbols.Contains(clazzSymbolAualifiedName))
+                if (classSymbols.Contains(clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)))
                 {
-                    classSymbols.Add(clazzSymbolAualifiedName);
-                    yield return clazzSymbol;
+                    continue;
+                }
+
+                foreach (var dependency in GetDependencyTree(clazzSymbol))
+                {
+                    var clazzSymbolAualifiedName = dependency.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                    if (!classSymbols.Contains(clazzSymbolAualifiedName))
+                    {
+                        classSymbols.Add(clazzSymbolAualifiedName);
+                        yield return dependency;
+                    }
+
                 }
             }
+
+            IEnumerable<INamedTypeSymbol> GetDependencyTree(INamedTypeSymbol classSymbol)
+            {
+                List<INamedTypeSymbol> result = new List<INamedTypeSymbol>();
+                result.Add(classSymbol);
+
+                var assembly = classSymbol.ContainingAssembly;
+
+
+
+                if (assembly != null)
+                {
+                    var current = classSymbol;
+                    while (current.BaseType != null && assembly.Equals(current.BaseType.ContainingAssembly, SymbolEqualityComparer.Default))
+                    {
+                        result.Insert(0, current.BaseType);
+                        current = current.BaseType;
+                    }
+
+                }
+               
+
+                return result;
+            }
         }
+
     }
 }

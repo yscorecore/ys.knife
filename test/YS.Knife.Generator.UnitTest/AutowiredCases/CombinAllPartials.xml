@@ -15,6 +15,20 @@ namespace ConsoleApp2
 }
         ]]>
         </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        [Autowired]
+        private int value2;
+
+    }
+}
+        ]]>
+        </code>
     </input>
     <output>
         <code file="Class1.g.cs">
@@ -23,9 +37,10 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        public Class1(int value)
+        public Class1(int value, int value2)
         {
             this.value = value;
+            this.value2 = value2;
         }
     }
 }

@@ -19,6 +19,9 @@
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
+      <None Remove="AutowiredCases\CombinAllPartials.xml" />
+      <None Remove="AutowiredCases\EmptyNamespace.xml" />
+      <None Remove="AutowiredCases\InheriteOtherClass.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -61,7 +64,16 @@
       <Content Include="AutoNotifyCases\NestedType.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="AutowiredCases\EmptyNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="AutowiredCases\GenericType.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutowiredCases\CombinAllPartials.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutowiredCases\InheriteOtherClass.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="AutowiredCases\HappyCase.xml">
@@ -85,7 +97,6 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.Common" Version="4.0.0-2.final" />
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.0.0-2.final" />
-        <PackageReference Include="PrimaryConstructor" Version="1.3.2" />
     </ItemGroup>
 
     <ItemGroup>
