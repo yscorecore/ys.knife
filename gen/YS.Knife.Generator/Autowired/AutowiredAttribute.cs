@@ -3,8 +3,8 @@
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    public sealed class AutoNotifyAttribute : Attribute
+    public sealed class AutowiredAttribute : Attribute
     {
-        public string PropertyName { get; set; }
+        public bool CheckNull { get; set; } = true;
     }
 }

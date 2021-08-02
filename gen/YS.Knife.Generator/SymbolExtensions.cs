@@ -38,8 +38,9 @@ namespace YS.Knife
         }
         public static bool HasAttribute(this ISymbol symbol, Type attributeType)
         {
-            return HasAttribute(symbol,attributeType.FullName);
+            return HasAttribute(symbol, attributeType.FullName);
         }
+
         public static IList<INamedTypeSymbol> GetParentClassChains(this INamedTypeSymbol classSymbol)
         {
             var namespaceSymbol = classSymbol.ContainingNamespace;
@@ -67,7 +68,7 @@ namespace YS.Knife
 
         }
 
-        public static IEnumerable<INamedTypeSymbol> GetAllClassSymbolsIgnoreRepeated(this CodeWriter codeWriter,IEnumerable<ClassDeclarationSyntax> classDeclarationSyntax)
+        public static IEnumerable<INamedTypeSymbol> GetAllClassSymbolsIgnoreRepeated(this CodeWriter codeWriter, IEnumerable<ClassDeclarationSyntax> classDeclarationSyntax)
         {
             var classSymbols = new HashSet<string>();
             foreach (var clazz in classDeclarationSyntax)
@@ -79,7 +80,7 @@ namespace YS.Knife
                 if (!classSymbols.Contains(clazzSymbolAualifiedName))
                 {
                     classSymbols.Add(clazzSymbolAualifiedName);
-                    yield return  clazzSymbol;
+                    yield return clazzSymbol;
                 }
             }
         }

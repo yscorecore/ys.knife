@@ -30,7 +30,7 @@ namespace SourceGenerator.Notify
 
         partial class Class1
         {
-            [AutoNotify(PropertyName ="IntValue")]
+            [AutoNotify(PropertyName = "IntValue")]
             private int value;
         }
     }

@@ -107,7 +107,8 @@ namespace YS.Knife
             codeBuilder.EndAllSegments();
             return new CodeFile
             {
-                BasicName = string.Join(".", classSymbols.Select(p => p.Name)), Content = codeBuilder.ToString(),
+                BasicName = string.Join(".", classSymbols.Select(p => p.Name)),
+                Content = codeBuilder.ToString(),
             };
         }
 
@@ -168,28 +169,27 @@ public {fieldType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}
             }
         }
 
-        /// <summary>
-        /// Created on demand before each generation pass
-        /// </summary>
         class AutoNotifySyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
 
-            /// <summary>
-            /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
-            /// </summary>
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
-                if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
-                    && fieldDeclarationSyntax.AttributeLists.Any() &&
-                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword) &&
-                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
                 {
-                    if (fieldDeclarationSyntax.Parent is ClassDeclarationSyntax clazzSyntax && !CandidateClasses.Contains(clazzSyntax))
+                    var hasInstanceFieldWithAttribute = classDeclarationSyntax.Members.OfType<FieldDeclarationSyntax>()
+                        .Any(HasInstanceFieldAndDefinedAttribute);
+                    if (hasInstanceFieldWithAttribute)
                     {
-                        CandidateClasses.Add((clazzSyntax));
+                        CandidateClasses.Add(classDeclarationSyntax);
                     }
+                }
 
+                bool HasInstanceFieldAndDefinedAttribute(FieldDeclarationSyntax fieldDeclarationSyntax)
+                {
+                    return fieldDeclarationSyntax.AttributeLists.Any() &&
+                           !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                           !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword);
                 }
             }
         }
