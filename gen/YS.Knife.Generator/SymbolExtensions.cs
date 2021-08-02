@@ -60,27 +60,28 @@ namespace YS.Knife
             return paths.AsReadOnly();
         }
 
-        public static IList<IFieldSymbol> GetAllInstanceFields(Compilation compilation,IEnumerable<FieldDeclarationSyntax> fieldDeclarationSyntaxes,Func<IFieldSymbol,bool> where)
+        public static IEnumerable<IFieldSymbol> GetAllInstanceFieldsByAttribute(this INamedTypeSymbol clazzSymbol, Type attributeType)
         {
-            List<IFieldSymbol> fieldSymbols = new List<IFieldSymbol>();
-            foreach (FieldDeclarationSyntax field in fieldDeclarationSyntaxes)
+            return clazzSymbol.GetMembers().OfType<IFieldSymbol>()
+                .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(attributeType));
+
+        }
+
+        public static IEnumerable<INamedTypeSymbol> GetAllClassSymbolsIgnoreRepeated(this CodeWriter codeWriter,IEnumerable<ClassDeclarationSyntax> classDeclarationSyntax)
+        {
+            var classSymbols = new HashSet<string>();
+            foreach (var clazz in classDeclarationSyntax)
             {
-                SemanticModel model = compilation.GetSemanticModel(field.SyntaxTree);
-                foreach (VariableDeclaratorSyntax variable in field.Declaration.Variables)
+                SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
+                var clazzSymbol = model.GetDeclaredSymbol(clazz) as INamedTypeSymbol;
+
+                var clazzSymbolAualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                if (!classSymbols.Contains(clazzSymbolAualifiedName))
                 {
-                    // Get the symbol being decleared by the field, and keep it if its annotated
-                    IFieldSymbol fieldSymbol = model.GetDeclaredSymbol(variable) as IFieldSymbol;
-                    if (fieldSymbol.CanBeReferencedByName && !fieldSymbol.IsStatic && where(fieldSymbol))
-                    {
-                        fieldSymbols.Add(fieldSymbol);
-                    }
+                    classSymbols.Add(clazzSymbolAualifiedName);
+                    yield return  clazzSymbol;
                 }
             }
-            return fieldSymbols;
-        }
-        public static IList<IFieldSymbol> GetAllInstanceFieldsByAttributeName(Compilation compilation, IEnumerable<FieldDeclarationSyntax> fieldDeclarationSyntaxes, string attributeMetaName)
-        {
-            return GetAllInstanceFields(compilation, fieldDeclarationSyntaxes, (p) => p.HasAttribute(attributeMetaName));
         }
     }
 }

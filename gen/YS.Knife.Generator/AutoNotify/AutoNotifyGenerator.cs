@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 
+// ReSharper disable once CheckNamespace
 namespace YS.Knife
 {
     [Generator]
@@ -16,7 +17,7 @@ namespace YS.Knife
         {
             context.RegisterForSyntaxNotifications(() => new AutoNotifySyntaxReceiver());
         }
-      
+
         public void Execute(GeneratorExecutionContext context)
         {
             if (!(context.SyntaxReceiver is AutoNotifySyntaxReceiver receiver))
@@ -24,49 +25,24 @@ namespace YS.Knife
 
             var codeWriter = new CodeWriter(context);
 
-            var classSymbols = new HashSet<string>();
-            foreach (var clazz in receiver.CandidateClasses)
+            foreach (var clazzSymbol in codeWriter.GetAllClassSymbolsIgnoreRepeated(receiver.CandidateClasses))
             {
-                SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
-                var clazzSymbol = model.GetDeclaredSymbol(clazz);
-
-                var clazzSymbolAualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                if (classSymbols.Contains(clazzSymbolAualifiedName))
+                var fieldList = clazzSymbol.GetAllInstanceFieldsByAttribute(typeof(AutoNotifyAttribute)).ToList();
+                if (fieldList.Any())
                 {
-                    continue;
+                    var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter.Compilation);
+                    codeWriter.WriteCodeFile(codeFile);
                 }
-                else
-                {
-                    classSymbols.Add(clazzSymbolAualifiedName);
-                }
-
-
-
-                var fieldList = clazzSymbol.GetMembers().OfType<IFieldSymbol>()
-                        .Where(p => p.CanBeReferencedByName && !p.IsStatic && p.HasAttribute(typeof(AutoNotifyAttribute)))
-                        .ToList();
-                if (fieldList.Count == 0)
-                {
-                    continue;
-                }
-
-                var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter.Compilation);
-
-                codeWriter.WriteCodeFile(codeFile);
-
             }
-
         }
 
-      
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("MicrosoftCodeAnalysisCorrectness",
             "RS1024:Compare symbols correctly", Justification = "<Pending>")]
-        private CodeFile ProcessClass( INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, Compilation compilation)
+        private CodeFile ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, Compilation compilation)
         {
-
             INamedTypeSymbol notifySymbol =
-               compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
+                compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
             var classSymbols = classSymbol.GetParentClassChains();
 
@@ -84,6 +60,7 @@ namespace YS.Knife
                     allNamespaces.Add(field.Type.ContainingNamespace.ToDisplayString());
                 }
             }
+
             allNamespaces.Remove(classSymbol.ContainingNamespace.ToDisplayString());
 
             foreach (var usingNamespace in allNamespaces.OrderBy(p => p))
@@ -108,11 +85,10 @@ namespace YS.Knife
             }
 
 
-
-
             if (!classSymbol.AllInterfaces.Contains(notifySymbol))
             {
-                codeBuilder.AppendCodeLines($@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
+                codeBuilder.AppendCodeLines(
+                    $@"partial class {classSymbol.Name} : {notifySymbol.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}");
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines("public event PropertyChangedEventHandler PropertyChanged;");
             }
@@ -131,11 +107,8 @@ namespace YS.Knife
             codeBuilder.EndAllSegments();
             return new CodeFile
             {
-                 BasicName = string.Join(".", classSymbols.Select(p => p.Name)),
-                 Content= codeBuilder.ToString(),
+                BasicName = string.Join(".", classSymbols.Select(p => p.Name)), Content = codeBuilder.ToString(),
             };
-
-
         }
 
         private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol)
@@ -144,9 +117,10 @@ namespace YS.Knife
             string fieldName = fieldSymbol.Name;
             ITypeSymbol fieldType = fieldSymbol.Type;
 
-            AttributeData attributeData = fieldSymbol.GetAttributes().Single(p => p.AttributeClass.SafeEquals(typeof(AutoNotifyAttribute)));
+            AttributeData attributeData = fieldSymbol.GetAttributes()
+                .Single(p => p.AttributeClass.SafeEquals(typeof(AutoNotifyAttribute)));
             // get the AutoNotify attribute from the field, and any associated data
-            
+
             TypedConstant overridenNameOpt =
                 attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
 
@@ -200,23 +174,22 @@ public {fieldType.ToDisplayString(SymbolDisplayFormat.MinimallyQualifiedFormat)}
         class AutoNotifySyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
-            public IList<FieldDeclarationSyntax> CandidateFields { get; } = new List<FieldDeclarationSyntax>();
 
             /// <summary>
             /// Called for every syntax node in the compilation, we can inspect the nodes and save any information useful for generation
             /// </summary>
             public void OnVisitSyntaxNode(SyntaxNode syntaxNode)
             {
-                if (syntaxNode is ClassDeclarationSyntax classDeclarationSyntax)
-                {
-                    CandidateClasses.Add(classDeclarationSyntax);
-                }
                 if (syntaxNode is FieldDeclarationSyntax fieldDeclarationSyntax
-                    && fieldDeclarationSyntax.AttributeLists.Any() && 
-                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword)&&
-                     !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
+                    && fieldDeclarationSyntax.AttributeLists.Any() &&
+                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                    !fieldDeclarationSyntax.Modifiers.Any(SyntaxKind.ConstKeyword))
                 {
-                    CandidateFields.Add(fieldDeclarationSyntax);
+                    if (fieldDeclarationSyntax.Parent is ClassDeclarationSyntax clazzSyntax && !CandidateClasses.Contains(clazzSyntax))
+                    {
+                        CandidateClasses.Add((clazzSyntax));
+                    }
+
                 }
             }
         }
