@@ -48,7 +48,7 @@ namespace YS.Knife
 
             public bool Handled { get; set; }
         }
-        public static void ForeachClassSyntax(this CodeWriter codeWriter, IEnumerable<ClassDeclarationSyntax> classSyntax, Func<INamedTypeSymbol,CodeWriter, CodeFile> codeFileFactory)
+        public static void ForeachClassSyntax(this CodeWriter codeWriter, IEnumerable<ClassDeclarationSyntax> classSyntax, Func<INamedTypeSymbol, CodeWriter, CodeFile> codeFileFactory)
         {
             _ = codeFileFactory ?? throw new ArgumentNullException(nameof(codeFileFactory));
             var dic = new Dictionary<string, ClassSyntaxCachedInfo>();
@@ -85,7 +85,7 @@ namespace YS.Knife
                 }
                 SemanticModel model = codeWriter.Compilation.GetSemanticModel(value.Syntax.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(value.Syntax);
-                codeWriter.WriteCodeFile(codeFileFactory(clazzSymbol,codeWriter));
+                codeWriter.WriteCodeFile(codeFileFactory(clazzSymbol, codeWriter));
                 value.Handled = true;
             }
         }

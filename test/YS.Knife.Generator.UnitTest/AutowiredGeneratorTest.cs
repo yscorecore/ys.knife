@@ -23,7 +23,7 @@ namespace YS.Knife.Generator.UnitTest
         [DataRow("AutowiredCases/InheriteClassFromOtherAssembly.xml")]
         [DataRow("AutowiredCases/ComplexTypeFromCurrentSource.xml")]
         [DataRow("AutowiredCases/ComplexTypeFromOtherAssembly.xml")]
-        
+
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             var assemblies = new[]
@@ -35,10 +35,10 @@ namespace YS.Knife.Generator.UnitTest
             base.ShouldGenerateExpectCodeFile(new AutowiredGenerator(), testCaseFileName, assemblies);
         }
 
-        public class BaseClassWithEmptyCtor 
+        public class BaseClassWithEmptyCtor
         {
 
-           
+
 
 
         }
@@ -62,7 +62,7 @@ namespace YS.Knife.Generator.UnitTest
             {
 
             }
-            
+
             public BaseClassWithAttributeInCtor(string strValue)
             {
 
@@ -70,8 +70,8 @@ namespace YS.Knife.Generator.UnitTest
 
         }
         public class Model1
-        { 
-        
+        {
+
         }
         public class Model2
         {
