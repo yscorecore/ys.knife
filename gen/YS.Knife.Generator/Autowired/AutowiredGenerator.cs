@@ -80,7 +80,7 @@ namespace YS.Knife
                 codeBuilder.AppendCodeLines($"public {classSymbol.Name}({args})");
                 if (nameMapper.Values.OfType<IParameterSymbol>().Any())
                 {
-                    string baseArgs = string.Join(", ", nameMapper.Where(p=>p.Value is IParameterSymbol).Select(p => $"{p.Value.Name}: {p.Key}"));
+                    string baseArgs = string.Join(", ", nameMapper.Where(p => p.Value is IParameterSymbol).Select(p => $"{p.Value.Name}: {p.Key}"));
                     codeBuilder.AppendCodeLines($"    : base({baseArgs})");
                 }
 
