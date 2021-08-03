@@ -78,7 +78,7 @@ namespace YS.Knife
             IEnumerable<IPropertySymbol> GetInstanceProperties()
             {
                 return classSymbol.GetMembers().OfType<IPropertySymbol>()
-                    .Where(p => !p.IsStatic && !p.IsReadOnly && p.CanBeReferencedByName && !p.HasAttribute(typeof(AutoConstructorIgnoreAttribute)));
+                    .Where(p => !p.IsStatic && !p.IsReadOnly && !p.IsIndexer && p.CanBeReferencedByName && !p.HasAttribute(typeof(AutoConstructorIgnoreAttribute)));
             }
 
             ImmutableArray<IParameterSymbol> GetBaseTypeParameters()
