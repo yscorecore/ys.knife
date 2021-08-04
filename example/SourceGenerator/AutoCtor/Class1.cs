@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,6 +25,30 @@ namespace SourceGenerator.AutoCtor
 
         public static void Test()
         {
+           
         }
+
+
+    }
+
+    [AutoConstructor]
+    partial class Class2
+    {
+
+        private int myVar;
+        private IList data;
+        private IList<Class2> logger;
+
+        public int MyProperty
+        {
+            get { return 1; }
+        }
+
+    }
+    [AutoConstructor]
+    partial class C2
+    {
+        private string abc;
+        private int bcd;
     }
 }

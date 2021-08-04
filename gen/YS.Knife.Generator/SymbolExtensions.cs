@@ -58,7 +58,12 @@ namespace YS.Knife
                 return classSymbol.Name;
             }
         }
+        public static bool IsAutoProperty(this IPropertySymbol propertySymbol)
+        {
+            var fields = propertySymbol.ContainingType.GetMembers().OfType<IFieldSymbol>();
 
+            return fields.Any(field => !field.CanBeReferencedByName && SymbolEqualityComparer.Default.Equals(field.AssociatedSymbol, propertySymbol));
+        }
         public static IList<INamedTypeSymbol> GetContainerClassChains(this INamedTypeSymbol classSymbol)
         {
             var namespaceSymbol = classSymbol.ContainingNamespace;

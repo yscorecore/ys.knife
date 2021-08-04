@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -12,6 +13,21 @@ namespace YS.Knife
     [Generator]
     public class AutoConstructorGenerator : ISourceGenerator
     {
+        static AutoConstructorGenerator()
+        {
+            AutoConstructorGenerator.AddExtensionField(new ListFieldAttribute());
+        }
+        private static IDictionary<Type, AutoConstructorExtensionFieldAttribute> ExtensionFields = new  ConcurrentDictionary<Type, AutoConstructorExtensionFieldAttribute>();
+
+        public static void AddExtensionField(AutoConstructorExtensionFieldAttribute fieldAttribute)
+        {
+            if (fieldAttribute != null)
+            {
+                ExtensionFields[fieldAttribute.GetType()] = fieldAttribute;
+            }
+           
+        }
+
         public void Initialize(GeneratorInitializationContext context)
         {
             context.RegisterForSyntaxNotifications(() => new AutoConstructorSyntaxReceiver());
@@ -33,7 +49,7 @@ namespace YS.Knife
             {
                 return null;
             }
-            var nameMapper = GetSymbolNameMapper(classSymbol);
+            var nameMapper = GetSymbolNameMapper(codeWriter.Compilation, classSymbol);
             if (!nameMapper.Any())
             {
                 return null;
@@ -41,7 +57,9 @@ namespace YS.Knife
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
             AppendNamespace(classSymbol, builder);
             AppendClassDefinition(classSymbol, builder);
+            AppendExtensionFields(classSymbol, nameMapper, builder);
             AppendPublicCtor(classSymbol, nameMapper, builder);
+
             builder.EndAllSegments();
             return new CodeFile
             {
@@ -51,23 +69,85 @@ namespace YS.Knife
 
         }
 
-
-        IDictionary<string, ISymbol> GetSymbolNameMapper(INamedTypeSymbol classSymbol)
+        private void AppendExtensionFields(INamedTypeSymbol _, IDictionary<string, ArgumentInfo> nameMapper, CsharpCodeBuilder builder)
         {
-            var nameMapper = new Dictionary<string, ISymbol>();
+            foreach (var newField in nameMapper.Values.Where(p => p.Source == ArgumentSource.NewField))
+            {
+
+                builder.AppendCodeLines($"private readonly {newField.MemberTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {newField.MemberName};");
+            }
+        }
+
+        IDictionary<string, ArgumentInfo> GetSymbolNameMapper(Compilation compilation, INamedTypeSymbol classSymbol)
+        {
+            var nameMapper = new Dictionary<string, ArgumentInfo>();
+
 
             foreach (var baseParam in GetBaseTypeParameters())
             {
-                nameMapper[NewArgumentName(baseParam, nameMapper)] = baseParam;
+
+                var newName = NewArgumentName(baseParam.Name.ToCamelCase(), nameMapper);
+                nameMapper[newName] = new ArgumentInfo
+                {
+                    ArgName = newName,
+                    ArgTypeSymbol = baseParam.Type,
+                    MemberName = baseParam.Name,
+                    MemberTypeSymbol = baseParam.Type,
+                    Source = ArgumentSource.BaseCtor
+                };
             }
             foreach (var field in GetInstanceFields())
             {
-                nameMapper[NewArgumentName(field, nameMapper)] = field;
+                var newName = NewArgumentName(field.Name.ToCamelCase(), nameMapper);
+                nameMapper[newName] = new ArgumentInfo
+                {
+                    ArgName = newName,
+                    ArgTypeSymbol = field.Type,
+                    MemberName = field.Name,
+                    MemberTypeSymbol = field.Type,
+                    Source = ArgumentSource.Field
+                };
             }
             foreach (var property in GetInstanceProperties())
             {
-                nameMapper[NewArgumentName(property, nameMapper)] = property;
+                var newName = NewArgumentName(property.Name.ToCamelCase(), nameMapper);
+                nameMapper[newName] = new ArgumentInfo
+                {
+                    ArgName = newName,
+                    ArgTypeSymbol = property.Type,
+                    MemberName = property.Name,
+                    MemberTypeSymbol = property.Type,
+                    Source = ArgumentSource.Property
+                };
             }
+            foreach (var (memberName, ctorType, memberType) in GetExtensionFields())
+            {
+                var newName = NewArgumentName(memberName, nameMapper);
+
+                var ctorTypeSymbol = compilation.GetTypeByMetadataName(ctorType);
+                var memberTypeSymbol = compilation.GetTypeByMetadataName(memberType);
+                // TODO check type symbol is null
+
+                // now, only support one generic type argument
+                if (ctorTypeSymbol.IsGenericType)
+                {
+                    ctorTypeSymbol = ctorTypeSymbol.Construct(classSymbol);
+                }
+                if (memberTypeSymbol.IsGenericType)
+                {
+                    memberTypeSymbol = memberTypeSymbol.Construct(classSymbol);
+                }
+                nameMapper[newName] = new ArgumentInfo
+                {
+                    ArgName = newName,
+                    ArgTypeSymbol = ctorTypeSymbol,
+                    MemberName = memberName,
+                    MemberTypeSymbol = memberTypeSymbol,
+                    Source = ArgumentSource.NewField
+                };
+
+            }
+
             return nameMapper;
 
             IEnumerable<IFieldSymbol> GetInstanceFields()
@@ -78,7 +158,7 @@ namespace YS.Knife
             IEnumerable<IPropertySymbol> GetInstanceProperties()
             {
                 return classSymbol.GetMembers().OfType<IPropertySymbol>()
-                    .Where(p => !p.IsStatic && !p.IsReadOnly && !p.IsIndexer && p.CanBeReferencedByName && !p.HasAttribute(typeof(AutoConstructorIgnoreAttribute)));
+                    .Where(p => !p.IsStatic && !p.IsIndexer && p.CanBeReferencedByName && p.IsAutoProperty() && !p.HasAttribute(typeof(AutoConstructorIgnoreAttribute)));
             }
 
             ImmutableArray<IParameterSymbol> GetBaseTypeParameters()
@@ -108,9 +188,22 @@ namespace YS.Knife
                 return ctor.Parameters;
             }
 
-            string NewArgumentName(ISymbol symbol, IDictionary<string, ISymbol> ctx)
+            IEnumerable<(string MemberName, string CtorArgType,string MemberType)> GetExtensionFields()
             {
-                string baseName = symbol.Name.ToCamelCase();
+                foreach (var attr in classSymbol.GetAttributes())
+                {
+                    foreach (var kv in ExtensionFields)
+                    {
+                        if (attr.AttributeClass.SafeEquals(kv.Key))
+                        {
+                            yield return (kv.Value.Name, kv.Value.CtorArgType, kv.Value.FieldType);
+                        }
+                    }
+                
+                }
+            }
+            string NewArgumentName(string baseName, IDictionary<string, ArgumentInfo> ctx)
+            {
                 if (string.IsNullOrEmpty(baseName))
                 {
                     baseName = "args";
@@ -144,51 +237,54 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ISymbol> nameMapper, CsharpCodeBuilder codeBuilder)
+        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ArgumentInfo> nameMapper, CsharpCodeBuilder codeBuilder)
         {
 
-            string args = string.Join(", ", nameMapper.Select(p => $"{GetSymbolTypeDisplayName(p.Value)} {p.Key}"));
+            string args = string.Join(", ", nameMapper.Select(p => p.Value.GetCtorMethodArgumentItem()));
 
             codeBuilder.AppendCodeLines($"public {classSymbol.Name}({args})");
-            if (nameMapper.Values.OfType<IParameterSymbol>().Any())
+            var baseCtorArgs = nameMapper.Values.Where(p => p.Source == ArgumentSource.BaseCtor);
+            if (baseCtorArgs.Any())
             {
-                string baseArgs = string.Join(", ", nameMapper.Where(p => p.Value is IParameterSymbol).Select(p => $"{p.Value.Name}: {p.Key}"));
+                string baseArgs = string.Join(", ", baseCtorArgs.Select(p => $"{p.MemberName}: {p.ArgName}"));
                 codeBuilder.AppendCodeLines($"    : base({baseArgs})");
             }
 
 
             codeBuilder.BeginSegment();
             // lines
-            foreach (var kv in nameMapper)
+            foreach (var member in nameMapper.Values.Where(p => p.Source != ArgumentSource.BaseCtor))
             {
-                if (kv.Value is IFieldSymbol fieldSymbol)
-                {
-                    codeBuilder.AppendCodeLines($"this.{fieldSymbol.Name} = {kv.Key};");
-                }
+                codeBuilder.AppendCodeLines($"this.{member.MemberName} = {member.ArgName};");
             }
 
             codeBuilder.EndSegment();
 
-            string GetSymbolTypeDisplayName(ISymbol symbol)
-            {
-                if (symbol is IFieldSymbol fieldSymbol)
-                {
-                    return fieldSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                }
-
-                if (symbol is IParameterSymbol parameterSymbol)
-                {
-                    return parameterSymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                }
-                if (symbol is IPropertySymbol propertySymbol)
-                {
-                    return propertySymbol.Type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                }
-                // never go here
-                throw new NotSupportedException();
-            }
-
         }
+        private class ArgumentInfo
+        {
+            public string ArgName { get; set; }
+            public ITypeSymbol ArgTypeSymbol { get; set; }
+
+            public string MemberName { get; set; }
+
+            public ITypeSymbol MemberTypeSymbol { get; set; }
+
+            public ArgumentSource Source { get; set; }
+
+            public string GetCtorMethodArgumentItem()
+            {
+                return $"{ArgTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {ArgName}";
+            }
+        }
+        private enum ArgumentSource
+        {
+            BaseCtor,
+            Field,
+            Property,
+            NewField
+        }
+
         private class AutoConstructorSyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
@@ -203,5 +299,9 @@ namespace YS.Knife
                 }
             }
         }
+
+
+
+
     }
 }
