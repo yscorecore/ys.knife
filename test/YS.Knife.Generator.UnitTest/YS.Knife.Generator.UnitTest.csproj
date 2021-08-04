@@ -100,6 +100,9 @@
       <Content Include="AutowiredCases\SameNameInDifferentNamespace.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="SingletonPatternCases\HappyCase.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
