@@ -13,8 +13,7 @@ namespace YS.Knife.Generator.UnitTest
     public class AutoConstructorGeneratorTest : BaseGeneratorTest
     {
         [DataTestMethod]
-        //[DataRow("AutoConstructorCases/HappyCase.xml")]
-        [DataRow("AutoConstructorCases/CustomizeFieldExtension.xml")]
+        [DataRow("AutoConstructorCases/HappyCase.xml")]
         public void ShouldGenerateExpectCodeFile(string testCaseFileName)
         {
             var assemblies = new[]
@@ -28,18 +27,5 @@ namespace YS.Knife.Generator.UnitTest
 
     }
 
-    public class ListFieldAttribute : AutoConstructorExtensionFieldAttribute
-    {
-        public ListFieldAttribute() : base("children", "System.Collections.IList", "System.Collections.Generic.IList`1")
-        {
-
-        }
-
-        [ModuleInitializer]
-
-        public static void Initializer()
-        {
-           AutoConstructorGenerator.AddExtensionField(new ListFieldAttribute());
-        }
-    }
+   
 }

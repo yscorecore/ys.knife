@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <None Remove="AutoConstructorCases\CustomizeFieldExtension.xml" />
       <None Remove="AutoConstructorCases\HappyCase.xml" />
       <None Remove="AutoNotifyCases\CombinAllPartials.xml" />
       <None Remove="AutoNotifyCases\ComplexTypeFromCurrentSource.xml" />
@@ -30,9 +29,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="AutoConstructorCases\CustomizeFieldExtension.xml">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </Content>
       <Content Include="AutoConstructorCases\HappyCase.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>

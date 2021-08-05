@@ -13,21 +13,6 @@ namespace YS.Knife
     [Generator]
     public class AutoConstructorGenerator : ISourceGenerator
     {
-        static AutoConstructorGenerator()
-        {
-            AutoConstructorGenerator.AddExtensionField(new ListFieldAttribute());
-        }
-        private static IDictionary<Type, AutoConstructorExtensionFieldAttribute> ExtensionFields = new  ConcurrentDictionary<Type, AutoConstructorExtensionFieldAttribute>();
-
-        public static void AddExtensionField(AutoConstructorExtensionFieldAttribute fieldAttribute)
-        {
-            if (fieldAttribute != null)
-            {
-                ExtensionFields[fieldAttribute.GetType()] = fieldAttribute;
-            }
-           
-        }
-
         public void Initialize(GeneratorInitializationContext context)
         {
             context.RegisterForSyntaxNotifications(() => new AutoConstructorSyntaxReceiver());
@@ -57,7 +42,6 @@ namespace YS.Knife
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
             AppendNamespace(classSymbol, builder);
             AppendClassDefinition(classSymbol, builder);
-            AppendExtensionFields(classSymbol, nameMapper, builder);
             AppendPublicCtor(classSymbol, nameMapper, builder);
 
             builder.EndAllSegments();
@@ -67,15 +51,6 @@ namespace YS.Knife
                 Content = builder.ToString(),
             };
 
-        }
-
-        private void AppendExtensionFields(INamedTypeSymbol _, IDictionary<string, ArgumentInfo> nameMapper, CsharpCodeBuilder builder)
-        {
-            foreach (var newField in nameMapper.Values.Where(p => p.Source == ArgumentSource.NewField))
-            {
-
-                builder.AppendCodeLines($"private readonly {newField.MemberTypeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat)} {newField.MemberName};");
-            }
         }
 
         IDictionary<string, ArgumentInfo> GetSymbolNameMapper(Compilation compilation, INamedTypeSymbol classSymbol)
@@ -120,33 +95,7 @@ namespace YS.Knife
                     Source = ArgumentSource.Property
                 };
             }
-            foreach (var (memberName, ctorType, memberType) in GetExtensionFields())
-            {
-                var newName = NewArgumentName(memberName, nameMapper);
-
-                var ctorTypeSymbol = compilation.GetTypeByMetadataName(ctorType);
-                var memberTypeSymbol = compilation.GetTypeByMetadataName(memberType);
-                // TODO check type symbol is null
-
-                // now, only support one generic type argument
-                if (ctorTypeSymbol.IsGenericType)
-                {
-                    ctorTypeSymbol = ctorTypeSymbol.Construct(classSymbol);
-                }
-                if (memberTypeSymbol.IsGenericType)
-                {
-                    memberTypeSymbol = memberTypeSymbol.Construct(classSymbol);
-                }
-                nameMapper[newName] = new ArgumentInfo
-                {
-                    ArgName = newName,
-                    ArgTypeSymbol = ctorTypeSymbol,
-                    MemberName = memberName,
-                    MemberTypeSymbol = memberTypeSymbol,
-                    Source = ArgumentSource.NewField
-                };
-
-            }
+           
 
             return nameMapper;
 
@@ -188,20 +137,6 @@ namespace YS.Knife
                 return ctor.Parameters;
             }
 
-            IEnumerable<(string MemberName, string CtorArgType,string MemberType)> GetExtensionFields()
-            {
-                foreach (var attr in classSymbol.GetAttributes())
-                {
-                    foreach (var kv in ExtensionFields)
-                    {
-                        if (attr.AttributeClass.SafeEquals(kv.Key))
-                        {
-                            yield return (kv.Value.Name, kv.Value.CtorArgType, kv.Value.FieldType);
-                        }
-                    }
-                
-                }
-            }
             string NewArgumentName(string baseName, IDictionary<string, ArgumentInfo> ctx)
             {
                 if (string.IsNullOrEmpty(baseName))
@@ -281,8 +216,7 @@ namespace YS.Knife
         {
             BaseCtor,
             Field,
-            Property,
-            NewField
+            Property
         }
 
         private class AutoConstructorSyntaxReceiver : ISyntaxReceiver
