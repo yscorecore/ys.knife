@@ -12,42 +12,36 @@ namespace YS.Knife.Data.UnitTest
     [TestClass]
     public class OrderExtensionsTest
     {
-        //[TestMethod]
-        //public void ShouldOrderByWhenGiveIdAsc()
-        //{
-        //    var data = CreateTestUsers().Order(new OrderItem("Id", OrderType.Asc))
-        //         .DoSelect(p => p.Id).ToList();
-        //    Assert.AreEqual("001,002,003,004", string.Join(",", data));
-        //}
-        //[TestMethod]
-        //public void ShouldOrderByWhenGiveIdDesc()
-        //{
-        //    var data = CreateTestUsers().Order(new OrderItem("Id", OrderType.Desc))
-        //         .DoSelect(p => p.Id).ToList();
-        //    Assert.AreEqual("004,003,002,001", string.Join(",", data));
-        //}
+        [TestMethod]
+        public void ShouldOrderByWhenGiveIdAsc()
+        {
+            var query = CreateTestUsers().DoOrderBy(OrderInfo.Parse("Id"));
+            JoinIds(query).Should().Be("001,002,003,004");
+        }
+        [TestMethod]
+        public void ShouldOrderByWhenGiveIdDesc()
+        {
+            var query = CreateTestUsers().DoOrderBy(OrderInfo.Parse("Id.desc()"));
+            JoinIds(query).Should().Be("004,003,002,001");
+        }
 
-        //[TestMethod]
-        //public void ShouldOrderByGiveAgeDescAndNameAsc()
-        //{
-        //    var orderInfo = new OrderInfo()
-        //        .Add("Age", OrderType.Desc)
-        //        .Add("Name", OrderType.Asc);
-        //    var data = CreateTestUsers().Order(orderInfo)
-        //         .DoSelect(p => p.Id).ToList();
-        //    Assert.AreEqual("002,003,004,001", string.Join(",", data));
-        //}
+        [TestMethod]
+        public void ShouldOrderByGiveAgeDescAndNameAsc()
+        {
+            var orderInfo = OrderInfo.Parse("Age.desc(),Name.asc()");
+            var query = CreateTestUsers().DoOrderBy(orderInfo);
+            JoinIds(query).Should().Be("002,003,004,001");
+        }
 
-        //[TestMethod]
-        //public void ShouldOrderByGiveAgeAscAndNameDesc()
-        //{
-        //    var orderInfo = new OrderInfo()
-        //        .Add("Age", OrderType.Asc)
-        //        .Add("Name", OrderType.Desc);
-        //    var data = CreateTestUsers().Order(orderInfo)
-        //         .DoSelect(p => p.Id).ToList();
-        //    Assert.AreEqual("001,004,003,002", string.Join(",", data));
-        //}
+        [TestMethod]
+        public void ShouldOrderByGiveAgeAscAndNameDesc()
+        {
+            
+            var orderInfo = OrderInfo.Parse("Age.Asc(),Name.desc()");
+            var query = CreateTestUsers().DoOrderBy(orderInfo);
+            JoinIds(query).Should().Be("001,004,003,002");
+          
+        }
 
         private IQueryable<User> CreateTestUsers()
         {

@@ -4,6 +4,7 @@ using YS.Knife;
 using YS.Knife.Data;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
+using YS.Knife.Data.Query.Expressions;
 
 namespace System.Linq
 {
@@ -14,16 +15,18 @@ namespace System.Linq
             _ = source ?? throw new ArgumentNullException(nameof(source));
             return source.DoOrderBy(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
         }
-        public static IQueryable<TSource> DoOrderBy<TSource, TTarget>(this IQueryable<TSource> source, OrderInfo orderInfo, ObjectMapper<TSource, TTarget> mapper)
-                   where TSource : class
-           where TTarget : class, new()
+
+        public static IQueryable<TSource> DoOrderBy<TSource, TTarget>(this IQueryable<TSource> source,
+            OrderInfo orderInfo, ObjectMapper<TSource, TTarget> mapper)
+            where TSource : class
+            where TTarget : class, new()
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
-            return source.DoOrderBy(orderInfo?.Items ?? Enumerable.Empty<OrderItem>());
+            return source.DoOrderBy(orderInfo?.Items ?? Enumerable.Empty<OrderItem>(), mapper);
         }
+
         private static IQueryable<T> DoOrderBy<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
         {
-
             _ = source ?? throw new ArgumentNullException(nameof(source));
             var lambdas = orderItems
                 .TrimNotNull()
@@ -31,13 +34,13 @@ namespace System.Linq
                 .ToArray();
 
             return source.DoOrderBy(lambdas);
-
         }
-        private static IQueryable<TSource> DoOrderBy<TSource, TTarget>(this IQueryable<TSource> source, IEnumerable<OrderItem> orderItems, ObjectMapper<TSource, TTarget> mapper)
-            where TSource : class
-           where TTarget : class, new()
-        {
 
+        private static IQueryable<TSource> DoOrderBy<TSource, TTarget>(this IQueryable<TSource> source,
+            IEnumerable<OrderItem> orderItems, ObjectMapper<TSource, TTarget> mapper)
+            where TSource : class
+            where TTarget : class, new()
+        {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             var lambdas = orderItems
                 .TrimNotNull()
@@ -45,43 +48,35 @@ namespace System.Linq
                 .ToArray();
 
             return source.DoOrderBy(lambdas);
-
         }
+
         private static LambdaExpression CreateKeySelectorLambda<TSource>(List<ValuePath> valuePaths)
         {
-            if (valuePaths?.Count > 0)
-            {
-                return null;
-            }
-            else
-            {
-                return null;
-            }
+            var valueProvider = QueryExpressionBuilder.Default.CreateValuePathLambda<TSource>(valuePaths);
+            return valueProvider.GetLambda();
         }
-        private static LambdaExpression CreateKeySelectorLambda<TSource, TTarget>(List<ValuePath> valuePaths, ObjectMapper<TSource, TTarget> mapper)
-          where TSource : class
-           where TTarget : class, new()
+
+        private static LambdaExpression CreateKeySelectorLambda<TSource, TTarget>(List<ValuePath> valuePaths,
+            ObjectMapper<TSource, TTarget> mapper)
+            where TSource : class
+            where TTarget : class, new()
         {
-            if (valuePaths?.Count > 0)
-            {
-                return null;
-            }
-            else
-            {
-                return null;
-            }
+            var valueProvider = QueryExpressionBuilder.Default.CreateValuePathLambda(valuePaths, mapper);
+            return valueProvider.GetLambda();
         }
-        public static IQueryable<TSource> DoOrderBy<TSource>(this IQueryable<TSource> source, params (LambdaExpression KeySelector, OrderType OrderType)[] orderByRules)
+
+        public static IQueryable<TSource> DoOrderBy<TSource>(this IQueryable<TSource> source,
+            params (LambdaExpression KeySelector, OrderType OrderType)[] orderByRules)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             IOrderedQueryable<TSource> result = null;
             foreach (var (lambda, type) in orderByRules)
             {
-
                 if (lambda == null) continue;
 
                 if (type == OrderType.Asc)
-                { //顺序
+                {
+                    //顺序
                     if (result != null)
                     {
                         result = result.ThenAsc(lambda);
@@ -103,6 +98,7 @@ namespace System.Linq
                     }
                 }
             }
+
             return result ?? source;
         }
 
@@ -113,6 +109,7 @@ namespace System.Linq
 
             return DoOrder(source, nameof(Queryable.OrderBy), keySelector);
         }
+
         private static IOrderedQueryable<T> ThenAsc<T>(this IQueryable<T> source, LambdaExpression keySelector)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
@@ -120,25 +117,28 @@ namespace System.Linq
 
             return DoOrder(source, nameof(Queryable.ThenBy), keySelector);
         }
+
         private static IOrderedQueryable<T> Desc<T>(this IQueryable<T> source, LambdaExpression keySelector)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
             return DoOrder(source, nameof(Queryable.OrderByDescending), keySelector);
         }
+
         private static IOrderedQueryable<T> ThenDesc<T>(this IQueryable<T> source, LambdaExpression keySelector)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
             _ = keySelector ?? throw new ArgumentNullException(nameof(keySelector));
             return DoOrder(source, nameof(Queryable.ThenByDescending), keySelector);
         }
-        private static IOrderedQueryable<TSource> DoOrder<TSource>(IQueryable<TSource> source, string methodName, LambdaExpression keySelector)
+
+        private static IOrderedQueryable<TSource> DoOrder<TSource>(IQueryable<TSource> source, string methodName,
+            LambdaExpression keySelector)
         {
-            var types = new Type[] { typeof(TSource), keySelector.ReturnType };
+            var types = new Type[] {typeof(TSource), keySelector.ReturnType};
             Expression expr = Expression.Call(typeof(Queryable),
-            methodName, types, source.Expression, keySelector);
+                methodName, types, source.Expression, keySelector);
             return source.Provider.CreateQuery<TSource>(expr) as IOrderedQueryable<TSource>;
         }
-
     }
 }

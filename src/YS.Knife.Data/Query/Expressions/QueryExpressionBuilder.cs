@@ -10,6 +10,7 @@ namespace YS.Knife.Data.Query.Expressions
 {
     public class QueryExpressionBuilder
     {
+        public  static readonly QueryExpressionBuilder Default = new QueryExpressionBuilder();
         public IFuncLambdaProvider CreateValueLambda<TSource>(ValueInfo valueInfo)
         {
             _ = valueInfo ?? throw new ArgumentNullException(nameof(valueInfo));
@@ -19,7 +20,7 @@ namespace YS.Knife.Data.Query.Expressions
             }
             else
             {
-                return CreateValueLambda<TSource>(valueInfo.NavigatePaths);
+                return CreateValuePathLambda<TSource>(valueInfo.NavigatePaths);
             }
         }
         public IFuncLambdaProvider CreateValueLambda<TSource, TTarget>(ValueInfo valueInfo, ObjectMapper<TSource, TTarget> mapper)
@@ -34,20 +35,20 @@ namespace YS.Knife.Data.Query.Expressions
             }
             else
             {
-                return CreateValueLambda(valueInfo.NavigatePaths, mapper);
+                return CreateValuePathLambda(valueInfo.NavigatePaths, mapper);
             }
         }
         public IFuncLambdaProvider CreateConstValueLambda<TSource>(object value)
         {
             return new ConstValueLambdaProvider<TSource>(value);
         }
-        public IFuncLambdaProvider CreateValueLambda<TSource, TTarget>(List<ValuePath> valuePaths, ObjectMapper<TSource, TTarget> mapper)
+        public IFuncLambdaProvider CreateValuePathLambda<TSource, TTarget>(List<ValuePath> valuePaths, ObjectMapper<TSource, TTarget> mapper)
                   where TSource : class
            where TTarget : class, new()
         {
             return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetMapperVisitor(mapper));
         }
-        public IFuncLambdaProvider CreateValueLambda<TSource>(List<ValuePath> valuePaths)
+        public IFuncLambdaProvider CreateValuePathLambda<TSource>(List<ValuePath> valuePaths)
         {
             return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetObjectVisitor(typeof(TSource)));
 
