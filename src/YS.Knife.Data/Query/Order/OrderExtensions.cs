@@ -135,7 +135,7 @@ namespace System.Linq
         private static IOrderedQueryable<TSource> DoOrder<TSource>(IQueryable<TSource> source, string methodName,
             LambdaExpression keySelector)
         {
-            var types = new Type[] {typeof(TSource), keySelector.ReturnType};
+            var types = new Type[] { typeof(TSource), keySelector.ReturnType };
             Expression expr = Expression.Call(typeof(Queryable),
                 methodName, types, source.Expression, keySelector);
             return source.Provider.CreateQuery<TSource>(expr) as IOrderedQueryable<TSource>;

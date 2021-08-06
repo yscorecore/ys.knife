@@ -10,7 +10,7 @@ namespace YS.Knife.Data.Query.Expressions
 {
     public class QueryExpressionBuilder
     {
-        public  static readonly QueryExpressionBuilder Default = new QueryExpressionBuilder();
+        public static readonly QueryExpressionBuilder Default = new QueryExpressionBuilder();
         public IFuncLambdaProvider CreateValueLambda<TSource>(ValueInfo valueInfo)
         {
             _ = valueInfo ?? throw new ArgumentNullException(nameof(valueInfo));

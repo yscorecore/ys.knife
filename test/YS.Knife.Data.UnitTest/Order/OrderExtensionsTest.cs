@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
@@ -18,6 +19,7 @@ namespace YS.Knife.Data.UnitTest
             var query = CreateTestUsers().DoOrderBy(OrderInfo.Parse("Id"));
             JoinIds(query).Should().Be("001,002,003,004");
         }
+
         [TestMethod]
         public void ShouldOrderByWhenGiveIdDesc()
         {
@@ -36,21 +38,31 @@ namespace YS.Knife.Data.UnitTest
         [TestMethod]
         public void ShouldOrderByGiveAgeAscAndNameDesc()
         {
-            
             var orderInfo = OrderInfo.Parse("Age.Asc(),Name.desc()");
             var query = CreateTestUsers().DoOrderBy(orderInfo);
             JoinIds(query).Should().Be("001,004,003,002");
-          
+        }
+
+        [TestMethod]
+        public void ShouldWhenOrderByWithMapperAndGiveAgeAscAndNameDesc()
+        {
+            var mapper = new ObjectMapper<User, UserDto>();
+            mapper.Append(p => p.TAge, p => p.Age);
+            mapper.Append(p => p.TId, p => p.Id);
+            mapper.Append(p => p.TName, p => p.Name);
+            var orderInfo = OrderInfo.Parse("TAge.Asc(),TName.desc()");
+            var query = CreateTestUsers().DoOrderBy(orderInfo, mapper);
+            JoinIds(query).Should().Be("001,004,003,002");
         }
 
         private IQueryable<User> CreateTestUsers()
         {
             return new List<User>
             {
-                new User{ Id="001",Name="ZhangSan",Age=19 },
-                new User{ Id="002",Name="lisi",Age=20 },
-                new User{ Id="003",Name="wangWu",Age=20 },
-                new User{ Id="004",Name="WangMaZi",Age=19 }
+                new User {Id = "001", Name = "ZhangSan", Age = 19},
+                new User {Id = "002", Name = "lisi", Age = 20},
+                new User {Id = "003", Name = "wangWu", Age = 20},
+                new User {Id = "004", Name = "WangMaZi", Age = 19}
             }.AsQueryable();
         }
 
@@ -65,6 +77,14 @@ namespace YS.Knife.Data.UnitTest
             public string Name { get; set; }
             public int Age { get; set; }
         }
+
+        public class UserDto
+        {
+            public string TId { get; set; }
+            public string TName { get; set; }
+            public int TAge { get; set; }
+        }
+
         [TestMethod]
         public void ShouldDoOrderWhenOrderByMultipleLambdas()
         {
@@ -74,6 +94,7 @@ namespace YS.Knife.Data.UnitTest
 
             JoinIds(query).Should().Be("002,003,004,001");
         }
+
         [TestMethod]
         public void ShouldDoOrderWhenOrderByMultipleLambdasAndWithFunctions()
         {
@@ -82,6 +103,7 @@ namespace YS.Knife.Data.UnitTest
 
             JoinIds(query).Should().Be("002,004,003,001");
         }
+
         [TestMethod]
         public void ShouldDoNothingWhenOrderByEmptyLambdas()
         {
