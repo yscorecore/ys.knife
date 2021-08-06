@@ -5,7 +5,7 @@ using YS.Knife.Data.Filter;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    public class ConstValueLambdaProvider<TSource> : IFuncLambdaProvider
+    internal class ConstValueLambdaProvider<TSource> : IFuncLambdaProvider
     {
         public ConstValueLambdaProvider(object constValue)
         {

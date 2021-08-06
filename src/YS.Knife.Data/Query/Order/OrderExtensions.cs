@@ -24,7 +24,42 @@ namespace System.Linq
             _ = source ?? throw new ArgumentNullException(nameof(source));
             return source.DoOrderBy(orderInfo?.Items ?? Enumerable.Empty<OrderItem>(), mapper);
         }
+        public static IQueryable<TSource> DoOrderBy<TSource>(this IQueryable<TSource> source,
+                params (LambdaExpression KeySelector, OrderType OrderType)[] orderByRules)
+        {
+            _ = source ?? throw new ArgumentNullException(nameof(source));
+            IOrderedQueryable<TSource> result = null;
+            foreach (var (lambda, type) in orderByRules)
+            {
+                if (lambda == null) continue;
 
+                if (type == OrderType.Asc)
+                {
+                    //顺序
+                    if (result != null)
+                    {
+                        result = result.ThenAsc(lambda);
+                    }
+                    else
+                    {
+                        result = source.Asc(lambda);
+                    }
+                }
+                else
+                {
+                    if (result != null)
+                    {
+                        result = result.ThenDesc(lambda);
+                    }
+                    else
+                    {
+                        result = source.Desc(lambda);
+                    }
+                }
+            }
+
+            return result ?? source;
+        }
         private static IQueryable<T> DoOrderBy<T>(this IQueryable<T> source, IEnumerable<OrderItem> orderItems)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
@@ -65,42 +100,7 @@ namespace System.Linq
             return valueProvider.GetLambda();
         }
 
-        public static IQueryable<TSource> DoOrderBy<TSource>(this IQueryable<TSource> source,
-            params (LambdaExpression KeySelector, OrderType OrderType)[] orderByRules)
-        {
-            _ = source ?? throw new ArgumentNullException(nameof(source));
-            IOrderedQueryable<TSource> result = null;
-            foreach (var (lambda, type) in orderByRules)
-            {
-                if (lambda == null) continue;
 
-                if (type == OrderType.Asc)
-                {
-                    //顺序
-                    if (result != null)
-                    {
-                        result = result.ThenAsc(lambda);
-                    }
-                    else
-                    {
-                        result = source.Asc(lambda);
-                    }
-                }
-                else
-                {
-                    if (result != null)
-                    {
-                        result = result.ThenDesc(lambda);
-                    }
-                    else
-                    {
-                        result = source.Desc(lambda);
-                    }
-                }
-            }
-
-            return result ?? source;
-        }
 
         private static IOrderedQueryable<T> Asc<T>(this IQueryable<T> source, LambdaExpression keySelector)
         {

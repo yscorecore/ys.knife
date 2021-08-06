@@ -13,6 +13,7 @@ namespace YS.Knife.Data.Query.Expressions
 
 namespace YS.Knife.Data.Filter
 {
+    [Obsolete]
     public class FilterInfoExpressionBuilder
     {
         internal static FilterInfoExpressionBuilder Default = new FilterInfoExpressionBuilder();
