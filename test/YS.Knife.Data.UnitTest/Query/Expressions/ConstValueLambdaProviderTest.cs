@@ -2,6 +2,7 @@
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
+
 namespace YS.Knife.Data.Query.Expressions
 {
     [TestClass]

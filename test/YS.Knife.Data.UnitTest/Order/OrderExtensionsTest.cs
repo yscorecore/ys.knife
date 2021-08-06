@@ -50,9 +50,23 @@ namespace YS.Knife.Data.UnitTest
             mapper.Append(p => p.TAge, p => p.Age);
             mapper.Append(p => p.TId, p => p.Id);
             mapper.Append(p => p.TName, p => p.Name);
+            mapper.Append(p => p.TNameLength, p => p.Name.Length);
             var orderInfo = OrderInfo.Parse("TAge.Asc(),TName.desc()");
             var query = CreateTestUsers().DoOrderBy(orderInfo, mapper);
             JoinIds(query).Should().Be("001,004,003,002");
+        }
+
+        [TestMethod]
+        public void ShouldWhenOrderByWithMapperAndGiveNameLengthDescAndNameAsc()
+        {
+            var mapper = new ObjectMapper<User, UserDto>();
+            mapper.Append(p => p.TAge, p => p.Age);
+            mapper.Append(p => p.TId, p => p.Id);
+            mapper.Append(p => p.TName, p => p.Name);
+            mapper.Append(p => p.TNameLength, p => p.Name.Length);
+            var orderInfo = OrderInfo.Parse("TNameLength.desc(),TName");
+            var query = CreateTestUsers().DoOrderBy(orderInfo, mapper);
+            JoinIds(query).Should().Be("004,001,003,002");
         }
 
         private IQueryable<User> CreateTestUsers()
@@ -76,6 +90,7 @@ namespace YS.Knife.Data.UnitTest
             public string Id { get; set; }
             public string Name { get; set; }
             public int Age { get; set; }
+            
         }
 
         public class UserDto
@@ -83,6 +98,7 @@ namespace YS.Knife.Data.UnitTest
             public string TId { get; set; }
             public string TName { get; set; }
             public int TAge { get; set; }
+            public int TNameLength { get; set; }
         }
 
         [TestMethod]

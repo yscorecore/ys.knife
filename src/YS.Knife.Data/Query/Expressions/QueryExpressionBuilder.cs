@@ -11,6 +11,8 @@ namespace YS.Knife.Data.Query.Expressions
     public class QueryExpressionBuilder
     {
         public static readonly QueryExpressionBuilder Default = new QueryExpressionBuilder();
+
+        #region Value
         public IFuncLambdaProvider CreateValueLambda<TSource>(ValueInfo valueInfo)
         {
             _ = valueInfo ?? throw new ArgumentNullException(nameof(valueInfo));
@@ -53,5 +55,8 @@ namespace YS.Knife.Data.Query.Expressions
             return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetObjectVisitor(typeof(TSource)));
 
         }
+        #endregion
+
+
     }
 }
