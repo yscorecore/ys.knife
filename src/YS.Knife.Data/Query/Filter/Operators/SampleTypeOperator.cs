@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using YS.Knife.Data.Query;
+using YS.Knife.Data.Query.Expressions;
 
 namespace YS.Knife.Data.Filter.Operators
 {
@@ -94,7 +95,7 @@ namespace YS.Knife.Data.Filter.Operators
                 {
                     if (right is null)
                     {
-                        throw ExpressionErrors.CompareBothNullError();
+                        throw FilterErrors.CompareBothNullError();
                     }
                     else
                     {
@@ -128,6 +129,23 @@ namespace YS.Knife.Data.Filter.Operators
 
         }
 
+        public Expression CompareValue(ExpressionValue left, ExpressionValue right)
+
+        {
+            if (left.IsConst && !right.IsConst)
+            {
+             
+                var rightLambda = right.ValueLambda.GetLambda();
+                var leftLambda = left.ValueLambda.GetLambda(rightLambda.ReturnType);
+                return CompareValue(leftLambda.Body, rightLambda.Body, rightLambda.ReturnType);
+            }
+            else
+            {
+                var leftLambda = left.ValueLambda.GetLambda();
+                var rightLambda = right.ValueLambda.GetLambda(leftLambda.ReturnType);
+                return CompareValue(leftLambda.Body, rightLambda.Body, leftLambda.ReturnType);
+            }
+        }
 
         protected abstract Expression CompareValue(Expression left, Expression right, Type type);
 
@@ -152,7 +170,7 @@ namespace YS.Knife.Data.Filter.Operators
             }
             catch (Exception ex)
             {
-                throw ExpressionErrors.ConvertValueError(value, valueType, ex);
+                throw FilterErrors.ConvertValueError(value, valueType, ex);
             }
         }
 

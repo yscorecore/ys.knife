@@ -21,7 +21,7 @@ namespace YS.Knife.Data.Filter.Operators
         {
             if (type != typeof(string))
             {
-                throw ExpressionErrors.TheOperatorCanOnlyUserForStringType(this.Operator);
+                throw FilterErrors.TheOperatorCanOnlyUserForStringType(this.Operator);
             }
             return Expression.Call(left, Method.Value, right);
         }

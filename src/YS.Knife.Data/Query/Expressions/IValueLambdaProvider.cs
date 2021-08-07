@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace YS.Knife.Data.Query.Expressions
 {
 
-    public interface IFuncLambdaProvider
+    public interface IValueLambdaProvider
     {
         Type SourceType { get; }
         LambdaExpression GetLambda();

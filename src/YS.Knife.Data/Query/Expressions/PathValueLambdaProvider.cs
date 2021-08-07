@@ -7,7 +7,7 @@ using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    internal class PathValueLambdaProvider<TSource> : IFuncLambdaProvider
+    internal class PathValueLambdaProvider<TSource> : IValueLambdaProvider
     {
         private readonly List<ValuePath> paths;
         private readonly IMemberVisitor memberVisitor;

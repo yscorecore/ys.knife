@@ -13,7 +13,7 @@ namespace YS.Knife.Data.Query.Expressions
         public static readonly QueryExpressionBuilder Default = new QueryExpressionBuilder();
 
         #region Value
-        public IFuncLambdaProvider CreateValueLambda<TSource>(ValueInfo valueInfo)
+        public IValueLambdaProvider CreateValueLambda<TSource>(ValueInfo valueInfo)
         {
             _ = valueInfo ?? throw new ArgumentNullException(nameof(valueInfo));
             if (valueInfo.IsConstant)
@@ -25,7 +25,7 @@ namespace YS.Knife.Data.Query.Expressions
                 return CreateValuePathLambda<TSource>(valueInfo.NavigatePaths);
             }
         }
-        public IFuncLambdaProvider CreateValueLambda<TSource, TTarget>(ValueInfo valueInfo, ObjectMapper<TSource, TTarget> mapper)
+        public IValueLambdaProvider CreateValueLambda<TSource, TTarget>(ValueInfo valueInfo, ObjectMapper<TSource, TTarget> mapper)
           where TSource : class
           where TTarget : class, new()
         {
@@ -40,17 +40,17 @@ namespace YS.Knife.Data.Query.Expressions
                 return CreateValuePathLambda(valueInfo.NavigatePaths, mapper);
             }
         }
-        public IFuncLambdaProvider CreateConstValueLambda<TSource>(object value)
+        public IValueLambdaProvider CreateConstValueLambda<TSource>(object value)
         {
             return new ConstValueLambdaProvider<TSource>(value);
         }
-        public IFuncLambdaProvider CreateValuePathLambda<TSource, TTarget>(List<ValuePath> valuePaths, ObjectMapper<TSource, TTarget> mapper)
+        public IValueLambdaProvider CreateValuePathLambda<TSource, TTarget>(List<ValuePath> valuePaths, ObjectMapper<TSource, TTarget> mapper)
                   where TSource : class
            where TTarget : class, new()
         {
             return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetMapperVisitor(mapper));
         }
-        public IFuncLambdaProvider CreateValuePathLambda<TSource>(List<ValuePath> valuePaths)
+        public IValueLambdaProvider CreateValuePathLambda<TSource>(List<ValuePath> valuePaths)
         {
             return new PathValueLambdaProvider<TSource>(valuePaths, IMemberVisitor.GetObjectVisitor(typeof(TSource)));
 

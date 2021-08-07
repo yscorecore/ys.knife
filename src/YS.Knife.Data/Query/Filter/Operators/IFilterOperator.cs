@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using YS.Knife.Data.Query;
+using YS.Knife.Data.Query.Expressions;
 
 namespace YS.Knife.Data.Filter.Operators
 {
@@ -18,6 +18,8 @@ namespace YS.Knife.Data.Filter.Operators
               .ToDictionary(p => p.Operator, p => p);
 
         Expression CompareValue(FilterValueDesc left, FilterValueDesc right);
+        Expression CompareValue(ExpressionValue left, ExpressionValue right);
+
         Operator Operator { get; }
 
         internal static Expression CreateOperatorExpression(FilterValueDesc left, Operator opType, FilterValueDesc right)
@@ -31,7 +33,13 @@ namespace YS.Knife.Data.Filter.Operators
             {
                 return instance;
             }
-            throw ExpressionErrors.OperatorNotSupported(@operator);
+            throw FilterErrors.OperatorNotSupported(@operator);
+        }
+        internal static Expression CreateOperator(ExpressionValue leftValue, Operator opType, ExpressionValue rightValue)
+        {
+            var @operator = GetOperator(opType);
+
+            return @operator.CompareValue(leftValue,rightValue); 
         }
     }
 }

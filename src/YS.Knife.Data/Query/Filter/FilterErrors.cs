@@ -4,7 +4,7 @@ using System.Text;
 
 namespace YS.Knife.Data.Query
 {
-    static class ExpressionErrors
+    static class FilterErrors
     {
         public static FieldInfo2ExpressionException OperatorNotSupported(Operator @operator)
         {

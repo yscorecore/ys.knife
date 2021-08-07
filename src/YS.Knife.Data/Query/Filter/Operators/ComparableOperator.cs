@@ -32,7 +32,7 @@ namespace YS.Knife.Data.Filter.Operators
             var comparableType = typeof(IComparable<>).MakeGenericType(dataType);
             if (!comparableType.IsAssignableFrom(dataType))
             {
-                throw ExpressionErrors.TheOperatorCanOnlyUserForComparableType(this.Operator);
+                throw FilterErrors.TheOperatorCanOnlyUserForComparableType(this.Operator);
             }
             if (SupportOpTypes.Contains(dataType))
             {

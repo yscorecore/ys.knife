@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using YS.Knife;
+using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Expressions;
@@ -152,8 +153,18 @@ namespace System.Linq
         {
             var left = QueryExpressionBuilder.Default.CreateValueLambda(singleItemFilter.Left, mapper);
             var right = QueryExpressionBuilder.Default.CreateValueLambda(singleItemFilter.Right, mapper);
-            // TODO ...
-            return null;
+            var leftExpressionValue = new ExpressionValue
+            {
+                ValueInfo = singleItemFilter.Left,
+                ValueLambda = left,
+            };
+            var rightExpressionValue = new ExpressionValue
+            {
+                ValueInfo = singleItemFilter.Right,
+                ValueLambda = right,
+            };
+
+            return IFilterOperator.CreateOperator(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
         }
 
     }

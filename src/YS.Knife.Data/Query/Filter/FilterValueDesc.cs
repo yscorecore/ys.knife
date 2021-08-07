@@ -70,7 +70,7 @@ namespace YS.Knife.Data.Filter
             }
             catch (Exception ex)
             {
-                throw ExpressionErrors.ConvertValueError(value, valueType, ex);
+                throw FilterErrors.ConvertValueError(value, valueType, ex);
             }
         }
     }
