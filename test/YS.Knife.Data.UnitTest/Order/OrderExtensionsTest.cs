@@ -90,7 +90,7 @@ namespace YS.Knife.Data.UnitTest
             public string Id { get; set; }
             public string Name { get; set; }
             public int Age { get; set; }
-            
+
         }
 
         public class UserDto

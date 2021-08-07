@@ -12,7 +12,7 @@ namespace YS.Knife.Data.Filter.Operators
     public abstract class SampleTypeOperator : IFilterOperator
     {
         public abstract Operator Operator { get; }
-        
+
 
         public LambdaExpression CompareValue(ExpressionValue left, ExpressionValue right)
 
@@ -20,10 +20,10 @@ namespace YS.Knife.Data.Filter.Operators
             if (left.IsConst && !right.IsConst)
             {
                 var parameter = Expression.Parameter(left.SourceType);
-             
-                var rightLambda = right.ValueLambda.GetLambda(parameter);
+
+                var rightLambda = right.GetLambda(parameter);
                 // ensure both right and left use the same parameter
-                var leftLambda = left.ValueLambda.GetLambda(parameter, rightLambda.ReturnType);
+                var leftLambda = left.GetLambda(parameter, rightLambda.ReturnType);
                 var expression = CompareValue(leftLambda.Body, rightLambda.Body, rightLambda.ReturnType);
                 return Expression.Lambda(typeof(Func<,>).MakeGenericType(left.SourceType, typeof(bool)), expression, parameter);
 
@@ -31,41 +31,15 @@ namespace YS.Knife.Data.Filter.Operators
             else
             {
                 var parameter = Expression.Parameter(left.SourceType);
-                var leftLambda = left.ValueLambda.GetLambda(parameter);
+                var leftLambda = left.GetLambda(parameter);
                 // ensure both right and left use the same parameter
-                var rightLambda = right.ValueLambda.GetLambda(parameter, leftLambda.ReturnType);
+                var rightLambda = right.GetLambda(parameter, leftLambda.ReturnType);
                 var expression = CompareValue(leftLambda.Body, rightLambda.Body, leftLambda.ReturnType);
                 return Expression.Lambda(typeof(Func<,>).MakeGenericType(left.SourceType, typeof(bool)), expression, parameter);
             }
         }
 
         protected abstract Expression CompareValue(Expression left, Expression right, Type type);
-
-        private object ChangeType(object value, Type valueType)
-        {
-            if (value == null)
-            {
-                return valueType.DefaultValue();
-            }
-            try
-            {
-                var originType = Nullable.GetUnderlyingType(valueType) ?? valueType;
-                if (value is IConvertible && typeof(IConvertible).IsAssignableFrom(originType))
-                {
-                    return Convert.ChangeType(value, originType);
-                }
-                else
-                {
-                    var converter = TypeDescriptor.GetConverter(originType);
-                    return converter.ConvertFrom(value);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw FilterErrors.ConvertValueError(value, valueType, ex);
-            }
-        }
-
 
     }
 }

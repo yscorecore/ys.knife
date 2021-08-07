@@ -61,8 +61,10 @@ namespace YS.Knife.Data.Filter
         //[DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
         //[DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
 
-        //[DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
+        [DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
         //[DataRow("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
+        [DataRow("Age", Operator.Between, new object[] { 20, null }, "002,003,005")]
+        [DataRow("Age", Operator.Between, new object[] { null, 20 }, "001,002,003,004")]
         public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
         {
 

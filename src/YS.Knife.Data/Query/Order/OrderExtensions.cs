@@ -87,8 +87,8 @@ namespace System.Linq
 
         private static LambdaExpression CreateKeySelectorLambda<TSource>(List<ValuePath> valuePaths)
         {
-            var valueProvider = QueryExpressionBuilder.Default.CreateValuePathLambda<TSource>(valuePaths);
-            return valueProvider.GetLambda();
+            var expValue = new ExpressionValue(typeof(TSource), ValueInfo.FromPaths(valuePaths), IMemberVisitor.GetObjectVisitor(typeof(TSource)));
+            return expValue.GetLambda();
         }
 
         private static LambdaExpression CreateKeySelectorLambda<TSource, TTarget>(List<ValuePath> valuePaths,
@@ -96,8 +96,9 @@ namespace System.Linq
             where TSource : class
             where TTarget : class, new()
         {
-            var valueProvider = QueryExpressionBuilder.Default.CreateValuePathLambda(valuePaths, mapper);
-            return valueProvider.GetLambda();
+            var expValue = new ExpressionValue(typeof(TSource), ValueInfo.FromPaths(valuePaths), IMemberVisitor.GetMapperVisitor(mapper));
+            return expValue.GetLambda();
+
         }
 
 

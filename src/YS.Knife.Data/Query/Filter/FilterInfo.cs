@@ -213,6 +213,14 @@ namespace YS.Knife.Data
                 ConstantValue = value
             };
         }
+        public static ValueInfo FromPaths(List<ValuePath> navigatePaths)
+        {
+            return new ValueInfo
+            {
+                IsConstant = false,
+                NavigatePaths = navigatePaths ?? new List<ValuePath>()
+            };
+        }
     }
 
 

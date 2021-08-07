@@ -5,16 +5,17 @@ using YS.Knife.Data.Filter;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    internal class ConstValueLambdaProvider<TSource> : IValueLambdaProvider
+    internal class ConstValueLambdaProvider : IValueLambdaProvider
     {
-        public ConstValueLambdaProvider(object constValue)
+        public ConstValueLambdaProvider(Type sourceType, object constValue)
         {
+            this.SourceType = sourceType;
             this.ConstValue = constValue;
         }
 
         public object ConstValue { get; }
 
-        public Type SourceType => typeof(TSource);
+        public Type SourceType { get; }
 
         public LambdaExpression GetLambda(ParameterExpression parameter)
         {

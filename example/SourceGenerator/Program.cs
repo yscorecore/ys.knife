@@ -7,7 +7,7 @@ namespace SourceGenerator
     {
         static void Main(string[] args)
         {
-            
+
             Console.WriteLine(Class1.Instance.Name);
         }
     }

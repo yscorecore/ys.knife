@@ -69,20 +69,20 @@ namespace System.Linq
 
         private static Expression CreateSingleItemFilterExpression<TSource>(ParameterExpression p, FilterInfo singleItemFilter)
         {
-            var left = QueryExpressionBuilder.Default.CreateValueLambda<TSource>(singleItemFilter.Left);
-            var right = QueryExpressionBuilder.Default.CreateValueLambda<TSource>(singleItemFilter.Right);
             var leftExpressionValue = new ExpressionValue
-            {
-                ValueInfo = singleItemFilter.Left,
-                ValueLambda = left,
-            };
+            (
+                typeof(TSource),
+               singleItemFilter.Left,
+                IMemberVisitor.GetObjectVisitor(typeof(TSource))
+            );
             var rightExpressionValue = new ExpressionValue
-            {
-                ValueInfo = singleItemFilter.Right,
-                ValueLambda = right,
-            };
-          
-            var lambda= IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
+            (
+                typeof(TSource),
+                singleItemFilter.Right,
+                IMemberVisitor.GetObjectVisitor(typeof(TSource))
+            );
+
+            var lambda = IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
             return lambda.ReplaceFirstParam(p);
         }
 
@@ -160,20 +160,20 @@ namespace System.Linq
           where TSource : class
           where TTarget : class, new()
         {
-            var left = QueryExpressionBuilder.Default.CreateValueLambda(singleItemFilter.Left, mapper);
-            var right = QueryExpressionBuilder.Default.CreateValueLambda(singleItemFilter.Right, mapper);
             var leftExpressionValue = new ExpressionValue
-            {
-                ValueInfo = singleItemFilter.Left,
-                ValueLambda = left,
-            };
+            (
+                 typeof(TSource),
+                singleItemFilter.Left,
+                IMemberVisitor.GetMapperVisitor(mapper)
+            );
             var rightExpressionValue = new ExpressionValue
-            {
-                ValueInfo = singleItemFilter.Right,
-                ValueLambda = right,
-            };
+            (
+                typeof(TSource),
+               singleItemFilter.Right,
+               IMemberVisitor.GetMapperVisitor(mapper)
+            );
 
-            var lambda =  IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
+            var lambda = IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
             return lambda.ReplaceFirstParam(p);
         }
 

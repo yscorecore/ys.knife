@@ -7,23 +7,24 @@ using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    internal class PathValueLambdaProvider<TSource> : IValueLambdaProvider
+    internal class PathValueLambdaProvider : IValueLambdaProvider
     {
         private readonly List<ValuePath> paths;
         private readonly IMemberVisitor memberVisitor;
 
-        public PathValueLambdaProvider(List<ValuePath> paths, IMemberVisitor memberVisitor)
+        public PathValueLambdaProvider(Type sourceType, List<ValuePath> paths, IMemberVisitor memberVisitor)
         {
+            this.SourceType = sourceType;
             this.paths = paths;
             this.memberVisitor = memberVisitor ?? throw new ArgumentNullException(nameof(memberVisitor));
         }
-        public Type SourceType => typeof(TSource);
+        public Type SourceType { get; }
         public LambdaExpression GetLambda(ParameterExpression parameter)
         {
             var (type, body) = CreateLambdaBody(parameter, paths, memberVisitor);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(SourceType, type), body, parameter);
         }
-        public LambdaExpression GetLambda(ParameterExpression parameter,Type targetType)
+        public LambdaExpression GetLambda(ParameterExpression parameter, Type targetType)
         {
             var (type, body) = CreateLambdaBody(parameter, paths, memberVisitor);
             if (type == targetType)

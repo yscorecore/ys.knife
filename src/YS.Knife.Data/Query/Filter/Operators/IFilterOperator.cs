@@ -17,12 +17,12 @@ namespace YS.Knife.Data.Filter.Operators
             .Select(type => Activator.CreateInstance(type) as IFilterOperator)
               .ToDictionary(p => p.Operator, p => p);
 
-      
+
         LambdaExpression CompareValue(ExpressionValue left, ExpressionValue right);
 
         Operator Operator { get; }
 
-       
+
         internal static IFilterOperator GetOperator(Operator @operator)
         {
             if (AllOperators.TryGetValue(@operator, out var instance))
@@ -35,7 +35,7 @@ namespace YS.Knife.Data.Filter.Operators
         {
             var @operator = GetOperator(opType);
 
-            return @operator.CompareValue(leftValue,rightValue); 
+            return @operator.CompareValue(leftValue, rightValue);
         }
     }
 }

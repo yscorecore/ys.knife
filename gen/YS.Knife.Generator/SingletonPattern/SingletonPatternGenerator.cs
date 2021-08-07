@@ -8,16 +8,16 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 namespace YS.Knife
 {
     [Generator]
-    public class SingletonPatternGenerator:ISourceGenerator
+    public class SingletonPatternGenerator : ISourceGenerator
     {
         public void Initialize(GeneratorInitializationContext context)
         {
-           context.RegisterForSyntaxNotifications(()=>new SingletonPatternSyntaxReceiver());
+            context.RegisterForSyntaxNotifications(() => new SingletonPatternSyntaxReceiver());
         }
 
         public void Execute(GeneratorExecutionContext context)
         {
-           
+
             if (!(context.SyntaxReceiver is SingletonPatternSyntaxReceiver receiver))
                 return;
             var codeWriter = new CodeWriter(context);
@@ -33,10 +33,10 @@ namespace YS.Knife
             }
 
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
-            AppendUsingLines(classSymbol,codeBuilder);
-            AppendNamespace(classSymbol,codeBuilder);
+            AppendUsingLines(classSymbol, codeBuilder);
+            AppendNamespace(classSymbol, codeBuilder);
             AppendClassDefinition(classSymbol, codeBuilder);
-            AppendSingletonBody(classSymbol,codeBuilder);
+            AppendSingletonBody(classSymbol, codeBuilder);
             codeBuilder.EndAllSegments();
             return new CodeFile
             {
@@ -75,7 +75,7 @@ namespace YS.Knife
 private {classSymbol.Name}() {{ }}
 
 public static {classSymbol.GetClassSymbolDisplayText()} Instance => LazyInstance.Value;";
-            
+
             codeBuilder.AppendCodeLines(content);
         }
 

@@ -19,7 +19,7 @@ namespace YS.Knife.Data.Query.Expressions
         {
             var valueInfo = ValueInfo.Parse(path);
             var memberVisitor = IMemberVisitor.GetObjectVisitor(typeof(SourceBasicClass));
-            IValueLambdaProvider constLambda = new PathValueLambdaProvider<SourceBasicClass>(valueInfo.NavigatePaths, memberVisitor);
+            IValueLambdaProvider constLambda = new PathValueLambdaProvider(typeof(SourceBasicClass), valueInfo.NavigatePaths, memberVisitor);
             var lambda = constLambda.GetLambda();
             lambda.ToString().Should().Be(expectedExpression);
 
@@ -34,7 +34,7 @@ namespace YS.Knife.Data.Query.Expressions
         {
             var valueInfo = ValueInfo.Parse(path);
             var memberVisitor = IMemberVisitor.GetObjectVisitor(typeof(SourceNullableClass));
-            IValueLambdaProvider constLambda = new PathValueLambdaProvider<SourceNullableClass>(valueInfo.NavigatePaths, memberVisitor);
+            IValueLambdaProvider constLambda = new PathValueLambdaProvider(typeof(SourceNullableClass), valueInfo.NavigatePaths, memberVisitor);
             var lambda = constLambda.GetLambda();
             lambda.ToString().Should().Be(expectedExpression);
         }

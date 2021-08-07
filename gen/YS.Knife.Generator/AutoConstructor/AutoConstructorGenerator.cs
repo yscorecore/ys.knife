@@ -95,7 +95,7 @@ namespace YS.Knife
                     Source = ArgumentSource.Property
                 };
             }
-           
+
 
             return nameMapper;
 

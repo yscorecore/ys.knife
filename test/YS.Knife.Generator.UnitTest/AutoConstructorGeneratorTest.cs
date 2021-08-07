@@ -27,5 +27,5 @@ namespace YS.Knife.Generator.UnitTest
 
     }
 
-   
+
 }

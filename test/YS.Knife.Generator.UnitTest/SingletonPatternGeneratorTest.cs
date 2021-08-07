@@ -5,7 +5,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace YS.Knife.Generator.UnitTest
 {
     [TestClass]
-    public class SingletonPatternGeneratorTest: BaseGeneratorTest
+    public class SingletonPatternGeneratorTest : BaseGeneratorTest
     {
         [DataTestMethod]
         [DataRow("SingletonPatternCases/HappyCase.xml")]
