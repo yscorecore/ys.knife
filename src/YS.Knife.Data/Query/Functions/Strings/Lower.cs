@@ -4,7 +4,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
-using static YS.Knife.Data.Filter.FilterInfoExpressionBuilder;
 
 namespace YS.Knife.Data.Query.Functions.Strings
 {

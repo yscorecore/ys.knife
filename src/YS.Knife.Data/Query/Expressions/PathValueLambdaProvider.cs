@@ -18,15 +18,13 @@ namespace YS.Knife.Data.Query.Expressions
             this.memberVisitor = memberVisitor ?? throw new ArgumentNullException(nameof(memberVisitor));
         }
         public Type SourceType => typeof(TSource);
-        public LambdaExpression GetLambda()
+        public LambdaExpression GetLambda(ParameterExpression parameter)
         {
-            var parameter = Expression.Parameter(SourceType, "p");
             var (type, body) = CreateLambdaBody(parameter, paths, memberVisitor);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(SourceType, type), body, parameter);
         }
-        public LambdaExpression GetLambda(Type targetType)
+        public LambdaExpression GetLambda(ParameterExpression parameter,Type targetType)
         {
-            var parameter = Expression.Parameter(SourceType, "p");
             var (type, body) = CreateLambdaBody(parameter, paths, memberVisitor);
             if (type == targetType)
             {

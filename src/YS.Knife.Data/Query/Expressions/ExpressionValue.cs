@@ -9,6 +9,7 @@ namespace YS.Knife.Data.Query.Expressions
     public class ExpressionValue
     {
         public bool IsConst { get => ValueInfo == null || ValueInfo.IsConstant; }
+        public Type SourceType { get => ValueLambda.SourceType; }
         public ValueInfo ValueInfo { get; set; }
 
         public IValueLambdaProvider ValueLambda { get; set; }

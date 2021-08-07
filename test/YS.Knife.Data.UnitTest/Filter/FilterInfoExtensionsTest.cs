@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using YS.Knife.Data.Query;
 
@@ -17,12 +18,12 @@ namespace YS.Knife.Data.Filter
                 new User{ Id="002",Name="LiSi",Age=20,Score=81 },
                 new User{ Id="003",Name="WangWu",Age=20,Score=70 },
                 new User{ Id="004",Name="WangMaZi",Age=19 },
-                new User{ Id="005",Name=null,Age=21 }
+                new User{ Id="005",Name="",Age=21 }
             }.AsQueryable();
         }
         [DataTestMethod]
         [DataRow("Name", Operator.Equals, "LiSi", "002")]
-        [DataRow("Name", Operator.Equals, null, "005")]
+        [DataRow("Name", Operator.Equals, "", "005")]
         [DataRow("Score", Operator.Equals, 81, "002")]
         [DataRow("Score", Operator.Equals, null, "004,005")]
         [DataRow("Age", Operator.Equals, 19, "001,004")]
@@ -37,7 +38,7 @@ namespace YS.Knife.Data.Filter
         [DataRow("Age", Operator.GreaterThan, 20, "005")]
         [DataRow("Name", Operator.GreaterThan, "WangMaZi", "001,003")]
         [DataRow("Score", Operator.GreaterThanOrEqual, 80, "002")]
-        [DataRow("Age", Operator.GreaterThanOrEqual, 20, "002,003,005")]
+        [DataRow("Age", Operator.GreaterThanOrEqual, "20", "002,003,005")]
         [DataRow("Name", Operator.GreaterThanOrEqual, "WangMaZi", "001,003,004")]
         [DataRow("Score", Operator.LessThan, 70, "001")]
         [DataRow("Age", Operator.LessThan, 20, "001,004")]
@@ -54,20 +55,20 @@ namespace YS.Knife.Data.Filter
         [DataRow("Name", Operator.EndsWith, "i", "002,004")]
         [DataRow("Name", Operator.NotEndsWith, "i", "001,003,005")]
 
-        [DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
-        [DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
-        [DataRow("Age", Operator.In, new object[] { }, "")]
-        [DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
-        [DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
+        //[DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        //[DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
+        //[DataRow("Age", Operator.In, new object[] { }, "")]
+        //[DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        //[DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
 
-        [DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
-        [DataRow("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
+        //[DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
+        //[DataRow("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
         public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
         {
-            //var filter = FilterInfo.CreateItem(fieldName, filterType, value);
-            //var ids = CreateTestUsers().WhereCondition(filter)
-            //        .DoSelect(p => p.Id);
-            //Assert.AreEqual(expectedIds, string.Join(",", ids));
+
+            var filter = FilterInfo.CreateItem(fieldName, filterType, value);
+            var ids = CreateTestUsers().DoFilter(filter).Select(p => p.Id);
+            string.Join(",", ids).Should().Be(expectedIds);
         }
         [DataTestMethod]
         [ExpectedException(typeof(FieldInfo2ExpressionException))]

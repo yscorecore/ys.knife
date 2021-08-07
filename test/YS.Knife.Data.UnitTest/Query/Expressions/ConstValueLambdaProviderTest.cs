@@ -17,7 +17,7 @@ namespace YS.Knife.Data.Query.Expressions
         [DataRow(1.1, "p => 1.1")]
         public void ShouldGetExpectedExpressionFromConstValue(object value, string expectedExpression)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda();
             lambda.ToString().Should().Be(expectedExpression);
         }
@@ -67,7 +67,7 @@ namespace YS.Knife.Data.Query.Expressions
         public void ShouldGetExpectedExpressionWhenValueAsBasicType(object value, Type targetType,
             string expectedExpression)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
             lambda.ReturnType.Should().Be(targetType);
             lambda.ToString().Should().Be(expectedExpression);
@@ -92,7 +92,7 @@ namespace YS.Knife.Data.Query.Expressions
         public void ShouldGetExpectedExpressionWhenValueAsEnumType(object value, Type targetType,
             string expectedExpression)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
             lambda.ReturnType.Should().Be(targetType);
             lambda.ToString().Should().Be(expectedExpression);
@@ -105,7 +105,7 @@ namespace YS.Knife.Data.Query.Expressions
         public void ShouldGetExpectedExpressionWhenValueAsGuidType(object value, Type targetType,
             string expectedExpression)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
             lambda.ReturnType.Should().Be(targetType);
             lambda.ToString().Should().Be(expectedExpression);
@@ -123,7 +123,7 @@ namespace YS.Knife.Data.Query.Expressions
         public void ShouldGetExpectedExpressionWhenValueAsDateTimeType(object value, Type targetType,
             string expectedExpression)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
             var datetime = lambda.Compile().DynamicInvoke(new object[] { null });
             datetime.Should().BeOfType<DateTime>()
@@ -143,7 +143,7 @@ namespace YS.Knife.Data.Query.Expressions
         public void ShouldGetExpectedExpressionWhenValueAsDateTimeOffsetType(object value, Type targetType,
             long timeStamp)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             var lambda = constLambda.GetLambda(targetType);
 
             var datetimeOffset = lambda.Compile().DynamicInvoke(new object[] { null });
@@ -158,7 +158,7 @@ namespace YS.Knife.Data.Query.Expressions
         [DataRow("abc", typeof(DateTime))]
         public void ShouldThrowExceptionWhenValueCanNotConvertToTargetType(object value, Type targetType)
         {
-            var constLambda = new ConstValueLambdaProvider<SourceClass>(value);
+            IValueLambdaProvider constLambda = new ConstValueLambdaProvider<SourceClass>(value);
             Action action = () => constLambda.GetLambda(targetType);
             action.Should().Throw<QueryExpressionException>()
                 .WithMessage($"convert value * to target type '{targetType.FullName}' error.");

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 
-namespace YS.Knife.Data.Mappers
+namespace YS.Knife.Data
 {
     public static class ExpressionExtensions
     {

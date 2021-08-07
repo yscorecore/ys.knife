@@ -85,8 +85,7 @@ namespace YS.Knife.Data.Filter
 
             private string FilterStudentIds(FilterInfo filter)
             {
-                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression<Student>(filter);
-                var ids = Students.AsQueryable().Where(exp)
+                var ids = Students.AsQueryable().DoFilter(filter)
                         .Select(p => p.Id);
                 return string.Join(",", ids);
             }
@@ -157,8 +156,7 @@ namespace YS.Knife.Data.Filter
                 scoreMapper.Append(p => p.TExam, p => p.Exam as IExam);
                 studentMapper.AppendCollection(p => p.TScores, p => p.Scores, scoreMapper);
 
-                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression(studentMapper, filter);
-                var ids = Students.AsQueryable().Where(exp)
+                var ids = Students.AsQueryable().DoFilter(filter)
                         .Select(p => p.Id);
                 return string.Join(",", ids);
             }
@@ -287,8 +285,7 @@ namespace YS.Knife.Data.Filter
                 scoreMapper.Append(p => p.TExam, p => p.Exam as IExam);
                 studentMapper.AppendCollection(p => p.TScores, p => p.Scores, scoreMapper);
 
-                var exp = new FilterInfoExpressionBuilder().CreateFilterLambdaExpression(studentMapper, filter);
-                var ids = dataContext1.Students.Where(exp).OrderBy(p => p.Id)
+                var ids = dataContext1.Students.DoFilter(filter, studentMapper).OrderBy(p => p.Id)
                         .Select(p => p.Id);
                 Console.WriteLine(ids.ToQueryString());
                 return string.Join(",", ids);

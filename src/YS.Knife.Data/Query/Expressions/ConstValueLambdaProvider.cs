@@ -16,18 +16,16 @@ namespace YS.Knife.Data.Query.Expressions
 
         public Type SourceType => typeof(TSource);
 
-        public LambdaExpression GetLambda()
+        public LambdaExpression GetLambda(ParameterExpression parameter)
         {
-            var parameter = Expression.Parameter(SourceType, "p");
             var targetType = ConstValue?.GetType() ?? typeof(string);
             var constExp = Expression.Constant(this.ConstValue, targetType);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(SourceType, targetType), constExp, parameter);
         }
 
-        public LambdaExpression GetLambda(Type targetType)
+        public LambdaExpression GetLambda(ParameterExpression parameter, Type targetType)
         {
             _ = targetType ?? throw new ArgumentNullException(nameof(targetType));
-            var parameter = Expression.Parameter(typeof(TSource), "p");
             var constExp = Expression.Constant(ChangeType(this.ConstValue, targetType), targetType);
             return Expression.Lambda(typeof(Func<,>).MakeGenericType(SourceType, targetType), constExp, parameter);
         }

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using YS.Knife;
+using YS.Knife.Data;
 using YS.Knife.Data.Filter.Operators;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
@@ -68,13 +69,21 @@ namespace System.Linq
 
         private static Expression CreateSingleItemFilterExpression<TSource>(ParameterExpression p, FilterInfo singleItemFilter)
         {
-
             var left = QueryExpressionBuilder.Default.CreateValueLambda<TSource>(singleItemFilter.Left);
             var right = QueryExpressionBuilder.Default.CreateValueLambda<TSource>(singleItemFilter.Right);
-            // TODO ...
-            return null;
-            //var right = CreateFilterValueDesc(p, memberVisitor, singleItemFilter.Right);
-            //return IFilterOperator.CreateOperatorExpression(left, singleItemFilter.Operator, right);
+            var leftExpressionValue = new ExpressionValue
+            {
+                ValueInfo = singleItemFilter.Left,
+                ValueLambda = left,
+            };
+            var rightExpressionValue = new ExpressionValue
+            {
+                ValueInfo = singleItemFilter.Right,
+                ValueLambda = right,
+            };
+          
+            var lambda= IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
+            return lambda.ReplaceFirstParam(p);
         }
 
         public static IQueryable<TSource> DoFilter<TSource, TTarget>(this IQueryable<TSource> source, FilterInfo targetFilter, ObjectMapper<TSource, TTarget> mapper)
@@ -164,7 +173,8 @@ namespace System.Linq
                 ValueLambda = right,
             };
 
-            return IFilterOperator.CreateOperator(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
+            var lambda =  IFilterOperator.CreateOperatorLambda(leftExpressionValue, singleItemFilter.Operator, rightExpressionValue);
+            return lambda.ReplaceFirstParam(p);
         }
 
     }
