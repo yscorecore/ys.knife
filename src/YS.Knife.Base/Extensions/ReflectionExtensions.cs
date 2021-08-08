@@ -127,7 +127,7 @@ namespace YS.Knife
             var entryAssembly = Assembly.GetEntryAssembly();
             foreach (var assembly in appDomain.GetAssemblies())
             {
-                if (assembly != entryAssembly && !IsFromMicrosoft(assembly))
+                if (assembly != entryAssembly && assembly.IsDynamic==false && !IsFromMicrosoft(assembly))
                 {
                     yield return assembly;
                 }
