@@ -1,7 +1,7 @@
 ﻿using System;
 using FluentAssertions;
-using Xunit;
 using MongoDB.Driver;
+using Xunit;
 using YS.Knife.Entity;
 using YS.Knife.Hosting;
 namespace YS.Knife.Mongo.UnitTest
@@ -10,7 +10,7 @@ namespace YS.Knife.Mongo.UnitTest
     [Collection(nameof(TestEnvironment))]
     public class TransactionAttributeTest : KnifeHost
     {
-      
+
 
         [InjectConfiguration("connectionStrings:book_db")]
         private readonly string _ = TestEnvironment.MongoConnectionString;

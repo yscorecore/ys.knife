@@ -6,7 +6,7 @@ using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
-    
+
     public class DefaultObjectMapperTest
     {
         #region ShouldMapStringProp

@@ -4,7 +4,7 @@ using Xunit;
 
 namespace YS.Knife.Utils
 {
-    
+
     public class JsonTest
     {
         [Fact]

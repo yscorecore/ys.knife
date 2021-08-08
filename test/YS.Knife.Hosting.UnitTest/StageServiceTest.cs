@@ -6,19 +6,19 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Xunit;
 using Moq;
+using Xunit;
 using YS.Knife.Hosting;
 using YS.Knife.Stages;
 using YS.Knife.Testing;
 
 namespace YS.Knife
 {
-    
+
     public class StageServiceTest
     {
 
-        
+
         public StageServiceTest()
         {
             InvokeHistory.Reset();

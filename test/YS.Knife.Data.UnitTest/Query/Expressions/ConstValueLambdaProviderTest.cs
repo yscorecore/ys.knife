@@ -5,7 +5,7 @@ using Xunit;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    
+
     public class ConstValueLambdaProviderTest
     {
         [Theory]

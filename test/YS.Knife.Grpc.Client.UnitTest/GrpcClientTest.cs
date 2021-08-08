@@ -7,7 +7,7 @@ using static Greeter;
 
 namespace YS.Knife.Grpc.Client.UnitTest
 {
-    
+
     public class GrpcClientTest : YS.Knife.Hosting.KnifeHost
     {
 

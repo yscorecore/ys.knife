@@ -14,7 +14,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    
+
     public class FilterInfoExpressionBuilderTest
     {
         private static readonly Exam[] Exams =
@@ -63,7 +63,7 @@ namespace YS.Knife.Data.Filter
         };
 
         #region For Model
-        
+
         public class ModelTest
         {
             [Fact]
@@ -104,7 +104,7 @@ namespace YS.Knife.Data.Filter
 
         #endregion
 
-        
+
         public class DtoModelTest
         {
 
@@ -164,11 +164,11 @@ namespace YS.Knife.Data.Filter
         }
 
 
-        
-        public class EfcoreTest:IDisposable
+
+        public class EfcoreTest : IDisposable
         {
 
-            private  DataContext dataContext1;
+            private DataContext dataContext1;
             public class DataContext : DbContext
             {
                 public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -201,13 +201,13 @@ namespace YS.Knife.Data.Filter
                 dataContext1.Database.EnsureCreated();
                 SeedData(dataContext1);
             }
-             void SeedData(DataContext dataContext)
+            void SeedData(DataContext dataContext)
             {
                 dataContext1.Students.AddRange(Students);
                 dataContext.SaveChanges();
             }
-           
-           
+
+
             [Theory]
             //[InlineData("", "001,002,003,004,005,006")]
             //[InlineData("tName=\"li si\"", "002")]

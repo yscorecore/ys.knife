@@ -3,7 +3,7 @@ using FluentAssertions;
 using Xunit;
 namespace YS.Knife.Data.UnitTest
 {
-    
+
     public class LimitDataExtensionsTest
     {
         [Fact]

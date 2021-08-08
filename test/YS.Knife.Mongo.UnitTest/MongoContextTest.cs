@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using FluentAssertions;
-using Xunit;
 using MongoDB.Driver;
+using Xunit;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Mongo.UnitTest

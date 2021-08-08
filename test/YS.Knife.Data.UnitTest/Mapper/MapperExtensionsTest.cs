@@ -5,7 +5,7 @@ using Xunit;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
-    
+
     public class MapperExtensionsTest
     {
         [Fact]

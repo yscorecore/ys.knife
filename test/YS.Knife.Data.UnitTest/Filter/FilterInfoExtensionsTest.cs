@@ -6,7 +6,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    
+
     public class FilterInfoExtensionsTest
     {
 

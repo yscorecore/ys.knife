@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Xunit;
 namespace YS.Knife.Hosting
 {
-    
+
     public class KnifeHostTest
     {
         [Fact]

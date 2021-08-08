@@ -103,6 +103,7 @@ namespace YS.Knife.Testing
 
         private static void RunDockerComposeAndWaitContainerReportStatus(IDictionary<string, object> envs, uint port = 8901, int maxSeconds = 120)
         {
+ 
             using (var httpListener = new HttpListener())
             {
                 httpListener.Prefixes.Add($"http://+:{port}/");
@@ -122,6 +123,7 @@ namespace YS.Knife.Testing
         private static void ListenerCallback(IAsyncResult result)
         {
             HttpListener listener = (HttpListener)result.AsyncState;
+            
             // Call EndGetContext to complete the asynchronous operation.
             HttpListenerContext context = listener.EndGetContext(result);
             // Obtain a response object.

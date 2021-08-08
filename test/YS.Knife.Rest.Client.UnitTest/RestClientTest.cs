@@ -7,7 +7,7 @@ using YS.Knife.Hosting;
 
 namespace YS.Knife.Rest.Client.UnitTest
 {
-    
+    [Collection(nameof(TestEnvironment))]
     public class RestClientTest : KnifeHost
     {
         #region RelativePath

@@ -3,7 +3,7 @@ using Xunit;
 
 namespace YS.Knife.Data.UnitTest
 {
-    
+
     public class FunctionAttributeTest
     {
         [Theory]

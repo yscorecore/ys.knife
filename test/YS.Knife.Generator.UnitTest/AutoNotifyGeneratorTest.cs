@@ -4,7 +4,7 @@ using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    
+
     public class AutoNotifyGeneratorTest : BaseGeneratorTest
     {
         [Theory]

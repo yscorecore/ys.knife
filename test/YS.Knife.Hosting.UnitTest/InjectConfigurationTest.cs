@@ -5,7 +5,7 @@ using Xunit;
 
 namespace YS.Knife.Hosting
 {
-    
+
     public class InjectConfigurationTest : KnifeHost
     {
         public InjectConfigurationTest() : base(new Dictionary<string, object>

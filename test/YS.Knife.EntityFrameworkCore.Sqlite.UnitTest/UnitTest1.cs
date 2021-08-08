@@ -6,7 +6,7 @@ using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
-    
+
     public class UnitTest1 : KnifeHost
     {
 

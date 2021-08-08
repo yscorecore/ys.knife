@@ -5,7 +5,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Select
 {
-    
+
     public class SelectInfoParserTest
     {
         [Fact]
@@ -73,7 +73,7 @@ namespace YS.Knife.Data.Select
         [InlineData("a{orderby(a), orderby(b)}")]
         public void should_throw_exception_when_parse_invalid_collection_functions(string input)
         {
-            var action = new Action(() => SelectInfo.Parse(input)) ;
+            var action = new Action(() => SelectInfo.Parse(input));
             action.Should().ThrowExactly<FilterInfoParseException>();
         }
         private void ParseSelectInfoShouldBe(string inputText, string expected)

@@ -5,7 +5,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    
+
     public class FilterInfo2ParserTest
     {
         private Func<string, FilterInfo> Parse => (text) => FilterInfo.Parse(text);
@@ -212,7 +212,7 @@ namespace YS.Knife.Data.Filter
         [InlineData("a.func(b=3,e=3)=null")]
         public void ShouldThrowFilterException(string expression)
         {
-            var action = new Action(() => Parse(expression)) ;
+            var action = new Action(() => Parse(expression));
             action.Should().ThrowExactly<FilterInfoParseException>();
         }
 

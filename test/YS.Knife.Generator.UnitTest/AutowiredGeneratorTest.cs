@@ -8,7 +8,7 @@ using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    
+
     public class AutowiredGeneratorTest : BaseGeneratorTest
     {
         [Theory]

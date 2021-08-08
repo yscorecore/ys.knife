@@ -9,7 +9,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Select
 {
-    
+
     public class SelectInfoTest
     {
         [Fact]

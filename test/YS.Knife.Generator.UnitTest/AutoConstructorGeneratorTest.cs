@@ -9,7 +9,7 @@ using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    
+
     public class AutoConstructorGeneratorTest : BaseGeneratorTest
     {
         [Theory]

@@ -1,11 +1,11 @@
 ﻿using FluentAssertions;
-using Xunit;
 using Moq;
+using Xunit;
 
 
 namespace YS.Knife.Hosting
 {
-    
+
     public class InjectServiceTest : KnifeHost
     {
         [Inject]

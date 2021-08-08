@@ -6,7 +6,7 @@ using YS.Knife.TestData;
 
 namespace YS.Knife
 {
-    
+
     public class KnifeFilterTest
     {
         [Fact]
@@ -32,7 +32,7 @@ namespace YS.Knife
                }))
             {
                 var instance = host.GetService<MyService1>();
-               instance.Should().NotBeNull();
+                instance.Should().NotBeNull();
             }
         }
         [Fact]
@@ -45,7 +45,7 @@ namespace YS.Knife
               }))
             {
                 var instance = host.GetService<MyService1>();
-               instance.Should().NotBeNull();
+                instance.Should().NotBeNull();
             }
         }
 
@@ -59,7 +59,7 @@ namespace YS.Knife
               }))
             {
                 var instance = host.GetService<MyService1>();
-               instance.Should().NotBeNull();
+                instance.Should().NotBeNull();
             }
         }
         [Fact]
@@ -72,7 +72,7 @@ namespace YS.Knife
              }))
             {
                 var instance = host.GetService<MyService1>();
-               instance.Should().NotBeNull();
+                instance.Should().NotBeNull();
             }
         }
     }

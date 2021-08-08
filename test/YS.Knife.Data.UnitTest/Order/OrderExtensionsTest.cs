@@ -10,7 +10,7 @@ using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
 {
-    
+
     public class OrderExtensionsTest
     {
         [Fact]
