@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
-    [TestClass]
+    
     public class MapperExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldMapSingleItemFromSourceTypeToTargetType()
         {
             var input = new Model1() { StrVal = "str" };
@@ -16,7 +16,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             actual.Should().BeEquivalentTo(new Model2 { StrVal = "str" });
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapSingleItemFromAnonymousTypeToTargetType()
         {
             var input = new { StrVal = "str" };
@@ -24,7 +24,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             actual.Should().BeEquivalentTo(new Model2 { StrVal = "str" });
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapEnumerableFromSourceTypeToTargetType()
         {
             var input = new List<Model1> { new Model1 { StrVal = "str1" } };
@@ -33,7 +33,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             actual.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapEnumerableFromAnonymousTypeToTargetType()
         {
             var input = new[] { new { StrVal = "str1" }, new { StrVal = "str2" } };
@@ -42,7 +42,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             actual.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapQueryableFromSourceTypeToTargetType()
         {
             var input = new List<Model1> { new Model1 { StrVal = "str1" } }.AsQueryable();
@@ -51,7 +51,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             actual.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapQueryableFromAnonymousTypeToTargetType()
         {
             var input = new[] { new { StrVal = "str1" }, new { StrVal = "str2" } }.AsQueryable();

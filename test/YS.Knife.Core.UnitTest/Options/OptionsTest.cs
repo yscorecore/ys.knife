@@ -1,24 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Options
 {
-    [TestClass]
+
     public class OptionsTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetNullWhenNotDefineOptionsAttribute()
         {
             var provider = Utility.BuildProvider();
             var options = provider.GetService<IOptions<Custom0Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual(default, options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be(default);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeWithEmptyConfigKey()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -26,12 +28,12 @@ namespace YS.Knife.Options
                 ["Custom1:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom1Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKey()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -39,13 +41,12 @@ namespace YS.Knife.Options
                 ["C2:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom2Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OptionsValidationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenDefineDataAnnotationsAndConfigInvalidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -53,11 +54,11 @@ namespace YS.Knife.Options
                 ["Custom7:Value"] = "not a url value"
             });
             var options = provider.GetService<IOptions<Custom7Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
+            options.Should().NotBeNull();
+            new Action(() => { _ = options.Value; }).Should().Throw<OptionsValidationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedValueWhenDefineDataAnnotationsAndConfigValidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -65,12 +66,12 @@ namespace YS.Knife.Options
                 ["Custom7:Value"] = "http://localhost"
             });
             var options = provider.GetService<IOptions<Custom7Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("http://localhost", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("http://localhost");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNested()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -78,11 +79,11 @@ namespace YS.Knife.Options
                 ["C:B:D:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom3Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNestedWithDot()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -90,11 +91,11 @@ namespace YS.Knife.Options
                 ["C:B:D:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom4Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsNestedWithDoubleUnderScore()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -102,12 +103,12 @@ namespace YS.Knife.Options
                 ["C:B:D:Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom5Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineOptionsAttributeConfigKeyIsEmptyString()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -115,13 +116,12 @@ namespace YS.Knife.Options
                 ["Value"] = "some_value"
             });
             var options = provider.GetService<IOptions<Custom6Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("some_value", options.Value.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Value.Should().Be("some_value");
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OptionsValidationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenDefineCustomValidateAndConfigInvalidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -129,10 +129,10 @@ namespace YS.Knife.Options
                 ["Custom8:Number"] = "1"
             });
             var options = provider.GetService<IOptions<Custom8Options>>();
-            Assert.IsNotNull(options);
-            _ = options.Value;
+            options.Should().NotBeNull();
+            new Action(() => { _ = options.Value; }).Should().Throw<OptionsValidationException>();
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigedValueWhenDefineCustomValidateAndConfigValidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -140,11 +140,11 @@ namespace YS.Knife.Options
                 ["Custom8:Number"] = "2"
             });
             var options = provider.GetService<IOptions<Custom8Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetPostedValueWhenDefineOptionsAttributeAndPostHandler()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
@@ -152,45 +152,43 @@ namespace YS.Knife.Options
                 ["Custom9:Text"] = "some_text"
             });
             var options = provider.GetService<IOptions<Custom9Options>>();
-            Assert.IsNotNull(options);
-            Assert.IsNotNull(options.Value);
-            Assert.AreEqual("__some_text", options.Value.Text);
+            options.Should().NotBeNull();
+            options.Value.Should().NotBeNull();
+            options.Value.Text.Should().Be("__some_text");
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OptionsValidationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNestedObjectConfigInvalidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
                 ["DeepObject:Address:Province:Code"] = "invalidValue"
             });
-            var options = provider.GetService<IOptions<DeepObjectOptions>>().Value;
-
+            var action = new Action(() => { _ = provider.GetService<IOptions<DeepObjectOptions>>().Value; });
+            action.Should().Throw<OptionsValidationException>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OptionsValidationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNestedListConfigInvalidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
                 ["DeepList:Addresses:0:Province:Code"] = "invalidValue"
             });
-            var options = provider.GetService<IOptions<DeepListOptions>>().Value;
+            var action = new Action(() => { _ = provider.GetService<IOptions<DeepListOptions>>().Value; });
+            action.Should().Throw<OptionsValidationException>();
 
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(OptionsValidationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNestedDicConfigInvalidValue()
         {
             var provider = Utility.BuildProvider(new Dictionary<string, string>
             {
                 ["DeepDic:Addresses:name:Province:Code"] = "invalidValue"
             });
-            var options = provider.GetService<IOptions<DeepDicOptions>>().Value;
-
+            var action = new Action(() => { _ = provider.GetService<IOptions<DeepDicOptions>>().Value; });
+            action.Should().Throw<OptionsValidationException>();
         }
     }
 }

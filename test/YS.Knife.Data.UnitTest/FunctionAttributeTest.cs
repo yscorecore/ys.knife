@@ -1,20 +1,21 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+    
     public class FunctionAttributeTest
     {
-        [DataTestMethod]
-        [DataRow(nameof(Class1.SayHello), "FunctionCode1")]
-        [DataRow(nameof(Class1.SayHello2), "")]
-        [DataRow(nameof(Class1.SayHello3), "YS.Knife.Data.UnitTest.Class1.SayHello3")]
-        [DataRow(nameof(Class1.SayHello4), "YS.Knife.Data.UnitTest.Class1.SayHello4")]
-        [DataRow(nameof(Class1.SayHello5), "YS.Knife.Data.UnitTest.Class1.SayHello5")]
-        [DataRow(nameof(Class1.SayHello6), "Function6")]
+        [Theory]
+        [InlineData(nameof(Class1.SayHello), "FunctionCode1")]
+        [InlineData(nameof(Class1.SayHello2), "")]
+        [InlineData(nameof(Class1.SayHello3), "YS.Knife.Data.UnitTest.Class1.SayHello3")]
+        [InlineData(nameof(Class1.SayHello4), "YS.Knife.Data.UnitTest.Class1.SayHello4")]
+        [InlineData(nameof(Class1.SayHello5), "YS.Knife.Data.UnitTest.Class1.SayHello5")]
+        [InlineData(nameof(Class1.SayHello6), "Function6")]
         public void ShouldGetExpectedFunctionCode(string methodName, string expected)
         {
-            Assert.AreEqual(expected, typeof(Class1).GetMethod(methodName).GetFunctionCode());
+            typeof(Class1).GetMethod(methodName).GetFunctionCode().Should().Be(expected);
         }
 
 

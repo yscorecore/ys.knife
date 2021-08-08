@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    [TestClass]
+    
     public class FilterInfoExtensionsTest
     {
 
@@ -21,50 +21,50 @@ namespace YS.Knife.Data.Filter
                 new User{ Id="005",Name="",Age=21 }
             }.AsQueryable();
         }
-        [DataTestMethod]
-        [DataRow("Name", Operator.Equals, "LiSi", "002")]
-        [DataRow("Name", Operator.Equals, "", "005")]
-        [DataRow("Score", Operator.Equals, 81, "002")]
-        [DataRow("Score", Operator.Equals, null, "004,005")]
-        [DataRow("Age", Operator.Equals, 19, "001,004")]
-        [DataRow("Age", Operator.Equals, "19", "001,004")]
-        [DataRow("Age", Operator.Equals, 19.0, "001,004")]
+        [Theory]
+        [InlineData("Name", Operator.Equals, "LiSi", "002")]
+        [InlineData("Name", Operator.Equals, "", "005")]
+        [InlineData("Score", Operator.Equals, 81, "002")]
+        [InlineData("Score", Operator.Equals, null, "004,005")]
+        [InlineData("Age", Operator.Equals, 19, "001,004")]
+        [InlineData("Age", Operator.Equals, "19", "001,004")]
+        [InlineData("Age", Operator.Equals, 19.0, "001,004")]
 
-        [DataRow("Score", Operator.NotEquals, 61, "002,003,004,005")]
-        [DataRow("Score", Operator.NotEquals, null, "001,002,003")]
-        [DataRow("Age", Operator.NotEquals, 19, "002,003,005")]
+        [InlineData("Score", Operator.NotEquals, 61, "002,003,004,005")]
+        [InlineData("Score", Operator.NotEquals, null, "001,002,003")]
+        [InlineData("Age", Operator.NotEquals, 19, "002,003,005")]
 
-        [DataRow("Score", Operator.GreaterThan, 80, "002")]
-        [DataRow("Age", Operator.GreaterThan, 20, "005")]
-        [DataRow("Name", Operator.GreaterThan, "WangMaZi", "001,003")]
-        [DataRow("Score", Operator.GreaterThanOrEqual, 80, "002")]
-        [DataRow("Age", Operator.GreaterThanOrEqual, "20", "002,003,005")]
-        [DataRow("Name", Operator.GreaterThanOrEqual, "WangMaZi", "001,003,004")]
-        [DataRow("Score", Operator.LessThan, 70, "001")]
-        [DataRow("Age", Operator.LessThan, 20, "001,004")]
-        [DataRow("Score", Operator.LessThanOrEqual, 70, "001,003")]
-        [DataRow("Age", Operator.LessThanOrEqual, 20, "001,002,003,004")]
+        [InlineData("Score", Operator.GreaterThan, 80, "002")]
+        [InlineData("Age", Operator.GreaterThan, 20, "005")]
+        [InlineData("Name", Operator.GreaterThan, "WangMaZi", "001,003")]
+        [InlineData("Score", Operator.GreaterThanOrEqual, 80, "002")]
+        [InlineData("Age", Operator.GreaterThanOrEqual, "20", "002,003,005")]
+        [InlineData("Name", Operator.GreaterThanOrEqual, "WangMaZi", "001,003,004")]
+        [InlineData("Score", Operator.LessThan, 70, "001")]
+        [InlineData("Age", Operator.LessThan, 20, "001,004")]
+        [InlineData("Score", Operator.LessThanOrEqual, 70, "001,003")]
+        [InlineData("Age", Operator.LessThanOrEqual, 20, "001,002,003,004")]
 
 
-        [DataRow("Name", Operator.Contains, "a", "001,003,004")]
-        [DataRow("Name", Operator.NotContains, "a", "002,005")]
+        [InlineData("Name", Operator.Contains, "a", "001,003,004")]
+        [InlineData("Name", Operator.NotContains, "a", "002,005")]
 
-        [DataRow("Name", Operator.StartsWith, "W", "003,004")]
-        [DataRow("Name", Operator.NotStartsWith, "W", "001,002,005")]
+        [InlineData("Name", Operator.StartsWith, "W", "003,004")]
+        [InlineData("Name", Operator.NotStartsWith, "W", "001,002,005")]
 
-        [DataRow("Name", Operator.EndsWith, "i", "002,004")]
-        [DataRow("Name", Operator.NotEndsWith, "i", "001,003,005")]
+        [InlineData("Name", Operator.EndsWith, "i", "002,004")]
+        [InlineData("Name", Operator.NotEndsWith, "i", "001,003,005")]
 
-        //[DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
-        //[DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
-        //[DataRow("Age", Operator.In, new object[] { }, "")]
-        //[DataRow("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
-        //[DataRow("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
+        //[InlineData("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        //[InlineData("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
+        //[InlineData("Age", Operator.In, new object[] { }, "")]
+        //[InlineData("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        //[InlineData("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
 
-        [DataRow("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
-        //[DataRow("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
-        [DataRow("Age", Operator.Between, new object[] { 20, null }, "002,003,005")]
-        [DataRow("Age", Operator.Between, new object[] { null, 20 }, "001,002,003,004")]
+        [InlineData("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
+        //[InlineData("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
+        [InlineData("Age", Operator.Between, new object[] { 20, null }, "002,003,005")]
+        [InlineData("Age", Operator.Between, new object[] { null, 20 }, "001,002,003,004")]
         public void ShouldGetExpectedResultWhenFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
         {
 
@@ -72,9 +72,9 @@ namespace YS.Knife.Data.Filter
             var ids = CreateTestUsers().DoFilter(filter).Select(p => p.Id);
             string.Join(",", ids).Should().Be(expectedIds);
         }
-        [DataTestMethod]
-        [ExpectedException(typeof(FieldInfo2ExpressionException))]
-        [DataRow("Age", Operator.Equals, null)]
+        [Theory]
+        //[ExpectedException(typeof(FieldInfo2ExpressionException))]
+        [InlineData("Age", Operator.Equals, null)]
         public void ShouldThrowFilterInfoExpressionExceptionWhenFilterSingleItemAndWithInvalidArguments(string fieldName, Operator filterType, object value)
         {
             //var filter = FilterInfo.CreateItem(fieldName, filterType, value);
@@ -82,39 +82,39 @@ namespace YS.Knife.Data.Filter
         }
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldSupportFilterTypeExists()
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.Exists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
-            //Assert.AreEqual("001,002,004", string.Join(",", ids));
+            // ids).Should().Be("001,002,004", string.Join(",");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldSupportFilterTypeNotExists()
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.NotExists, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
-            //Assert.AreEqual("003,005", string.Join(",", ids));
+            // ids).Should().Be("003,005", string.Join(",");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldSupportFilterTypeAll()
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.All, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
-            //Assert.AreEqual("001,004", string.Join(",", ids));
+            // ids).Should().Be("001,004", string.Join(",");
         }
-        [TestMethod]
+        [Fact]
         public void ShouldSupportFilterTypeNotAll()
         {
             //var datas = CreateUsersWithAddress();
             //var filter = FilterInfo.CreateItem("Addresses", Operator.NotAll, FilterInfo.CreateItem("City", Operator.Equals, "xian"));
             //var ids = datas.WhereCondition(filter).DoSelect(p => p.Id);
-            //Assert.AreEqual("002,003,005", string.Join(",", ids));
+            // ids).Should().Be("002,003,005", string.Join(",");
         }
         public IQueryable<User> CreateUsersWithAddress()
         {

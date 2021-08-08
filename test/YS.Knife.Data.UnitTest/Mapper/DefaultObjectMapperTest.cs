@@ -1,17 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
-    [TestClass]
+    
     public class DefaultObjectMapperTest
     {
         #region ShouldMapStringProp
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapStringProp()
         {
             var data = new Model { StrProp = "str" };
@@ -35,7 +35,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #region ShouldMapComplexObject
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapComplexObjectWhenInnerPropIsNull()
         {
             var data = new Model3 { Inner = null };
@@ -45,7 +45,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(new Dto3() { Inner = null });
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapComplexObjectWhenInnerPropHasValue()
         {
             var data = new Model3 { Inner = new InnerModel3() { InnerStrProp = "str" } };
@@ -77,7 +77,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #region ShouldMapComplexObjectList
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapComplexObjectList()
         {
             var data = new Model4
@@ -124,7 +124,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #region ShouldMapNullableValueList
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapNullableValueList()
         {
             var data = new Model5
@@ -158,7 +158,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
         #endregion
 
         #region ShouldMapAssignList
-        [TestMethod]
+        [Fact]
         public void ShouldMapAssignList()
         {
             var data = new Model6()

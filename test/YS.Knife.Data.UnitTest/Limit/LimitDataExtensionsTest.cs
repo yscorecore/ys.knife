@@ -1,82 +1,83 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+    
     public class LimitDataExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldGetListSourceWhenAsListSource()
         {
             var listSource = Enumerable.Range(1, 100).AsQueryable()
                 .ToPagedList(50, 15).ToListSource();
-            Assert.AreEqual(true, listSource.ContainsListCollection);
-            Assert.AreEqual(15, listSource.GetList().Count);
+            listSource.ContainsListCollection.Should().Be(true);
+            listSource.GetList().Count.Should().Be(15);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedLimitData()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(50, 15);
-            Assert.AreEqual(true, data.HasNext);
-            Assert.AreEqual(100, data.TotalCount);
-            Assert.AreEqual(15, data.Limit);
-            Assert.AreEqual(50, data.Offset);
-            Assert.AreEqual(15, data.Items.Count);
-            Assert.AreEqual(51, data.Items.First());
-            Assert.AreEqual(65, data.Items.Last());
+            data.HasNext.Should().Be(true);
+            data.TotalCount.Should().Be(100);
+            data.Limit.Should().Be(15);
+            data.Offset.Should().Be(50);
+            data.Items.Count.Should().Be(15);
+            data.Items.First().Should().Be(51);
+            data.Items.Last().Should().Be(65);
 
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedLimitDataWhenAtStart()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(0, 10);
-            Assert.AreEqual(true, data.HasNext);
-            Assert.AreEqual(100, data.TotalCount);
-            Assert.AreEqual(10, data.Limit);
-            Assert.AreEqual(0, data.Offset);
-            Assert.AreEqual(10, data.Items.Count);
-            Assert.AreEqual(1, data.Items.First());
-            Assert.AreEqual(10, data.Items.Last());
+            data.HasNext.Should().Be(true);
+            data.TotalCount.Should().Be(100);
+            data.Limit.Should().Be(10);
+            data.Offset.Should().Be(0);
+            data.Items.Count.Should().Be(10);
+            data.Items.First().Should().Be(1);
+            data.Items.Last().Should().Be(10);
 
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedLimitDataWhenAtEnd()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(90, 10);
-            Assert.AreEqual(false, data.HasNext);
-            Assert.AreEqual(100, data.TotalCount);
-            Assert.AreEqual(10, data.Limit);
-            Assert.AreEqual(90, data.Offset);
-            Assert.AreEqual(10, data.Items.Count);
-            Assert.AreEqual(91, data.Items.First());
-            Assert.AreEqual(100, data.Items.Last());
+            data.HasNext.Should().Be(false);
+            data.TotalCount.Should().Be(100);
+            data.Limit.Should().Be(10);
+            data.Offset.Should().Be(90);
+            data.Items.Count.Should().Be(10);
+            data.Items.First().Should().Be(91);
+            data.Items.Last().Should().Be(100);
 
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedLimitDataWhenOverlopRange()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(95, 15);
-            Assert.AreEqual(false, data.HasNext);
-            Assert.AreEqual(100, data.TotalCount);
-            Assert.AreEqual(15, data.Limit);
-            Assert.AreEqual(95, data.Offset);
-            Assert.AreEqual(5, data.Items.Count);
-            Assert.AreEqual(96, data.Items.First());
-            Assert.AreEqual(100, data.Items.Last());
+            data.HasNext.Should().Be(false);
+            data.TotalCount.Should().Be(100);
+            data.Limit.Should().Be(15);
+            data.Offset.Should().Be(95);
+            data.Items.Count.Should().Be(5);
+            data.Items.First().Should().Be(96);
+            data.Items.Last().Should().Be(100);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedLimitDataWhenOutRange()
         {
             var data = Enumerable.Range(1, 100).AsQueryable().ToPagedList(120, 15);
-            Assert.AreEqual(false, data.HasNext);
-            Assert.AreEqual(100, data.TotalCount);
-            Assert.AreEqual(15, data.Limit);
-            Assert.AreEqual(120, data.Offset);
-            Assert.AreEqual(0, data.Items.Count);
+            data.HasNext.Should().Be(false);
+            data.TotalCount.Should().Be(100);
+            data.Limit.Should().Be(15);
+            data.Offset.Should().Be(120);
+            data.Items.Count.Should().Be(0);
         }
 
     }

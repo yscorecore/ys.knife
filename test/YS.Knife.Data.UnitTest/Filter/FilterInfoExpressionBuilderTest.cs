@@ -7,14 +7,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Filter;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    [TestClass]
+    
     public class FilterInfoExpressionBuilderTest
     {
         private static readonly Exam[] Exams =
@@ -63,19 +63,19 @@ namespace YS.Knife.Data.Filter
         };
 
         #region For Model
-        [TestClass]
+        
         public class ModelTest
         {
-            [TestMethod]
+            [Fact]
             public void ShouldGetAllWhenFilterIsNull()
             {
                 var result = FilterStudentIds(null);
                 result.Should().Be("001,002,003,004");
             }
 
-            [DataTestMethod]
-            [DataRow("Name", Operator.Equals, "li si", "002")]
-            [DataRow("Name", Operator.Equals, null, "003")]
+            [Theory]
+            [InlineData("Name", Operator.Equals, "li si", "002")]
+            [InlineData("Name", Operator.Equals, null, "003")]
 
 
             public void ShouldFilterSingleItem(string fieldName, Operator filterType, object value, string expectedIds)
@@ -104,36 +104,36 @@ namespace YS.Knife.Data.Filter
 
         #endregion
 
-        [TestClass]
+        
         public class DtoModelTest
         {
 
-            [DataTestMethod]
-            [DataRow("", "001,002,003,004,005,006")]
-            [DataRow("tName=\"li si\"", "002")]
-            [DataRow("tName=null", "003")]
-            [DataRow("tAddress!.city=null", "004")]
+            [Theory]
+            [InlineData("", "001,002,003,004,005,006")]
+            [InlineData("tName=\"li si\"", "002")]
+            [InlineData("tName=null", "003")]
+            [InlineData("tAddress!.city=null", "004")]
             public void ShouldFilterSingleItem(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
 
 
-            [DataTestMethod]
-            [DataRow("tAddress=null", "005,006")]
-            [DataRow("tAddress!.city=null", "004")]
-            [DataRow("tAddress?.city=null", "004,005,006")]
-            [DataRow("tAddress?.city!.Length=5", "003,005,006")]
-            [DataRow("tAddress?.city?.Length=5", "003,004,005,006")]
-            [DataRow("tAddress!.city!.Length=5", "003")]
-            [DataRow("tAddress!.city?.Length=5", "003,004")]
+            [Theory]
+            [InlineData("tAddress=null", "005,006")]
+            [InlineData("tAddress!.city=null", "004")]
+            [InlineData("tAddress?.city=null", "004,005,006")]
+            [InlineData("tAddress?.city!.Length=5", "003,005,006")]
+            [InlineData("tAddress?.city?.Length=5", "003,004,005,006")]
+            [InlineData("tAddress!.city!.Length=5", "003")]
+            [InlineData("tAddress!.city?.Length=5", "003,004")]
             public void ShouldFilterWithOptionalField(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
-            [DataTestMethod]
+            [Theory]
 
-            [DataRow("TName!.Count()=5", "002")]
+            [InlineData("TName!.Count()=5", "002")]
 
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
@@ -164,11 +164,11 @@ namespace YS.Knife.Data.Filter
         }
 
 
-        [TestClass]
-        public class EfcoreTest
+        
+        public class EfcoreTest:IDisposable
         {
 
-            private static DataContext dataContext1;
+            private  DataContext dataContext1;
             public class DataContext : DbContext
             {
                 public DataContext(DbContextOptions<DataContext> options) : base(options)
@@ -195,63 +195,54 @@ namespace YS.Knife.Data.Filter
 
             }
 
-            [ClassInitialize]
-            public static void Setup(TestContext _)
+            public EfcoreTest()
             {
                 dataContext1 = DataContext.CreateMemorySqlite();
                 dataContext1.Database.EnsureCreated();
                 SeedData(dataContext1);
             }
-            static void SeedData(DataContext dataContext)
+             void SeedData(DataContext dataContext)
             {
                 dataContext1.Students.AddRange(Students);
                 dataContext.SaveChanges();
             }
-            [ClassCleanup]
-            public static void TearDown()
-            {
-                if (dataContext1 != null)
-                {
-                    dataContext1.Database.GetDbConnection().Close();
-                    dataContext1.Dispose();
-                    dataContext1 = null;
-                }
-            }
-            [DataTestMethod]
-            //[DataRow("", "001,002,003,004,005,006")]
-            //[DataRow("tName=\"li si\"", "002")]
-            [DataRow("tName=null", "003")]
-            [DataRow("tName>null", "")]
-            [DataRow("tName>=null", "")]
-            [DataRow("tName<null", "")]
-            [DataRow("tName<=null", "")]
-            [DataRow("null=tName", "003")]
+           
+           
+            [Theory]
+            //[InlineData("", "001,002,003,004,005,006")]
+            //[InlineData("tName=\"li si\"", "002")]
+            [InlineData("tName=null", "003")]
+            [InlineData("tName>null", "")]
+            [InlineData("tName>=null", "")]
+            [InlineData("tName<null", "")]
+            [InlineData("tName<=null", "")]
+            [InlineData("null=tName", "003")]
             public void ShouldFilterSingleItem(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
 
-            [DataTestMethod]
-            [DataRow("tAddress=null", "005,006")]
-            [DataRow("tAddress.city=null", "004,005,006")]
-            [DataRow("tAddress.city.length=5", "003")]
-            [DataRow("5=tAddress.city.Length", "003")]
+            [Theory]
+            [InlineData("tAddress=null", "005,006")]
+            [InlineData("tAddress.city=null", "004,005,006")]
+            [InlineData("tAddress.city.length=5", "003")]
+            [InlineData("5=tAddress.city.Length", "003")]
             public void ShouldFilterWithNavigateField(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
 
-            [DataTestMethod]
+            [Theory]
 
-            //[DataRow("Lower(tName)=\"zhang san\"", "001")]
-            //[DataRow("Lower(tAddress.city)=\"xi'an\"", "001")]
-            //[DataRow("TScores.Count()=6", "001,002,003")]
-            [DataRow("TScores.Count(TClassName=\"Chinese\")=2", "001,002,003")]
+            //[InlineData("Lower(tName)=\"zhang san\"", "001")]
+            //[InlineData("Lower(tAddress.city)=\"xi'an\"", "001")]
+            //[InlineData("TScores.Count()=6", "001,002,003")]
+            [InlineData("TScores.Count(TClassName=\"Chinese\")=2", "001,002,003")]
             public void ShouldFilterWithFunction(string filterExpressionForDto, string expectedIds)
             {
                 FilterDtoStudents(filterExpressionForDto).Should().Be(expectedIds);
             }
-            [TestMethod]
+            [Fact]
             public void TestSelect()
             {
 
@@ -289,6 +280,16 @@ namespace YS.Knife.Data.Filter
                         .Select(p => p.Id);
                 Console.WriteLine(ids.ToQueryString());
                 return string.Join(",", ids);
+            }
+
+            public void Dispose()
+            {
+                if (dataContext1 != null)
+                {
+                    dataContext1.Database.GetDbConnection().Close();
+                    dataContext1.Dispose();
+                    dataContext1 = null;
+                }
             }
         }
         public class Address

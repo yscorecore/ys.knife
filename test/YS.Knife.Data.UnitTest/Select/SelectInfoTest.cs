@@ -4,15 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Select
 {
-    [TestClass]
+    
     public class SelectInfoTest
     {
-        [TestMethod]
+        [Fact]
         public void should_get_empty_string_when_to_string_given_non_items()
         {
             var select = new SelectInfo()
@@ -21,7 +21,7 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be(string.Empty);
         }
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_simple_items()
         {
             var select = new SelectInfo()
@@ -35,7 +35,7 @@ namespace YS.Knife.Data.Select
             select.ToString().Should().Be("a,b");
         }
 
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_sub_items()
         {
             var select = new SelectInfo()
@@ -49,7 +49,7 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be("a,b(c),d");
         }
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_collection_filter()
         {
             var select = new SelectInfo()
@@ -63,7 +63,7 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be("a,b{where(c == 123)},d");
         }
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_collection_order()
         {
             var select = new SelectInfo()
@@ -77,7 +77,7 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be("a,b{orderby(c.asc(),d.desc(),e.asc())},f");
         }
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_collection_limit()
         {
             var select = new SelectInfo()
@@ -91,7 +91,7 @@ namespace YS.Knife.Data.Select
             };
             select.ToString().Should().Be("a,b{limit(1,5)},f");
         }
-        [TestMethod]
+        [Fact]
         public void should_join_items_when_to_string_given_all_sub_sfuff()
         {
             var select = new SelectInfo()
@@ -116,7 +116,7 @@ namespace YS.Knife.Data.Select
             select.ToString().Should().Be("a,b{limit(1,5),orderby(e.asc(),f.desc(),g.asc()),where((c > 1) and (d < 2))}(h,i),j");
         }
 
-        //[TestMethod]
+        //[Fact]
         //public void should_deserialize_from_json_string()
         //{
         //    var jsonText = "{\"select\":\"a,b,c\"}";

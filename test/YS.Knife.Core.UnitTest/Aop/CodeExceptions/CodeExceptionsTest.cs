@@ -2,22 +2,22 @@
 using System.Collections.Generic;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Localization;
 namespace YS.Knife.Aop.CodeExceptions
 {
-    [TestClass]
+
     public class CodeExceptionsTest
     {
         private IAllErrors _allErrors;
-        [TestInitialize]
-        public void Setup()
+        public CodeExceptionsTest()
         {
             var provider = Utility.BuildProvider();
             _allErrors = provider.GetRequiredService<IAllErrors>();
         }
 
-        [TestMethod]
+
+        [Fact]
         public void ShouldGetCodeExceptionWhenNoArgumentAndReturnException()
         {
             var actual = _allErrors.NoArgumentReturnException();
@@ -27,7 +27,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenNoArgumentAndReturnApplicationException()
         {
             var actual = _allErrors.NoArgumentReturnApplicationException();
@@ -38,7 +38,7 @@ namespace YS.Knife.Aop.CodeExceptions
         }
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenNoArgumentAndReturnCodeException()
         {
             var actual = _allErrors.NoArgumentReturnCodeException();
@@ -49,7 +49,7 @@ namespace YS.Knife.Aop.CodeExceptions
         }
 
 
-        [TestMethod]
+        [Fact]
 
         public void ShouldThrowInvalidOperationExceptionWhenReturnTypeIsArgumentException()
         {
@@ -59,7 +59,7 @@ namespace YS.Knife.Aop.CodeExceptions
         }
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithNameArgument()
         {
             var actual = _allErrors.WithNameArgument("abc");
@@ -69,7 +69,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithIndexArgument()
         {
             var actual = _allErrors.WithIndexArgument("abc");
@@ -79,7 +79,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasDefaultValue()
         {
             var actual = _allErrors.WithNameArgumentAndHasDefaultValue();
@@ -89,7 +89,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormat()
         {
             var actual = _allErrors.WithNameArgumentAndHasFormat(12);
@@ -99,7 +99,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormatAndHasWidth()
         {
             var actual = _allErrors.WithNameArgumentAndHasFormatAndWidth(12);
@@ -109,7 +109,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenWithNameArgumentAndHasFormatAndHasNegativeWidth()
         {
             var actual = _allErrors.WithNameArgumentAndHasFormatAndNegativeWidth(12);
@@ -119,7 +119,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenMixedNameArgumentAndIndexArgument()
         {
             var actual = _allErrors.MixedNameArgumentAndIndexArgument(12, 13);
@@ -130,7 +130,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenMissingNameArgument()
         {
             var actual = _allErrors.MissingNameArgument();
@@ -139,7 +139,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWhenMissingIndexArgument()
         {
             var actual = _allErrors.MissingIndexArgument();
@@ -148,7 +148,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWithExceptionWhenUseNameArgument()
         {
             var actual = _allErrors.WithInnerExceptionAndHasNameArgument(new Exception("some error"), "abc");
@@ -159,7 +159,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWithExceptionWhenUseIndexArgument()
         {
             var actual = _allErrors.WithInnerExceptionAndHasIndexArgument(new Exception("some error"), "abc");
@@ -169,7 +169,7 @@ namespace YS.Knife.Aop.CodeExceptions
             actual.Should().BeOfType<CodeException>()
                 .Which.Should().BeEquivalentTo(expected);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeExceptionWithEmptyStringMessageWhenMessageTemplateIsNull()
         {
             var actual = _allErrors.NullTemplate("abc");
@@ -179,7 +179,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldReturnNullWhenNoDefineCeAttribute()
         {
             var actual = _allErrors.NoDefineCeAttributeWillReturnNull();

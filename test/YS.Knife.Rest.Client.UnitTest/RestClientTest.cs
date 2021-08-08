@@ -2,42 +2,38 @@
 using System.Net.Http;
 using System.Threading.Tasks;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Rest.Client.UnitTest
 {
-    [TestClass]
+    
     public class RestClientTest : KnifeHost
     {
         #region RelativePath
 
-        [TestCategory("RelativePath")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathStartWithBackslash()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl + "/api");
             var all = await client.Get<string[]>("/testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
-        [TestCategory("RelativePath")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathStartWithBackslash()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl + "/api/");
             var all = await client.Get<string[]>("/testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
-        [TestCategory("RelativePath")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenBaseAddressNotEndWithBackslashAndPathNotStartWithBackslash()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl + "/api");
             var all = await client.Get<string[]>("testget");
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
-        [TestCategory("RelativePath")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenBaseAddressEndWithBackslashAndPathNotStartWithBackslash()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl + "/api/");
@@ -47,8 +43,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         #endregion
 
         #region GET
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenNoArgs()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -56,8 +51,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             all.Should().BeEquivalentTo(new string[] { "value1", "value2" });
         }
 
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenAddHeaderDictionary()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -70,8 +64,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             all.Should().BeEquivalentTo(new string[] { "abc", "22" });
         }
 
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenAddQueryDictionary()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -82,8 +75,7 @@ namespace YS.Knife.Rest.Client.UnitTest
                 });
             all.Should().BeEquivalentTo(new string[] { "abc", "11" });
         }
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenAddQueryObject()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -94,8 +86,7 @@ namespace YS.Knife.Rest.Client.UnitTest
                 });
             all.Should().BeEquivalentTo(new string[] { "abc", "11" });
         }
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenAddHeaderAndQueryObject()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -111,8 +102,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             all.Should().BeEquivalentTo(new string[] { "abc", "11", "22" });
         }
 
-        [TestCategory("GET")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldGetAllValueWhenUseSendHttpAndAddHeaderAndQueryObject()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -127,8 +117,7 @@ namespace YS.Knife.Rest.Client.UnitTest
         #endregion
 
         #region POST
-        [TestCategory("POST")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldPostJsonSuccess()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);
@@ -139,8 +128,7 @@ namespace YS.Knife.Rest.Client.UnitTest
             });
             result.Should().BeEquivalentTo(new Result { Success = true, Message = "1-zhangsan" });
         }
-        [TestCategory("POST")]
-        [TestMethod]
+        [Fact]
         public async Task ShouldPostUrlEncodeFormSuccess()
         {
             var client = NewRestClient(TestEnvironment.TestServerUrl);

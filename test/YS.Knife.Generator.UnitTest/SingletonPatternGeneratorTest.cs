@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    [TestClass]
+    
     public class SingletonPatternGeneratorTest : BaseGeneratorTest
     {
-        [DataTestMethod]
-        [DataRow("SingletonPatternCases/HappyCase.xml")]
+        [Theory]
+        [InlineData("SingletonPatternCases/HappyCase.xml")]
 
-        public void ShouldGenerateExpectCodeFile(string testCaseFileName)
+        public void ShouldGenerateExpectSingletonPaitalClass(string testCaseFileName)
         {
             var assemblies = new[]
             {

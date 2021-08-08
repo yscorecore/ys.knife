@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using YS.Knife.Hosting;
 using YS.Knife.TestData;
 
 namespace YS.Knife
 {
-    [TestClass]
+    
     public class KnifeFilterTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldGetInstanceIfNoFilters()
         {
             using (var host = new KnifeHost(
@@ -17,11 +18,11 @@ namespace YS.Knife
                 }))
             {
                 var instance = host.GetService<MyService1>();
-                Assert.IsNotNull(instance);
+                instance.Should().NotBeNull();
             }
 
         }
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetInstanceWhenFilterAssemblyByName()
         {
             using (var host = new KnifeHost(
@@ -31,10 +32,10 @@ namespace YS.Knife
                }))
             {
                 var instance = host.GetService<MyService1>();
-                Assert.IsNull(instance);
+               instance.Should().NotBeNull();
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetInstanceWhenFilterAssemblyByWildcard()
         {
             using (var host = new KnifeHost(
@@ -44,11 +45,11 @@ namespace YS.Knife
               }))
             {
                 var instance = host.GetService<MyService1>();
-                Assert.IsNull(instance);
+               instance.Should().NotBeNull();
             }
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetInstanceWhenFilterTypeByName()
         {
             using (var host = new KnifeHost(
@@ -58,10 +59,10 @@ namespace YS.Knife
               }))
             {
                 var instance = host.GetService<MyService1>();
-                Assert.IsNull(instance);
+               instance.Should().NotBeNull();
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetInstanceWhenFilterTypeByWildcard()
         {
             using (var host = new KnifeHost(
@@ -71,7 +72,7 @@ namespace YS.Knife
              }))
             {
                 var instance = host.GetService<MyService1>();
-                Assert.IsNull(instance);
+               instance.Should().NotBeNull();
             }
         }
     }

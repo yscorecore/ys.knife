@@ -1,156 +1,156 @@
 ﻿using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Filter
 {
-    [TestClass]
+    
     public class FilterInfoTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldGetReverseFilterTypeWhenGivenSingleItemAndInvokeNot()
         {
             //var filter = new FilterInfo("Age", Operator.GreaterThan, 1).Not();
-            //Assert.AreEqual(CombinSymbol.SingleItem, filter.OpType);
-            //Assert.AreEqual(Operator.LessThanOrEqual, filter.FilterType);
-            //Assert.AreEqual("Age", filter.FieldName);
-            //Assert.AreEqual(1, filter.Value);
+            // filter.OpType.Should().Be(CombinSymbol.SingleItem);
+            // filter.FilterType.Should().Be(Operator.LessThanOrEqual);
+            // filter.FieldName.Should().Be("Age");
+            // filter.Value.Should().Be(1);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetReverseFilterTypeWhenGivenAndOpTypeAndInvokeNot()
         {
             //var filter = new FilterInfo("Age", Operator.GreaterThan, 1)
             //    .AndAlso("Name", Operator.StartsWith, "Zhang").Not();
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
-            //Assert.AreEqual("Age", filter.Items.First().FieldName);
-            //Assert.AreEqual(Operator.LessThanOrEqual, filter.Items.First().FilterType);
-            //Assert.AreEqual(1, filter.Items.First().Value);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(2);
+            // filter.Items.First().FieldName.Should().Be("Age");
+            // filter.Items.First().FilterType.Should().Be(Operator.LessThanOrEqual);
+            // filter.Items.First().Value.Should().Be(1);
 
-            //Assert.AreEqual("Name", filter.Items.Last().FieldName);
-            //Assert.AreEqual(Operator.NotStartsWith, filter.Items.Last().FilterType);
-            //Assert.AreEqual("Zhang", filter.Items.Last().Value);
+            // filter.Items.Last().FieldName.Should().Be("Name");
+            // filter.Items.Last().FilterType.Should().Be(Operator.NotStartsWith);
+            // filter.Items.Last().Value.Should().Be("Zhang");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldReturnSelfInstanceWhenAndAlsoNull()
         {
             //var filter = new FilterInfo("Age", Operator.GreaterThan, 1);
-            //Assert.AreEqual(filter, filter.AndAlso(null));
+            // filter.AndAlso(null).Should().Be(filter);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldReturnSelfInstanceWhenOrElseNull()
         {
             //var filter = new FilterInfo("Age", Operator.GreaterThan, 1);
-            //Assert.AreEqual(filter, filter.OrElse(null));
+            // filter.OrElse(null).Should().Be(filter);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetReverseFilterTypeWhenGivenOrOpTypeAndInvokeNot()
         {
             //var filter = new FilterInfo("Age", Operator.GreaterThan, 1)
             //    .OrElse("Name", Operator.StartsWith, "Zhang").Not();
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
-            //Assert.AreEqual("Age", filter.Items.First().FieldName);
-            //Assert.AreEqual(Operator.LessThanOrEqual, filter.Items.First().FilterType);
-            //Assert.AreEqual(1, filter.Items.First().Value);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(2);
+            // filter.Items.First().FieldName.Should().Be("Age");
+            // filter.Items.First().FilterType.Should().Be(Operator.LessThanOrEqual);
+            // filter.Items.First().Value.Should().Be(1);
 
-            //Assert.AreEqual("Name", filter.Items.Last().FieldName);
-            //Assert.AreEqual(Operator.NotStartsWith, filter.Items.Last().FilterType);
-            //Assert.AreEqual("Zhang", filter.Items.Last().Value);
+            // filter.Items.Last().FieldName.Should().Be("Name");
+            // filter.Items.Last().FilterType.Should().Be(Operator.NotStartsWith);
+            // filter.Items.Last().Value.Should().Be("Zhang");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldAppendItemsWhenAndAlsoAndGivenOpTypeIsAndItemsAndOtherOpTypeIsSingleItem()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .AndAlso("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(2);
             //filter.AndAlso(new FilterInfo("Id", Operator.Equals, "001"));
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(3, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(3);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldAppendItemsWhenAndAlsoAndGivenOpTypeIsAndItemsAndOtherOpTypeIsAndItems()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .AndAlso("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(2);
             //var otherAndItems = FilterInfo.CreateAnd(
             //    new FilterInfo("Id", Operator.StartsWith, "0"),
             //    new FilterInfo("Tel", Operator.Contains, "135"));
             //filter.AndAlso(otherAndItems);
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(4, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(4);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldCreateNewAndItemsFilterWhenAndAlsoAndGivenOpTypeIsOrItemsAndOtherTypeIsSignleItem()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .OrElse("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(2);
             //var newfilter = filter.AndAlso(new FilterInfo("Id", Operator.Equals, "001"));
-            //Assert.AreEqual(CombinSymbol.AndItems, newfilter.OpType);
-            //Assert.AreEqual(2, newfilter.Items.Count);
+            // newfilter.OpType.Should().Be(CombinSymbol.AndItems);
+            // newfilter.Items.Count.Should().Be(2);
 
 
-            //Assert.AreEqual(filter, newfilter.Items.First());
-            //Assert.AreEqual(CombinSymbol.SingleItem, newfilter.Items.Last().OpType);
+            // newfilter.Items.First().Should().Be(filter);
+            // newfilter.Items.Last().OpType.Should().Be(CombinSymbol.SingleItem);
 
         }
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldAppendItemsWhenOrElseAndGivenOpTypeIsOrItemsAndOtherOpTypeIsSingleItem()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .OrElse("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(2);
             //filter.OrElse(new FilterInfo("Id", Operator.Equals, "001"));
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(3, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(3);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldAppendItemsWhenOrElseAndGivenOpTypeIsOrItemsAndOtherOpTypeIsOrItems()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .OrElse("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(2);
             //var otherAndItems = FilterInfo.CreateOr(
             //    new FilterInfo("Id", Operator.StartsWith, "0"),
             //    new FilterInfo("Tel", Operator.Contains, "135"));
             //filter.OrElse(otherAndItems);
-            //Assert.AreEqual(CombinSymbol.OrItems, filter.OpType);
-            //Assert.AreEqual(4, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter.Items.Count.Should().Be(4);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldCreateNewOrItemsFilterWhenOrElseAndGivenOpTypeIsAndItemsAndOtherTypeIsSignleItem()
         {
             //var filter = FilterInfo.CreateItem("Age", Operator.GreaterThan, 1)
             //      .AndAlso("Name", Operator.StartsWith, "Zhang");
-            //Assert.AreEqual(CombinSymbol.AndItems, filter.OpType);
-            //Assert.AreEqual(2, filter.Items.Count);
+            // filter.OpType.Should().Be(CombinSymbol.AndItems);
+            // filter.Items.Count.Should().Be(2);
             //var newfilter = filter.OrElse(new FilterInfo("Id", Operator.Equals, "001"));
-            //Assert.AreEqual(CombinSymbol.OrItems, newfilter.OpType);
-            //Assert.AreEqual(2, newfilter.Items.Count);
+            // newfilter.OpType.Should().Be(CombinSymbol.OrItems);
+            // newfilter.Items.Count.Should().Be(2);
 
 
-            //Assert.AreEqual(filter, newfilter.Items.First());
-            //Assert.AreEqual(CombinSymbol.SingleItem, newfilter.Items.Last().OpType);
+            // newfilter.Items.First().Should().Be(filter);
+            // newfilter.Items.Last().OpType.Should().Be(CombinSymbol.SingleItem);
 
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldConvertToStringAndConvertFromString()
         {
             //var filter = FilterInfo.CreateOr(
@@ -166,10 +166,10 @@ namespace YS.Knife.Data.Filter
             //var plainText = converter.ConvertTo(filter, typeof(string)) as string;
             //Assert.IsNotNull(plainText);
             //var filter2 = converter.ConvertFrom(plainText) as FilterInfo;
-            //Assert.AreEqual(CombinSymbol.OrItems, filter2.OpType);
-            //Assert.AreEqual(2, filter2.Items.Count);
+            // filter2.OpType.Should().Be(CombinSymbol.OrItems);
+            // filter2.Items.Count.Should().Be(2);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldReturnStringExpressionWhenToString()
         {
             //var filter = FilterInfo.CreateOr(
@@ -180,24 +180,24 @@ namespace YS.Knife.Data.Filter
             //            new FilterInfo("Id", Operator.In, new[] { 1, 3, 4 }),
             //            new FilterInfo("Tel", Operator.Contains, "135")));
 
-            //Assert.AreEqual("((Age > 1) and (Name sw \"Zhang\")) or ((Id in [1,3,4]) and (Tel ct \"135\"))", filter.ToString());
-            //Assert.AreEqual("((Age <= 1) or (Name nsw \"Zhang\")) and ((Id nin [1,3,4]) or (Tel nct \"135\"))", filter.Not().ToString());
+            // filter.ToString().Should().Be("((Age > 1) and (Name sw \"Zhang\")) or ((Id in [1,3,4]) and (Tel ct \"135\"))");
+            // filter.Not().ToString().Should().Be("((Age <= 1) or (Name nsw \"Zhang\")) and ((Id nin [1,3,4]) or (Tel nct \"135\"))");
 
         }
-        [DataTestMethod]
-        [DataRow("a", Operator.Equals, null, "a == null")]
-        [DataRow("a", Operator.Equals, true, "a == true")]
-        [DataRow("a", Operator.Equals, false, "a == false")]
-        [DataRow("a", Operator.Equals, 1, "a == 1")]
-        [DataRow("a", Operator.Equals, .1, "a == 0.1")]
-        [DataRow("a", Operator.Equals, -.1, "a == -0.1")]
-        [DataRow("a", Operator.Equals, "zhangsan", @"a == ""zhangsan""")]
-        [DataRow("a", Operator.Equals, "\\\"", "a == \"\\\\\\\"\"")]
+        [Theory]
+        [InlineData("a", Operator.Equals, null, "a == null")]
+        [InlineData("a", Operator.Equals, true, "a == true")]
+        [InlineData("a", Operator.Equals, false, "a == false")]
+        [InlineData("a", Operator.Equals, 1, "a == 1")]
+        [InlineData("a", Operator.Equals, .1, "a == 0.1")]
+        [InlineData("a", Operator.Equals, -.1, "a == -0.1")]
+        [InlineData("a", Operator.Equals, "zhangsan", @"a == ""zhangsan""")]
+        [InlineData("a", Operator.Equals, "\\\"", "a == \"\\\\\\\"\"")]
         public void ShouldReprValueWhenToString(string field, Operator filterType, object value, string expectedString)
         {
             //var filter = FilterInfo.CreateItem(field, Operator.Equals, value);
 
-            //Assert.AreEqual(expectedString, filter.ToString());
+            // filter.ToString().Should().Be(expectedString);
 
         }
 

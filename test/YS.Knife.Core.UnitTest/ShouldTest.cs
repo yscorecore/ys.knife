@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
+
+
 namespace YS.Knife
 {
-    [TestClass]
+
     public class ShouldTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotNullCheckNotNullValue()
         {
             Should.NotNull("", () => new CodeException());
@@ -14,14 +17,14 @@ namespace YS.Knife
             Should.NotNull(new object(), () => new CodeException());
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(InvalidOperationException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotNullCheckNullValue()
         {
-            Should.NotNull(null, () => new InvalidOperationException());
+            var action = new Action(() => Should.NotNull(null, () => new InvalidOperationException()));
+            action.Should().Throw<InvalidOperationException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotEmptyCheckNotEmptyString()
         {
             Should.NotEmpty("a", () => new CodeException());
@@ -29,96 +32,95 @@ namespace YS.Knife
             Should.NotEmpty("\t", () => new CodeException());
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotEmptyCheckEmptyString()
         {
-            Should.NotEmpty("", () => new CodeException());
+            var action = new Action(() => Should.NotEmpty("", () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotEmptyCheckNullString()
         {
-            Should.NotEmpty(null, () => new CodeException());
+            var action = new Action(() => Should.NotEmpty(null, () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotEmptyCheckNotEmptyCollection()
         {
             Should.NotEmpty(new[] { 1 }, () => new CodeException());
 
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotEmptyCheckEmptyCollection()
         {
-            Should.NotEmpty(new string[0], () => new CodeException());
-
+            var action = new Action(() => Should.NotEmpty(new string[0], () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotEmptyCheckNullCollection()
         {
             IEnumerable<string> enumerable = null;
-            Should.NotEmpty(enumerable, () => new CodeException());
+            var action = new Action(() => Should.NotEmpty(enumerable, () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenNotBlankCheckNotBlankString()
         {
             Should.NotBlank("a", () => new CodeException());
             Should.NotBlank(" a ", () => new CodeException());
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotBlankCheckEmptyString()
         {
-            Should.NotBlank("", () => new CodeException());
+            var action = new Action(() => Should.NotBlank("", () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotBlankCheckNullString()
         {
-            Should.NotBlank(null, () => new CodeException());
+            var action = new Action(() => Should.NotBlank(null, () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenNotBlankCheckBlankString()
         {
-            Should.NotBlank(" \t ", () => new CodeException());
+            var action = new Action(() => Should.NotBlank(" \t ", () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenBeTrueCheckTrueValue()
         {
             Should.BeTrue(true, () => new CodeException());
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenBeTrueCheckFalseValue()
         {
-            Should.BeTrue(false, () => new CodeException());
+            var action = new Action(() => Should.BeTrue(false, () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotThrowExceptionWhenBeFalseCheckFalseValue()
         {
             Should.BeFalse(false, () => new CodeException());
         }
 
-        [TestMethod]
-        [ExpectedException(typeof(CodeException))]
+        [Fact]
         public void ShouldThrowExceptionWhenBeFalseCheckTrueValue()
         {
-            Should.BeFalse(true, () => new CodeException());
+            var action = new Action(() => Should.BeFalse(true, () => new CodeException()));
+            action.Should().Throw<CodeException>();
         }
     }
 }

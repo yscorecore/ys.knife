@@ -5,16 +5,16 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    [TestClass]
+    
     public class AutoConstructorGeneratorTest : BaseGeneratorTest
     {
-        [DataTestMethod]
-        [DataRow("AutoConstructorCases/HappyCase.xml")]
-        public void ShouldGenerateExpectCodeFile(string testCaseFileName)
+        [Theory]
+        [InlineData("AutoConstructorCases/HappyCase.xml")]
+        public void ShouldGenerateExpectConstructor(string testCaseFileName)
         {
             var assemblies = new[]
             {

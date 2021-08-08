@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.UnitTest.Mapper
 {
-    [TestClass]
+    
     public class ObjectMapperTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldMapStrPropertyWhenDefineStrMapper()
         {
             var data = new Model
@@ -24,7 +24,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
         }
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetNullWhenSourceIsNull()
         {
             Model data = null;
@@ -34,7 +34,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetEmptyTargetWhenMapperNothing()
         {
             Model data = new Model
@@ -45,7 +45,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel());
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetConstValueWhenMapperTargetValueAsConst()
         {
             Model data = new Model
@@ -57,7 +57,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "const" });
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetValueWhenMapperTargetValueToSomeExpression()
         {
             Model data = new Model
@@ -70,7 +70,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "conststr" });
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetValueWhenMapperTargetValueToSomeExpression2()
         {
             Model data = new Model
@@ -82,7 +82,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "const0" });
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetValueWhenMapNullableToValue()
         {
             Model data = new Model
@@ -94,7 +94,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { IntProp = 1 });
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetValueWhenMapValueToNullable()
         {
             Model data = new Model
@@ -106,7 +106,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { NullIntProp = 1 });
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetPropValueWhenMapToNavigateProp()
         {
             Model data = new Model
@@ -118,7 +118,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             var target = data.Map(mapper);
             target.Should().BeEquivalentTo(new DtoModel() { StrProp = "str" });
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetDeepValueWhenMapComplexObjectAndSourceComplexObjectIsNotNull()
         {
             Model data = new Model
@@ -138,7 +138,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
             target.Should().BeEquivalentTo(expected);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetNullDeepValueWhenMapComplexObjectAndSourceComplexObjectIsNull()
         {
             Model data = new Model
@@ -160,7 +160,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetArrayValueWhenMapQueryableComplexObjects()
         {
             Model data = new Model
@@ -185,7 +185,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             };
             target.Should().BeEquivalentTo(expected);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetArrayValueWhenMapQueryableComplexObjectsAsNull()
         {
             Model data = new Model
@@ -205,7 +205,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetArrayValueWhenMapEnumerableComplexObjects()
         {
             Model data = new Model
@@ -230,7 +230,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             };
             target.Should().BeEquivalentTo(expected);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetArrayValueWhenMapEnumerableComplexObjectsAsNull()
         {
             Model data = new Model
@@ -250,7 +250,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
             target.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetTargetInstanceWhenUseDefaultMapper()
         {
             var datetime = DateTime.Now;
@@ -289,7 +289,7 @@ namespace YS.Knife.Data.UnitTest.Mapper
 
         #region ShouldMapIntPropToNullableInt
 
-        [TestMethod]
+        [Fact]
         public void ShouldMapIntPropToNullableInt()
         {
             var data = new Model2 { IntProp = 123 };

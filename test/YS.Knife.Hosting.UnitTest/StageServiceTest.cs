@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using Moq;
 using YS.Knife.Hosting;
 using YS.Knife.Stages;
@@ -13,28 +14,28 @@ using YS.Knife.Testing;
 
 namespace YS.Knife
 {
-    [TestClass]
+    
     public class StageServiceTest
     {
 
-        [TestInitialize]
-        public void Setup()
+        
+        public StageServiceTest()
         {
             InvokeHistory.Reset();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldRunOneStageServiceWhenRunStageTempWithAnyEnvironment()
         {
             using (var host = new KnifeHost(new[] { "Knife:Stage=temp" }))
             {
                 host.Run();
             }
-            Assert.AreEqual(1, InvokeHistory.Instance.Count);
-            Assert.AreEqual(typeof(TempStageInAllEnvironment), InvokeHistory.Instance.First());
+            InvokeHistory.Instance.Count.Should().Be(1);
+            InvokeHistory.Instance.First().Should().Be(typeof(TempStageInAllEnvironment));
 
         }
-        [TestMethod]
+        [Fact]
         public void ShouldRunTwoStageServiceWhenRunStageTempWithUatEnvironment()
         {
             using (Utility.WithDotnetEnv("uat"))
@@ -43,9 +44,9 @@ namespace YS.Knife
                 {
                     host.Run();
                 }
-                Assert.AreEqual(2, InvokeHistory.Instance.Count);
-                Assert.AreEqual(typeof(TempStageInUatEnvironment), InvokeHistory.Instance.First());
-                Assert.AreEqual(typeof(TempStageInAllEnvironment), InvokeHistory.Instance.Last());
+                InvokeHistory.Instance.Count.Should().Be(2);
+                InvokeHistory.Instance.First().Should().Be(typeof(TempStageInUatEnvironment));
+                InvokeHistory.Instance.Last().Should().Be(typeof(TempStageInAllEnvironment));
             }
         }
     }

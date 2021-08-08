@@ -1,28 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 namespace YS.Knife.Utilities
 {
-    [TestClass]
+
     public class TypeExtensionsTest
     {
-        [DataRow(typeof(int))]
-        [DataRow(typeof(double))]
-        [DataRow(typeof(DateTime))]
-        [DataRow(typeof(object))]
-        [DataRow(typeof(ICollection<>))]
-        [DataTestMethod]
+        [InlineData(typeof(int))]
+        [InlineData(typeof(double))]
+        [InlineData(typeof(DateTime))]
+        [InlineData(typeof(object))]
+        [InlineData(typeof(ICollection<>))]
+        [Theory]
         public void ShouldNotBeGenericEnumerableType(Type type)
         {
             type.IsGenericEnumerable().Should().Be(false);
         }
 
-        [DataRow(typeof(string))]// string is IEnumerable<string>
-        [DataRow(typeof(List<int>))]
-        [DataRow(typeof(int[]))]
-        [DataRow(typeof(ICollection<int>))]
-        [DataTestMethod]
+        [InlineData(typeof(string))]// string is IEnumerable<string>
+        [InlineData(typeof(List<int>))]
+        [InlineData(typeof(int[]))]
+        [InlineData(typeof(ICollection<int>))]
+        [Theory]
         public void ShouldBeGenericEnumerableType(Type type)
         {
             type.IsGenericEnumerable().Should().Be(true);

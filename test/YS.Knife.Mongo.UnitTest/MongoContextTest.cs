@@ -1,25 +1,26 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using MongoDB.Driver;
 using YS.Knife.Hosting;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    //[TestClass]
+    [Collection(nameof(TestEnvironment))]
     public class MongoContextTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:cms")]
         private readonly string _ = TestEnvironment.MongoConnectionString;
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetContextInstanceFromDIContainer()
         {
             var context = this.GetService<Contents.ContentManageContext>();
-            Assert.IsNotNull(context);
+            context.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldInsertTopicItemSuccess()
         {
             var context = this.GetService<Contents.ContentManageContext>();
@@ -35,15 +36,15 @@ namespace YS.Knife.Mongo.UnitTest
                     Viewed = 100,
                 },
             });
-            Assert.IsNotNull(context);
+            context.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldQueryListTopicItemSuccess()
         {
             var context = this.GetService<Contents.ContentManageContext>();
             var topics = context.Topic.AsQueryable().Where(p => p.CreateTime < DateTimeOffset.Now).ToList();
-            Assert.IsNotNull(topics);
+            topics.Should().NotBeNull();
         }
     }
 }

@@ -1,21 +1,20 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Aop.StringResources
 {
-    [TestClass]
+
     public class StringResourcesWithI18NTest
     {
         private I18NWithResx _i18N;
-        [TestInitialize]
-        public void Setup()
+        public StringResourcesWithI18NTest()
         {
             var provider = Utility.BuildProvider();
             _i18N = provider.GetRequiredService<I18NWithResx>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeTemplateMessageWhenNoConfigKeyInI18NResx()
         {
             var actual = _i18N.NotConfigKeyInI18NResx();
@@ -24,7 +23,7 @@ namespace YS.Knife.Aop.StringResources
             actual.Should().Be(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetEmptyMessageWhenConfigEmptyTemplateInI18NResx()
         {
             var actual = _i18N.ConfigEmptyTemplateInI18NResx();
@@ -33,7 +32,7 @@ namespace YS.Knife.Aop.StringResources
             actual.Should().Be(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigValueWhenConfigSomeValueInI18NResx()
         {
             var actual = _i18N.ConfigSomeValueInI18NResx();
@@ -42,7 +41,7 @@ namespace YS.Knife.Aop.StringResources
             actual.Should().Be(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetFormatMessageWhenConfigNameTemplateValueInI18NResx()
         {
             var actual = _i18N.ConfigNameTemplateValueInI18NResx(1);
@@ -51,7 +50,7 @@ namespace YS.Knife.Aop.StringResources
             actual.Should().Be(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetFormatMessageWhenConfigIndexTemplateValueInI18NResx()
         {
             var actual = _i18N.ConfigIndexTemplateValueInI18NResx(1);

@@ -36,20 +36,7 @@
     </Resource>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Update="Bogus">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-    <PackageReference Update="FluentAssertions">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-    <PackageReference Update="Moq">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-    <PackageReference Update="MSTest.TestAdapter">
-      <TreatAsUsed>true</TreatAsUsed>
-    </PackageReference>
-  </ItemGroup>
+
 
  
 

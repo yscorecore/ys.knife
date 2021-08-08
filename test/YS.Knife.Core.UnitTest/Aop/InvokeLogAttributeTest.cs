@@ -1,21 +1,22 @@
 ﻿using System;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Testing.Logging;
 
 namespace YS.Knife.Aop.UnitTest
 {
-    [TestClass]
+
     public class InvokeLogAttributeTest
     {
 
         private IServiceProvider provider;
-        [TestInitialize]
-        public void Setup()
+
+        public InvokeLogAttributeTest()
         {
             provider = Utility.BuildProvider((sc, config) =>
             {
@@ -29,52 +30,64 @@ namespace YS.Knife.Aop.UnitTest
         }
         private readonly TestLoggerStore loggerStore = new TestLoggerStore();
 
-        [TestMethod]
+        [Fact]
         public void ShouldHasStartLoggerWhenInvokeMethod()
         {
             var service = provider.GetService<ILoggingTestService>();
             service.Hello();
-            var loggerEntry = loggerStore.First();
-            Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
-            Assert.IsNull(loggerEntry.Exception);
-            Assert.AreEqual(typeof(InvokeLogAttribute).FullName, loggerEntry.CategoryName);
-            Assert.AreEqual("Start invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Hello\".", loggerEntry.Message);
+            loggerStore.First()
+                  .Should().BeEquivalentTo(new TestLoggerEntry
+                  {
+                      LogLevel = LogLevel.Information,
+                      Message = "Start invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Hello\".",
+                      CategoryName = typeof(InvokeLogAttribute).FullName,
+                      Exception = null
+
+                  });
+
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldHasEndLoggerWhenInvokeMethod()
         {
             var service = provider.GetService<ILoggingTestService>();
             service.Hello();
-            var loggerEntry = loggerStore.Last();
-            Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
-            Assert.IsNull(loggerEntry.Exception);
-            Assert.AreEqual(typeof(InvokeLogAttribute).FullName, loggerEntry.CategoryName);
-            Assert.AreEqual("End invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Hello\".", loggerEntry.Message);
+            loggerStore.Last()
+                  .Should().BeEquivalentTo(new TestLoggerEntry
+                  {
+                      LogLevel = LogLevel.Information,
+                      Message = "End invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Hello\".",
+                      CategoryName = typeof(InvokeLogAttribute).FullName,
+                      Exception = null
+
+                  });
+
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldHasStartLoggerWhenThrowException()
         {
             var service = provider.GetService<ILoggingTestService>();
-            Assert.ThrowsException<NotImplementedException>(() => { service.Wrong(); });
+            var action = new Action(() => { service.Wrong(); });
+            action.Should().Throw<NotImplementedException>();
             var loggerEntry = loggerStore.First();
-            Assert.AreEqual(LogLevel.Information, loggerEntry.LogLevel);
-            Assert.IsNull(loggerEntry.Exception);
-            Assert.AreEqual(typeof(InvokeLogAttribute).FullName, loggerEntry.CategoryName);
-            Assert.AreEqual("Start invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Wrong\".", loggerEntry.Message);
+            loggerEntry.LogLevel.Should().Be(LogLevel.Information);
+            loggerEntry.Exception.Should().BeNull();
+            loggerEntry.CategoryName.Should().Be(typeof(InvokeLogAttribute).FullName);
+            loggerEntry.Message.Should().Be("Start invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Wrong\".");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldHasExceptionLoggerWhenThrowException()
         {
             var service = provider.GetService<ILoggingTestService>();
-            Assert.ThrowsException<NotImplementedException>(() => { service.Wrong(); });
+            var action = new Action(() => { service.Wrong(); });
+            action.Should().Throw<NotImplementedException>();
             var loggerEntry = loggerStore.Last();
-            Assert.AreEqual(LogLevel.Error, loggerEntry.LogLevel);
-            Assert.IsNotNull(loggerEntry.Exception);
-            Assert.AreEqual(typeof(InvokeLogAttribute).FullName, loggerEntry.CategoryName);
-            Assert.AreEqual("Error occurred when invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Wrong\".", loggerEntry.Message);
+            loggerEntry.LogLevel.Should().Be(LogLevel.Error);
+            loggerEntry.Exception.Should().BeOfType<NotImplementedException>();
+            loggerEntry.CategoryName.Should().Be(typeof(InvokeLogAttribute).FullName);
+            loggerEntry.Message.Should().Be("Error occurred when invoke method \"YS.Knife.Aop.UnitTest.LoggingTestService.Wrong\".");
         }
     }
 

@@ -1,21 +1,21 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 namespace YS.Knife.Aop
 {
-    [TestClass]
+
     public class ParameterValidationAttributeTest
     {
         private IServiceProvider provider;
-        [TestInitialize]
-        public void Setup()
+        public ParameterValidationAttributeTest()
         {
             provider = Utility.BuildProvider();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldSuccessIfNotDefineParameterValidation()
         {
             var service = provider.GetService<INoDefineParameterValidation>();
@@ -23,85 +23,97 @@ namespace YS.Knife.Aop
             service.AnyString("abc");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfDefineParameterValidationInInterfaceMethod()
         {
             var service = provider.GetService<INoDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.MustBeUrlWillEffectiveBecauseDefineParameterValidationInInterface("abc");
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("url"));
-            Assert.AreEqual("abc", exception.Value);
-            Assert.AreEqual(typeof(UrlAttribute), exception.ValidationAttribute.GetType());
+
+
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+
+
+            exception.ValidationResult.MemberNames.Should().Contain("url");
+            exception.Value.Should().Be("abc");
+            exception.ValidationAttribute.GetType().Should().Be(typeof(UrlAttribute));
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfDefineParameterValidationInImplementationMethod()
         {
             var service = provider.GetService<INoDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.MustBeUrlWillEffectiveBecauseDefineParameterValidationInImplementation("abc");
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("url"));
-            Assert.AreEqual("abc", exception.Value);
-            Assert.AreEqual(typeof(UrlAttribute), exception.ValidationAttribute.GetType());
+
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+
+            exception.ValidationResult.MemberNames.Should().Contain("url");
+            exception.Value.Should().Be("abc");
+            exception.ValidationAttribute.GetType().Should().Be(typeof(UrlAttribute));
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfDefineParameterValidationInInterfaceType()
         {
             var service = provider.GetService<IDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.MustbeEmailAddress("abc");
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("emailAddress"));
-            Assert.AreEqual("abc", exception.Value);
-            Assert.AreEqual(typeof(EmailAddressAttribute), exception.ValidationAttribute.GetType());
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+            exception.ValidationResult.MemberNames.Should().Contain("emailAddress");
+            exception.Value.Should().Be("abc");
+            exception.ValidationAttribute.GetType().Should().Be(typeof(EmailAddressAttribute));
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfImplementationMethodDefineRequiredAttribute()
         {
             var service = provider.GetService<IDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.MustbeEmailAddress(null);
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("emailAddress"));
-            Assert.AreEqual(null, exception.Value);
-            Assert.AreEqual(typeof(RequiredAttribute), exception.ValidationAttribute.GetType());
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+            exception.ValidationResult.MemberNames.Should().Contain("emailAddress");
+            exception.Value.Should().Be(null);
+            exception.ValidationAttribute.GetType().Should().Be(typeof(RequiredAttribute));
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfImplementationMethodDefineRequiredAttributeAndGivenComplexType()
         {
             var service = provider.GetService<IDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.ValidateComplexClass(null);
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("cpmplexObject"));
-            Assert.AreEqual(null, exception.Value);
-            Assert.AreEqual(typeof(RequiredAttribute), exception.ValidationAttribute.GetType());
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+            exception.ValidationResult.MemberNames.Should().Contain("cpmplexObject");
+            exception.Value.Should().Be(null);
+            exception.ValidationAttribute.GetType().Should().Be(typeof(RequiredAttribute));
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldThrowIfComplexTypeValidateFail()
         {
             var service = provider.GetService<IDefineParameterValidation>();
-            var exception = Assert.ThrowsException<ValidationException>(() =>
+            var action = new Action(() =>
             {
                 service.ValidateComplexClass(new ComplexClass { Value = -1 });
             });
-            Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("Value"));
-            Assert.AreEqual(-1, exception.Value);
-            Assert.AreEqual(typeof(RangeAttribute), exception.ValidationAttribute.GetType());
+            var exception = action.Should().ThrowExactly<ValidationException>().Which;
+            exception.ValidationResult.MemberNames.Should().Contain("Value");
+            exception.Value.Should().Be(-1);
+            exception.ValidationAttribute.GetType().Should().Be(typeof(RangeAttribute));
         }
 
-        // [TestMethod]
+        //[Fact]
         // public void ShouldThrowIfComplexNestedTypeValidateFail()
         // {
         //     var service = this.GetService<IDefineParameterValidation>();
@@ -110,8 +122,8 @@ namespace YS.Knife.Aop
         //         service.ValidateComplexClass(new ComplexClass { Value = 5, NestedProp = new NestedClass { NestedValue = "too long......" } });
         //     });
         //     Assert.IsTrue(exception.ValidationResult.MemberNames.Contains("NestedValue"));
-        //     Assert.AreEqual(-1, exception.Value);
-        //     Assert.AreEqual(typeof(StringLengthAttribute), exception.ValidationAttribute.GetType());
+        //      exception.Value.Should().Be(-1);
+        //      exception.ValidationAttribute.GetType().Should().Be(typeof(StringLengthAttribute));
         // }
     }
 

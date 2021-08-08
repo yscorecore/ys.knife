@@ -1,27 +1,27 @@
 ﻿using System.ComponentModel;
 using System.Reflection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    [TestClass]
+    
     public class AutoNotifyGeneratorTest : BaseGeneratorTest
     {
-        [DataTestMethod]
-        [DataRow("AutoNotifyCases/HappyCase.xml")]
-        [DataRow("AutoNotifyCases/GenericType.xml")]
-        [DataRow("AutoNotifyCases/CombinAllPartials.xml")]
-        [DataRow("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
-        [DataRow("AutoNotifyCases/NotifyPropertyChangedInherited.xml")]
-        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
-        [DataRow("AutoNotifyCases/NestedType.xml")]
-        [DataRow("AutoNotifyCases/EmptyNamespace.xml")]
-        [DataRow("AutoNotifyCases/SameNameInMultipleNamespace.xml")]
-        [DataRow("AutoNotifyCases/NotifyPropertyChangedInheritedFromOtherAssembly.xml")]
-        [DataRow("AutoNotifyCases/ComplexTypeFromCurrentSource.xml")]
-        [DataRow("AutoNotifyCases/ComplexTypeFromCurrentSourceAndOtherNamespace.xml")]
-        [DataRow("AutoNotifyCases/ComplexTypeFromOtherAssembly.xml")]
-        public void ShouldGenerateExpectCodeFile(string testCaseFileName)
+        [Theory]
+        [InlineData("AutoNotifyCases/HappyCase.xml")]
+        [InlineData("AutoNotifyCases/GenericType.xml")]
+        [InlineData("AutoNotifyCases/CombinAllPartials.xml")]
+        [InlineData("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
+        [InlineData("AutoNotifyCases/NotifyPropertyChangedInherited.xml")]
+        [InlineData("AutoNotifyCases/NotifyPropertyChangedInheritedFromGenerator.xml")]
+        [InlineData("AutoNotifyCases/NestedType.xml")]
+        [InlineData("AutoNotifyCases/EmptyNamespace.xml")]
+        [InlineData("AutoNotifyCases/SameNameInMultipleNamespace.xml")]
+        [InlineData("AutoNotifyCases/NotifyPropertyChangedInheritedFromOtherAssembly.xml")]
+        [InlineData("AutoNotifyCases/ComplexTypeFromCurrentSource.xml")]
+        [InlineData("AutoNotifyCases/ComplexTypeFromCurrentSourceAndOtherNamespace.xml")]
+        [InlineData("AutoNotifyCases/ComplexTypeFromOtherAssembly.xml")]
+        public void ShouldGenerateExpectPartailClass(string testCaseFileName)
         {
             var assemblies = new[]
             {

@@ -1,29 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Testing;
 
 namespace YS.Knife.Grpc.Client.UnitTest
 {
-    [TestClass]
+    
     public class TestEnvironment
     {
         public static string TestServerUrl { get; private set; } = "http://127.0.0.1:8080";
-        [AssemblyInitialize]
-        public static void Setup(TestContext t)
-        {
-            DockerCompose.OutputLine = t.WriteLine;
-            var httpPort = Utility.GetAvailableTcpPort(8080);
-            var hostReportPort = Utility.GetAvailableTcpPort(8901);
-            StartContainer(httpPort, hostReportPort);
+       //[AssemblyInitialize]
+       // public static void Setup(TestContext t)
+       // {
+       //     DockerCompose.OutputLine = t.WriteLine;
+       //     var httpPort = Utility.GetAvailableTcpPort(8080);
+       //     var hostReportPort = Utility.GetAvailableTcpPort(8901);
+       //     StartContainer(httpPort, hostReportPort);
 
-        }
+       // }
 
-        [AssemblyCleanup]
-        public static void TearDown()
-        {
-            DockerCompose.Down();
-        }
+       // [AssemblyCleanup]
+       // public static void TearDown()
+       // {
+       //     DockerCompose.Down();
+       // }
         private static void StartContainer(uint port, uint reportPort)
         {
 

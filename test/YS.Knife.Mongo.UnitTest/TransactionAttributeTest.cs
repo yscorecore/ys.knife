@@ -1,18 +1,21 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using MongoDB.Driver;
 using YS.Knife.Entity;
 using YS.Knife.Hosting;
 namespace YS.Knife.Mongo.UnitTest
 {
 
-    //[TestClass]
+    [Collection(nameof(TestEnvironment))]
     public class TransactionAttributeTest : KnifeHost
     {
+      
+
         [InjectConfiguration("connectionStrings:book_db")]
         private readonly string _ = TestEnvironment.MongoConnectionString;
 
-        [TestMethod]
+        [Fact]
         public void ShouldInsertOneBookWhenNoTransactionAndThrowError()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
@@ -25,10 +28,10 @@ namespace YS.Knife.Mongo.UnitTest
             catch
             {
                 var afterCount = entityStore.Count(p => p.Id > 0);
-                Assert.IsTrue(afterCount - beforeCount == 1);
+                (afterCount - beforeCount).Should().Be(1);
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldInsertTwoBookWhenNoTransaction()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
@@ -36,10 +39,10 @@ namespace YS.Knife.Mongo.UnitTest
             var bookService = this.GetService<IBookService>();
             bookService.AddTwoBookNoTransaction(false);
             var afterCount = entityStore.Count(p => p.Id > 0);
-            Assert.IsTrue(afterCount - beforeCount == 2);
+            (afterCount - beforeCount).Should().Be(2);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldInsertZeroBookWhenWithTransactionAndThrowError()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
@@ -52,10 +55,10 @@ namespace YS.Knife.Mongo.UnitTest
             catch
             {
                 var afterCount = entityStore.Count(p => p.Id > 0);
-                Assert.AreEqual(afterCount, beforeCount);
+                beforeCount.Should().Be(afterCount);
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldInsertTwoBookWhenWithTransaction()
         {
             var entityStore = this.GetService<IEntityStore<Book>>();
@@ -63,7 +66,7 @@ namespace YS.Knife.Mongo.UnitTest
             var bookService = this.GetService<IBookService>();
             bookService.AddTwoBookNoTransaction(false);
             var afterCount = entityStore.Count(p => p.Id > 0);
-            Assert.IsTrue(afterCount - beforeCount == 2);
+            (afterCount - beforeCount).Should().Be(2);
         }
 
         public interface IBookService

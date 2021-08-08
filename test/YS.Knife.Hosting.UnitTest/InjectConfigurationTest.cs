@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Hosting
 {
-    [TestClass]
+    
     public class InjectConfigurationTest : KnifeHost
     {
         public InjectConfigurationTest() : base(new Dictionary<string, object>
@@ -55,32 +56,32 @@ namespace YS.Knife.Hosting
         };
 
 
-        [DataRow("private_const", ConnectionStringFromPrivateConst)]
-        [DataRow("public_const", ConnectionStringFromPublicConst)]
-        [DataRow("private_static_field", "value_from_private_static_field")]
-        [DataRow("public_static_field", "value_from_public_static_field")]
-        [DataRow("private_instance_field", "value_from_private_instance_field")]
-        [DataRow("public_instance_field", "value_from_public_instance_field")]
-        [DataRow("private_static_property", "value_from_private_static_property")]
-        [DataRow("public_static_property", "value_from_public_static_property")]
-        [DataRow("private_instance_property", "value_from_private_instance_property")]
-        [DataRow("public_instance_property", "value_from_public_instance_property")]
-        [DataRow("string_value", "string_value")]
-        [DataRow("int_value", "123456")]
-        [DataTestMethod]
+        [InlineData("private_const", ConnectionStringFromPrivateConst)]
+        [InlineData("public_const", ConnectionStringFromPublicConst)]
+        [InlineData("private_static_field", "value_from_private_static_field")]
+        [InlineData("public_static_field", "value_from_public_static_field")]
+        [InlineData("private_instance_field", "value_from_private_instance_field")]
+        [InlineData("public_instance_field", "value_from_public_instance_field")]
+        [InlineData("private_static_property", "value_from_private_static_property")]
+        [InlineData("public_static_property", "value_from_public_static_property")]
+        [InlineData("private_instance_property", "value_from_private_instance_property")]
+        [InlineData("public_instance_property", "value_from_public_instance_property")]
+        [InlineData("string_value", "string_value")]
+        [InlineData("int_value", "123456")]
+        [Theory]
 
         public void ShouldGetConnectionStringsFromInjectValue(string key, string expectedValue)
         {
             var configuration = this.GetService<IConfiguration>();
-            Assert.AreEqual(expectedValue, configuration.GetConnectionString(key));
+            configuration.GetConnectionString(key).Should().Be(expectedValue);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldHaveHighestPriority()
         {
             var configuration = this.GetService<IConfiguration>();
-            Assert.AreEqual("value from command line", configuration.GetSection("prop_a").Get<string>());
-            Assert.AreEqual("value from injection", configuration.GetSection("prop_b").Get<string>());
+            configuration.GetSection("prop_a").Get<string>().Should().Be("value from command line");
+            configuration.GetSection("prop_b").Get<string>().Should().Be("value from injection");
         }
     }
 }

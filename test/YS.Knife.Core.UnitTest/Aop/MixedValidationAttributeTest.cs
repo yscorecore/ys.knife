@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 namespace YS.Knife.Aop.UnitTest
 {
 
-    [TestClass]
+
     public class MixedValidationAttributeTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldValidateSuccessWhenGivenValidValue()
         {
             var entity = new DataEntity
@@ -18,9 +19,9 @@ namespace YS.Knife.Aop.UnitTest
             var validationContext = new ValidationContext(entity);
             var validationResults = new List<ValidationResult>();
             Validator.TryValidateObject(entity, validationContext, validationResults, true);
-            Assert.AreEqual(0, validationResults.Count);
+            validationResults.Should().BeEmpty();
         }
-        [TestMethod]
+        [Fact]
         public void ShouldHasRequiredRule()
         {
             var entity = new DataEntity
@@ -30,10 +31,11 @@ namespace YS.Knife.Aop.UnitTest
             var validationContext = new ValidationContext(entity);
             var validationResults = new List<ValidationResult>();
             Validator.TryValidateObject(entity, validationContext, validationResults, true);
-            Assert.AreEqual(1, validationResults.Count);
-            Assert.AreEqual("The Prop1 field is required.", validationResults.First().ErrorMessage);
+            validationResults.Should().HaveCount(1);
+            validationResults.First().ErrorMessage.Should().Be("The Prop1 field is required.");
+
         }
-        [TestMethod]
+        [Fact]
         public void ShouldHasRegularExpressionRule()
         {
             var entity = new DataEntity
@@ -43,8 +45,8 @@ namespace YS.Knife.Aop.UnitTest
             var validationContext = new ValidationContext(entity);
             var validationResults = new List<ValidationResult>();
             Validator.TryValidateObject(entity, validationContext, validationResults, true);
-            Assert.AreEqual(1, validationResults.Count);
-            Assert.AreEqual("The field Prop1 must match the regular expression '^\\w+$'.", validationResults.First().ErrorMessage);
+            validationResults.Should().HaveCount(1);
+            validationResults.First().ErrorMessage.Should().Be("The field Prop1 must match the regular expression '^\\w+$'.");
         }
     }
 

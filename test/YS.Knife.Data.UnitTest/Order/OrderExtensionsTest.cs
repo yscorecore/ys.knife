@@ -4,30 +4,30 @@ using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+    
     public class OrderExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldOrderByWhenGiveIdAsc()
         {
             var query = CreateTestUsers().DoOrderBy(OrderInfo.Parse("Id"));
             JoinIds(query).Should().Be("001,002,003,004");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldOrderByWhenGiveIdDesc()
         {
             var query = CreateTestUsers().DoOrderBy(OrderInfo.Parse("Id.desc()"));
             JoinIds(query).Should().Be("004,003,002,001");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldOrderByGiveAgeDescAndNameAsc()
         {
             var orderInfo = OrderInfo.Parse("Age.desc(),Name.asc()");
@@ -35,7 +35,7 @@ namespace YS.Knife.Data.UnitTest
             JoinIds(query).Should().Be("002,003,004,001");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldOrderByGiveAgeAscAndNameDesc()
         {
             var orderInfo = OrderInfo.Parse("Age.Asc(),Name.desc()");
@@ -43,7 +43,7 @@ namespace YS.Knife.Data.UnitTest
             JoinIds(query).Should().Be("001,004,003,002");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldWhenOrderByWithMapperAndGiveAgeAscAndNameDesc()
         {
             var mapper = new ObjectMapper<User, UserDto>();
@@ -56,7 +56,7 @@ namespace YS.Knife.Data.UnitTest
             JoinIds(query).Should().Be("001,004,003,002");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldWhenOrderByWithMapperAndGiveNameLengthDescAndNameAsc()
         {
             var mapper = new ObjectMapper<User, UserDto>();
@@ -101,7 +101,7 @@ namespace YS.Knife.Data.UnitTest
             public int TNameLength { get; set; }
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldDoOrderWhenOrderByMultipleLambdas()
         {
             var query = CreateTestUsers().DoOrderBy(
@@ -111,7 +111,7 @@ namespace YS.Knife.Data.UnitTest
             JoinIds(query).Should().Be("002,003,004,001");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldDoOrderWhenOrderByMultipleLambdasAndWithFunctions()
         {
             var query = CreateTestUsers().DoOrderBy(
@@ -120,7 +120,7 @@ namespace YS.Knife.Data.UnitTest
             JoinIds(query).Should().Be("002,004,003,001");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldDoNothingWhenOrderByEmptyLambdas()
         {
             var query = CreateTestUsers().DoOrderBy();

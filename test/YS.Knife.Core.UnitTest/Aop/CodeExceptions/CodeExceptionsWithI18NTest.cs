@@ -1,21 +1,21 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Aop.CodeExceptions
 {
-    [TestClass]
+
     public class CodeExceptionsWithI18NTest
     {
         private IAllErrorWithResource _allErrors;
-        [TestInitialize]
-        public void Setup()
+
+        public CodeExceptionsWithI18NTest()
         {
             var provider = Utility.BuildProvider();
             _allErrors = provider.GetRequiredService<IAllErrorWithResource>();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetCodeTemplateMessageWhenNoConfigKeyInI18NResx()
         {
             var actual = _allErrors.NotConfigKeyInI18NResx();
@@ -25,7 +25,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetEmptyMessageWhenConfigEmptyTemplateInI18NResx()
         {
             var actual = _allErrors.ConfigEmptyTemplateInI18NResx();
@@ -35,7 +35,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetConfigValueWhenConfigSomeValueInI18NResx()
         {
             var actual = _allErrors.ConfigSomeValueInI18NResx();
@@ -45,7 +45,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetFormatMessageWhenConfigNameTemplateValueInI18NResx()
         {
             var actual = _allErrors.ConfigNameTemplateValueInI18NResx(1);
@@ -56,7 +56,7 @@ namespace YS.Knife.Aop.CodeExceptions
                 .Which.Should().BeEquivalentTo(expected);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetFormatMessageWhenConfigIndexTemplateValueInI18NResx()
         {
             var actual = _allErrors.ConfigIndexTemplateValueInI18NResx(1);

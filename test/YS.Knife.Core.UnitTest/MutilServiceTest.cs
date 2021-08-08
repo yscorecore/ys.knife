@@ -1,42 +1,43 @@
 ﻿using System.Linq;
+using FluentAssertions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.TestData;
 
 namespace YS.Knife
 {
-    [TestClass]
+
     public class MultiServiceTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldGetMultiInstanceWhenMultiDefineKnifeAttribute()
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
             var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<MultiService>();
-            Assert.AreEqual(4, instances.Count());
+            instances.Count().Should().Be(4);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldNotGetInstanceWhenJustDefineKnifeAttributeInParents()
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
             var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<SubClass>();
-            Assert.AreEqual(0, instances.Count());
+            instances.Count().Should().Be(0);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetMultiInstanceWhenMultiDefineKnifeAttributeInNestedType()
         {
             var services = new ServiceCollection();
             var configuration = new ConfigurationBuilder().Build();
             var sp = services.RegisterKnifeServices(configuration).BuildServiceProvider();
             var instances = sp.GetServices<OutterClass.InnerClass>();
-            Assert.AreEqual(4, instances.Count());
+            instances.Count().Should().Be(4);
         }
 
     }

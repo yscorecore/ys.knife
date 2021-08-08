@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+    
     public class SequentialKeyTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldAlwaysCreateSequenceString()
         {
             var t1 = DateTime.UtcNow.Ticks;
@@ -14,7 +15,7 @@ namespace YS.Knife.Data.UnitTest
             var datas = Enumerable.Range(1, 1000).Select(p => SequentialKey.NewString()).ToList();
             for (int i = 1; i < datas.Count; i++)
             {
-                Assert.IsTrue(datas[i].CompareTo(datas[i - 1]) > 0);
+                datas[i].CompareTo(datas[i - 1]).Should().BeGreaterThan(0);
             }
         }
     }

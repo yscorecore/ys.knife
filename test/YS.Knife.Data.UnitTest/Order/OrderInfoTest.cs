@@ -1,27 +1,28 @@
 ﻿using System.ComponentModel;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+
     public class OrderInfoTest
     {
 
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedStringWhenToString()
         {
             OrderInfo order = OrderInfo.Parse("Name,Age.desc()");
-            Assert.AreEqual("Name.asc(),Age.desc()", order.ToString());
+            order.ToString().Should().Be("Name.asc(),Age.desc()");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedOrderInfoWhenParseFromString()
         {
             var orderInfo = OrderInfo.Parse("Name, Age.desc() ,Address.asc() ");
-            Assert.IsTrue(orderInfo.HasItems());
-            Assert.AreEqual(3, orderInfo.Items.Count);
+            orderInfo.HasItems().Should().BeTrue();
+            orderInfo.Items.Count.Should().Be(3);
             AssertOrderItem(orderInfo.Items[0], "Name", OrderType.Asc);
             AssertOrderItem(orderInfo.Items[1], "Age", OrderType.Desc);
             AssertOrderItem(orderInfo.Items[2], "Address", OrderType.Asc);
@@ -29,24 +30,24 @@ namespace YS.Knife.Data.UnitTest
 
         private void AssertOrderItem(OrderItem orderItem, string field, OrderType orderType)
         {
-            Assert.AreEqual(field, string.Join(".", orderItem.NavigatePaths));
-            Assert.AreEqual(orderType, orderItem.OrderType);
+            string.Join(".", orderItem.NavigatePaths).Should().Be(field);
+            orderItem.OrderType.Should().Be(orderType);
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldCanConvertToString()
         {
             var converter = TypeDescriptor.GetConverter(typeof(OrderInfo));
-            Assert.AreEqual(true, converter.CanConvertTo(typeof(string)));
+            converter.CanConvertTo(typeof(string)).Should().Be(true);
             OrderInfo orderItem = OrderInfo.Parse("Field.Desc()");
-            Assert.AreEqual("Field.desc()", converter.ConvertTo(orderItem, typeof(string)));
+            converter.ConvertTo(orderItem, typeof(string)).Should().Be("Field.desc()");
         }
-        [TestMethod]
+        [Fact]
         public void ShouldCanConvertFromString()
         {
             var converter = TypeDescriptor.GetConverter(typeof(OrderInfo));
-            Assert.AreEqual(true, converter.CanConvertFrom(typeof(string)));
-            Assert.IsInstanceOfType(converter.ConvertFrom("Field.desc(),Field2.desc()"), typeof(OrderInfo));
+            converter.CanConvertFrom(typeof(string)).Should().Be(true);
+            converter.ConvertFrom("Field.desc(),Field2.desc()").Should().BeOfType<OrderInfo>();
         }
     }
 }

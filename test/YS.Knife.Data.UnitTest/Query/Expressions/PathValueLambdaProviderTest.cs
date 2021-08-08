@@ -1,20 +1,20 @@
 ﻿using System;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Data.Query.Expressions
 {
-    [TestClass]
+    
     public class PathValueLambdaProviderTest
     {
-        [DataTestMethod]
-        [DataRow("StrProp", "p => p.StrProp")]
-        [DataRow("strprop", "p => p.StrProp")]
-        [DataRow("strfield", "p => p.StrField")]
-        [DataRow("StrProp.length", "p => p.StrProp.Length")]
-        [DataRow("intprop", "p => p.IntProp")]
-        [DataRow("TimeProp", "p => p.TimeProp")]
-        [DataRow("timeprop.year", "p => p.TimeProp.Year")]
+        [Theory]
+        [InlineData("StrProp", "p => p.StrProp")]
+        [InlineData("strprop", "p => p.StrProp")]
+        [InlineData("strfield", "p => p.StrField")]
+        [InlineData("StrProp.length", "p => p.StrProp.Length")]
+        [InlineData("intprop", "p => p.IntProp")]
+        [InlineData("TimeProp", "p => p.TimeProp")]
+        [InlineData("timeprop.year", "p => p.TimeProp.Year")]
         public void ShouldGetExpectedExpressionFromBaiscMemberPaths(string path, string expectedExpression)
         {
             var valueInfo = ValueInfo.Parse(path);
@@ -24,12 +24,12 @@ namespace YS.Knife.Data.Query.Expressions
             lambda.ToString().Should().Be(expectedExpression);
 
         }
-        [DataTestMethod]
-        [DataRow("nullableTimeProp", "p => p.NullableTimeProp")]
-        [DataRow("nullableTimeProp.value", "p => p.NullableTimeProp.Value")]
-        [DataRow("nullableTimeProp.value.year", "p => p.NullableTimeProp.Value.Year")]
-        [DataRow("nullableTimeProp.year", "p => p.NullableTimeProp.Value.Year")]
-        [DataRow("nullableTimeProp.month", "p => p.NullableTimeProp.Value.Month")]
+        [Theory]
+        [InlineData("nullableTimeProp", "p => p.NullableTimeProp")]
+        [InlineData("nullableTimeProp.value", "p => p.NullableTimeProp.Value")]
+        [InlineData("nullableTimeProp.value.year", "p => p.NullableTimeProp.Value.Year")]
+        [InlineData("nullableTimeProp.year", "p => p.NullableTimeProp.Value.Year")]
+        [InlineData("nullableTimeProp.month", "p => p.NullableTimeProp.Value.Month")]
         public void ShouldGetExpectedExpressionFromNullableMemberPaths(string path, string expectedExpression)
         {
             var valueInfo = ValueInfo.Parse(path);

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using MongoDB.Driver;
 using YS.Knife.Hosting;
+using System.Collections;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    //[TestClass]
     public class MongoContextAttributeTest : KnifeHost
     {
         [InjectConfiguration("connectionStrings:book_db")]
@@ -15,28 +16,34 @@ namespace YS.Knife.Mongo.UnitTest
         [InjectConfiguration("connectionStrings:user_db")]
         private readonly string user_conn = TestEnvironment.MongoConnectionString;
 
-        [DataTestMethod]
-        [DataRow(typeof(UserContext))]
-        [DataRow(typeof(BookContext))]
+        [Theory]
+        [InlineData(typeof(UserContext))]
+        [InlineData(typeof(BookContext))]
         public void ShouldGetContextType(Type contextType)
         {
             var context = GetService(contextType);
-            var baseContexts = GetService<IEnumerable<MongoContext>>();
-            Assert.IsNotNull(context);
-            Assert.IsNotNull(baseContexts);
-            Assert.IsTrue(baseContexts.Contains(context));
+            IEnumerable baseContexts = GetService<IEnumerable<MongoContext>>();
+            context.Should().NotBeNull();
+            baseContexts.Should().NotBeNull();
+            baseContexts.Should().Contain(context);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetUserStoreWhenRegisteEntityStore()
         {
             var userStore = GetService<IEntityStore<User>>();
-            Assert.IsNotNull(userStore);
+            userStore.Should().NotBeNull();
         }
-        [TestMethod]
-        public void ShouldNotGetBookStoreWhenNotRegisteEntityStore()
+        [Fact]
+        public void ShouldGetBookStoreWhenRegisteEntityStore()
         {
-            var bookStore = GetService<IEntityStore<Book>>();
-            Assert.IsNull(bookStore);
+            var userStore = GetService<IEntityStore<User>>();
+            userStore.Should().NotBeNull();
+        }
+        [Fact]
+        public void ShouldNotGetNewBookStoreWhenNotRegisteEntityStore()
+        {
+            var bookStore = GetService<IEntityStore<NewBook>>();
+            bookStore.Should().BeNull();
         }
         #region UserContext
 
@@ -62,6 +69,11 @@ namespace YS.Knife.Mongo.UnitTest
             public string Id { get; set; }
             public int Name { get; set; }
         }
+        public class NewBook
+        {
+            public string Id { get; set; }
+            public int Name { get; set; }
+        }
         [MongoContext("book_db", RegisterEntityStore = false)]
         public class BookContext : MongoContext
         {
@@ -69,7 +81,7 @@ namespace YS.Knife.Mongo.UnitTest
             {
             }
 
-            public IMongoCollection<Book> Users { get; set; }
+            public IMongoCollection<Book> Books { get; set; }
         }
         #endregion
 

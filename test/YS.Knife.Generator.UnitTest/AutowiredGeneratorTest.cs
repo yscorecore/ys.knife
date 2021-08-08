@@ -4,27 +4,27 @@ using System.ComponentModel;
 using System.Reflection;
 using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
 {
-    [TestClass]
+    
     public class AutowiredGeneratorTest : BaseGeneratorTest
     {
-        [DataTestMethod]
-        [DataRow("AutowiredCases/HappyCase.xml")]
-        [DataRow("AutowiredCases/GenericType.xml")]
-        [DataRow("AutowiredCases/NestedType.xml")]
-        [DataRow("AutowiredCases/CamelCase.xml")]
-        [DataRow("AutowiredCases/EmptyNamespace.xml")]
-        [DataRow("AutowiredCases/SameNameInDifferentNamespace.xml")]
-        [DataRow("AutowiredCases/CombinAllPartials.xml")]
-        [DataRow("AutowiredCases/InheriteOtherClass.xml")]
-        [DataRow("AutowiredCases/InheriteClassFromOtherAssembly.xml")]
-        [DataRow("AutowiredCases/ComplexTypeFromCurrentSource.xml")]
-        [DataRow("AutowiredCases/ComplexTypeFromOtherAssembly.xml")]
+        [Theory]
+        [InlineData("AutowiredCases/HappyCase.xml")]
+        [InlineData("AutowiredCases/GenericType.xml")]
+        [InlineData("AutowiredCases/NestedType.xml")]
+        [InlineData("AutowiredCases/CamelCase.xml")]
+        [InlineData("AutowiredCases/EmptyNamespace.xml")]
+        [InlineData("AutowiredCases/SameNameInDifferentNamespace.xml")]
+        [InlineData("AutowiredCases/CombinAllPartials.xml")]
+        [InlineData("AutowiredCases/InheriteOtherClass.xml")]
+        [InlineData("AutowiredCases/InheriteClassFromOtherAssembly.xml")]
+        [InlineData("AutowiredCases/ComplexTypeFromCurrentSource.xml")]
+        [InlineData("AutowiredCases/ComplexTypeFromOtherAssembly.xml")]
 
-        public void ShouldGenerateExpectCodeFile(string testCaseFileName)
+        public void ShouldGenerateExpectPartailClass(string testCaseFileName)
         {
             var assemblies = new[]
             {

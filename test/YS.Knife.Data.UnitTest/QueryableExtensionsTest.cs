@@ -1,15 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.UnitTest
 {
-    [TestClass]
+    
     public class QueryableExtensionsTest
     {
-        [TestMethod, TestCategory("ListAll")]
+
+        [Fact]
         public void ShouldGetListWhenListAllWithOutQueryInfo()
         {
             var users = CreateUsersWithAddress();
@@ -17,7 +18,7 @@ namespace YS.Knife.Data.UnitTest
             actual.Should().BeEquivalentTo(users.ToList());
         }
 
-        [TestMethod, TestCategory("ListAll")]
+        [Fact]
         public void ShouldGetListWhenListAllWithFilterInfoAndNoOrderInfo()
         {
             var users = CreateUsersWithAddress();
@@ -25,7 +26,7 @@ namespace YS.Knife.Data.UnitTest
             actual.Should().BeEquivalentTo(users.Where(p => (p.Name != null && p.Name.Contains("a"))).ToList());
         }
 
-        [TestMethod, TestCategory("ListAll")]
+        [Fact]
         public void ShouldGetOriginListWhenListAllWithNoFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
@@ -33,7 +34,7 @@ namespace YS.Knife.Data.UnitTest
             actual.Should().BeEquivalentTo(users.OrderByDescending(p => p.Name).ToList());
         }
 
-        [TestMethod, TestCategory("ListAll")]
+        [Fact]
         public void ShouldGetListWhenListAllWithFilterInfoAndOrderInfo()
         {
             var users = CreateUsersWithAddress();
@@ -44,7 +45,7 @@ namespace YS.Knife.Data.UnitTest
         }
 
 
-        // [TestMethod, TestCategory("ListAll2")]
+        // [TestMethod, Collection("ListAll2")]
         // public void ShouldGetOriginListWhenListAll2WithOutQueryInfo()
         // {
         //     var users = CreateUsersWithAddress();

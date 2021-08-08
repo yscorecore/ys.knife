@@ -1,29 +1,30 @@
 ﻿using System.Threading.Tasks;
+using FluentAssertions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 namespace YS.Knife.Hosting
 {
-    [TestClass]
+    
     public class KnifeHostTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldCreateANewInstanceWhenCallCtor()
         {
             using (var host = new KnifeHost())
             {
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldReturnServiceWhenGetService()
         {
             using (var knifeHost = new KnifeHost(new string[0]))
             {
                 var innerHost = knifeHost.GetRequiredService<IHost>();
-                Assert.IsNotNull(innerHost);
+                innerHost.Should().NotBeNull();
             }
         }
-        [TestMethod]
+        [Fact]
         public void ShouldCanBeStopedWhenRun()
         {
             using (var knifeHost = new KnifeHost(new string[0]))

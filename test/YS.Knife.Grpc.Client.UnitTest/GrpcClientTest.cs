@@ -1,12 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using YS.Knife.Hosting;
 using static Greeter;
 
 namespace YS.Knife.Grpc.Client.UnitTest
 {
-    [TestClass]
+    
     public class GrpcClientTest : YS.Knife.Hosting.KnifeHost
     {
 
@@ -16,34 +17,34 @@ namespace YS.Knife.Grpc.Client.UnitTest
             ["BaseAddress"] = TestEnvironment.TestServerUrl
         };
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetGreeterClientInstance()
         {
             var greeterClient = this.GetService<GreeterClient>();
-            Assert.IsNotNull(greeterClient);
+            greeterClient.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetInjectInterfaceInstance()
         {
             var greeterClient = this.GetService<IGreeterService>();
-            Assert.IsNotNull(greeterClient);
+            greeterClient.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ShouldInvokeSayHelloFromInjectInterface()
         {
             var greeterClient = this.GetService<IGreeterService>();
             var result = await greeterClient.SayHello("abc");
-            Assert.AreEqual("Hello,abc", result);
+            result.Should().Be("Hello,abc");
         }
 
-        [TestMethod]
+        [Fact]
         public async Task ShouldInvokeGetForecastFromInjectInterface()
         {
             var greeterClient = this.GetService<IGreeterService>();
             var result = await greeterClient.GetForecast();
-            Assert.AreEqual(5, result.Count);
+            result.Count.Should().Be(5);
         }
     }
 }

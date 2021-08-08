@@ -1,15 +1,16 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Xunit;
 namespace YS.Knife
 {
-    [TestClass]
+
     public class ReflectionExtensionsTest
     {
-        [TestMethod]
+        [Fact]
         public void ShouldGetExpectedDefaultValue()
         {
-            Assert.AreEqual(0, typeof(int).DefaultValue());
-            Assert.AreEqual(null, typeof(int?).DefaultValue());
-            Assert.AreEqual(null, typeof(object).DefaultValue());
+            typeof(int).DefaultValue().Should().Be(0);
+            typeof(int?).DefaultValue().Should().Be(null);
+            typeof(object).DefaultValue().Should().Be(null);
         }
     }
 }

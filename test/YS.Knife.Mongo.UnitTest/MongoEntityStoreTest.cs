@@ -1,26 +1,27 @@
 ﻿using System;
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FluentAssertions;
+using Xunit;
 using YS.Knife.Data;
 using YS.Knife.Hosting;
 using YS.Knife.Mongo.UnitTest.Contents;
 
 namespace YS.Knife.Mongo.UnitTest
 {
-    //[TestClass]
+    [Collection(nameof(TestEnvironment))]
     public class MongoEntityStoreTest : Knife.Hosting.KnifeHost
     {
         [InjectConfiguration("connectionstrings:cms")]
         private readonly string _ = TestEnvironment.MongoConnectionString;
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetStoreInstanceFromDiContainer()
         {
             var store = this.GetService<IEntityStore<Topic>>();
-            Assert.IsNotNull(store);
+            store.Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldAddEntitySuccess()
         {
             var store = this.GetService<IEntityStore<Topic>>();
@@ -33,10 +34,10 @@ namespace YS.Knife.Mongo.UnitTest
                 Summary = "This is summary"
             });
             var topicInDb = store.Query(p => p.Title == title).FirstOrDefault();
-            Assert.IsNotNull(topicInDb);
-            Assert.AreEqual(title, topicInDb.Title);
+            topicInDb.Should().NotBeNull();
+            topicInDb.Title.Should().Be(title);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldUpdateEntitySuccess()
         {
             var store = this.GetService<IEntityStore<Topic>>();
@@ -48,17 +49,17 @@ namespace YS.Knife.Mongo.UnitTest
                 Summary = "summary"
             };
             store.Add(entity);
-            Assert.IsNotNull(entity.Id);
+            entity.Id.Should().NotBeNull();
             var newEntity = new Topic { Id = entity.Id, Title = "new title", Content = "new content" };
             store.Update(newEntity, nameof(Topic.Title), nameof(Topic.Content));
             var topicInDb = store.FindByKey(entity.Id);
-            Assert.IsNotNull(topicInDb);
-            Assert.AreEqual("new title", topicInDb.Title);
-            Assert.AreEqual("new content", topicInDb.Content);
-            Assert.AreEqual("summary", topicInDb.Summary);
+            topicInDb.Should().NotBeNull();
+            topicInDb.Title.Should().Be("new title");
+            topicInDb.Content.Should().Be("new content");
+            topicInDb.Summary.Should().Be("summary");
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldDeleteEntitySuccess()
         {
             var store = this.GetService<IEntityStore<Topic>>();
@@ -70,10 +71,10 @@ namespace YS.Knife.Mongo.UnitTest
                 Summary = "This is summary"
             };
             store.Add(entity);
-            Assert.IsNotNull(entity.Id);
+            entity.Id.Should().NotBeNull();
             store.Delete(entity);
             var topicInDb = store.FindByKey(entity.Id);
-            Assert.IsNull(topicInDb);
+            topicInDb.Should().BeNull();
         }
     }
 }

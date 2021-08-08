@@ -1,10 +1,11 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using FluentAssertions;
+using Xunit;
 using Moq;
 
 
 namespace YS.Knife.Hosting
 {
-    [TestClass]
+    
     public class InjectServiceTest : KnifeHost
     {
         [Inject]
@@ -13,15 +14,15 @@ namespace YS.Knife.Hosting
         [Inject]
         private ITest2 Prop { get; set; } = Mock.Of<ITest2>();
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetInjectServiceByCodeWhenDefineInjectAttributeInField()
         {
-            Assert.IsNotNull(this.GetService<ITest>());
+            this.GetService<ITest>().Should().NotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void ShouldGetInjectServiceByCodeWhenDefineInjectAttributeInProperty()
         {
-            Assert.IsNotNull(this.GetService<ITest2>());
+            this.GetService<ITest2>().Should().NotBeNull();
         }
 
         public interface ITest { }

@@ -1,27 +1,28 @@
 ﻿using System.Linq;
+using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Xunit;
 using YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts;
 using YS.Knife.Hosting;
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
 {
-    [TestClass]
+    
     public class UnitTest1 : KnifeHost
     {
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetBloggingContext()
         {
-            Assert.IsNotNull(this.GetService<BloggingContext>());
+            this.GetService<BloggingContext>().Should().NotBeNull();
         }
 
-        [TestMethod]
+        [Fact]
         public void ShouldGetEntityStore()
         {
-            Assert.IsNotNull(this.GetService<IEntityStore<Blog>>());
-            Assert.IsNotNull(this.GetService<IEntityStore<Post>>());
+            this.GetService<IEntityStore<Blog>>().Should().NotBeNull();
+            this.GetService<IEntityStore<Post>>().Should().NotBeNull();
         }
-        [TestMethod]
+        [Fact]
         public void ShouldEntityStoreDoCRUD()
         {
             var context = this.GetService<BloggingContext>();
@@ -30,9 +31,9 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
             var service = this.GetService<IBlogingServices>();
             service.AddTwoBlog();
             var all = service.AllBlogs();
-            Assert.AreEqual(2, all.Count);
+            all.Count.Should().Be(2);
         }
-        [TestMethod]
+        [Fact]
         public void ShouldListTopBlogsBySql()
         {
             var context = this.GetService<BloggingContext>();
@@ -41,7 +42,7 @@ namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest
             var service = this.GetService<IBlogingServices>();
             service.AddTwoBlog();
             var all = service.TopBlogs(1);
-            Assert.AreEqual(1, all.Count);
+            all.Count.Should().Be(1);
         }
 
 
