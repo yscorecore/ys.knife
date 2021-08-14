@@ -14,21 +14,22 @@ namespace YS.Knife.Mongo.UnitTest
 
         public static string MongoConnectionString { get => $"mongodb://root:{WebUtility.UrlEncode(MongoPassword)}@127.0.0.1:{MongoPort1}?replicaSet=rs"; }
 
+        IDisposable dockerCompose;
         public TestEnvironment()
         {
             MongoPort1 = Utility.GetAvailableTcpPort(27017);
             MongoPassword = Utility.NewPassword();
-            var hostReportPort = Utility.GetAvailableTcpPort(8901);
-            DockerCompose.Up(new Dictionary<string, object>
+
+            dockerCompose = DockerCompose.Up(new Dictionary<string, object>
             {
                 ["MONGO_PORT1"] = MongoPort1,
                 ["MONGO_PASSWORD"] = MongoPassword
-            }, hostReportPort);
+            }, "mongo-1:27017");
         }
 
         public void Dispose()
         {
-            DockerCompose.Down();
+            dockerCompose?.Dispose();
         }
 
 

@@ -5,8 +5,8 @@ using YS.Knife.Testing;
 
 namespace YS.Knife.Grpc.Client.UnitTest
 {
-
-    public class TestEnvironment
+    [CollectionDefinition(nameof(TestEnvironment))]
+    public class TestEnvironment : IDisposable, ICollectionFixture<TestEnvironment>
     {
         public static string TestServerUrl { get; private set; } = "http://127.0.0.1:8080";
         //[AssemblyInitialize]
@@ -24,17 +24,19 @@ namespace YS.Knife.Grpc.Client.UnitTest
         // {
         //     DockerCompose.Down();
         // }
-        private static void StartContainer(uint port, uint reportPort)
+        //private static void StartContainer(uint port, uint reportPort)
+        //{
+
+        //    DockerCompose.Up(new Dictionary<string, object>
+        //    {
+        //        ["HTTP_PORT"] = port
+        //    }, reportPort);
+        //    TestServerUrl = $"http://127.0.0.1:{port}";
+        //}
+
+        public void Dispose()
         {
-
-            DockerCompose.Up(new Dictionary<string, object>
-            {
-                ["HTTP_PORT"] = port
-            }, reportPort);
-            TestServerUrl = $"http://127.0.0.1:{port}";
+            throw new NotImplementedException();
         }
-
-
-
     }
 }

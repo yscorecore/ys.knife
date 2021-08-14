@@ -24,5 +24,4 @@ services:
       - -c 
       - |
         /wait 
-        mongo mongodb://root:${MONGO_PASSWORD:-example}@mongo-1:${MONGO_PORT1:-27017}/admin --eval 'rs.initiate({ _id: "rs", members: [{_id:1,host:"localhost:${MONGO_PORT1:-27017}"}]})'    
-        wget 'http://host.docker.internal:${REPORT_TO_HOST_PORT:-8901}'
+        mongo mongodb://root:${MONGO_PASSWORD:-example}@mongo-1:${MONGO_PORT1:-27017}/admin --eval 'rs.initiate({ _id: "rs", members: [{_id:1,host:"localhost:${MONGO_PORT1:-27017}"}]})'

@@ -1,5 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-
-
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\YS.Knife.Testing\YS.Knife.Testing.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="docker-compose.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

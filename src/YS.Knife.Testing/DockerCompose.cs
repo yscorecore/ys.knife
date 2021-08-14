@@ -2,41 +2,151 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
-using System.Net;
+using System.IO;
+using System.Linq;
+using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace YS.Knife.Testing
 {
     public static class DockerCompose
     {
-        public static Action<string> OutputLine { get; set; } = Console.WriteLine;
         public static int MaxTimeOutSeconds { get; set; } = 60 * 30;
 
-        public static void Up(IDictionary<string, object> envs = null)
+        public static IDisposable Up(IDictionary<string, object> envs = null)
         {
             envs ??= new Dictionary<string, object>();
-            Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
+            Exec("docker-compose", "up --build -d", envs);
+            return new DockerComposeGroup(null);
         }
 
-        public static void Up(IDictionary<string, object> envs, uint reportStatusPort, int maxWaitStatusSeconds = 120)
+        public static IDisposable Up(string dockerComposeFile, IDictionary<string, object> envs, string waitingContainerPorts, int maxTimeOutSeconds = 120)
         {
+            var actualDockerComposeFile = FindDockerComposeFile();
+            if (actualDockerComposeFile == null)
+            {
+                throw new FileNotFoundException($"can not find the docker compose file '{dockerComposeFile}'.", dockerComposeFile);
+            }
             envs ??= new Dictionary<string, object>();
+            var workFolder = Environment.CurrentDirectory;
+            var tempFolder = Path.Combine(workFolder, "tmp", DateTime.Now.ToString("yyyyMMdd_HHmmss.fff"));
+            Directory.CreateDirectory(tempFolder);
+            var statusFile = Path.Combine(tempFolder, "status.txt");
+            var waitComposeFile = Path.Combine(tempFolder, "docker-compose.wait.yml");
+            // create empty status file
+            File.WriteAllText(statusFile, string.Empty);
+            // create docker compose file
+            GeneratorWaitComposeFile();
 
+            string dockerComposeFileArgument = $"-f \"{actualDockerComposeFile}\" -f \"{waitComposeFile}\"";
 
+            using (AutoResetEvent waitReport = new AutoResetEvent(false))
+            {
+                using (var fileWatcher = new FileSystemWatcher(tempFolder))
+                {
+                    fileWatcher.NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.LastAccess;
+                    fileWatcher.Changed += (sender, e) =>
+                    {
+                        if (e.ChangeType == WatcherChangeTypes.Changed)
+                        {
+                            waitReport.Set();
+                        }
+                    };
+                    fileWatcher.EnableRaisingEvents = true;
 
+                    Exec("docker-compose", $"{dockerComposeFileArgument} up --build -d", envs);
 
+                    if (waitReport.WaitOne(maxTimeOutSeconds * 1000))
+                    {
+                        var status = int.Parse(File.ReadAllText(statusFile).Trim());
+                        if (status != 0)
+                        {
+                            throw new ApplicationException($"wait compose proxy status return non-zero code {status}.");
+                        }
+                    }
+                    else
+                    {
+                        throw new ApplicationException($"time out to get response from wait compose proxy.");
+                    }
+                }
+            }
+            return new DockerComposeGroup(tempFolder, actualDockerComposeFile, waitComposeFile);
+            string GetDockerComposeVersionFromMainFile()
+            {
+                var versionLine = File.ReadAllLines(actualDockerComposeFile).FirstOrDefault(p => p.StartsWith("version:"));
+                if (versionLine != null)
+                {
+                    return versionLine.Substring(8).Trim().Replace("\"", string.Empty).Replace("'", string.Empty);
+                }
+                return "1";
+            }
 
-            RunDockerComposeAndWaitContainerReportStatus(envs, reportStatusPort,
-             maxWaitStatusSeconds);
+            void GeneratorWaitComposeFile()
+            {
 
+                var waithosts = waitingContainerPorts;
+                var version = GetDockerComposeVersionFromMainFile();
+                var content = $@"version: '{version}'
+services:
+  wait-compose-ready:
+    image: ysknife/wait-compose-ready
+    volumes:
+    - {statusFile}:/status.txt
+    environment:
+      WAIT_HOSTS: {waithosts}
+      WAIT_TIMEOUT: {maxTimeOutSeconds}
+";
+                File.WriteAllText(waitComposeFile, content);
+            }
+
+            string FindDockerComposeFile()
+
+            {
+
+                var current = Environment.CurrentDirectory;
+                var root = Path.GetPathRoot(current);
+                while (true)
+                {
+                    var full = Path.Combine(current, dockerComposeFile);
+
+                    if (File.Exists(full))
+                    {
+                        return full;
+                    }
+                    else if (current == root)
+                    {
+                        return null;
+                    }
+                    else
+                    {
+                        current = Path.GetDirectoryName(current);
+                    }
+                }
+
+            }
 
         }
+        public static IDisposable Up(string dockerComposeFile, IDictionary<string, object> envs, IDictionary<string, int> waitingContainerPorts, int maxTimeOutSeconds = 120)
+        {
+            return Up(dockerComposeFile, envs, string.Join(", ", waitingContainerPorts?.Select(p => $"{p.Key}:{p.Value}")), maxTimeOutSeconds);
+        }
+        public static IDisposable Up(IDictionary<string, object> envs, IDictionary<string, int> waitingContainerPorts, int maxTimeOutSeconds = 120)
+        {
+            return Up("docker-compose.yml", envs, waitingContainerPorts, maxTimeOutSeconds);
+        }
+        public static IDisposable Up(IDictionary<string, object> envs, string waitingContainerPorts, int maxTimeOutSeconds = 120)
+        {
+            return Up("docker-compose.yml", envs, waitingContainerPorts, maxTimeOutSeconds);
+        }
+
+
+
+
         public static void Down()
         {
-            Exec("docker-compose", "down", null, OutputLine ?? Console.WriteLine);
+            Exec("docker-compose", "down", null);
         }
-        private static int Exec(string fileName, string arguments, IDictionary<string, object> envs, Action<string> outputLine)
+        private static int Exec(string fileName, string arguments, IDictionary<string, object> envs)
         {
             var startInfo = new ProcessStartInfo
             {
@@ -53,6 +163,7 @@ namespace YS.Knife.Testing
                     startInfo.Environment.Add(kv.Key, Convert.ToString(kv.Value, CultureInfo.InvariantCulture));
                 }
             }
+            StringBuilder stringBuilder = new StringBuilder();
             using (var process = Process.Start(startInfo))
             {
 
@@ -67,7 +178,7 @@ namespace YS.Knife.Testing
                         }
                         else
                         {
-                            outputLine(e.Data);
+                            stringBuilder.AppendLine(e.Data);
                         }
                     };
                     process.ErrorDataReceived += (s, e) =>
@@ -78,7 +189,7 @@ namespace YS.Knife.Testing
                         }
                         else
                         {
-                            outputLine(e.Data);
+                            stringBuilder.AppendLine(e.Data);
                         }
                     };
                     process.BeginOutputReadLine();
@@ -88,12 +199,12 @@ namespace YS.Knife.Testing
                     {
                         if (process.ExitCode != 0)
                         {
-                            throw new Exception($"Exec process return {process.ExitCode}.");
+                            throw new Exception($"Exec process exit with code: {process.ExitCode}, output: {stringBuilder}");
                         }
                     }
                     else
                     {
-                        throw new Exception($"Exec process timeout, total seconds > {MaxTimeOutSeconds}s.");
+                        throw new Exception($"Exec process timeout, total seconds > {MaxTimeOutSeconds}s, output: {stringBuilder}");
                     }
                 }
                 return process.ExitCode;
@@ -101,34 +212,47 @@ namespace YS.Knife.Testing
 
         }
 
-        private static void RunDockerComposeAndWaitContainerReportStatus(IDictionary<string, object> envs, uint port = 8901, int maxSeconds = 120)
+        class DockerComposeGroup : IDisposable
         {
- 
-            using (var httpListener = new HttpListener())
+            public DockerComposeGroup(string tempFolder, params string[] composeFiles)
             {
-                httpListener.Prefixes.Add($"http://+:{port}/");
-                httpListener.Start();
-                IAsyncResult result = httpListener.BeginGetContext(new AsyncCallback(ListenerCallback), httpListener);
-                Console.WriteLine("Waiting for request to be processed asyncronously.");
-                Task.Run(() =>
-                {
-                    envs.Add("REPORT_TO_HOST_PORT", port);
-                    Exec("docker-compose", "up --build -d", envs, OutputLine ?? Console.WriteLine);
-                });
-
-                result.AsyncWaitHandle.WaitOne(TimeSpan.FromSeconds(maxSeconds));
-                Console.WriteLine("Request processed asyncronously.");
+                TempFolder = tempFolder;
+                ComposeFiles = composeFiles;
             }
-        }
-        private static void ListenerCallback(IAsyncResult result)
-        {
-            HttpListener listener = (HttpListener)result.AsyncState;
-            
-            // Call EndGetContext to complete the asynchronous operation.
-            HttpListenerContext context = listener.EndGetContext(result);
-            // Obtain a response object.
-            HttpListenerResponse response = context.Response;
-            response.StatusCode = (int)HttpStatusCode.OK;
+
+            public string TempFolder { get; }
+            public string[] ComposeFiles { get; }
+
+            public void Dispose()
+            {
+                if (ComposeFiles.Length == 0)
+                {
+                    Exec("docker-compose", "down", null);
+                }
+                else
+                {
+                    var dockerComposeFileArgument = string.Join(" ", ComposeFiles.Select(p => $"-f \"{Path.GetFullPath(p)}\""));
+                    Exec("docker-compose", $"{dockerComposeFileArgument} down", null);
+                }
+                if (string.IsNullOrEmpty(TempFolder))
+                {
+                    DeleteFolder(TempFolder);
+                }
+
+            }
+
+            private void DeleteFolder(string tempFolder)
+            {
+                foreach (var file in Directory.GetFiles(tempFolder))
+                {
+                    File.Delete(file);
+                }
+                foreach (var folder in Directory.GetDirectories(tempFolder))
+                {
+                    DeleteFolder(folder);
+                }
+                Directory.Delete(tempFolder);
+            }
         }
     }
 }
