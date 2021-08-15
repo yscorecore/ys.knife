@@ -26,6 +26,7 @@
       <None Remove="AutowiredCases\EmptyNamespace.xml" />
       <None Remove="AutowiredCases\InheriteClassFromOtherAssembly.xml" />
       <None Remove="AutowiredCases\InheriteOtherClass.xml" />
+      <None Remove="ConvertToCases\HappyCase.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -102,6 +103,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="AutowiredCases\SameNameInDifferentNamespace.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\HappyCase.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="SingletonPatternCases\HappyCase.xml">

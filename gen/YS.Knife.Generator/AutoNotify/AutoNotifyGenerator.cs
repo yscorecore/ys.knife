@@ -97,7 +97,7 @@ namespace YS.Knife
             codeBuilder.EndAllSegments();
             return new CodeFile
             {
-                BasicName = string.Join(".", classSymbols.Select(p => p.Name)),
+                BasicName = classSymbol.GetCodeFileBasicName(),
                 Content = codeBuilder.ToString(),
             };
         }

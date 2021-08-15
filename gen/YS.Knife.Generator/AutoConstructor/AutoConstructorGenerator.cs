@@ -47,7 +47,7 @@ namespace YS.Knife
             builder.EndAllSegments();
             return new CodeFile
             {
-                BasicName = string.Join(".", classSymbol.GetContainerClassChains().Select(p => p.Name)),
+                BasicName = classSymbol.GetCodeFileBasicName(),
                 Content = builder.ToString(),
             };
 

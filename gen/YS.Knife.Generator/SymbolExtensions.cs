@@ -141,5 +141,10 @@ namespace YS.Knife
             }
         }
 
+        public static string GetCodeFileBasicName(this INamedTypeSymbol classSymbol)
+        {
+            return string.Join(".", classSymbol.GetContainerClassChains().Select(p => p.Name));
+        }
+
     }
 }

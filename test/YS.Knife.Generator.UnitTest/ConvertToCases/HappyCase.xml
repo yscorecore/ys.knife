@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+using YS.Knife.Generator.UnitTest;
+namespace ConsoleApp2
+{
+
+    [ConvertToAttribute(SourceType ="TUser", TargetType ="UserInfo")]
+    partial class Convertors
+    {
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Convertors.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    static partial class Convertors
+    {
+        private static readonly Lazy<Class1> LazyInstance = new Lazy<Class1>(() => new Class1(), true);
+
+        private Class1() { }
+
+        public static Class1 Instance => LazyInstance.Value;
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>
