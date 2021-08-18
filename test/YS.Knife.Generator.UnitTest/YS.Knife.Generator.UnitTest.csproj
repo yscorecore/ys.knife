@@ -2,8 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
-<!--        <CompilerGeneratedFilesOutputPath>$(MSBuildProjectDirectory)/generated</CompilerGeneratedFilesOutputPath>-->
-<!--        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>-->
     </PropertyGroup>
 
     <ItemGroup>
@@ -114,7 +112,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
+      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj"  OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>
@@ -126,12 +124,5 @@
     <ItemGroup>
       <Folder Include="Properties\" />
     </ItemGroup>
-<!--    <Target Name="ExcludeGenerated" BeforeTargets="AssignTargetPaths">-->
-<!--        <ItemGroup>-->
-<!--            <Generated Include="generated/**/*.g.cs" />-->
-<!--            <Compile Remove="@(Generated)" />-->
-<!--        </ItemGroup>-->
-<!--        <Delete Files="@(Generated)" />-->
-<!--    </Target>-->
 
 </Project>

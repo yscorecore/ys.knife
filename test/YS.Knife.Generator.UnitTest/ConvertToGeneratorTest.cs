@@ -12,9 +12,9 @@ namespace YS.Knife.Generator.UnitTest
     {
         [Theory]
         [InlineData("ConvertToCases/HappyCase.xml")]
-
         public void ShouldGenerateExpectSingletonPaitalClass(string testCaseFileName)
         {
+
             var assemblies = new[]
             {
                 typeof(Binder).GetTypeInfo().Assembly,
@@ -25,26 +25,6 @@ namespace YS.Knife.Generator.UnitTest
         }
     }
 
-    public class UserInfo
-    {
-        public int Id { get; set; }
 
-        public string Name { get; set; }
-
-        public int? Age { get; set; }
-
-        public int? OtherProp { get; set; }
-
-    }
-
-    public partial class TUser
-    {
-        public int Id { get; set; }
-
-        public string Name { get; set; }
-
-        public int? Age { get; set; }
-    }
-    
 
 }

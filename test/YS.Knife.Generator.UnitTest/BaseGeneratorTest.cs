@@ -38,12 +38,17 @@ namespace YS.Knife.Generator.UnitTest
         private static Compilation CreateCompilation(string[] sources, Assembly[] assemblies)
         {
             var allSources = sources
-                .Select(p => CSharpSyntaxTree.ParseText(p, new CSharpParseOptions(LanguageVersion.CSharp10)));
+                .Select(p => CSharpSyntaxTree.ParseText(p, CodeWriter.CSharpOptions));
             var allReferenceAssemblies =
                 assemblies.Select(p => MetadataReference.CreateFromFile(p.Location));
+            var defaultAssemblies = new MetadataReference[]
+                {
+                    MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location),
+                     MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
+                };
             return CSharpCompilation.Create("tempassembly",
                 allSources,
-                allReferenceAssemblies,
+                defaultAssemblies.Union(allReferenceAssemblies),
                 new CSharpCompilationOptions(OutputKind.ConsoleApplication));
         }
 
@@ -58,4 +63,5 @@ namespace YS.Knife.Generator.UnitTest
             return newCompilation;
         }
     }
+
 }

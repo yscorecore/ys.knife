@@ -11,6 +11,7 @@ namespace YS.Knife
 {
     class CodeWriter
     {
+        public static CSharpParseOptions CSharpOptions = new CSharpParseOptions(LanguageVersion.CSharp10);
         public CodeWriter(GeneratorExecutionContext context)
         {
             Context = context;
@@ -33,7 +34,7 @@ namespace YS.Knife
             this.Context.AddSource($"{name}.{CodeFileSuffix}", codeFile.Content);
 
             this.Compilation = this.Compilation.AddSyntaxTrees(
-               CSharpSyntaxTree.ParseText(SourceText.From(codeFile.Content, Encoding.UTF8)));
+               CSharpSyntaxTree.ParseText(SourceText.From(codeFile.Content, Encoding.UTF8), CSharpOptions));
         }
     }
     static class CodeWriterExtensions
@@ -57,6 +58,13 @@ namespace YS.Knife
             {
                 SemanticModel model = codeWriter.Compilation.GetSemanticModel(clazz.SyntaxTree);
                 var clazzSymbol = model.GetDeclaredSymbol(clazz);
+
+                var digs = model.GetDeclarationDiagnostics();
+                if (digs.Length > 0)
+                {
+                    // Log warning..
+                }
+
                 var qualifiedName = clazzSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
                 dic[qualifiedName] = new ClassSyntaxCachedInfo
                 {

@@ -7,18 +7,14 @@ namespace YS.Knife
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public class ConvertToAttribute : Attribute
     {
-        public ConvertToAttribute()
-        {
-
-        }
-        public ConvertToAttribute(string sourceType, string targetType)
+        public ConvertToAttribute(Type sourceType, Type targetType)
         {
 
             SourceType = sourceType ?? throw new ArgumentNullException(nameof(sourceType));
             TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
         }
 
-        public string SourceType { get; set; }
-        public string TargetType { get; set; }
+        public Type SourceType { get; set; }
+        public Type TargetType { get; set; }
     }
 }

@@ -8,7 +8,7 @@ namespace ConsoleApp2
 {
     partial class Class1<T>
     {
-        [AutoNotify(PropertyName="abc")]
+        [AutoNotify()]
         private int _age;
 
     }

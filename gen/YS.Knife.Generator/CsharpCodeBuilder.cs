@@ -48,10 +48,15 @@ namespace YS.Knife
             this.AppendCodeLines("{");
             this.IncreaseDepth();
         }
-        public void EndSegment()
+
+        public void EndSegment(string end = "}")
         {
             this.DecreaseDepth();
-            this.AppendCodeLines("}");
+            if (!string.IsNullOrEmpty(end))
+            {
+                this.AppendCodeLines(end);
+            }
+
         }
         public void EndAllSegments()
         {

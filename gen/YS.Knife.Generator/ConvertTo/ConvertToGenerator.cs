@@ -35,9 +35,13 @@ namespace YS.Knife
             AppendUsingLines(classSymbol, codeBuilder);
             AppendNamespace(classSymbol, codeBuilder);
             AppendClassDefinition(classSymbol, codeBuilder);
-            foreach (var convertToAttr in classSymbol.GetAttributes().Where(p => p.AttributeClass.SafeEquals(typeof(ConvertToAttribute))))
+
+            foreach (var convertToAttr in classSymbol.GetAttributes())
             {
-                AppendConvertToFunctions(convertToAttr, codeBuilder);
+                if (convertToAttr.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
+                {
+                    AppendConvertToFunctions(convertToAttr, codeBuilder);
+                }
             }
 
             codeBuilder.EndAllSegments();
@@ -82,8 +86,90 @@ namespace YS.Knife
 
         void AppendConvertToFunctions(AttributeData attributeData, CsharpCodeBuilder codeBuilder)
         {
-            var v1= attributeData.NamedArguments.FirstOrDefault();
-            var v2 = attributeData.ConstructorArguments.FirstOrDefault();
+            var arguments = attributeData.ConstructorArguments;
+            var fromType = arguments.First().Value as INamedTypeSymbol;
+            var toType = arguments.Last().Value as INamedTypeSymbol;
+            var methodName = $"To{toType.Name}";
+            var toTypeDisplay = toType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var fromTypeDisplay = fromType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            addToMethodForSingle();
+            addCopyToMethodForSingle();
+            addToMethodForEnumable();
+            addToMethodForQueryable();
+            void addToMethodForSingle()
+            {
+                codeBuilder.AppendCodeLines($"public static {toTypeDisplay} {methodName}(this {fromTypeDisplay} source)");
+                codeBuilder.BeginSegment();
+                if (!fromType.IsValueType)
+                {
+                    codeBuilder.AppendCodeLines("if (source == null) return default;");
+                }
+                codeBuilder.AppendCodeLines($"return new {toTypeDisplay}");
+                codeBuilder.BeginSegment();
+                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = source.{sourceName},");
+                codeBuilder.EndSegment("};");
+                codeBuilder.EndSegment();
+            }
+            void addCopyToMethodForSingle()
+            {
+                codeBuilder.AppendCodeLines($"public static void {methodName}(this {fromTypeDisplay} source, {toTypeDisplay} target)");
+                codeBuilder.BeginSegment();
+                if (!fromType.IsValueType)
+                {
+                    codeBuilder.AppendCodeLines("if (source == null) return;");
+                }
+                if (!toType.IsValueType)
+                {
+                    codeBuilder.AppendCodeLines("if (target == null) return;");
+                }
+                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"target.{targetName} = source.{sourceName};");
+                codeBuilder.EndSegment();
+            }
+            void addToMethodForEnumable()
+            {
+                codeBuilder.AppendCodeLines($"public static IEnumerable<{toTypeDisplay}> {methodName}(this IEnumerable<{fromTypeDisplay}> source)");
+                codeBuilder.BeginSegment();
+                codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
+                codeBuilder.BeginSegment();
+                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = p.{sourceName},");
+                codeBuilder.EndSegment("});");
+                codeBuilder.EndSegment();
+            }
+            void addToMethodForQueryable()
+            {
+                codeBuilder.AppendCodeLines($"public static IQueryable<{toTypeDisplay}> {methodName}(this IQueryable<{fromTypeDisplay}> source)");
+                codeBuilder.BeginSegment();
+                codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
+                codeBuilder.BeginSegment();
+                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = p.{sourceName},");
+                codeBuilder.EndSegment("});");
+                codeBuilder.EndSegment();
+            }
+            bool canAssign(INamedTypeSymbol source, INamedTypeSymbol target)
+            {
+                return true;
+            }
+            void appendPropertyAssign(INamedTypeSymbol sourceType, INamedTypeSymbol targetType, Func<string, string, string> lineBuilder)
+            {
+                var targetProps = targetType.GetMembers()
+                     .OfType<IPropertySymbol>()
+                     .Where(p => !p.IsReadOnly && p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer)
+                     .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
+                     .ToDictionary(p => p.Name, p => p.Type);
+                var sourceProps = sourceType.GetMembers()
+                    .OfType<IPropertySymbol>()
+                    .Where(p => p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer && !p.IsWriteOnly)
+                    .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
+                    .ToDictionary(p => p.Name, p => p.Type);
+                foreach (var prop in targetProps)
+                {
+                    if (sourceProps.TryGetValue(prop.Key, out var sourcePropType) && canAssign(sourcePropType, prop.Value))
+                    {
+                        codeBuilder.AppendCodeLines(lineBuilder(prop.Key, prop.Key));
+                    }
+                }
+            }
+
             /**
                      public static IEnumerable<UserInfo> ToUserInfo(this IEnumerable<TUser> user)
         {
@@ -91,7 +177,7 @@ namespace YS.Knife
             {
                 Id = p.Id,
                 Name = p.Name,
-                Age = p.Age
+                Age = p.Age,
             });
         }
         public static IQueryable<UserInfo> ToUserInfo(this IQueryable<TUser> user)
@@ -103,18 +189,10 @@ namespace YS.Knife
                 Age = p.Age
             });
         }
-        public static UserInfo ToUserInfo(this TUser user)
+
+        public static void ToUserInfo(this TUser source, UserInfo target)
         {
-            if (user == null) return null;
-            return new UserInfo
-            {
-                Id = user.Id,
-                Name = user.Name,
-                Age = user.Age
-            };
-        }
-        public static void ToUserInfo(this TUser user, UserInfo userInfo)
-        {
+
             if (userInfo != null && user != null)
             {
                 userInfo.Id = user.Id;

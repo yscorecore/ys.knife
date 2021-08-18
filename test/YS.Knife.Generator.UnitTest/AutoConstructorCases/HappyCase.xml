@@ -6,7 +6,7 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
-    [AutoConstructor]
+    [AutoConstructor()]
     partial class Class1
     {
         private int value;
