@@ -5,12 +5,12 @@
             <![CDATA[
 namespace ConsoleApp2
 {
-    public class UserInfo
+    public struct UserInfo
     {
         public string Name { get; set; }
     }
 
-    public partial class TUser
+    public struct TUser
     {
         public string Name { get; set; }
     }
@@ -44,7 +44,6 @@ namespace ConsoleApp2
     {
         public static global::ConsoleApp2.UserInfo ToUserInfo(this global::ConsoleApp2.TUser source)
         {
-            if (source == null) return default;
             return new global::ConsoleApp2.UserInfo
             {
                 Name = source.Name,
@@ -52,8 +51,6 @@ namespace ConsoleApp2
         }
         public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
         {
-            if (source == null) return;
-            if (target == null) return;
             target.Name = source.Name;
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)

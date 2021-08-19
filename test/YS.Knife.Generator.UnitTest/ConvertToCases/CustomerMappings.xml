@@ -8,6 +8,9 @@ namespace ConsoleApp2
     public class UserInfo
     {
         public string Name { get; set; }
+
+        public int NameLength { get; set; }
+
     }
 
     public partial class TUser
@@ -24,7 +27,8 @@ using YS.Knife;
 using YS.Knife.Generator.UnitTest;
 namespace ConsoleApp2
 {
-    [ConvertToAttribute(typeof(TUser), typeof(UserInfo))]
+    [ConvertToAttribute(typeof(TUser), typeof(UserInfo), 
+            CustomMappings = new string[] {"NameLength = $.Name.Length"})]
     partial class Convertors
     {
 
@@ -48,6 +52,7 @@ namespace ConsoleApp2
             return new global::ConsoleApp2.UserInfo
             {
                 Name = source.Name,
+                NameLength = source.Name.Length,
             };
         }
         public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
@@ -55,12 +60,14 @@ namespace ConsoleApp2
             if (source == null) return;
             if (target == null) return;
             target.Name = source.Name;
+            target.NameLength = source.Name.Length;
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
+                NameLength = p.Name.Length,
             });
         }
         public static IQueryable<global::ConsoleApp2.UserInfo> ToUserInfo(this IQueryable<global::ConsoleApp2.TUser> source)
@@ -68,6 +75,7 @@ namespace ConsoleApp2
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
+                NameLength = p.Name.Length,
             });
         }
     }

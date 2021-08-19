@@ -14,7 +14,12 @@ namespace YS.Knife
             TargetType = targetType ?? throw new ArgumentNullException(nameof(targetType));
         }
 
-        public Type SourceType { get; set; }
-        public Type TargetType { get; set; }
+        public Type SourceType { get; }
+        public Type TargetType { get; }
+
+        public string[] IgnoreTargetProperties { get; set; }
+
+        public string[] CustomMappings { get; set; }
+
     }
 }

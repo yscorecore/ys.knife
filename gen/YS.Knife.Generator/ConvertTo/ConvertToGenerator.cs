@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace YS.Knife
@@ -40,7 +41,7 @@ namespace YS.Knife
             {
                 if (convertToAttr.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
                 {
-                    AppendConvertToFunctions(convertToAttr, codeBuilder);
+                    AppendConvertToFunctions(convertToAttr, codeBuilder, codeWriter);
                 }
             }
 
@@ -83,22 +84,19 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-
-        void AppendConvertToFunctions(AttributeData attributeData, CsharpCodeBuilder codeBuilder)
+        void AppendConvertToFunctions(ConvertContext context, ConvertMappingInfo mappingInfo, CsharpCodeBuilder codeBuilder)
         {
-            var arguments = attributeData.ConstructorArguments;
-            var fromType = arguments.First().Value as INamedTypeSymbol;
-            var toType = arguments.Last().Value as INamedTypeSymbol;
-            var methodName = $"To{toType.Name}";
-            var toTypeDisplay = toType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            var fromTypeDisplay = fromType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-            addToMethodForSingle();
-            addCopyToMethodForSingle();
-            addToMethodForEnumable();
-            addToMethodForQueryable();
-            void addToMethodForSingle()
+            var toType = mappingInfo.TargetType;
+            var fromType = mappingInfo.SourceType;
+            var toTypeDisplay = mappingInfo.TargetType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var fromTypeDisplay = mappingInfo.SourceType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            AddToMethodForSingle();
+            AddCopyToMethodForSingle();
+            AddToMethodForEnumable();
+            AddToMethodForQueryable();
+            void AddToMethodForSingle()
             {
-                codeBuilder.AppendCodeLines($"public static {toTypeDisplay} {methodName}(this {fromTypeDisplay} source)");
+                codeBuilder.AppendCodeLines($"public static {toTypeDisplay} {mappingInfo.ConvertToMethodName}(this {fromTypeDisplay} source)");
                 codeBuilder.BeginSegment();
                 if (!fromType.IsValueType)
                 {
@@ -106,13 +104,13 @@ namespace YS.Knife
                 }
                 codeBuilder.AppendCodeLines($"return new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = source.{sourceName},");
+                AppendPropertyAssign(fromType, toType, "source", null, ",");
                 codeBuilder.EndSegment("};");
                 codeBuilder.EndSegment();
             }
-            void addCopyToMethodForSingle()
+            void AddCopyToMethodForSingle()
             {
-                codeBuilder.AppendCodeLines($"public static void {methodName}(this {fromTypeDisplay} source, {toTypeDisplay} target)");
+                codeBuilder.AppendCodeLines($"public static void {mappingInfo.ConvertToMethodName}(this {fromTypeDisplay} source, {toTypeDisplay} target)");
                 codeBuilder.BeginSegment();
                 if (!fromType.IsValueType)
                 {
@@ -122,34 +120,43 @@ namespace YS.Knife
                 {
                     codeBuilder.AppendCodeLines("if (target == null) return;");
                 }
-                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"target.{targetName} = source.{sourceName};");
+                AppendPropertyAssign(fromType, toType, "source", "target", ";");
                 codeBuilder.EndSegment();
             }
-            void addToMethodForEnumable()
+            void AddToMethodForEnumable()
             {
-                codeBuilder.AppendCodeLines($"public static IEnumerable<{toTypeDisplay}> {methodName}(this IEnumerable<{fromTypeDisplay}> source)");
+                codeBuilder.AppendCodeLines($"public static IEnumerable<{toTypeDisplay}> {mappingInfo.ConvertToMethodName}(this IEnumerable<{fromTypeDisplay}> source)");
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = p.{sourceName},");
+                AppendPropertyAssign(fromType, toType, "p", null, ",");
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
-            void addToMethodForQueryable()
+            void AddToMethodForQueryable()
             {
-                codeBuilder.AppendCodeLines($"public static IQueryable<{toTypeDisplay}> {methodName}(this IQueryable<{fromTypeDisplay}> source)");
+                codeBuilder.AppendCodeLines($"public static IQueryable<{toTypeDisplay}> {mappingInfo.ConvertToMethodName}(this IQueryable<{fromTypeDisplay}> source)");
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                appendPropertyAssign(fromType, toType, (sourceName, targetName) => $"{targetName} = p.{sourceName},");
+                AppendPropertyAssign(fromType, toType, "p", null, ",");
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
-            bool canAssign(INamedTypeSymbol source, INamedTypeSymbol target)
+            bool CanAssign(INamedTypeSymbol source, INamedTypeSymbol target)
             {
-                return true;
+                var conversion = context.CodeWriter.Compilation.ClassifyConversion(source, target);
+                return conversion.IsImplicit || conversion.IsReference || conversion.IsNullable || conversion.IsBoxing;
             }
-            void appendPropertyAssign(INamedTypeSymbol sourceType, INamedTypeSymbol targetType, Func<string, string, string> lineBuilder)
+            string FormatRefrence(string refrenceName, string expression)
+            {
+                if (string.IsNullOrEmpty(refrenceName))
+                {
+                    return expression;
+                }
+                return $"{refrenceName}.{expression}";
+            }
+            void AppendPropertyAssign(INamedTypeSymbol sourceType, INamedTypeSymbol targetType, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar)
             {
                 var targetProps = targetType.GetMembers()
                      .OfType<IPropertySymbol>()
@@ -163,44 +170,46 @@ namespace YS.Knife
                     .ToDictionary(p => p.Name, p => p.Type);
                 foreach (var prop in targetProps)
                 {
-                    if (sourceProps.TryGetValue(prop.Key, out var sourcePropType) && canAssign(sourcePropType, prop.Value))
+                    if (mappingInfo.IgnoreTargetProperties != null && mappingInfo.IgnoreTargetProperties.Contains(prop.Key))
                     {
-                        codeBuilder.AppendCodeLines(lineBuilder(prop.Key, prop.Key));
+                        continue;
+                    }
+                    if (mappingInfo.CustomerMappings != null && mappingInfo.CustomerMappings.TryGetValue(prop.Key, out var sourceExpression))
+                    {
+                        var actualSourceExpression = sourceExpression.Replace("$", sourceRefrenceName);
+                        codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {actualSourceExpression}{lineSplitChar}");
+                    }
+                    else if (sourceProps.TryGetValue(prop.Key, out var sourcePropType))
+                    {
+                        if (CanAssign(sourcePropType, prop.Value))
+                        {
+                            // default 
+                            codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {FormatRefrence(sourceRefrenceName, prop.Key)}{lineSplitChar}");
+                        }
+                        else
+                        {
+                            // object
+                            if (targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor())
+                            {
+                                // p.User = source.User == null ? null: new UserInfo
+                                // {
+                                //      Name=source.User.Name,
+                                //      Age= source.User.Age
+                                // },
+                                // address = source?.Address
+                            }
+
+                        }
+
+
                     }
                 }
             }
-
-            /**
-                     public static IEnumerable<UserInfo> ToUserInfo(this IEnumerable<TUser> user)
-        {
-            return user?.Select(p => new UserInfo
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Age = p.Age,
-            });
         }
-        public static IQueryable<UserInfo> ToUserInfo(this IQueryable<TUser> user)
+        void AppendConvertToFunctions(AttributeData attributeData, CsharpCodeBuilder codeBuilder, CodeWriter codeWriter)
         {
-            return user?.Select(p => new UserInfo
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Age = p.Age
-            });
-        }
-
-        public static void ToUserInfo(this TUser source, UserInfo target)
-        {
-
-            if (userInfo != null && user != null)
-            {
-                userInfo.Id = user.Id;
-                userInfo.Age = user.Age;
-                userInfo.Name = user.Name;
-            }
-        }
-             */
+            var context = new ConvertContext(codeWriter);
+            AppendConvertToFunctions(context, ConvertMappingInfo.FromAttributeData(attributeData), codeBuilder);
         }
 
         private class ConvertToSyntaxReceiver : ISyntaxReceiver
@@ -213,6 +222,96 @@ namespace YS.Knife
                     classDeclarationSyntax.AttributeLists.Any())
                 {
                     CandidateClasses.Add(classDeclarationSyntax);
+                }
+            }
+        }
+        private class ConvertContext
+        {
+            public ConvertContext(CodeWriter codeWriter)
+            {
+                CodeWriter = codeWriter;
+            }
+
+            public CodeWriter CodeWriter { get; }
+        }
+
+        private class ConvertMappingInfo
+        {
+            public INamedTypeSymbol TargetType { get; private set; }
+            public INamedTypeSymbol SourceType { get; private set; }
+            public HashSet<string> IgnoreTargetProperties { get; private set; }
+            public Dictionary<string, string> CustomerMappings { get; private set; }
+            public string ConvertToMethodName { get; private set; }
+
+            public static ConvertMappingInfo FromAttributeData(AttributeData attributeData)
+            {
+                var arguments = attributeData.ConstructorArguments;
+                var fromType = arguments.First().Value as INamedTypeSymbol;
+                var toType = arguments.Last().Value as INamedTypeSymbol;
+                var ignoreProperties = attributeData.NamedArguments
+                    .Where(p => p.Key == nameof(ConvertToAttribute.IgnoreTargetProperties))
+                    .Where(p => p.Value.IsNull == false)
+                    .SelectMany(p => p.Value.Values.Select(t => (string)t.Value))
+                    .Where(p => !string.IsNullOrWhiteSpace(p));
+                var customMappings = attributeData.NamedArguments
+                    .Where(p => p.Key == nameof(ConvertToAttribute.CustomMappings))
+                    .Where(p => p.Value.IsNull == false)
+                    .SelectMany(p => p.Value.Values.Select(t => (string)t.Value))
+                    .Select(ParseCustomMapping)
+                    .Where(item => item != null)
+                    .Select(item => item.Value)
+                    .ToLookup(item => item.Key, item => item.Value)
+                    .ToDictionary(p => p.Key, p => p.Last());
+                return new ConvertMappingInfo
+                {
+                    SourceType = fromType,
+                    TargetType = toType,
+                    IgnoreTargetProperties = new HashSet<string>(ignoreProperties),
+                    CustomerMappings = customMappings,
+                    ConvertToMethodName = $"To{toType.Name}",
+                };
+            }
+
+            public static ConvertMappingInfo Create(INamedTypeSymbol source, INamedTypeSymbol target, INamedTypeSymbol hostClasses)
+            {
+
+                var attributeData = hostClasses.GetAttributes()
+                     .Where(p => p.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
+                     .Where(p => (p.ConstructorArguments.First().Value as INamedTypeSymbol).Equals(source, SymbolEqualityComparer.Default))
+                     .Where(p => (p.ConstructorArguments.Last().Value as INamedTypeSymbol).Equals(source, SymbolEqualityComparer.Default))
+                     .FirstOrDefault();
+                if (attributeData != null)
+                {
+                    return FromAttributeData(attributeData);
+                }
+                else
+                {
+                    return new ConvertMappingInfo
+                    {
+                        SourceType = source,
+                        TargetType = target,
+                        CustomerMappings = new Dictionary<string, string>(),
+                        IgnoreTargetProperties = new HashSet<string>()
+                    };
+                }
+            }
+
+            static KeyValuePair<string, string>? ParseCustomMapping(string expression)
+            {
+                if (string.IsNullOrWhiteSpace(expression))
+                {
+                    return null;
+                }
+                var equalIndex = expression.IndexOf('=');
+                if (equalIndex > 0)
+                {
+                    var targetExpression = expression.Substring(0, equalIndex).Trim();
+                    var sourceExpression = expression.Substring(equalIndex + 1).Trim();
+                    return new KeyValuePair<string, string>(targetExpression, sourceExpression);
+                }
+                else
+                {
+                    return null;
                 }
             }
         }

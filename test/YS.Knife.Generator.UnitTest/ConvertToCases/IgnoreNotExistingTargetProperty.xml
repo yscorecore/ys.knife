@@ -7,12 +7,20 @@ namespace ConsoleApp2
 {
     public class UserInfo
     {
-        public string Name { get; set; }
+        public int Id { get; set; }
+
+        public int? Age { get; set; }
+
+
     }
 
     public partial class TUser
     {
+        public int Id { get; set; }
+
         public string Name { get; set; }
+
+        public int? Age { get; set; }
     }
 }
             
@@ -24,7 +32,8 @@ using YS.Knife;
 using YS.Knife.Generator.UnitTest;
 namespace ConsoleApp2
 {
-    [ConvertToAttribute(typeof(TUser), typeof(UserInfo))]
+    [ConvertToAttribute(typeof(TUser), typeof(UserInfo), 
+            IgnoreTargetProperties = new string[] {"Abcde"})]
     partial class Convertors
     {
 
@@ -32,6 +41,7 @@ namespace ConsoleApp2
 }
         ]]>
         </code>
+        
     </input>
     <output>
         <code file="Convertors.g.cs">
@@ -47,32 +57,38 @@ namespace ConsoleApp2
             if (source == null) return default;
             return new global::ConsoleApp2.UserInfo
             {
-                Name = source.Name,
+                Id = source.Id,
+                Age = source.Age,
             };
         }
         public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
         {
             if (source == null) return;
             if (target == null) return;
-            target.Name = source.Name;
+            target.Id = source.Id;
+            target.Age = source.Age;
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
-                Name = p.Name,
+                Id = p.Id,
+                Age = p.Age,
             });
         }
         public static IQueryable<global::ConsoleApp2.UserInfo> ToUserInfo(this IQueryable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
-                Name = p.Name,
+                Id = p.Id,
+                Age = p.Age,
             });
         }
     }
 }
             ]]>
         </code>
+
+
     </output>
 </case>

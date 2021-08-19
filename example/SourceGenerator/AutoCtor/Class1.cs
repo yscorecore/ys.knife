@@ -25,7 +25,7 @@ namespace SourceGenerator.AutoCtor
 
         public static void Test()
         {
-
+           
         }
 
 

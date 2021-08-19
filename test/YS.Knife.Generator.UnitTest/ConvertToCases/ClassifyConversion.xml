@@ -7,12 +7,12 @@ namespace ConsoleApp2
 {
     public class UserInfo
     {
-        public string Name { get; set; }
+        public double Age { get; set; }
     }
 
     public partial class TUser
     {
-        public string Name { get; set; }
+        public long Age { get; set; }
     }
 }
             
@@ -47,27 +47,27 @@ namespace ConsoleApp2
             if (source == null) return default;
             return new global::ConsoleApp2.UserInfo
             {
-                Name = source.Name,
+                Age = source.Age,
             };
         }
         public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
         {
             if (source == null) return;
             if (target == null) return;
-            target.Name = source.Name;
+            target.Age = source.Age;
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
-                Name = p.Name,
+                Age = p.Age,
             });
         }
         public static IQueryable<global::ConsoleApp2.UserInfo> ToUserInfo(this IQueryable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
-                Name = p.Name,
+                Age = p.Age,
             });
         }
     }

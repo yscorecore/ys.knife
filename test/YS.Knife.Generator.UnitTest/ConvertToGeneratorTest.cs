@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Reflection;
 using Xunit;
 
 namespace YS.Knife.Generator.UnitTest
@@ -12,9 +7,18 @@ namespace YS.Knife.Generator.UnitTest
     {
         [Theory]
         [InlineData("ConvertToCases/HappyCase.xml")]
-        public void ShouldGenerateExpectSingletonPaitalClass(string testCaseFileName)
+        [InlineData("ConvertToCases/ClassifyConversion.xml")]
+        [InlineData("ConvertToCases/ClassToStruct.xml")]
+        [InlineData("ConvertToCases/StructToClass.xml")]
+        [InlineData("ConvertToCases/StructToStruct.xml")]
+        [InlineData("ConvertToCases/IgnoreTargetProperty.xml")]
+        [InlineData("ConvertToCases/IgnoreNullTargetProperty.xml")]
+        [InlineData("ConvertToCases/IgnoreEmptyTargetProperty.xml")]
+        [InlineData("ConvertToCases/IgnoreNotExistingTargetProperty.xml")]
+        [InlineData("ConvertToCases/CustomerMappings.xml")]
+        
+        public void ShouldGenerateConverterClass(string testCaseFileName)
         {
-
             var assemblies = new[]
             {
                 typeof(Binder).GetTypeInfo().Assembly,

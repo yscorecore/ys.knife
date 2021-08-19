@@ -24,7 +24,16 @@
       <None Remove="AutowiredCases\EmptyNamespace.xml" />
       <None Remove="AutowiredCases\InheriteClassFromOtherAssembly.xml" />
       <None Remove="AutowiredCases\InheriteOtherClass.xml" />
+      <None Remove="ConvertToCases\ClassifyConversion.xml" />
+      <None Remove="ConvertToCases\ClassToStruct.xml" />
+      <None Remove="ConvertToCases\CustomerMappings.xml" />
       <None Remove="ConvertToCases\HappyCase.xml" />
+      <None Remove="ConvertToCases\IgnoreEmptyTargetProperty.xml" />
+      <None Remove="ConvertToCases\IgnoreNotExistingTargetProperty.xml" />
+      <None Remove="ConvertToCases\IgnoreNullTargetProperty.xml" />
+      <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
+      <None Remove="ConvertToCases\StructToClass.xml" />
+      <None Remove="ConvertToCases\StructToStruct.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -103,6 +112,33 @@
       <Content Include="AutowiredCases\SameNameInDifferentNamespace.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="ConvertToCases\CustomerMappings.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ClassToStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ClassifyConversion.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\IgnoreNotExistingTargetProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\StructToStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\StructToClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\IgnoreEmptyTargetProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\IgnoreNullTargetProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\IgnoreTargetProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="ConvertToCases\HappyCase.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -112,7 +148,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj"  OutputItemType="Analyzer"  ReferenceOutputAssembly="true" />
+      <ProjectReference Include="..\..\gen\YS.Knife.Generator\YS.Knife.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>

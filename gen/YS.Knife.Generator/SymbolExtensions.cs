@@ -145,6 +145,9 @@ namespace YS.Knife
         {
             return string.Join(".", classSymbol.GetContainerClassChains().Select(p => p.Name));
         }
-
+        public static bool HasEmptyCtor(this INamedTypeSymbol classSymbol)
+        {
+            return classSymbol.InstanceConstructors.Any(p => p.Parameters.Count() == 0);
+        }
     }
 }

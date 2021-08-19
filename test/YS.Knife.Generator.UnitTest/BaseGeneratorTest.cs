@@ -44,7 +44,7 @@ namespace YS.Knife.Generator.UnitTest
             var defaultAssemblies = new MetadataReference[]
                 {
                     MetadataReference.CreateFromFile(Assembly.Load("netstandard").Location),
-                     MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
+                    MetadataReference.CreateFromFile(Assembly.Load("System.Runtime").Location)
                 };
             return CSharpCompilation.Create("tempassembly",
                 allSources,
