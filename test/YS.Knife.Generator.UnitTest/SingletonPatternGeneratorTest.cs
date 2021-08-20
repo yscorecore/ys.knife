@@ -9,7 +9,9 @@ namespace YS.Knife.Generator.UnitTest
     {
         [Theory]
         [InlineData("SingletonPatternCases/HappyCase.xml")]
-
+        [InlineData("SingletonPatternCases/NestedType.xml")]
+        [InlineData("SingletonPatternCases/GeneicType.xml")]
+        [InlineData("SingletonPatternCases/CustomerInstanceName.xml")]
         public void ShouldGenerateExpectSingletonPaitalClass(string testCaseFileName)
         {
             var assemblies = new[]
@@ -19,6 +21,19 @@ namespace YS.Knife.Generator.UnitTest
                 Assembly.GetExecutingAssembly()
             };
             base.ShouldGenerateExpectCodeFile(new SingletonPatternGenerator(), testCaseFileName, assemblies);
+        }
+
+        [Theory]
+        [InlineData("SingletonPatternCases/AlreadyExistCtor.xml")]
+        public void ShouldReportDigError(string testCaseFileName)
+        {
+            var assemblies = new[]
+            {
+                typeof(Binder).GetTypeInfo().Assembly,
+                typeof(SingletonPatternAttribute).GetTypeInfo().Assembly,
+                Assembly.GetExecutingAssembly()
+            };
+            base.ShouldReportDiagnostic(new SingletonPatternGenerator(), testCaseFileName, assemblies);
         }
     }
 }

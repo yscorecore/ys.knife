@@ -19,7 +19,7 @@ namespace YS.Knife
         }
         public string CodeFileSuffix { get; set; } = "g.cs";
         public Compilation Compilation { get; private set; }
-        private GeneratorExecutionContext Context { get; }
+        public GeneratorExecutionContext Context { get; }
 
         private Dictionary<string, int> fileNames = new Dictionary<string, int>(StringComparer.InvariantCultureIgnoreCase);
 

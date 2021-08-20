@@ -35,6 +35,27 @@ namespace YS.Knife.Generator.UnitTest
             }
         }
 
+        protected void ShouldReportDiagnostic(ISourceGenerator generator, string testCaseFileName, params Assembly[] assemblies)
+        {
+            XDocument xmlFile = XDocument.Load(testCaseFileName);
+            var codes = xmlFile.XPathSelectElements("case/input/code")
+                .Select(prop => prop.Value).ToArray();
+            var newComp = RunGenerators(CreateCompilation(codes, assemblies), out var warningAndErrors,
+                generator);
+
+            //warningAndErrors.Should().Contain()
+
+            var outputs = xmlFile.XPathSelectElements("case/output/diagnostic")
+                .Select(prop => (Code: prop.Attribute("code").Value,Level:prop.Attribute("level"), Message: prop.Value));
+            foreach (var output in outputs)
+            {
+                var dig = warningAndErrors.FirstOrDefault(p => p.Id == output.Code);
+                dig.Should().NotBeNull($"can not report diagnostic, code:{output.Code}");
+                dig.GetMessage().Should().Match(output.Message);
+            }
+          
+        }
+
         private static Compilation CreateCompilation(string[] sources, Assembly[] assemblies)
         {
             var allSources = sources

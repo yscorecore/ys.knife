@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    [SingletonPattern(InstancePropertyName="CustomName")]
+    partial class Class1<T>
+    {
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class Class1<T>
+    {
+        private static readonly Lazy<Class1<T>> LazyInstance = new Lazy<Class1<T>>(() => new Class1<T>(), true);
+
+        private Class1() { }
+
+        public static Class1<T> CustomName => LazyInstance.Value;
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

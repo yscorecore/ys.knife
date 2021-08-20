@@ -32,6 +32,7 @@ namespace YS.Knife
                 return null;
             }
 
+
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
             AppendUsingLines(classSymbol, codeBuilder);
             AppendNamespace(classSymbol, codeBuilder);

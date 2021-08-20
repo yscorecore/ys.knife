@@ -31,7 +31,10 @@ namespace YS.Knife
             {
                 return null;
             }
-
+            if (classSymbol.Constructors.Any(p => p.DeclaringSyntaxReferences.Count() > 0))
+            {
+                codeWriter.Context.ReportDiagnostic(KnifeDiagnostic.Singleton.AlreadyExistsConstructor(classSymbol));
+            }
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
             AppendUsingLines(classSymbol, codeBuilder);
             AppendNamespace(classSymbol, codeBuilder);
@@ -70,11 +73,16 @@ namespace YS.Knife
 
         void AppendSingletonBody(INamedTypeSymbol classSymbol, CsharpCodeBuilder codeBuilder)
         {
+            var instanceName = classSymbol.GetAttributes().Where(p => p.AttributeClass.SafeEquals(typeof(SingletonPatternAttribute)))
+                .Select(p => p.NamedArguments.Where(t => t.Key == nameof(SingletonPatternAttribute.InstancePropertyName)).Where(t => !t.Value.IsNull).Select(t => (string)t.Value.Value).FirstOrDefault())
+                .FirstOrDefault();
+            instanceName = string.IsNullOrEmpty(instanceName) ? SingletonPatternAttribute.DefaultInstanceName : instanceName;
+
             var content = $@"private static readonly Lazy<{classSymbol.GetClassSymbolDisplayText()}> LazyInstance = new Lazy<{classSymbol.GetClassSymbolDisplayText()}>(() => new {classSymbol.GetClassSymbolDisplayText()}(), true);
 
 private {classSymbol.Name}() {{ }}
 
-public static {classSymbol.GetClassSymbolDisplayText()} Instance => LazyInstance.Value;";
+public static {classSymbol.GetClassSymbolDisplayText()} {instanceName} => LazyInstance.Value;";
 
             codeBuilder.AppendCodeLines(content);
         }

@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class BaseClass
+    {
+        [SingletonPattern]
+        partial class Class1
+        {
+
+        }
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="BaseClass.Class1.g.cs">
+            <![CDATA[
+using System;
+namespace ConsoleApp2
+{
+    partial class BaseClass
+    {
+        partial class Class1
+        {
+            private static readonly Lazy<Class1> LazyInstance = new Lazy<Class1>(() => new Class1(), true);
+
+            private Class1() { }
+
+            public static Class1 Instance => LazyInstance.Value;
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

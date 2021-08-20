@@ -5,7 +5,7 @@ using System.Text;
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
-    public class ConvertToAttribute : Attribute
+    public sealed class ConvertToAttribute : Attribute
     {
         public ConvertToAttribute(Type sourceType, Type targetType)
         {

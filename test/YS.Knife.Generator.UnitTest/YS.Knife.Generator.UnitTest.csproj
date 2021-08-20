@@ -34,6 +34,10 @@
       <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
+      <None Remove="SingletonPatternCases\AlreadyExistCtor.xml" />
+      <None Remove="SingletonPatternCases\CustomerInstanceName.xml" />
+      <None Remove="SingletonPatternCases\GeneicType.xml" />
+      <None Remove="SingletonPatternCases\NestedType.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -140,6 +144,18 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\HappyCase.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="SingletonPatternCases\AlreadyExistCtor.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="SingletonPatternCases\CustomerInstanceName.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="SingletonPatternCases\GeneicType.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="SingletonPatternCases\NestedType.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="SingletonPatternCases\HappyCase.xml">

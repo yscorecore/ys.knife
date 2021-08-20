@@ -3,7 +3,9 @@
 namespace YS.Knife
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = false)]
-    public class SingletonPatternAttribute : Attribute
+    public sealed class SingletonPatternAttribute : Attribute
     {
+        internal const string DefaultInstanceName = "Instance";
+        public string InstancePropertyName { get; set; } = DefaultInstanceName;
     }
 }
