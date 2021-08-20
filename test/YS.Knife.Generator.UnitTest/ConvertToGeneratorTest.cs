@@ -16,7 +16,7 @@ namespace YS.Knife.Generator.UnitTest
         [InlineData("ConvertToCases/IgnoreEmptyTargetProperty.xml")]
         [InlineData("ConvertToCases/IgnoreNotExistingTargetProperty.xml")]
         [InlineData("ConvertToCases/CustomerMappings.xml")]
-        
+
         public void ShouldGenerateConverterClass(string testCaseFileName)
         {
             var assemblies = new[]

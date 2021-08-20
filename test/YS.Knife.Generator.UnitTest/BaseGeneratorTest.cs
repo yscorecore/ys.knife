@@ -38,7 +38,7 @@ namespace YS.Knife.Generator.UnitTest
         private static Compilation CreateCompilation(string[] sources, Assembly[] assemblies)
         {
             var allSources = sources
-                .Select(p => CSharpSyntaxTree.ParseText(p, CodeWriter.CSharpOptions));
+                .Select(p => CSharpSyntaxTree.ParseText(p));
             var allReferenceAssemblies =
                 assemblies.Select(p => MetadataReference.CreateFromFile(p.Location));
             var defaultAssemblies = new MetadataReference[]

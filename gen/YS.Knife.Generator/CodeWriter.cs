@@ -11,7 +11,7 @@ namespace YS.Knife
 {
     class CodeWriter
     {
-        public static CSharpParseOptions CSharpOptions = new CSharpParseOptions(LanguageVersion.CSharp10);
+        public static CSharpParseOptions CSharpOptions = new CSharpParseOptions(LanguageVersion.CSharp9);
         public CodeWriter(GeneratorExecutionContext context)
         {
             Context = context;
@@ -34,7 +34,7 @@ namespace YS.Knife
             this.Context.AddSource($"{name}.{CodeFileSuffix}", codeFile.Content);
 
             this.Compilation = this.Compilation.AddSyntaxTrees(
-               CSharpSyntaxTree.ParseText(SourceText.From(codeFile.Content, Encoding.UTF8), CSharpOptions));
+               CSharpSyntaxTree.ParseText(SourceText.From(codeFile.Content, Encoding.UTF8)));
         }
     }
     static class CodeWriterExtensions
