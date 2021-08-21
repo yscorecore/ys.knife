@@ -43,14 +43,12 @@ namespace YS.Knife.Generator.UnitTest
             var newComp = RunGenerators(CreateCompilation(codes, assemblies), out var warningAndErrors,
                 generator);
 
-            //warningAndErrors.Should().Contain()
-
             var outputs = xmlFile.XPathSelectElements("case/output/diagnostic")
-                .Select(prop => (Code: prop.Attribute("code").Value,Level:prop.Attribute("level"), Message: prop.Value));
+                .Select(prop => (Code: prop.Attribute("code").Value,Message: prop.Value.Trim()));
             foreach (var output in outputs)
             {
                 var dig = warningAndErrors.FirstOrDefault(p => p.Id == output.Code);
-                dig.Should().NotBeNull($"can not report diagnostic, code:{output.Code}");
+                dig.Should().NotBeNull($"missing expected diagnostic, code:{output.Code}");
                 dig.GetMessage().Should().Match(output.Message);
             }
           

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-
+using Microsoft.Extensions.DependencyInjection;
 namespace YS.Knife.Generator.UnitTest
 {
 
@@ -14,6 +14,18 @@ namespace YS.Knife.Generator.UnitTest
     {
         [Theory]
         [InlineData("AutoConstructorCases/HappyCase.xml")]
+        [InlineData("AutoConstructorCases/IgnoreField.xml")]
+        [InlineData("AutoConstructorCases/EmptyNamespace.xml")]
+        [InlineData("AutoConstructorCases/GenericType.xml")]
+        [InlineData("AutoConstructorCases/CombinAllPartials.xml")]
+        [InlineData("AutoConstructorCases/NestedType.xml")]
+        [InlineData("AutoConstructorCases/SameNameInDifferentNamespace.xml")]
+        [InlineData("AutoConstructorCases/CamelCase.xml")]
+        [InlineData("AutoConstructorCases/InheriteOtherClass.xml")]
+        [InlineData("AutoConstructorCases/InheriteClassFromOtherAssembly.xml")]
+        [InlineData("AutoConstructorCases/ComplexTypeFromCurrentSource.xml")]
+        [InlineData("AutoConstructorCases/ComplexTypeFromOtherAssembly.xml")]
+
         public void ShouldGenerateExpectConstructor(string testCaseFileName)
         {
             var assemblies = new[]
@@ -23,6 +35,64 @@ namespace YS.Knife.Generator.UnitTest
                 Assembly.GetExecutingAssembly()
             };
             base.ShouldGenerateExpectCodeFile(new AutoConstructorGenerator(), testCaseFileName, assemblies);
+        }
+
+        [Theory]
+        [InlineData("AutoConstructorCases/DependencyInjection/HappyCase.xml")]
+        [InlineData("AutoConstructorCases/DependencyInjection/IgnoreField.xml")]
+        public void ShouldGenerateExpectConstructorWhenRefrenceDependencyInjection(string testCaseFileName)
+        {
+            var assemblies = new[]
+            {
+                typeof(Binder).GetTypeInfo().Assembly,
+                typeof(AutoConstructorAttribute).GetTypeInfo().Assembly,
+                typeof(ActivatorUtilitiesConstructorAttribute).GetTypeInfo().Assembly,
+                Assembly.GetExecutingAssembly()
+            };
+            base.ShouldGenerateExpectCodeFile(new AutoConstructorGenerator(), testCaseFileName, assemblies);
+        }
+
+        public class BaseClassWithEmptyCtor
+        {
+
+
+
+
+        }
+        public class BaseClassWith2Ctors
+        {
+            public BaseClassWith2Ctors(string strValue, int intValue)
+            {
+
+            }
+
+            public BaseClassWith2Ctors(string value)
+            {
+
+            }
+
+        }
+        public class BaseClassWithAttributeInCtor
+        {
+            [ActivatorUtilitiesConstructor()]
+            public BaseClassWithAttributeInCtor(string strValue, int intValue)
+            {
+
+            }
+
+            public BaseClassWithAttributeInCtor(string strValue)
+            {
+
+            }
+
+        }
+        public class Model1
+        {
+
+        }
+        public class Model2
+        {
+
         }
 
     }

@@ -6,24 +6,13 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class1
     {
-        [Autowired]
+        [AutoConstructorIgnore()]
         private int value;
-
-    }
-}
-        ]]>
-        </code>
-        <code>
-            <![CDATA[
-using YS.Knife;
-namespace ConsoleApp2
-{
-    partial class Class1
-    {
-        [Autowired]
-        private int value2;
+        
+        private string str;
 
     }
 }
@@ -37,10 +26,10 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        public Class1(int value, int value2)
+        [Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]
+        public Class1(string str)
         {
-            this.value = value;
-            this.value2 = value2;
+            this.str = str;
         }
     }
 }

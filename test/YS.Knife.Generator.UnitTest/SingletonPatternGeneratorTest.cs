@@ -24,7 +24,7 @@ namespace YS.Knife.Generator.UnitTest
         }
 
         [Theory]
-        [InlineData("SingletonPatternCases/AlreadyExistCtor.xml")]
+        [InlineData("SingletonPatternCases/Error.AlreadyExistCtor.xml")]
         public void ShouldReportDigError(string testCaseFileName)
         {
             var assemblies = new[]

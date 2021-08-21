@@ -6,13 +6,23 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+
     [AutoConstructor()]
     partial class Class1
     {
-        private int value;
-        
-        private string str;
+        private MyClass _val;
 
+    }
+}
+        ]]>
+        </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    public class MyClass
+    {
     }
 }
         ]]>
@@ -25,10 +35,9 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        public Class1(int value, string str)
+        public Class1(global::ConsoleApp2.MyClass val)
         {
-            this.value = value;
-            this.str = str;
+            this._val = val;
         }
     }
 }

@@ -5,9 +5,9 @@
             <![CDATA[
 using YS.Knife;
 
+[AutoConstructor]
 partial class Class1
 {
-    [Autowired]
     private int _age;
 
 }

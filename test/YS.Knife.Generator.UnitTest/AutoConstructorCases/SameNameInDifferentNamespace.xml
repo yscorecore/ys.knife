@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    [AutoConstructor()]
+    partial class Class1
+    {
+        
+        private int value;
+
+    }
+}
+        ]]>
+        </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp3
+{
+    [AutoConstructor()]
+    partial class Class1
+    {
+        private int value;
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.g.cs">
+            <![CDATA[
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        public Class1(int value)
+        {
+            this.value = value;
+        }
+    }
+}
+            ]]>
+        </code>
+        <code file="Class1.2.g.cs">
+            <![CDATA[
+namespace ConsoleApp3
+{
+    partial class Class1
+    {
+        public Class1(int value)
+        {
+            this.value = value;
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

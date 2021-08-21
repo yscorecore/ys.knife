@@ -6,9 +6,10 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class1: Class2
     {
-        [Autowired]
+        
         private string value;
 
     }
@@ -20,9 +21,9 @@ namespace ConsoleApp2
 using YS.Knife;
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class2
     {
-        [Autowired]
         private int __;
 
     }

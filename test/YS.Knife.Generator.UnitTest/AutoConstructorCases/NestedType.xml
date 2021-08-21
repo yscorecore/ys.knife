@@ -8,14 +8,15 @@ namespace ConsoleApp2
 {
     particl class BaseClass
     {
+        [AutoConstructor()]
         partial class SecondClass
         {
-            [Autowired]
+            
             private int value;
     
+            [AutoConstructor()]
             partial class ThirdClass
             {
-                [Autowired]
                 private int value;
             }
         }

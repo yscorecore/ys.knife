@@ -6,9 +6,9 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class1: YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.BaseClassWithEmptyCtor
+    [AutoConstructor()]
+    partial class Class1: YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.BaseClassWithEmptyCtor
     {
-        [Autowired]
         private string value;
 
     }
@@ -20,9 +20,9 @@ namespace ConsoleApp2
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class2: YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.BaseClassWith2Ctors
+    [AutoConstructor()]
+    partial class Class2: YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.BaseClassWith2Ctors
     {
-        [Autowired]
         private string value;
 
     }
@@ -34,9 +34,9 @@ namespace ConsoleApp2
 using YS.Knife;
 namespace ConsoleApp2
 {
-    partial class Class3: YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.BaseClassWithAttributeInCtor
+    [AutoConstructor()]
+    partial class Class3: YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.BaseClassWithAttributeInCtor
     {
-        [Autowired]
         private string value;
 
     }

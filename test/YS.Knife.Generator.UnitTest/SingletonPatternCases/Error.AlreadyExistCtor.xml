@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    [SingletonPattern]
+    partial class Class1
+    {
+        public Class1() {}
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <diagnostic code="KF0001">The type 'ConsoleApp2.Class1' has already exists constructor, *</diagnostic>
+    </output>
+</case>

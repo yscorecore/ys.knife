@@ -6,10 +6,13 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class1
     {
-        [Autowired]
+        [AutoConstructorIgnore()]
         private int value;
+        
+        private string str;
 
     }
 }
@@ -23,9 +26,9 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        public Class1(int value)
+        public Class1(string str)
         {
-            this.value = value;
+            this.str = str;
         }
     }
 }

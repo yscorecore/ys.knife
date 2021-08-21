@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        [AutoNotify(PropertyName="age")]
+        private int age;
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+
+            <diagnostic code="KF1002">The property name 'age' and field name are equal.</diagnostic>
+
+    </output>
+</case>

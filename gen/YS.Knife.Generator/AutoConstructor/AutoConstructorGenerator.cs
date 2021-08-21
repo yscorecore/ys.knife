@@ -34,15 +34,20 @@ namespace YS.Knife
             {
                 return null;
             }
+           
+
             var nameMapper = GetSymbolNameMapper(codeWriter.Compilation, classSymbol);
             if (!nameMapper.Any())
             {
                 return null;
             }
+            var isDependencyInjection = codeWriter.Compilation.ReferencedAssemblyNames
+                    .Any(p => p.Name == "Microsoft.Extensions.DependencyInjection.Abstractions");
+
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
             AppendNamespace(classSymbol, builder);
             AppendClassDefinition(classSymbol, builder);
-            AppendPublicCtor(classSymbol, nameMapper, builder);
+            AppendPublicCtor(classSymbol, nameMapper, isDependencyInjection, builder);
 
             builder.EndAllSegments();
             return new CodeFile
@@ -172,10 +177,15 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ArgumentInfo> nameMapper, CsharpCodeBuilder codeBuilder)
+        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ArgumentInfo> nameMapper, bool isDependencyInjection, CsharpCodeBuilder codeBuilder)
         {
-
+            if (isDependencyInjection)
+            {
+                codeBuilder.AppendCodeLines("[Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]");
+            }
+            
             string args = string.Join(", ", nameMapper.Select(p => p.Value.GetCtorMethodArgumentItem()));
+
 
             codeBuilder.AppendCodeLines($"public {classSymbol.Name}({args})");
             var baseCtorArgs = nameMapper.Values.Where(p => p.Source == ArgumentSource.BaseCtor);

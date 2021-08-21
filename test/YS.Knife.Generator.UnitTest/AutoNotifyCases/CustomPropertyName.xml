@@ -8,7 +8,7 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        [AutoNotify]
+        [AutoNotify(PropertyName="UserAge")]
         private int _age;
 
     }
@@ -26,7 +26,7 @@ namespace ConsoleApp2
     {
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public int Age 
+        public int UserAge 
         {
             get 
             {
@@ -37,7 +37,7 @@ namespace ConsoleApp2
                 if(this._age != value)
                 {
                     this._age = value;
-                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(Age)));
+                    this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(UserAge)));
                 }
             }
         }

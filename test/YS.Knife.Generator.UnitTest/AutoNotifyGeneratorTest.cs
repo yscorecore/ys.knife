@@ -9,6 +9,7 @@ namespace YS.Knife.Generator.UnitTest
     {
         [Theory]
         [InlineData("AutoNotifyCases/HappyCase.xml")]
+        [InlineData("AutoNotifyCases/CustomPropertyName.xml")]
         [InlineData("AutoNotifyCases/GenericType.xml")]
         [InlineData("AutoNotifyCases/CombinAllPartials.xml")]
         [InlineData("AutoNotifyCases/NotifyPropertyChangedDefined.xml")]
@@ -31,6 +32,22 @@ namespace YS.Knife.Generator.UnitTest
                 Assembly.GetExecutingAssembly()
             };
             base.ShouldGenerateExpectCodeFile(new AutoNotifyGenerator(), testCaseFileName, assemblies);
+        }
+
+        [Theory]
+        [InlineData("AutoNotifyCases/Error.EmptyPropertyName.xml")]
+        [InlineData("AutoNotifyCases/Error.InvalidPropertyName.xml")]
+        [InlineData("AutoNotifyCases/Error.PropertyNameEqualFieldName.xml")]
+        public void ShouldReportDigError(string testCaseFileName)
+        {
+            var assemblies = new[]
+            {
+                typeof(Binder).GetTypeInfo().Assembly,
+                typeof(INotifyPropertyChanged).GetTypeInfo().Assembly,
+                typeof(AutoNotifyAttribute).GetTypeInfo().Assembly,
+                Assembly.GetExecutingAssembly()
+            };
+            base.ShouldReportDiagnostic(new AutoNotifyGenerator(), testCaseFileName, assemblies);
         }
 
         public class BaseClass : INotifyPropertyChanged

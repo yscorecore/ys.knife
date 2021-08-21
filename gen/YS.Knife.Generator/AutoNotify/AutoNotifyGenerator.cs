@@ -30,7 +30,7 @@ namespace YS.Knife
                 var fieldList = clazzSymbol.GetAllInstanceFieldsByAttribute(typeof(AutoNotifyAttribute)).ToList();
                 if (fieldList.Any())
                 {
-                    var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter.Compilation);
+                    var codeFile = ProcessClass(clazzSymbol, fieldList, codeWriter);
                     codeWriter.WriteCodeFile(codeFile);
                 }
             }
@@ -39,8 +39,9 @@ namespace YS.Knife
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("MicrosoftCodeAnalysisCorrectness",
             "RS1024:Compare symbols correctly", Justification = "<Pending>")]
-        private CodeFile ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, Compilation compilation)
+        private CodeFile ProcessClass(INamedTypeSymbol classSymbol, List<IFieldSymbol> fields, CodeWriter codeWriter)
         {
+            var compilation = codeWriter.Compilation;
             INamedTypeSymbol notifySymbol =
                 compilation.GetTypeByMetadataName("System.ComponentModel.INotifyPropertyChanged");
 
@@ -91,7 +92,7 @@ namespace YS.Knife
             // create properties for each field 
             foreach (IFieldSymbol fieldSymbol in fields)
             {
-                ProcessField(codeBuilder, fieldSymbol);
+                ProcessField(codeBuilder, fieldSymbol, codeWriter);
             }
 
             codeBuilder.EndAllSegments();
@@ -102,7 +103,7 @@ namespace YS.Knife
             };
         }
 
-        private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol)
+        private static void ProcessField(CsharpCodeBuilder source, IFieldSymbol fieldSymbol, CodeWriter codeWriter)
         {
             // get the name and type of the field
             string fieldName = fieldSymbol.Name;
@@ -113,13 +114,16 @@ namespace YS.Knife
             // get the AutoNotify attribute from the field, and any associated data
 
             TypedConstant overridenNameOpt =
-                attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == "PropertyName").Value;
+                attributeData.NamedArguments.SingleOrDefault(kvp => kvp.Key == nameof(AutoNotifyAttribute.PropertyName)).Value;
 
             string propertyName = chooseName(fieldName, overridenNameOpt);
-            if (propertyName.Length == 0 || propertyName == fieldName)
+            if (!System.Text.RegularExpressions.Regex.IsMatch(propertyName, "^[_a-zA-Z][_a-zA-Z0-9]*$"))
             {
-                //TODO: issue a diagnostic that we can't process this field
-                return;
+                codeWriter.Context.ReportDiagnostic(KnifeDiagnostic.AutoNotify.InvalidPropertyName(propertyName));
+            }
+            if (propertyName == fieldName)
+            {
+                codeWriter.Context.ReportDiagnostic(KnifeDiagnostic.AutoNotify.PropertyNameEqualFieldName(propertyName));
             }
 
             source.AppendCodeLines($@"

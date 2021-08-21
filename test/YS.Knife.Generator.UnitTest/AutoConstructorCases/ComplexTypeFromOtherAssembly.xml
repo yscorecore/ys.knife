@@ -6,10 +6,10 @@
 using YS.Knife;
 namespace ConsoleApp3
 {
+    [AutoConstructor()]
     partial class Class2: ConsoleApp2.Class1
     {
-        [Autowired]
-        private YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.Model2 _v2;
+        private YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.Model2 _v2;
     }
 }
         ]]>
@@ -20,10 +20,10 @@ using YS.Knife;
 
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class1
     {
-        [Autowired]
-        private YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.Model1 _v1;
+        private YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.Model1 _v1;
 
 
     }
@@ -39,7 +39,7 @@ namespace ConsoleApp2
 {
     partial class Class1
     {
-        public Class1(global::YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.Model1 v1)
+        public Class1(global::YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.Model1 v1)
         {
             this._v1 = v1;
         }
@@ -53,7 +53,7 @@ namespace ConsoleApp3
 {
     partial class Class2
     {
-        public Class2(global::YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.Model1 v1, global::YS.Knife.Generator.UnitTest.AutowiredGeneratorTest.Model2 v2)
+        public Class2(global::YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.Model1 v1, global::YS.Knife.Generator.UnitTest.AutoConstructorGeneratorTest.Model2 v2)
             : base(v1: v1)
         {
             this._v2 = v2;

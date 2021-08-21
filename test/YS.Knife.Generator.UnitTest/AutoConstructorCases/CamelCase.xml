@@ -6,17 +6,13 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+    [AutoConstructor()]
     partial class Class1
     {
-        [Autowired]
         private int _;
-        [Autowired]
         private string __;
-        [Autowired]
         private string _name;
-        [Autowired]
         private double ___;
-        [Autowired]
         private int age;
     }
 }

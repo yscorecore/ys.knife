@@ -6,17 +6,17 @@
 using YS.Knife;
 namespace ConsoleApp2
 {
+   [AutoConstructor()]
     partial class Class1<T>
     {
-        [Autowired]
         private int value;
 
     }
     partial class Class2
     {
+        [AutoConstructor()]
         partial class Class3<T>
         {
-            [Autowired]
             private int value;
     
         }
