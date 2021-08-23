@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using YS.Knife;
+namespace ConsoleApp2
+{
+    [AutoConstructor(NullCheck=true)]
+    partial class Class1
+    {
+        private int value;
+        
+        private string str;
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Class1.g.cs">
+            <![CDATA[
+namespace ConsoleApp2
+{
+    partial class Class1
+    {
+        public Class1(int value, string str)
+        {
+            this.value = value;
+            this.str = str ?? throw new System.ArgumentNullException(nameof(str));
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

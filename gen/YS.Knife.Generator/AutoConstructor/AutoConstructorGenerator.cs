@@ -44,10 +44,14 @@ namespace YS.Knife
             var isDependencyInjection = codeWriter.Compilation.ReferencedAssemblyNames
                     .Any(p => p.Name == "Microsoft.Extensions.DependencyInjection.Abstractions");
 
+            var nullChecked = GetNullCheckValue(classSymbol);
+                
+
+
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
             AppendNamespace(classSymbol, builder);
             AppendClassDefinition(classSymbol, builder);
-            AppendPublicCtor(classSymbol, nameMapper, isDependencyInjection, builder);
+            AppendPublicCtor(classSymbol, nameMapper, isDependencyInjection, nullChecked, builder);
 
             builder.EndAllSegments();
             return new CodeFile
@@ -56,6 +60,22 @@ namespace YS.Knife
                 Content = builder.ToString(),
             };
 
+        }
+        bool GetNullCheckValue(INamedTypeSymbol classSymbol)
+        {
+            var attr = classSymbol.GetAttributes()
+                .Where(p => p.AttributeClass.SafeEquals(typeof(AutoConstructorAttribute)))
+                .FirstOrDefault();
+            if (attr != null)
+            {
+                var val = attr.NamedArguments.Where(p => p.Key == nameof(AutoConstructorAttribute.NullCheck))
+                     .Select(p => p.Value.Value).FirstOrDefault();
+                if (val != null)
+                {
+                    return Convert.ToBoolean(val);
+                }
+            }
+            return false;
         }
 
         IDictionary<string, ArgumentInfo> GetSymbolNameMapper(Compilation compilation, INamedTypeSymbol classSymbol)
@@ -177,7 +197,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ArgumentInfo> nameMapper, bool isDependencyInjection, CsharpCodeBuilder codeBuilder)
+        void AppendPublicCtor(INamedTypeSymbol classSymbol, IDictionary<string, ArgumentInfo> nameMapper, bool isDependencyInjection, bool nullCheck, CsharpCodeBuilder codeBuilder)
         {
             if (isDependencyInjection)
             {
@@ -200,10 +220,22 @@ namespace YS.Knife
             // lines
             foreach (var member in nameMapper.Values.Where(p => p.Source != ArgumentSource.BaseCtor))
             {
-                codeBuilder.AppendCodeLines($"this.{member.MemberName} = {member.ArgName};");
+                codeBuilder.AppendCodeLines(BuildCtorAssignLine(member));
             }
 
             codeBuilder.EndSegment();
+
+            string BuildCtorAssignLine(ArgumentInfo argumentInfo)
+            {
+                if (nullCheck && !argumentInfo.ArgTypeSymbol.IsValueType)
+                {
+                    return $"this.{argumentInfo.MemberName} = {argumentInfo.ArgName} ?? throw new System.ArgumentNullException(nameof({argumentInfo.ArgName}));";
+                }
+                else
+                {
+                    return $"this.{argumentInfo.MemberName} = {argumentInfo.ArgName};";
+                }
+            }
 
         }
         private class ArgumentInfo
@@ -243,9 +275,5 @@ namespace YS.Knife
                 }
             }
         }
-
-
-
-
     }
 }

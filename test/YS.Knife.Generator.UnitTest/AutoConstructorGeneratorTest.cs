@@ -25,6 +25,7 @@ namespace YS.Knife.Generator.UnitTest
         [InlineData("AutoConstructorCases/InheriteClassFromOtherAssembly.xml")]
         [InlineData("AutoConstructorCases/ComplexTypeFromCurrentSource.xml")]
         [InlineData("AutoConstructorCases/ComplexTypeFromOtherAssembly.xml")]
+        [InlineData("AutoConstructorCases/NullCheck.xml")]
 
         public void ShouldGenerateExpectConstructor(string testCaseFileName)
         {
@@ -97,5 +98,19 @@ namespace YS.Knife.Generator.UnitTest
 
     }
 
+    partial class Class1
+    {
+        private int value;
 
+        private string str;
+
+    }
+    partial class Class1
+    {
+        public Class1(int value, string str)
+        {
+            this.value = value;
+            this.str = str ?? throw new System.ArgumentNullException(nameof(str));
+        }
+    }
 }

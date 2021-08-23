@@ -16,6 +16,7 @@
       <None Remove="AutoConstructorCases\InheriteClassFromOtherAssembly.xml" />
       <None Remove="AutoConstructorCases\InheriteOtherClass.xml" />
       <None Remove="AutoConstructorCases\NestedType.xml" />
+      <None Remove="AutoConstructorCases\NullCheck.xml" />
       <None Remove="AutoConstructorCases\SameNameInDifferentNamespace.xml" />
       <None Remove="AutoNotifyCases\CombinAllPartials.xml" />
       <None Remove="AutoNotifyCases\ComplexTypeFromCurrentSource.xml" />
@@ -72,6 +73,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="AutoConstructorCases\GenericType.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="AutoConstructorCases\NullCheck.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="AutoConstructorCases\HappyCase.xml">
