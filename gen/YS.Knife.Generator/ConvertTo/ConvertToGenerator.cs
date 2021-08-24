@@ -105,7 +105,7 @@ namespace YS.Knife
                 }
                 codeBuilder.AppendCodeLines($"return new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(fromType, toType, "source", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "source", null, ",");
                 codeBuilder.EndSegment("};");
                 codeBuilder.EndSegment();
             }
@@ -121,7 +121,7 @@ namespace YS.Knife
                 {
                     codeBuilder.AppendCodeLines("if (target == null) return;");
                 }
-                AppendPropertyAssign(fromType, toType, "source", "target", ";");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "source", "target", ";");
                 codeBuilder.EndSegment();
             }
             void AddToMethodForEnumable()
@@ -130,7 +130,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(fromType, toType, "p", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "p", null, ",");
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
@@ -140,7 +140,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(fromType, toType, "p", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "p", null, ",");
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
@@ -157,7 +157,7 @@ namespace YS.Knife
                 }
                 return $"{refrenceName}.{expression}";
             }
-            void AppendPropertyAssign(INamedTypeSymbol sourceType, INamedTypeSymbol targetType, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar)
+            void AppendPropertyAssign(WalkedPaths walkedPaths, INamedTypeSymbol sourceType, INamedTypeSymbol targetType, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar)
             {
                 var targetProps = targetType.GetMembers()
                      .OfType<IPropertySymbol>()
@@ -190,20 +190,42 @@ namespace YS.Knife
                         else
                         {
                             // object
-                            if (targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor())
+                            if (CanMappingSubObject(sourcePropType, prop.Value) && !walkedPaths.HasWalked(prop.Value))
                             {
-                                // p.User = source.User == null ? null: new UserInfo
-                                // {
-                                //      Name=source.User.Name,
-                                //      Age= source.User.Age
-                                // },
-                                // address = source?.Address
+
+                                MappingSubObjectProperty(walkedPaths.Fork(prop.Value), sourcePropType, prop.Value, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
                             }
 
                         }
 
 
                     }
+                }
+
+            }
+            bool CanMappingSubObject(INamedTypeSymbol sourceType, INamedTypeSymbol targetType)
+            {
+                return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor();
+            }
+            void MappingSubObjectProperty(WalkedPaths walkedPaths, INamedTypeSymbol sourcePropertyType, INamedTypeSymbol targetPropertyType, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
+            {
+                var targetPropertyTypeText = targetPropertyType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+                var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
+                var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
+                if (sourcePropertyType.IsValueType)
+                {
+
+                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
+                    codeBuilder.BeginSegment();
+                    AppendPropertyAssign(walkedPaths, sourcePropertyType, targetPropertyType, sourcePropertyExpression, null, ",");
+                    codeBuilder.EndSegment("}" + lineSplitChar);
+                }
+                else
+                {
+                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? default({targetPropertyTypeText}): new {targetPropertyTypeText}");
+                    codeBuilder.BeginSegment();
+                    AppendPropertyAssign(walkedPaths, sourcePropertyType, targetPropertyType, sourcePropertyExpression, null, ",");
+                    codeBuilder.EndSegment("}" + lineSplitChar);
                 }
             }
         }
@@ -234,6 +256,33 @@ namespace YS.Knife
             }
 
             public CodeWriter CodeWriter { get; }
+
+        }
+        private class WalkedPaths
+        {
+            public WalkedPaths(params INamedTypeSymbol[] paths)
+            {
+                this.Paths.AddRange(paths);
+            }
+            private List<INamedTypeSymbol> Paths { get; } = new List<INamedTypeSymbol>();
+
+            public WalkedPaths Fork(INamedTypeSymbol symbol)
+            {
+                var paths = Paths.Concat(new INamedTypeSymbol[] { symbol });
+                return new WalkedPaths(paths.ToArray());
+            }
+            public bool HasWalked(INamedTypeSymbol symbol)
+            {
+                foreach (var path in Paths)
+                {
+                    if (path.Equals(symbol, SymbolEqualityComparer.Default))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
         }
 
         private class ConvertMappingInfo

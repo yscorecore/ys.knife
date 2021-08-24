@@ -44,6 +44,7 @@
       <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
+      <None Remove="ConvertToCases\SubObjectType.xml" />
       <None Remove="SingletonPatternCases\CustomerInstanceName.xml" />
       <None Remove="SingletonPatternCases\Error.AlreadyExistCtor.xml" />
       <None Remove="SingletonPatternCases\GeneicType.xml" />
@@ -154,6 +155,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\ClassifyConversion.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\SubObjectType.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\IgnoreNotExistingTargetProperty.xml">
