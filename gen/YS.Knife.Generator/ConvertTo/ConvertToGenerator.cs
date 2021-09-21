@@ -160,7 +160,12 @@ namespace YS.Knife
 
         bool CanMappingSubObject(INamedTypeSymbol sourceType, INamedTypeSymbol targetType)
         {
-            return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor();
+            if (sourceType.TypeKind == TypeKind.Class || sourceType.TypeKind == TypeKind.Struct)
+            {
+                if (targetType.TypeKind == TypeKind.Struct) return true;
+                return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor();
+            }
+            return false;
         }
         void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
         {

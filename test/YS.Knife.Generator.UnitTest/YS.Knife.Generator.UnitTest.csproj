@@ -34,6 +34,7 @@
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
+      <None Remove="ConvertToCases\CircleRefrence.xml" />
       <None Remove="ConvertToCases\ClassifyConversion.xml" />
       <None Remove="ConvertToCases\ClassToStruct.xml" />
       <None Remove="ConvertToCases\CustomerMappings.xml" />
@@ -44,7 +45,10 @@
       <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
-      <None Remove="ConvertToCases\SubObjectType.xml" />
+      <None Remove="ConvertToCases\SubClassToClass.xml" />
+      <None Remove="ConvertToCases\SubClassToStruct.xml" />
+      <None Remove="ConvertToCases\SubStructToClass.xml" />
+      <None Remove="ConvertToCases\SubStructToStruct.xml" />
       <None Remove="SingletonPatternCases\CustomerInstanceName.xml" />
       <None Remove="SingletonPatternCases\Error.AlreadyExistCtor.xml" />
       <None Remove="SingletonPatternCases\GeneicType.xml" />
@@ -148,6 +152,9 @@
       <Content Include="AutoNotifyCases\NestedType.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="ConvertToCases\CircleRefrence.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="ConvertToCases\CustomerMappings.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -157,7 +164,16 @@
       <Content Include="ConvertToCases\ClassifyConversion.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
-      <Content Include="ConvertToCases\SubObjectType.xml">
+      <Content Include="ConvertToCases\SubClassToStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\SubStructToClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\SubStructToStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\SubClassToClass.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\IgnoreNotExistingTargetProperty.xml">
