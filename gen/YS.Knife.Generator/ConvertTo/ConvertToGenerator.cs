@@ -42,7 +42,14 @@ namespace YS.Knife
             {
                 if (convertToAttr.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
                 {
-                    AppendConvertToFunctions(convertToAttr, codeBuilder, codeWriter);
+
+                    var context = new ConvertContext(
+                        classSymbol,
+                        codeWriter.Compilation,
+                        codeBuilder,
+                        ConvertMappingInfo.FromAttributeData(convertToAttr));
+
+                    AppendConvertToFunctions(context);
                 }
             }
 
@@ -85,8 +92,10 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendConvertToFunctions(ConvertContext context, ConvertMappingInfo mappingInfo, CsharpCodeBuilder codeBuilder)
+        void AppendConvertToFunctions(ConvertContext context)
         {
+            var mappingInfo = context.MappingInfo;
+            var codeBuilder = context.CodeBuilder;
             var toType = mappingInfo.TargetType;
             var fromType = mappingInfo.SourceType;
             var toTypeDisplay = mappingInfo.TargetType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
@@ -105,7 +114,7 @@ namespace YS.Knife
                 }
                 codeBuilder.AppendCodeLines($"return new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "source", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "source", null, ",", context);
                 codeBuilder.EndSegment("};");
                 codeBuilder.EndSegment();
             }
@@ -121,7 +130,7 @@ namespace YS.Knife
                 {
                     codeBuilder.AppendCodeLines("if (target == null) return;");
                 }
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "source", "target", ";");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "source", "target", ";", context);
                 codeBuilder.EndSegment();
             }
             void AddToMethodForEnumable()
@@ -130,7 +139,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "p", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "p", null, ",", context);
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
@@ -140,101 +149,106 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), fromType, toType, "p", null, ",");
+                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "p", null, ",", context);
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
-            bool CanAssign(INamedTypeSymbol source, INamedTypeSymbol target)
-            {
-                var conversion = context.CodeWriter.Compilation.ClassifyConversion(source, target);
-                return conversion.IsImplicit || conversion.IsReference || conversion.IsNullable || conversion.IsBoxing;
-            }
-            string FormatRefrence(string refrenceName, string expression)
-            {
-                if (string.IsNullOrEmpty(refrenceName))
-                {
-                    return expression;
-                }
-                return $"{refrenceName}.{expression}";
-            }
-            void AppendPropertyAssign(WalkedPaths walkedPaths, INamedTypeSymbol sourceType, INamedTypeSymbol targetType, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar)
-            {
-                var targetProps = targetType.GetMembers()
-                     .OfType<IPropertySymbol>()
-                     .Where(p => !p.IsReadOnly && p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer)
-                     .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
-                     .ToDictionary(p => p.Name, p => p.Type);
-                var sourceProps = sourceType.GetMembers()
-                    .OfType<IPropertySymbol>()
-                    .Where(p => p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer && !p.IsWriteOnly)
-                    .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
-                    .ToDictionary(p => p.Name, p => p.Type);
-                foreach (var prop in targetProps)
-                {
-                    if (mappingInfo.IgnoreTargetProperties != null && mappingInfo.IgnoreTargetProperties.Contains(prop.Key))
-                    {
-                        continue;
-                    }
-                    if (mappingInfo.CustomerMappings != null && mappingInfo.CustomerMappings.TryGetValue(prop.Key, out var sourceExpression))
-                    {
-                        var actualSourceExpression = sourceExpression.Replace("$", sourceRefrenceName);
-                        codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {actualSourceExpression}{lineSplitChar}");
-                    }
-                    else if (sourceProps.TryGetValue(prop.Key, out var sourcePropType))
-                    {
-                        if (CanAssign(sourcePropType, prop.Value))
-                        {
-                            // default 
-                            codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {FormatRefrence(sourceRefrenceName, prop.Key)}{lineSplitChar}");
-                        }
-                        else
-                        {
-                            // object
-                            if (CanMappingSubObject(sourcePropType, prop.Value) && !walkedPaths.HasWalked(prop.Value))
-                            {
-
-                                MappingSubObjectProperty(walkedPaths.Fork(prop.Value), sourcePropType, prop.Value, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
-                            }
-
-                        }
 
 
-                    }
-                }
 
-            }
-            bool CanMappingSubObject(INamedTypeSymbol sourceType, INamedTypeSymbol targetType)
-            {
-                return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor();
-            }
-            void MappingSubObjectProperty(WalkedPaths walkedPaths, INamedTypeSymbol sourcePropertyType, INamedTypeSymbol targetPropertyType, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
-            {
-                var targetPropertyTypeText = targetPropertyType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
-                var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
-                var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
-                if (sourcePropertyType.IsValueType)
-                {
-
-                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
-                    codeBuilder.BeginSegment();
-                    AppendPropertyAssign(walkedPaths, sourcePropertyType, targetPropertyType, sourcePropertyExpression, null, ",");
-                    codeBuilder.EndSegment("}" + lineSplitChar);
-                }
-                else
-                {
-                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? default({targetPropertyTypeText}): new {targetPropertyTypeText}");
-                    codeBuilder.BeginSegment();
-                    AppendPropertyAssign(walkedPaths, sourcePropertyType, targetPropertyType, sourcePropertyExpression, null, ",");
-                    codeBuilder.EndSegment("}" + lineSplitChar);
-                }
-            }
         }
-        void AppendConvertToFunctions(AttributeData attributeData, CsharpCodeBuilder codeBuilder, CodeWriter codeWriter)
+
+        bool CanMappingSubObject(INamedTypeSymbol sourceType, INamedTypeSymbol targetType)
         {
-            var context = new ConvertContext(codeWriter);
-            AppendConvertToFunctions(context, ConvertMappingInfo.FromAttributeData(attributeData), codeBuilder);
+            return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && targetType.HasEmptyCtor();
         }
+        void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
+        {
 
+            var targetPropertyType = convertContext.MappingInfo.TargetType;
+            var sourcePropertyType = convertContext.MappingInfo.SourceType;
+            var codeBuilder = convertContext.CodeBuilder;
+            var targetPropertyTypeText = targetPropertyType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
+            var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
+            if (sourcePropertyType.IsValueType)
+            {
+
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
+                codeBuilder.BeginSegment();
+                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+                codeBuilder.EndSegment("}" + lineSplitChar);
+            }
+            else
+            {
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? default({targetPropertyTypeText}): new {targetPropertyTypeText}");
+                codeBuilder.BeginSegment();
+                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+                codeBuilder.EndSegment("}" + lineSplitChar);
+            }
+        }
+        bool CanAssign(INamedTypeSymbol source, INamedTypeSymbol target, Compilation compilation)
+        {
+            var conversion = compilation.ClassifyConversion(source, target);
+            return conversion.IsImplicit || conversion.IsReference || conversion.IsNullable || conversion.IsBoxing;
+        }
+        string FormatRefrence(string refrenceName, string expression)
+        {
+            if (string.IsNullOrEmpty(refrenceName))
+            {
+                return expression;
+            }
+            return $"{refrenceName}.{expression}";
+        }
+        void AppendPropertyAssign(WalkedPaths walkedPaths, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar, ConvertContext convertContext)
+        {
+            var mappingInfo = convertContext.MappingInfo;
+            var codeBuilder = convertContext.CodeBuilder;
+            var targetProps = mappingInfo.TargetType.GetMembers()
+                 .OfType<IPropertySymbol>()
+                 .Where(p => !p.IsReadOnly && p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer)
+                 .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
+                 .ToDictionary(p => p.Name, p => p.Type);
+            var sourceProps = mappingInfo.SourceType.GetMembers()
+                .OfType<IPropertySymbol>()
+                .Where(p => p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer && !p.IsWriteOnly)
+                .Select(p => new { p.Name, Type = p.Type as INamedTypeSymbol })
+                .ToDictionary(p => p.Name, p => p.Type);
+            foreach (var prop in targetProps)
+            {
+                if (mappingInfo.IgnoreTargetProperties != null && mappingInfo.IgnoreTargetProperties.Contains(prop.Key))
+                {
+                    continue;
+                }
+                if (mappingInfo.CustomerMappings != null && mappingInfo.CustomerMappings.TryGetValue(prop.Key, out var sourceExpression))
+                {
+                    var actualSourceExpression = sourceExpression.Replace("$", sourceRefrenceName);
+                    codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {actualSourceExpression}{lineSplitChar}");
+                }
+                else if (sourceProps.TryGetValue(prop.Key, out var sourcePropType))
+                {
+                    if (CanAssign(sourcePropType, prop.Value, convertContext.Compilation))
+                    {
+                        // default 
+                        codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {FormatRefrence(sourceRefrenceName, prop.Key)}{lineSplitChar}");
+                    }
+                    else
+                    {
+                        // object
+                        if (CanMappingSubObject(sourcePropType, prop.Value) && !walkedPaths.HasWalked(prop.Value))
+                        {
+                            var subMappingInfo = ConvertMappingInfo.Create(sourcePropType, prop.Value, convertContext.HostClass);
+                            var subContext = new ConvertContext(convertContext, subMappingInfo);
+                            MappingSubObjectProperty(walkedPaths.Fork(prop.Value), subContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
+                        }
+
+                    }
+
+
+                }
+            }
+
+        }
         private class ConvertToSyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
@@ -250,12 +264,27 @@ namespace YS.Knife
         }
         private class ConvertContext
         {
-            public ConvertContext(CodeWriter codeWriter)
+            public ConvertContext(INamedTypeSymbol hostClass, Compilation compilation, CsharpCodeBuilder codeBuilder, ConvertMappingInfo convertMappingInfo)
             {
-                CodeWriter = codeWriter;
+                this.HostClass = hostClass;
+                this.Compilation = compilation;
+                this.MappingInfo = convertMappingInfo;
+                this.CodeBuilder = codeBuilder;
             }
+            public ConvertContext(ConvertContext baseConvertContext, ConvertMappingInfo convertMappingInfo)
+                : this(baseConvertContext.HostClass, baseConvertContext.Compilation, baseConvertContext.CodeBuilder, convertMappingInfo)
+            {
 
-            public CodeWriter CodeWriter { get; }
+            }
+            public Compilation Compilation { get; }
+
+
+            public ConvertMappingInfo MappingInfo { get; }
+
+            public CsharpCodeBuilder CodeBuilder { get; }
+
+            public INamedTypeSymbol HostClass { get; }
+
 
         }
         private class WalkedPaths
@@ -325,7 +354,7 @@ namespace YS.Knife
             public static ConvertMappingInfo Create(INamedTypeSymbol source, INamedTypeSymbol target, INamedTypeSymbol hostClasses)
             {
 
-                var attributeData = hostClasses.GetAttributes()
+                var attributeData = hostClasses.GetAttributes().Reverse()
                      .Where(p => p.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
                      .Where(p => (p.ConstructorArguments.First().Value as INamedTypeSymbol).Equals(source, SymbolEqualityComparer.Default))
                      .Where(p => (p.ConstructorArguments.Last().Value as INamedTypeSymbol).Equals(source, SymbolEqualityComparer.Default))

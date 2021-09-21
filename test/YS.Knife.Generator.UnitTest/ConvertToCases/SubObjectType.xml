@@ -58,6 +58,10 @@ namespace ConsoleApp2
             return new global::ConsoleApp2.UserInfo
             {
                 Name = source.Name,
+                Address = source.Address == null ? default(global::ConsoleApp2.AddressInfo): new global::ConsoleApp2.AddressInfo
+                {
+                    City = source.Address.City,
+                },
             };
         }
         public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
@@ -65,12 +69,20 @@ namespace ConsoleApp2
             if (source == null) return;
             if (target == null) return;
             target.Name = source.Name;
+            target.Address = source.Address == null ? default(global::ConsoleApp2.AddressInfo): new global::ConsoleApp2.AddressInfo
+            {
+                City = source.Address.City,
+            };
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
         {
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
+                Address = p.Address == null ? default(global::ConsoleApp2.AddressInfo): new global::ConsoleApp2.AddressInfo
+                {
+                    City = p.Address.City,
+                },
             });
         }
         public static IQueryable<global::ConsoleApp2.UserInfo> ToUserInfo(this IQueryable<global::ConsoleApp2.TUser> source)
@@ -78,6 +90,10 @@ namespace ConsoleApp2
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
+                Address = p.Address == null ? default(global::ConsoleApp2.AddressInfo): new global::ConsoleApp2.AddressInfo
+                {
+                    City = p.Address.City,
+                },
             });
         }
     }
