@@ -43,6 +43,7 @@
       <None Remove="ConvertToCases\IgnoreNotExistingTargetProperty.xml" />
       <None Remove="ConvertToCases\IgnoreNullTargetProperty.xml" />
       <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
+      <None Remove="ConvertToCases\ListToList.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
       <None Remove="ConvertToCases\SubClassToClass.xml" />
@@ -162,6 +163,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\ClassifyConversion.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToList.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\SubClassToStruct.xml">

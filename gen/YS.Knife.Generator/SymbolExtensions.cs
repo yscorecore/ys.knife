@@ -20,14 +20,37 @@ namespace YS.Knife
                    other?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
         }
 
-        public static bool SafeEquals(this INamedTypeSymbol symbol, string typeMetaName)
+        private static bool SafeEquals(this INamedTypeSymbol symbol, string globalTypeMetaName)
         {
-            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == $"global::{typeMetaName}";
+            return symbol?.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat) == globalTypeMetaName;
         }
 
+        private static string TypeNameCombinGlobal(this string typeName) => $"global::{typeName}";
+        private static string GetGlobalTypeName(Type type)
+        {
+            if (type.IsGenericType)
+            {
+                var index = type.FullName.IndexOf('`');
+                string typeName = type.FullName.Substring(0, index);
+                if (type.IsGenericTypeDefinition)
+                {
+                    var argumentLength = type.GetGenericArguments().Length;
+                    return $"{typeName.TypeNameCombinGlobal()}<{new string(',', argumentLength - 1)}>";
+                }
+                else
+                {
+                    var arguments = type.GetGenericArguments().Select(p => GetGlobalTypeName(p));
+                    return $"{typeName.TypeNameCombinGlobal()}<{string.Join(",", arguments)}>";
+                }
+            }
+            else
+            {
+                return type.FullName.TypeNameCombinGlobal();
+            }
+        }
         public static bool SafeEquals(this INamedTypeSymbol symbol, Type type)
         {
-            return SafeEquals(symbol, type.FullName);
+            return SafeEquals(symbol, GetGlobalTypeName(type));
         }
 
         public static bool HasAttribute(this ISymbol symbol, INamedTypeSymbol attributeSymbol)
@@ -39,7 +62,7 @@ namespace YS.Knife
         public static bool HasAttribute(this ISymbol symbol, string attributeMetaType)
         {
             return symbol.GetAttributes().Any(ad =>
-                ad.AttributeClass.SafeEquals(attributeMetaType));
+                ad.AttributeClass.SafeEquals(attributeMetaType.TypeNameCombinGlobal()));
         }
 
         public static bool HasAttribute(this ISymbol symbol, Type attributeType)
