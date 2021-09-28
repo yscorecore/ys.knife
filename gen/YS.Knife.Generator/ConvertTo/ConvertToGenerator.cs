@@ -233,20 +233,21 @@ namespace YS.Knife
                 return false;
             }
 
-            ITypeSymbol GetItemType(ITypeSymbol typeSymbol)
-            {
-                if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
-                {
-                    return arrayTypeSymbol.ElementType;
-                }
-                if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
-                {
-                    return namedTypeSymbol.TypeArguments[0];
-                }
-                return null;
-            }
+            
         }
-        void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
+        ITypeSymbol GetItemType(ITypeSymbol typeSymbol)
+        {
+            if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
+            {
+                return arrayTypeSymbol.ElementType;
+            }
+            if (typeSymbol is INamedTypeSymbol namedTypeSymbol)
+            {
+                return namedTypeSymbol.TypeArguments[0];
+            }
+            return null;
+        }
+        private void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
         {
 
             var targetPropertyType = convertContext.MappingInfo.TargetType;
@@ -271,6 +272,49 @@ namespace YS.Knife
                 codeBuilder.EndSegment("}" + lineSplitChar);
             }
         }
+
+        private void MappingCollectionProperty(WalkedPaths walkedPaths, ConvertContext convertContext,
+            string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
+        {
+            var codeBuilder = convertContext.CodeBuilder;
+            var targetPropertyType = convertContext.MappingInfo.TargetType;
+            var sourcePropertyType = convertContext.MappingInfo.SourceType;
+            var targetItemType = GetItemType(targetPropertyType);
+            var sourceItemType = GetItemType(sourcePropertyType);
+            var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
+            var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
+            if (sourceItemType.IsValueType)
+            {
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
+                codeBuilder.BeginSegment();
+                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+                codeBuilder.EndSegment("}" + lineSplitChar);
+            }
+            else
+            {
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
+                codeBuilder.BeginSegment();
+                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+                codeBuilder.EndSegment("}" + lineSplitChar);
+            }
+
+            string ToTargetMethodName()
+            {
+                if (targetPropertyType is IArrayTypeSymbol arrayTypeSymbol)
+                {
+                    return nameof(Enumerable.ToArray);
+                }
+
+                if ((targetPropertyType as INamedTypeSymbol).ConstructUnboundGenericType()
+                    .SafeEquals(typeof(IQueryable<>)))
+                {
+                    return nameof(Queryable.AsQueryable);
+                }
+
+                return nameof(Enumerable.ToList);
+            }
+        }
+
         bool CanAssign(ITypeSymbol source, ITypeSymbol target, ConvertContext context)
         {
             var conversion = context.Compilation.ClassifyConversion(source, target);
@@ -329,7 +373,6 @@ namespace YS.Knife
                         var subMappingInfo = ConvertMappingInfo.Create(sourcePropType, prop.Value, convertContext.HostClass);
                         var subContext = new ConvertContext(convertContext, subMappingInfo);
                         MappingSubObjectProperty(walkedPaths.Fork(prop.Value), subContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
-
                     }
 
 
