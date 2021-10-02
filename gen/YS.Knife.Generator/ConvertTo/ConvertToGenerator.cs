@@ -249,7 +249,6 @@ namespace YS.Knife
         }
         private void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
         {
-
             var targetPropertyType = convertContext.MappingInfo.TargetType;
             var sourcePropertyType = convertContext.MappingInfo.SourceType;
             var codeBuilder = convertContext.CodeBuilder;
@@ -258,19 +257,15 @@ namespace YS.Knife
             var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
             if (sourcePropertyType.IsValueType)
             {
-
                 codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
-                codeBuilder.BeginSegment();
-                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
-                codeBuilder.EndSegment("}" + lineSplitChar);
             }
             else
             {
                 codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? default({targetPropertyTypeText}): new {targetPropertyTypeText}");
-                codeBuilder.BeginSegment();
-                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
-                codeBuilder.EndSegment("}" + lineSplitChar);
             }
+            codeBuilder.BeginSegment();
+            AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+            codeBuilder.EndSegment("}" + lineSplitChar);
         }
 
         private void MappingCollectionProperty(WalkedPaths walkedPaths, ConvertContext convertContext,
@@ -285,19 +280,19 @@ namespace YS.Knife
             var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
             if (sourceItemType.IsValueType)
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
-                codeBuilder.BeginSegment();
-                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
-                codeBuilder.EndSegment("}" + lineSplitChar);
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => new xxx");
             }
             else
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = new {targetPropertyTypeText}");
-                codeBuilder.BeginSegment();
-                AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
-                codeBuilder.EndSegment("}" + lineSplitChar);
-            }
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => p == null ? default(xx) : new xxx ");
 
+            }
+            codeBuilder.BeginSegment();
+            //AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+            codeBuilder.EndSegment("})."+$"{ToTargetMethodName()}(){lineSplitChar}");
+            
+            
+            
             string ToTargetMethodName()
             {
                 if (targetPropertyType is IArrayTypeSymbol arrayTypeSymbol)
