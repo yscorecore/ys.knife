@@ -24,16 +24,47 @@ namespace YS.Knife.Generator.UnitTest
         [InlineData("ConvertToCases/SubClassToStruct.xml")]
         [InlineData("ConvertToCases/CircleRefrence.xml")]
         [InlineData("ConvertToCases/ListToList.xml")]
+        [InlineData("ConvertToCases/ListToArray.xml")]
+        [InlineData("ConvertToCases/ListToIEnumerable.xml")]
+        [InlineData("ConvertToCases/ListToIQueryable.xml")]
+        [InlineData("ConvertToCases/ListToIList.xml")]
+        [InlineData("ConvertToCases/ListToICollection.xml")]
+
+        [InlineData("ConvertToCases/ArrayToList.xml")]
+        [InlineData("ConvertToCases/ArrayToArray.xml")]
+        [InlineData("ConvertToCases/ArrayToIEnumerable.xml")]
+        [InlineData("ConvertToCases/ArrayToIQueryable.xml")]
+        [InlineData("ConvertToCases/ArrayToIList.xml")]
+        [InlineData("ConvertToCases/ArrayToICollection.xml")]
+
+        [InlineData("ConvertToCases/ArrayClassToListStruct.xml")]
+        [InlineData("ConvertToCases/ArrayClassToArrayStruct.xml")]
+        [InlineData("ConvertToCases/ArrayClassToIEnumerableStruct.xml")]
+        [InlineData("ConvertToCases/ArrayClassToIQueryableStruct.xml")]
+        [InlineData("ConvertToCases/ArrayClassToIListStruct.xml")]
+        [InlineData("ConvertToCases/ArrayClassToICollectionStruct.xml")]
+
+
+        [InlineData("ConvertToCases/ArrayStructToListClass.xml")]
+        [InlineData("ConvertToCases/ArrayStructToArrayClass.xml")]
+        [InlineData("ConvertToCases/ArrayStructToIEnumerableClass.xml")]
+        [InlineData("ConvertToCases/ArrayStructToIQueryableClass.xml")]
+        [InlineData("ConvertToCases/ArrayStructToIListClass.xml")]
+        [InlineData("ConvertToCases/ArrayStructToICollectionClass.xml")]
+
         public void ShouldGenerateConverterClass(string testCaseFileName)
         {
+           
             var assemblies = new[]
             {
                 typeof(Binder).GetTypeInfo().Assembly,
                 typeof(ConvertToAttribute).GetTypeInfo().Assembly,
+                typeof(IQueryable<>).GetTypeInfo().Assembly,
                 Assembly.GetExecutingAssembly()
             };
             base.ShouldGenerateExpectCodeFile(new ConvertToGenerator(), testCaseFileName, assemblies);
         }
     }
 }
+
 

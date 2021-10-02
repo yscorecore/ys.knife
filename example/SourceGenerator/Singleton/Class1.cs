@@ -18,7 +18,7 @@ namespace SourceGenerator.Singleton
     {
         public void Hello()
         {
-            
+
             Console.WriteLine(Class1.Instance.Name);
             Console.WriteLine(Class2<int>.Instance.Name);
         }

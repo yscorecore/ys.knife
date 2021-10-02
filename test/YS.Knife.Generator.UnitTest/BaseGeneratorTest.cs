@@ -44,14 +44,14 @@ namespace YS.Knife.Generator.UnitTest
                 generator);
 
             var outputs = xmlFile.XPathSelectElements("case/output/diagnostic")
-                .Select(prop => (Code: prop.Attribute("code").Value,Message: prop.Value.Trim()));
+                .Select(prop => (Code: prop.Attribute("code").Value, Message: prop.Value.Trim()));
             foreach (var output in outputs)
             {
                 var dig = warningAndErrors.FirstOrDefault(p => p.Id == output.Code);
                 dig.Should().NotBeNull($"missing expected diagnostic, code:{output.Code}");
                 dig.GetMessage().Should().Match(output.Message);
             }
-          
+
         }
 
         private static Compilation CreateCompilation(string[] sources, Assembly[] assemblies)

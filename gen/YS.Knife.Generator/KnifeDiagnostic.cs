@@ -7,7 +7,7 @@ namespace YS.Knife
 {
     static class KnifeDiagnostic
     {
-       
+
         public static class Singleton
         {
             public static Diagnostic AlreadyExistsConstructor(INamedTypeSymbol classType)

@@ -32,7 +32,7 @@ namespace YS.Knife
             {
                 return null;
             }
-           
+
 
             var nameMapper = GetSymbolNameMapper(codeWriter.Compilation, classSymbol);
             if (!nameMapper.Any())
@@ -43,7 +43,7 @@ namespace YS.Knife
                     .Any(p => p.Name == "Microsoft.Extensions.DependencyInjection.Abstractions");
 
             var nullChecked = GetNullCheckValue(classSymbol);
-                
+
 
 
             CsharpCodeBuilder builder = new CsharpCodeBuilder();
@@ -201,7 +201,7 @@ namespace YS.Knife
             {
                 codeBuilder.AppendCodeLines("[Microsoft.Extensions.DependencyInjection.ActivatorUtilitiesConstructor]");
             }
-            
+
             string args = string.Join(", ", nameMapper.Select(p => p.Value.GetCtorMethodArgumentItem()));
 
 

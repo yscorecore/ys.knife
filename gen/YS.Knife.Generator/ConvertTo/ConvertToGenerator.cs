@@ -31,8 +31,6 @@ namespace YS.Knife
             {
                 return null;
             }
-
-
             CsharpCodeBuilder codeBuilder = new CsharpCodeBuilder();
             AppendUsingLines(classSymbol, codeBuilder);
             AppendNamespace(classSymbol, codeBuilder);
@@ -40,17 +38,24 @@ namespace YS.Knife
 
             foreach (var convertToAttr in classSymbol.GetAttributes())
             {
-                if (convertToAttr.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
+                if (!convertToAttr.AttributeClass.SafeEquals(typeof(ConvertToAttribute)))
+                {
+                    continue;
+                }
+                var convertMappingInfo = ConvertMappingInfo.FromAttributeData(convertToAttr);
+                if (ConvertMappingInfo.CanMappingSubObject(convertMappingInfo.SourceType, convertMappingInfo.TargetType))
+                {
+                    AppendConvertToFunctions(new ConvertContext(
+                          classSymbol,
+                          codeWriter.Compilation,
+                          codeBuilder, convertMappingInfo));
+                }
+                else
                 {
 
-                    var context = new ConvertContext(
-                        classSymbol,
-                        codeWriter.Compilation,
-                        codeBuilder,
-                        ConvertMappingInfo.FromAttributeData(convertToAttr));
-
-                    AppendConvertToFunctions(context);
+                    // TOTO report error
                 }
+
             }
 
             codeBuilder.EndAllSegments();
@@ -62,12 +67,12 @@ namespace YS.Knife
 
 
         }
-        void AppendUsingLines(INamedTypeSymbol _, CsharpCodeBuilder codeBuilder)
+        private void AppendUsingLines(INamedTypeSymbol _, CsharpCodeBuilder codeBuilder)
         {
             codeBuilder.AppendCodeLines("using System.Collections.Generic;");
             codeBuilder.AppendCodeLines("using System.Linq;");
         }
-        void AppendNamespace(INamedTypeSymbol classSymbol, CsharpCodeBuilder codeBuilder)
+        private void AppendNamespace(INamedTypeSymbol classSymbol, CsharpCodeBuilder codeBuilder)
         {
             if (!classSymbol.ContainingNamespace.IsGlobalNamespace)
             {
@@ -75,7 +80,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendClassDefinition(INamedTypeSymbol classSymbol, CsharpCodeBuilder codeBuilder)
+        private void AppendClassDefinition(INamedTypeSymbol classSymbol, CsharpCodeBuilder codeBuilder)
         {
             var classSymbols = classSymbol.GetContainerClassChains();
             for (int i = 0; i < classSymbols.Count; i++)
@@ -92,7 +97,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
             }
         }
-        void AppendConvertToFunctions(ConvertContext context)
+        private void AppendConvertToFunctions(ConvertContext context)
         {
             var mappingInfo = context.MappingInfo;
             var codeBuilder = context.CodeBuilder;
@@ -114,7 +119,7 @@ namespace YS.Knife
                 }
                 codeBuilder.AppendCodeLines($"return new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "source", null, ",", context);
+                AppendPropertyAssign("source", null, ",", context);
                 codeBuilder.EndSegment("};");
                 codeBuilder.EndSegment();
             }
@@ -130,7 +135,7 @@ namespace YS.Knife
                 {
                     codeBuilder.AppendCodeLines("if (target == null) return;");
                 }
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "source", "target", ";", context);
+                AppendPropertyAssign("source", "target", ";", context);
                 codeBuilder.EndSegment();
             }
             void AddToMethodForEnumable()
@@ -139,7 +144,7 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "p", null, ",", context);
+                AppendPropertyAssign("p", null, ",", context);
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
@@ -149,18 +154,15 @@ namespace YS.Knife
                 codeBuilder.BeginSegment();
                 codeBuilder.AppendCodeLines($"return source?.Select(p => new {toTypeDisplay}");
                 codeBuilder.BeginSegment();
-                AppendPropertyAssign(new WalkedPaths(mappingInfo.TargetType), "p", null, ",", context);
+                AppendPropertyAssign("p", null, ",", context);
                 codeBuilder.EndSegment("});");
                 codeBuilder.EndSegment();
             }
 
-
-
         }
-
-        bool CanMappingSubObjectProperty(ITypeSymbol sourceType, ITypeSymbol targetType, WalkedPaths walkedPaths)
+        private bool CanMappingSubObjectProperty(ITypeSymbol sourceType, ITypeSymbol targetType, ConvertContext convertContext)
         {
-            if (walkedPaths.HasWalked(targetType))
+            if (convertContext.HasWalked(targetType))
             {
                 return false;
             }
@@ -172,16 +174,16 @@ namespace YS.Knife
                     return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && namedTargetType.HasEmptyCtor();
                 }
             }
-           
+
             return false;
         }
-        private bool CanMappingCollectionProperty(ITypeSymbol sourcePropType, ITypeSymbol targetPropType, ConvertContext convertContext, WalkedPaths walkedPaths)
+        private bool CanMappingCollectionProperty(ITypeSymbol sourcePropType, ITypeSymbol targetPropType, ConvertContext convertContext)
         {
             if (SourceTypeIsEnumerable() && TargetTypeIsSupportedEnumerable())
             {
                 var sourceItemType = GetItemType(sourcePropType);
                 var targetItemType = GetItemType(targetPropType);
-                return CanMappingSubObjectProperty(sourceItemType, targetItemType, walkedPaths);
+                return CanMappingSubObjectProperty(sourceItemType, targetItemType, convertContext);
             }
             return false;
 
@@ -205,7 +207,7 @@ namespace YS.Knife
                         }
                     }
                 }
-               
+
                 return false;
 
             }
@@ -229,13 +231,13 @@ namespace YS.Knife
                             targetUnboundGenericType.SafeEquals(typeof(ICollection<>));
                     }
                 }
-               
+
                 return false;
             }
 
-            
+
         }
-        ITypeSymbol GetItemType(ITypeSymbol typeSymbol)
+        private ITypeSymbol GetItemType(ITypeSymbol typeSymbol)
         {
             if (typeSymbol is IArrayTypeSymbol arrayTypeSymbol)
             {
@@ -247,7 +249,7 @@ namespace YS.Knife
             }
             return null;
         }
-        private void MappingSubObjectProperty(WalkedPaths walkedPaths, ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
+        private void MappingSubObjectProperty(ConvertContext convertContext, string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
         {
             var targetPropertyType = convertContext.MappingInfo.TargetType;
             var sourcePropertyType = convertContext.MappingInfo.SourceType;
@@ -264,11 +266,11 @@ namespace YS.Knife
                 codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? default({targetPropertyTypeText}): new {targetPropertyTypeText}");
             }
             codeBuilder.BeginSegment();
-            AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+            AppendPropertyAssign(sourcePropertyExpression, null, ",", convertContext);
             codeBuilder.EndSegment("}" + lineSplitChar);
         }
 
-        private void MappingCollectionProperty(WalkedPaths walkedPaths, ConvertContext convertContext,
+        private void MappingCollectionProperty(ConvertContext convertContext,
             string sourceRefrenceName, string targetRefrenceName, string propertyName, string lineSplitChar)
         {
             var codeBuilder = convertContext.CodeBuilder;
@@ -290,10 +292,9 @@ namespace YS.Knife
 
             }
             codeBuilder.BeginSegment();
-            var subMappingInfo = ConvertMappingInfo.Create(sourceItemType, targetItemType, convertContext.HostClass);
-            var newConvertContext = new ConvertContext(convertContext, subMappingInfo);
-            AppendPropertyAssign(walkedPaths, "p", null, ",", newConvertContext);
-            codeBuilder.EndSegment("})."+$"{ToTargetMethodName()}(){lineSplitChar}");
+            var newConvertContext = convertContext.Fork(sourceItemType, targetItemType);
+            AppendPropertyAssign("p", null, ",", newConvertContext);
+            codeBuilder.EndSegment("})." + $"{ToTargetMethodName()}(){lineSplitChar}");
             string ToTargetMethodName()
             {
                 if (targetPropertyType is IArrayTypeSymbol arrayTypeSymbol)
@@ -311,12 +312,12 @@ namespace YS.Knife
             }
         }
 
-        bool CanAssign(ITypeSymbol source, ITypeSymbol target, ConvertContext context)
+        private bool CanAssign(ITypeSymbol source, ITypeSymbol target, ConvertContext context)
         {
             var conversion = context.Compilation.ClassifyConversion(source, target);
-            return conversion.IsImplicit || conversion.IsReference || conversion.IsNullable || conversion.IsBoxing;
+            return conversion.IsImplicit  || conversion.IsNullable || conversion.IsBoxing;
         }
-        string FormatRefrence(string refrenceName, string expression)
+        private string FormatRefrence(string refrenceName, string expression)
         {
             if (string.IsNullOrEmpty(refrenceName))
             {
@@ -324,23 +325,23 @@ namespace YS.Knife
             }
             return $"{refrenceName}.{expression}";
         }
-        void AppendPropertyAssign(WalkedPaths walkedPaths, string sourceRefrenceName, string targetRefrenceName, string lineSplitChar, ConvertContext convertContext)
+        private void AppendPropertyAssign(string sourceRefrenceName, string targetRefrenceName, string lineSplitChar, ConvertContext convertContext)
         {
             var mappingInfo = convertContext.MappingInfo;
             var codeBuilder = convertContext.CodeBuilder;
             var targetProps = mappingInfo.TargetType.GetMembers()
                  .OfType<IPropertySymbol>()
                  .Where(p => !p.IsReadOnly && p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer)
-                 .Select(p => new { p.Name, Type = p.Type})
+                 .Select(p => new { p.Name, Type = p.Type })
                  .ToDictionary(p => p.Name, p => p.Type);
             var sourceProps = mappingInfo.SourceType.GetMembers()
                 .OfType<IPropertySymbol>()
                 .Where(p => p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer && !p.IsWriteOnly)
-                .Select(p => new { p.Name, Type = p.Type})
+                .Select(p => new { p.Name, Type = p.Type })
                 .ToDictionary(p => p.Name, p => p.Type);
             foreach (var prop in targetProps)
             {
-                
+
                 if (mappingInfo.IgnoreTargetProperties != null && mappingInfo.IgnoreTargetProperties.Contains(prop.Key))
                 {
                     continue;
@@ -357,30 +358,21 @@ namespace YS.Knife
                         // default 
                         codeBuilder.AppendCodeLines($"{FormatRefrence(targetRefrenceName, prop.Key)} = {FormatRefrence(sourceRefrenceName, prop.Key)}{lineSplitChar}");
                     }
-                    else if (CanMappingCollectionProperty(sourcePropType, prop.Value, convertContext, walkedPaths))
+                    else if (CanMappingCollectionProperty(sourcePropType, prop.Value, convertContext))
                     {
                         // collection
-                        var subMappingInfo = ConvertMappingInfo.Create(sourcePropType, prop.Value, convertContext.HostClass);
-                        var subContext = new ConvertContext(convertContext, subMappingInfo);
-                        MappingCollectionProperty(walkedPaths, subContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
-                        // TODO
+                        var newConvertContext = convertContext.Fork(sourcePropType, prop.Value);
+                        MappingCollectionProperty(newConvertContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
                     }
-                    else if (CanMappingSubObjectProperty(sourcePropType, prop.Value, walkedPaths))
+                    else if (CanMappingSubObjectProperty(sourcePropType, prop.Value, convertContext))
                     {
                         // sub object 
-                        var subMappingInfo = ConvertMappingInfo.Create(sourcePropType, prop.Value, convertContext.HostClass);
-                        var subContext = new ConvertContext(convertContext, subMappingInfo);
-                        MappingSubObjectProperty(walkedPaths.Fork(prop.Value), subContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
+                        var newConvertContext = convertContext.Fork(sourcePropType, prop.Value);
+                        MappingSubObjectProperty(newConvertContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
                     }
-
-
                 }
             }
-
         }
-
-
-
         private class ConvertToSyntaxReceiver : ISyntaxReceiver
         {
             public IList<ClassDeclarationSyntax> CandidateClasses { get; } = new List<ClassDeclarationSyntax>();
@@ -402,39 +394,22 @@ namespace YS.Knife
                 this.Compilation = compilation;
                 this.MappingInfo = convertMappingInfo;
                 this.CodeBuilder = codeBuilder;
+                this.WorkedPaths.Add(convertMappingInfo.TargetType);
             }
-            public ConvertContext(ConvertContext baseConvertContext, ConvertMappingInfo convertMappingInfo)
+            private ConvertContext(ConvertContext baseConvertContext, ConvertMappingInfo convertMappingInfo)
                 : this(baseConvertContext.HostClass, baseConvertContext.Compilation, baseConvertContext.CodeBuilder, convertMappingInfo)
             {
-
+                this.WorkedPaths = new List<ITypeSymbol>(baseConvertContext.WorkedPaths);
+                this.WorkedPaths.Add(convertMappingInfo.TargetType);
             }
             public Compilation Compilation { get; }
-
-
             public ConvertMappingInfo MappingInfo { get; }
-
             public CsharpCodeBuilder CodeBuilder { get; }
-
             public INamedTypeSymbol HostClass { get; }
-
-
-        }
-        private class WalkedPaths
-        {
-            public WalkedPaths(params ITypeSymbol[] paths)
-            {
-                this.Paths.AddRange(paths);
-            }
-            private List<ITypeSymbol> Paths { get; } = new List<ITypeSymbol>();
-
-            public WalkedPaths Fork(ITypeSymbol symbol)
-            {
-                var paths = Paths.Concat(new ITypeSymbol[] { symbol });
-                return new WalkedPaths(paths.ToArray());
-            }
+            public List<ITypeSymbol> WorkedPaths { get; } = new List<ITypeSymbol>();
             public bool HasWalked(ITypeSymbol symbol)
             {
-                foreach (var path in Paths)
+                foreach (var path in WorkedPaths)
                 {
                     if (path.Equals(symbol, SymbolEqualityComparer.Default))
                     {
@@ -443,9 +418,12 @@ namespace YS.Knife
                 }
                 return false;
             }
-
+            public ConvertContext Fork(ITypeSymbol source, ITypeSymbol target)
+            {
+                var newMappingInfo = ConvertMappingInfo.Create(source, target, this.HostClass);
+                return new ConvertContext(this, newMappingInfo);
+            }
         }
-
         private class ConvertMappingInfo
         {
             public ITypeSymbol TargetType { get; private set; }
@@ -524,6 +502,20 @@ namespace YS.Knife
                 {
                     return null;
                 }
+            }
+
+            public static bool CanMappingSubObject(ITypeSymbol sourceType, ITypeSymbol targetType)
+            {
+                if (targetType is INamedTypeSymbol namedTargetType)
+                {
+                    if (sourceType.TypeKind == TypeKind.Class || sourceType.TypeKind == TypeKind.Struct)
+                    {
+                        if (targetType.TypeKind == TypeKind.Struct) return true;
+                        return targetType.TypeKind == TypeKind.Class && !targetType.IsAbstract && namedTargetType.HasEmptyCtor();
+                    }
+                }
+
+                return false;
             }
         }
     }

@@ -34,6 +34,24 @@
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
+      <None Remove="ConvertToCases\ArrayClassToArrayStruct.xml" />
+      <None Remove="ConvertToCases\ArrayClassToICollectionStruct.xml" />
+      <None Remove="ConvertToCases\ArrayClassToIEnumerableStruct.xml" />
+      <None Remove="ConvertToCases\ArrayClassToIListStruct.xml" />
+      <None Remove="ConvertToCases\ArrayClassToIQueryableStruct.xml" />
+      <None Remove="ConvertToCases\ArrayClassToListStruct.xml" />
+      <None Remove="ConvertToCases\ArrayStructToArrayClass.xml" />
+      <None Remove="ConvertToCases\ArrayStructToICollectionClass.xml" />
+      <None Remove="ConvertToCases\ArrayStructToIEnumerableClass.xml" />
+      <None Remove="ConvertToCases\ArrayStructToIListClass.xml" />
+      <None Remove="ConvertToCases\ArrayStructToIQueryableClass.xml" />
+      <None Remove="ConvertToCases\ArrayStructToListClass.xml" />
+      <None Remove="ConvertToCases\ArrayToArray.xml" />
+      <None Remove="ConvertToCases\ArrayToICollection.xml" />
+      <None Remove="ConvertToCases\ArrayToIEnumerable.xml" />
+      <None Remove="ConvertToCases\ArrayToIList.xml" />
+      <None Remove="ConvertToCases\ArrayToIQueryable.xml" />
+      <None Remove="ConvertToCases\ArrayToList.xml" />
       <None Remove="ConvertToCases\CircleRefrence.xml" />
       <None Remove="ConvertToCases\ClassifyConversion.xml" />
       <None Remove="ConvertToCases\ClassToStruct.xml" />
@@ -43,6 +61,11 @@
       <None Remove="ConvertToCases\IgnoreNotExistingTargetProperty.xml" />
       <None Remove="ConvertToCases\IgnoreNullTargetProperty.xml" />
       <None Remove="ConvertToCases\IgnoreTargetProperty.xml" />
+      <None Remove="ConvertToCases\ListToArray.xml" />
+      <None Remove="ConvertToCases\ListToICollection.xml" />
+      <None Remove="ConvertToCases\ListToIEnumerable.xml" />
+      <None Remove="ConvertToCases\ListToIList.xml" />
+      <None Remove="ConvertToCases\ListToIQueryable.xml" />
       <None Remove="ConvertToCases\ListToList.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
@@ -153,6 +176,42 @@
       <Content Include="AutoNotifyCases\NestedType.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="ConvertToCases\ArrayClassToArrayStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayClassToICollectionStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayClassToIEnumerableStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayClassToIListStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayClassToIQueryableStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayClassToListStruct.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToArrayClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToICollectionClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToIEnumerableClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToIListClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToIQueryableClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayStructToListClass.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="ConvertToCases\CircleRefrence.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -165,7 +224,40 @@
       <Content Include="ConvertToCases\ClassifyConversion.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="ConvertToCases\ArrayToArray.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayToICollection.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToICollection.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayToIEnumerable.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayToIList.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayToIQueryable.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToIQueryable.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToIList.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ArrayToList.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="ConvertToCases\ListToList.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToIEnumerable.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\ListToArray.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\SubClassToStruct.xml">
