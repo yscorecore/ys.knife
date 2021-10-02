@@ -276,23 +276,24 @@ namespace YS.Knife
             var sourcePropertyType = convertContext.MappingInfo.SourceType;
             var targetItemType = GetItemType(targetPropertyType);
             var sourceItemType = GetItemType(sourcePropertyType);
+            var targetItemTypeText = targetItemType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+
             var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
             var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
             if (sourceItemType.IsValueType)
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => new xxx");
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => new {targetItemTypeText}");
             }
             else
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => p == null ? default(xx) : new xxx ");
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => p == null ? default({targetItemTypeText}) : new {targetItemTypeText}");
 
             }
             codeBuilder.BeginSegment();
-            //AppendPropertyAssign(walkedPaths, sourcePropertyExpression, null, ",", convertContext);
+            var subMappingInfo = ConvertMappingInfo.Create(sourceItemType, targetItemType, convertContext.HostClass);
+            var newConvertContext = new ConvertContext(convertContext, subMappingInfo);
+            AppendPropertyAssign(walkedPaths, "p", null, ",", newConvertContext);
             codeBuilder.EndSegment("})."+$"{ToTargetMethodName()}(){lineSplitChar}");
-            
-            
-            
             string ToTargetMethodName()
             {
                 if (targetPropertyType is IArrayTypeSymbol arrayTypeSymbol)
@@ -359,7 +360,9 @@ namespace YS.Knife
                     else if (CanMappingCollectionProperty(sourcePropType, prop.Value, convertContext, walkedPaths))
                     {
                         // collection
-
+                        var subMappingInfo = ConvertMappingInfo.Create(sourcePropType, prop.Value, convertContext.HostClass);
+                        var subContext = new ConvertContext(convertContext, subMappingInfo);
+                        MappingCollectionProperty(walkedPaths, subContext, sourceRefrenceName, targetRefrenceName, prop.Key, lineSplitChar);
                         // TODO
                     }
                     else if (CanMappingSubObjectProperty(sourcePropType, prop.Value, walkedPaths))

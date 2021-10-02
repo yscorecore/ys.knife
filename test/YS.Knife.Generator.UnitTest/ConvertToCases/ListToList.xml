@@ -8,8 +8,8 @@ namespace ConsoleApp2
 {
     public class UserInfo
     {
-        //public string Name { get; set; }
-        public AddressInfo[] Addresses {get; set;}
+        public string Name { get; set; }
+        public List<AddressInfo> Addresses {get; set;}
     }
     public struct AddressInfo
     {
@@ -18,7 +18,7 @@ namespace ConsoleApp2
 
     public partial class TUser
     {
-        //public string Name { get; set; }
+        public string Name { get; set; }
         public List<AddressDto> Addresses {get; set;}
     }
      public class AddressDto
@@ -59,9 +59,9 @@ namespace ConsoleApp2
             return new global::ConsoleApp2.UserInfo
             {
                 Name = source.Name,
-                Addresses = source.Addresses == null ? null : source.Addresses.Select(p => p == null ? default(AddressInfo) : new AddressInfo
+                Addresses = source.Addresses == null ? null : source.Addresses.Select(p => p == null ? default(global::ConsoleApp2.AddressInfo) : new global::ConsoleApp2.AddressInfo
                 {
-                    City = p.City
+                    City = p.City,
                 }).ToList(),
             };
         }
@@ -70,9 +70,9 @@ namespace ConsoleApp2
             if (source == null) return;
             if (target == null) return;
             target.Name = source.Name;
-            target.Addresses = source.Addresses == null ? null : source.Addresses.Select(p => p == null ? default(AddressInfo) : new AddressInfo
+            target.Addresses = source.Addresses == null ? null : source.Addresses.Select(p => p == null ? default(global::ConsoleApp2.AddressInfo) : new global::ConsoleApp2.AddressInfo
             {
-                City = p.City
+                City = p.City,
             }).ToList();
         }
         public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
@@ -80,9 +80,9 @@ namespace ConsoleApp2
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
-                Addresses = p.Addresses == null ? null : p.Addresses.Select(p => p == null ? default(AddressInfo) : new AddressInfo
+                Addresses = p.Addresses == null ? null : p.Addresses.Select(p => p == null ? default(global::ConsoleApp2.AddressInfo) : new global::ConsoleApp2.AddressInfo
                 {
-                    City = p.City
+                    City = p.City,
                 }).ToList(),
             });
         }
@@ -91,9 +91,9 @@ namespace ConsoleApp2
             return source?.Select(p => new global::ConsoleApp2.UserInfo
             {
                 Name = p.Name,
-                Addresses = p.Addresses == null ? null : p.Addresses.Select(p => p == null ? default(AddressInfo) : new AddressInfo
+                Addresses = p.Addresses == null ? null : p.Addresses.Select(p => p == null ? default(global::ConsoleApp2.AddressInfo) : new global::ConsoleApp2.AddressInfo
                 {
-                    City = p.City
+                    City = p.City,
                 }).ToList(),
             });
         }
