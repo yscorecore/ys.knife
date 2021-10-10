@@ -34,6 +34,7 @@
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromGenerator.xml" />
       <None Remove="AutoNotifyCases\NotifyPropertyChangedInheritedFromOtherAssembly.xml" />
       <None Remove="AutoNotifyCases\SameNameInMultipleNamespace.xml" />
+      <None Remove="ConvertToCases\AllInOne.xml" />
       <None Remove="ConvertToCases\ArrayClassToArrayStruct.xml" />
       <None Remove="ConvertToCases\ArrayClassToICollectionStruct.xml" />
       <None Remove="ConvertToCases\ArrayClassToIEnumerableStruct.xml" />
@@ -213,6 +214,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\CircleRefrence.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\AllInOne.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="ConvertToCases\CustomerMappings.xml">

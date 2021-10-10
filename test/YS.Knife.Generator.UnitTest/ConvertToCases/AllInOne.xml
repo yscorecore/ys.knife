@@ -1,0 +1,191 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+using System.Collections.Generic;
+using System.Linq;
+namespace SourceGenerator.ConvertTo
+{
+    public class From
+    {
+        public string StrProp { get; set; }
+        public int IntProp { get; set; }
+
+        public int? NullableIntProp { get; set; }
+        public int NullableIntProp2 { get; set; }
+        public OneEnum OneEnumProp { get; set; }
+        public OneEnum? NullableOneEnumProp { get; set; }
+        public OneEnum NullableOneEnumProp2 { get; set; }
+        
+        public OneStruct OneStructProp { get; set; }
+        
+        public OneStruct? NullableOneStructProp { get; set; }
+        
+        public OneStruct NullableOneStructProp2 { get; set; }
+        
+        
+        public string[] ArrayStringToArray { get; set; }
+        public string[] ArrayStringToList { get; set; }
+        public string[] ArrayStringToIList { get; set; }
+        public string[] ArrayStringToICollection { get; set; }
+        public string[] ArrayStringToIEnumerable { get; set; }
+        public string[] ArrayStringToIQueryable { get; set; }
+    }
+
+    public enum OneEnum
+    {
+        Ont,
+    }
+    public struct OneStruct
+    {
+        public string StrProp { get; set; }
+    }
+    public struct OtherStruct
+    {
+        public string StrProp { get; set; }
+        public int IntProp { get; set; }
+    }
+
+
+    public class To
+    {
+        public string StrProp { get; set; }
+        public int IntProp { get; set; }
+        public int? NullableIntProp { get; set; }
+        public int? NullableIntProp2 { get; set; }
+        public OneEnum OneEnumProp { get; set; }
+        public OneEnum? NullableOneEnumProp { get; set; }
+        public OneEnum? NullableOneEnumProp2 { get; set; }
+
+        public OneStruct OneStructProp { get; set; }
+
+        public OneStruct? NullableOneStructProp { get; set; }
+
+        public OneStruct? NullableOneStructProp2 { get; set; }
+
+        public string[] ArrayStringToArray { get; set; }
+
+        public List<string> ArrayStringToList { get; set; }
+        public IList<string> ArrayStringToIList { get; set; }
+
+        public ICollection<string> ArrayStringToICollection { get; set; }
+
+        public IEnumerable<string> ArrayStringToIEnumerable { get; set; }
+
+        public IQueryable<string> ArrayStringToIQueryable { get; set; }
+    }
+
+    [YS.Knife.ConvertTo(typeof(From),typeof(To))]
+    public partial class Convertors
+    { 
+    
+    }
+}
+            
+            ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Convertors.g.cs">
+            <![CDATA[
+using System.Collections.Generic;
+using System.Linq;
+namespace SourceGenerator.ConvertTo
+{
+    static partial class Convertors
+    {
+        public static global::SourceGenerator.ConvertTo.To ToTo(this global::SourceGenerator.ConvertTo.From source)
+        {
+            if (source == null) return default;
+            return new global::SourceGenerator.ConvertTo.To
+            {
+                StrProp = source.StrProp,
+                IntProp = source.IntProp,
+                NullableIntProp = source.NullableIntProp,
+                NullableIntProp2 = source.NullableIntProp2,
+                OneEnumProp = source.OneEnumProp,
+                NullableOneEnumProp = source.NullableOneEnumProp,
+                NullableOneEnumProp2 = source.NullableOneEnumProp2,
+                OneStructProp = source.OneStructProp,
+                NullableOneStructProp = source.NullableOneStructProp,
+                NullableOneStructProp2 = source.NullableOneStructProp2,
+                ArrayStringToArray = source.ArrayStringToArray,
+                ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToList(),
+                ArrayStringToIList = source.ArrayStringToIList,
+                ArrayStringToICollection = source.ArrayStringToICollection,
+                ArrayStringToIEnumerable = source.ArrayStringToIEnumerable,
+                ArrayStringToIQueryable = source.ArrayStringToIQueryable == null ? null : source.ArrayStringToIQueryable.AsQueryable(),
+            };
+        }
+        public static void ToTo(this global::SourceGenerator.ConvertTo.From source, global::SourceGenerator.ConvertTo.To target)
+        {
+            if (source == null) return;
+            if (target == null) return;
+            target.StrProp = source.StrProp;
+            target.IntProp = source.IntProp;
+            target.NullableIntProp = source.NullableIntProp;
+            target.NullableIntProp2 = source.NullableIntProp2;
+            target.OneEnumProp = source.OneEnumProp;
+            target.NullableOneEnumProp = source.NullableOneEnumProp;
+            target.NullableOneEnumProp2 = source.NullableOneEnumProp2;
+            target.OneStructProp = source.OneStructProp;
+            target.NullableOneStructProp = source.NullableOneStructProp;
+            target.NullableOneStructProp2 = source.NullableOneStructProp2;
+            target.ArrayStringToArray = source.ArrayStringToArray;
+            target.ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToList();
+            target.ArrayStringToIList = source.ArrayStringToIList;
+            target.ArrayStringToICollection = source.ArrayStringToICollection;
+            target.ArrayStringToIEnumerable = source.ArrayStringToIEnumerable;
+            target.ArrayStringToIQueryable = source.ArrayStringToIQueryable == null ? null : source.ArrayStringToIQueryable.AsQueryable();
+        }
+        public static IEnumerable<global::SourceGenerator.ConvertTo.To> ToTo(this IEnumerable<global::SourceGenerator.ConvertTo.From> source)
+        {
+            return source?.Select(p => new global::SourceGenerator.ConvertTo.To
+            {
+                StrProp = p.StrProp,
+                IntProp = p.IntProp,
+                NullableIntProp = p.NullableIntProp,
+                NullableIntProp2 = p.NullableIntProp2,
+                OneEnumProp = p.OneEnumProp,
+                NullableOneEnumProp = p.NullableOneEnumProp,
+                NullableOneEnumProp2 = p.NullableOneEnumProp2,
+                OneStructProp = p.OneStructProp,
+                NullableOneStructProp = p.NullableOneStructProp,
+                NullableOneStructProp2 = p.NullableOneStructProp2,
+                ArrayStringToArray = p.ArrayStringToArray,
+                ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToList(),
+                ArrayStringToIList = p.ArrayStringToIList,
+                ArrayStringToICollection = p.ArrayStringToICollection,
+                ArrayStringToIEnumerable = p.ArrayStringToIEnumerable,
+                ArrayStringToIQueryable = p.ArrayStringToIQueryable == null ? null : p.ArrayStringToIQueryable.AsQueryable(),
+            });
+        }
+        public static IQueryable<global::SourceGenerator.ConvertTo.To> ToTo(this IQueryable<global::SourceGenerator.ConvertTo.From> source)
+        {
+            return source?.Select(p => new global::SourceGenerator.ConvertTo.To
+            {
+                StrProp = p.StrProp,
+                IntProp = p.IntProp,
+                NullableIntProp = p.NullableIntProp,
+                NullableIntProp2 = p.NullableIntProp2,
+                OneEnumProp = p.OneEnumProp,
+                NullableOneEnumProp = p.NullableOneEnumProp,
+                NullableOneEnumProp2 = p.NullableOneEnumProp2,
+                OneStructProp = p.OneStructProp,
+                NullableOneStructProp = p.NullableOneStructProp,
+                NullableOneStructProp2 = p.NullableOneStructProp2,
+                ArrayStringToArray = p.ArrayStringToArray,
+                ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToList(),
+                ArrayStringToIList = p.ArrayStringToIList,
+                ArrayStringToICollection = p.ArrayStringToICollection,
+                ArrayStringToIEnumerable = p.ArrayStringToIEnumerable,
+                ArrayStringToIQueryable = p.ArrayStringToIQueryable == null ? null : p.ArrayStringToIQueryable.AsQueryable(),
+            });
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

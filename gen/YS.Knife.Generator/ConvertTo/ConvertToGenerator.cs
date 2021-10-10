@@ -183,7 +183,7 @@ namespace YS.Knife
             {
                 var sourceItemType = GetItemType(sourcePropType);
                 var targetItemType = GetItemType(targetPropType);
-                return CanMappingSubObjectProperty(sourceItemType, targetItemType, convertContext);
+                return CanAssign(sourceItemType, targetItemType, convertContext) || CanMappingSubObjectProperty(sourceItemType, targetItemType, convertContext);
             }
             return false;
 
@@ -282,19 +282,34 @@ namespace YS.Knife
 
             var targetPropertyExpression = FormatRefrence(targetRefrenceName, propertyName);
             var sourcePropertyExpression = FormatRefrence(sourceRefrenceName, propertyName);
-            if (sourceItemType.IsValueType)
+
+            if (sourceItemType.SafeEquals(targetItemType))
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => new {targetItemTypeText}");
+
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.{ToTargetMethodName()}(){lineSplitChar}");
+            }
+            else if (CanAssign(sourceItemType, targetItemType, convertContext))
+            {
+                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Cast<{targetItemTypeText}>().{ToTargetMethodName()}(){lineSplitChar}");
             }
             else
             {
-                codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => p == null ? default({targetItemTypeText}) : new {targetItemTypeText}");
+                if (sourceItemType.IsValueType)
+                {
+                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => new {targetItemTypeText}");
+                }
+                else
+                {
+                    codeBuilder.AppendCodeLines($"{targetPropertyExpression} = {sourcePropertyExpression} == null ? null : {sourcePropertyExpression}.Select(p => p == null ? default({targetItemTypeText}) : new {targetItemTypeText}");
 
+                }
+                codeBuilder.BeginSegment();
+                var newConvertContext = convertContext.Fork(sourceItemType, targetItemType);
+                AppendPropertyAssign("p", null, ",", newConvertContext);
+                codeBuilder.EndSegment("})." + $"{ToTargetMethodName()}(){lineSplitChar}");
+                
             }
-            codeBuilder.BeginSegment();
-            var newConvertContext = convertContext.Fork(sourceItemType, targetItemType);
-            AppendPropertyAssign("p", null, ",", newConvertContext);
-            codeBuilder.EndSegment("})." + $"{ToTargetMethodName()}(){lineSplitChar}");
+
             string ToTargetMethodName()
             {
                 if (targetPropertyType is IArrayTypeSymbol arrayTypeSymbol)
@@ -310,12 +325,13 @@ namespace YS.Knife
 
                 return nameof(Enumerable.ToList);
             }
+
         }
 
         private bool CanAssign(ITypeSymbol source, ITypeSymbol target, ConvertContext context)
         {
             var conversion = context.Compilation.ClassifyConversion(source, target);
-            return conversion.IsImplicit  || conversion.IsNullable || conversion.IsBoxing;
+            return conversion.IsImplicit || conversion.IsNullable || conversion.IsBoxing;
         }
         private string FormatRefrence(string refrenceName, string expression)
         {

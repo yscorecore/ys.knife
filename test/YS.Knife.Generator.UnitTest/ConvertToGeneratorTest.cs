@@ -52,6 +52,8 @@ namespace YS.Knife.Generator.UnitTest
         [InlineData("ConvertToCases/ArrayStructToIListClass.xml")]
         [InlineData("ConvertToCases/ArrayStructToICollectionClass.xml")]
 
+        [InlineData("ConvertToCases/AllInOne.xml")]
+
         public void ShouldGenerateConverterClass(string testCaseFileName)
         {
            
@@ -65,6 +67,7 @@ namespace YS.Knife.Generator.UnitTest
             base.ShouldGenerateExpectCodeFile(new ConvertToGenerator(), testCaseFileName, assemblies);
         }
     }
+   
 }
 
 
