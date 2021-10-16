@@ -56,7 +56,7 @@ namespace YS.Knife.Generator.UnitTest
 
         public void ShouldGenerateConverterClass(string testCaseFileName)
         {
-           
+
             var assemblies = new[]
             {
                 typeof(Binder).GetTypeInfo().Assembly,
@@ -67,7 +67,7 @@ namespace YS.Knife.Generator.UnitTest
             base.ShouldGenerateExpectCodeFile(new ConvertToGenerator(), testCaseFileName, assemblies);
         }
     }
-   
+
 }
 
 

@@ -12,7 +12,7 @@ namespace YS.Knife.Utils
         {
             var student = new Student { Name = "zs", Secret = "secret", Age = 18, Money = 100 };
             var text = Json.Serialize(student);
-            text.Should().Be("{\"name\":\"zs\",\"secret\":\"********\",\"age\":18,\"money\":\"******\"}");
+            text.Should().Be("{\"name\":\"zs\",\"secret\":\"********\",\"age\":18,\"money\":0}");
         }
         [Fact]
         public void ShouldReadMaskSecretProperty()
@@ -26,17 +26,18 @@ namespace YS.Knife.Utils
         [Fact]
         public void ShouldReadOriginPropertyWhenProvided()
         {
-            string jsonText = "{\"Money\":123}";
+            string jsonText = "{\"money\":123}";
             var newStudent = Json.DeSerialize<Student>(jsonText);
             newStudent.Should().BeEquivalentTo(new Student { Money = 123 });
         }
+
         public class Student
         {
             public string Name { get; set; }
-            [JsonMask(8)]
+            [JsonMask("********")]
             public string Secret { get; set; }
             public int Age { get; set; }
-            [JsonMask]
+            [JsonMask(0)]
             public double Money { get; set; }
         }
     }

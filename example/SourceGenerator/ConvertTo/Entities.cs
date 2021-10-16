@@ -76,9 +76,9 @@ namespace SourceGenerator.ConvertTo
         public IQueryable<string> ArrayStringToIQueryable { get; set; }
     }
 
-    [YS.Knife.ConvertTo(typeof(From),typeof(To))]
+    [YS.Knife.ConvertTo(typeof(From), typeof(To))]
     public partial class Converts
     {
-       
+
     }
 }

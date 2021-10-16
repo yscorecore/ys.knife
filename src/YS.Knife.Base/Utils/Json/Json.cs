@@ -50,6 +50,10 @@ namespace YS.Knife
         {
             File.WriteAllText(filePath, obj.Dump(withIndented));
         }
+        public static void DumpToConsole(this object obj, bool withIndented = true)
+        {
+            Console.WriteLine(obj.Dump(withIndented));
+        }
 
     }
 }

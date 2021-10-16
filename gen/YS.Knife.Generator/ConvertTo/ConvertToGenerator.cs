@@ -307,7 +307,7 @@ namespace YS.Knife
                 var newConvertContext = convertContext.Fork(sourceItemType, targetItemType);
                 AppendPropertyAssign("p", null, ",", newConvertContext);
                 codeBuilder.EndSegment("})." + $"{ToTargetMethodName()}(){lineSplitChar}");
-                
+
             }
 
             string ToTargetMethodName()
