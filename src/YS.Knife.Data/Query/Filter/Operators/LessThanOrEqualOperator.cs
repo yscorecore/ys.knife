@@ -8,6 +8,8 @@ namespace YS.Knife.Data.Query.Operators
 {
     class LessThanOrEqualOperator : ComparableOperator
     {
+        public static LessThanOrEqualOperator Default = new LessThanOrEqualOperator();
+
         public override Operator Operator => Operator.LessThanOrEqual;
 
         protected override Func<Expression, Expression, BinaryExpression> CompareFunc => Expression.LessThanOrEqual;

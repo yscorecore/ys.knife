@@ -12,11 +12,10 @@ namespace YS.Knife.Data.Query.Operators
 {
     class BetweenOperator : IFilterOperator
     {
-        static IFilterOperator LeftOperator = new GreaterThanOrEqualOperator();
-        static IFilterOperator RightOperator = new LessThanOrEqualOperator();
+      
         public virtual Operator Operator { get => Operator.Between; }
 
-        public  LambdaExpression CompareValue(ExpressionValue left, ExpressionValue right)
+        public LambdaExpression CompareValue(ExpressionValue left, ExpressionValue right)
         {
 
             if (!right.IsConst)
@@ -78,12 +77,14 @@ namespace YS.Knife.Data.Query.Operators
                 var parameter = Expression.Parameter(left.SourceType);
                 var firstBody = lambdaList.First().ReplaceFirstParam(parameter);
                 var secondBody = lambdaList.Last().ReplaceFirstParam(parameter);
-                var body = Expression.AndAlso(firstBody, secondBody);
+                var body = CombinFunc(firstBody, secondBody);
                 return Expression.Lambda(body, parameter);
             }
 
         }
 
-     
+        protected virtual IFilterOperator LeftOperator { get => GreaterThanOrEqualOperator.Default; } 
+        protected virtual IFilterOperator RightOperator { get => LessThanOrEqualOperator.Default; }
+        protected virtual Func<Expression, Expression, BinaryExpression> CombinFunc { get => Expression.AndAlso; }
     }
 }
