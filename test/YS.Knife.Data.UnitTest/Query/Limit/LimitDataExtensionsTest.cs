@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using FluentAssertions;
 using Xunit;
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Data.Query
 {
 
     public class LimitDataExtensionsTest

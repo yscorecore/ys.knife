@@ -56,6 +56,10 @@ namespace YS.Knife.Data.Query
                 return new FilterInfo() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() { this, other } };
             }
         }
+        public FilterInfo AndAlso(string fieldPaths, Operator filterOperator, object value)
+        {
+            return this.AndAlso(FilterInfo.CreateItem(fieldPaths, filterOperator, value));
+        }
         public FilterInfo OrElse(FilterInfo other)
         {
             if (other == null)
@@ -80,6 +84,11 @@ namespace YS.Knife.Data.Query
             {
                 return new FilterInfo() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() { this, other } };
             }
+        }
+
+        public FilterInfo OrElse(string fieldPaths, Operator filterOperator, object value)
+        {
+            return this.OrElse(FilterInfo.CreateItem(fieldPaths, filterOperator, value));
         }
         public override string ToString()
         {
@@ -129,6 +138,37 @@ namespace YS.Knife.Data.Query
         public static FilterInfo CreateAnd(params FilterInfo[] items)
         {
             return new FilterInfo { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.AndItems };
+        }
+
+      
+        public FilterInfo Not()
+        {
+            if (this.OpType == CombinSymbol.SingleItem)
+            {
+                this.Operator = ~(this).Operator;
+                return this;
+            }
+            else if (this.OpType == CombinSymbol.AndItems)
+            {
+                // AndCondition current = this as AndCondition;
+                FilterInfo oc = new FilterInfo() { OpType = CombinSymbol.OrItems, Items = new List<FilterInfo>() };
+                foreach (var v in this.Items)
+                {
+                    oc.Items.Add(v.Not());
+                }
+
+                return oc;
+            }
+            else
+            {
+                FilterInfo oc = new FilterInfo() { OpType = CombinSymbol.AndItems, Items = new List<FilterInfo>() };
+                foreach (var v in this.Items)
+                {
+                    oc.Items.Add(v.Not());
+                }
+
+                return oc;
+            }
         }
 
     }

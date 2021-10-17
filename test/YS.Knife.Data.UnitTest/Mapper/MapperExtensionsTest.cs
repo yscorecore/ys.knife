@@ -3,7 +3,7 @@ using System.Linq;
 using FluentAssertions;
 using Xunit;
 
-namespace YS.Knife.Data.UnitTest.Mapper
+namespace YS.Knife.Data.Mapper
 {
 
     public class MapperExtensionsTest

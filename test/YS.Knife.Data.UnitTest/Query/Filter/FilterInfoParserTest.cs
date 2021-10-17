@@ -1,12 +1,11 @@
 ﻿using System;
 using FluentAssertions;
 using Xunit;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter
+namespace YS.Knife.Data.Query
 {
 
-    public class FilterInfo2ParserTest
+    public class FilterInfoParserTest
     {
         private Func<string, FilterInfo> Parse => (text) => FilterInfo.Parse(text);
         [Theory]

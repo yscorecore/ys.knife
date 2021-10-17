@@ -5,7 +5,7 @@ using FluentAssertions;
 using Xunit;
 using YS.Knife.Data.Mappers;
 
-namespace YS.Knife.Data.UnitTest.Mapper
+namespace YS.Knife.Data.Mapper
 {
 
     public class ObjectMapperTest

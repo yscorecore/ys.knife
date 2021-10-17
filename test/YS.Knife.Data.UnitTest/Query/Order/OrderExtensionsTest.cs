@@ -6,9 +6,8 @@ using System.Linq.Expressions;
 using FluentAssertions;
 using Xunit;
 using YS.Knife.Data.Mappers;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Data.Query
 {
 
     public class OrderExtensionsTest

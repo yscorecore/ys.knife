@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using YS.Knife;
 using YS.Knife.Data;
-using YS.Knife.Data.Filter.Operators;
+using YS.Knife.Data.Query.Operators;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Expressions;

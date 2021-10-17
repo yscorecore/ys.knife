@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
-using YS.Knife.Data.Filter;
+using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Expressions;
 
 namespace YS.Knife.Data.Query.Functions

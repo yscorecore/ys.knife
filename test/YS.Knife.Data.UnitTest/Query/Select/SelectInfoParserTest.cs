@@ -1,9 +1,8 @@
 ﻿using System;
 using FluentAssertions;
 using Xunit;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Select
+namespace YS.Knife.Data.Query
 {
 
     public class SelectInfoParserTest

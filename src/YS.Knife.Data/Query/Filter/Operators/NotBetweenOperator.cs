@@ -1,48 +1,21 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using YS.Knife.Data.Query.Operators;
 using YS.Knife.Data.Query.Expressions;
+using YS.Knife.Data.Query.Operators;
 
 namespace YS.Knife.Data.Query.Operators
 {
-    class BetweenOperator : IFilterOperator
+    class NotBetweenOperator : BetweenOperator
     {
-        static IFilterOperator LeftOperator = new GreaterThanOrEqualOperator();
-        static IFilterOperator RightOperator = new LessThanOrEqualOperator();
-        public virtual Operator Operator { get => Operator.Between; }
+        static IFilterOperator LeftOperator = new LessThanOperator();
+        static IFilterOperator RightOperator = new GreaterThanOperator();
+        public override Operator Operator { get => Operator.NotBetween; }
 
-        public  LambdaExpression CompareValue(ExpressionValue left, ExpressionValue right)
-        {
-
-            if (!right.IsConst)
-            {
-                // TODO ..
-                // throw 
-            }
-
-            if (right.ValueInfo.ConstantValue is IList list)
-            {
-                if (list.Count != 2)
-                {
-                    // TODO ..
-                    // throw between only support 2 value
-                }
-                return CompareValue(left, list[0], list[1]);
-            }
-            else
-            {
-                // TODO ..
-                // throw
-            }
-
-            throw new NotImplementedException();
-        }
-        protected virtual LambdaExpression CompareValue(ExpressionValue left, object minValue, object maxValue)
+        protected override LambdaExpression CompareValue(ExpressionValue left, object minValue, object maxValue)
         {
             List<LambdaExpression> lambdaList = new List<LambdaExpression>(2);
             if (minValue != null)
@@ -78,12 +51,10 @@ namespace YS.Knife.Data.Query.Operators
                 var parameter = Expression.Parameter(left.SourceType);
                 var firstBody = lambdaList.First().ReplaceFirstParam(parameter);
                 var secondBody = lambdaList.Last().ReplaceFirstParam(parameter);
-                var body = Expression.AndAlso(firstBody, secondBody);
+                var body = Expression.OrElse(firstBody, secondBody);
                 return Expression.Lambda(body, parameter);
             }
 
         }
-
-     
     }
 }

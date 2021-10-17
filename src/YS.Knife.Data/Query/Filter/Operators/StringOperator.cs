@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter.Operators
+namespace YS.Knife.Data.Query.Operators
 {
     abstract class StringOperator : SampleTypeOperator
     {

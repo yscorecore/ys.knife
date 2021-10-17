@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using YS.Knife.Data.Filter;
+using YS.Knife.Data.Query;
 using YS.Knife.Data.Mappers;
 
 namespace YS.Knife.Data.Query.Expressions

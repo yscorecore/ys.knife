@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using FluentAssertions;
 using Xunit;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Select
+namespace YS.Knife.Data.Query
 {
 
     public class SelectInfoTest

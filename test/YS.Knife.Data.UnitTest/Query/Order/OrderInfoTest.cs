@@ -1,9 +1,8 @@
 ﻿using System.ComponentModel;
 using FluentAssertions;
 using Xunit;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.UnitTest
+namespace YS.Knife.Data.Query
 {
 
     public class OrderInfoTest

@@ -8,11 +8,11 @@ using FluentAssertions;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Xunit;
-using YS.Knife.Data.Filter;
+using YS.Knife.Data.Query;
 using YS.Knife.Data.Mappers;
 using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter
+namespace YS.Knife.Data.Query
 {
 
     public class FilterInfoExpressionBuilderTest

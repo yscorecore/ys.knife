@@ -6,7 +6,7 @@ using System.Reflection;
 using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Expressions;
 
-namespace YS.Knife.Data.Filter.Operators
+namespace YS.Knife.Data.Query.Operators
 {
     // user can not extend new operator, so make filter operator internal
     internal interface IFilterOperator

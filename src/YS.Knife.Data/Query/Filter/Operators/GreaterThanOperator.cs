@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Text;
-using YS.Knife.Data.Query;
 
-namespace YS.Knife.Data.Filter.Operators
+namespace YS.Knife.Data.Query.Operators
 {
     class GreaterThanOperator : ComparableOperator
     {
