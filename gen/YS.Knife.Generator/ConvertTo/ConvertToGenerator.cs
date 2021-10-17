@@ -162,12 +162,17 @@ namespace YS.Knife
         }
         private bool CanMappingSubObjectProperty(ITypeSymbol sourceType, ITypeSymbol targetType, ConvertContext convertContext)
         {
+            if (sourceType.IsPrimitive() || targetType.IsPrimitive())
+            {
+                return false;
+            }
             if (convertContext.HasWalked(targetType))
             {
                 return false;
             }
             if (targetType is INamedTypeSymbol namedTargetType)
             {
+               
                 if (sourceType.TypeKind == TypeKind.Class || sourceType.TypeKind == TypeKind.Struct)
                 {
                     if (targetType.TypeKind == TypeKind.Struct) return true;
@@ -331,7 +336,7 @@ namespace YS.Knife
         private bool CanAssign(ITypeSymbol source, ITypeSymbol target, ConvertContext context)
         {
             var conversion = context.Compilation.ClassifyConversion(source, target);
-            return conversion.IsImplicit || conversion.IsNullable || conversion.IsBoxing;
+            return conversion.IsImplicit || conversion.IsBoxing;
         }
         private string FormatRefrence(string refrenceName, string expression)
         {

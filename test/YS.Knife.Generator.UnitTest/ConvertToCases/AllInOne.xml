@@ -17,14 +17,20 @@ namespace SourceGenerator.ConvertTo
         public OneEnum OneEnumProp { get; set; }
         public OneEnum? NullableOneEnumProp { get; set; }
         public OneEnum NullableOneEnumProp2 { get; set; }
-        
+
         public OneStruct OneStructProp { get; set; }
-        
+
         public OneStruct? NullableOneStructProp { get; set; }
-        
+
         public OneStruct NullableOneStructProp2 { get; set; }
-        
-        
+
+        public OneClass OneClassProp { get; set; }
+        public OneClass OneClassProp2 { get; set; }
+
+        public IEnumerable<OneClass> ClassList { get; set; }
+
+        public IEnumerable<OneClass> ClassList2 { get; set; }
+
         public string[] ArrayStringToArray { get; set; }
         public string[] ArrayStringToList { get; set; }
         public string[] ArrayStringToIList { get; set; }
@@ -35,9 +41,13 @@ namespace SourceGenerator.ConvertTo
 
     public enum OneEnum
     {
-        Ont,
+        One,
     }
     public struct OneStruct
+    {
+        public string StrProp { get; set; }
+    }
+    public struct OneClass
     {
         public string StrProp { get; set; }
     }
@@ -46,7 +56,11 @@ namespace SourceGenerator.ConvertTo
         public string StrProp { get; set; }
         public int IntProp { get; set; }
     }
-
+    public struct OtherClass
+    {
+        public string StrProp { get; set; }
+        public int IntProp { get; set; }
+    }
 
     public class To
     {
@@ -64,6 +78,13 @@ namespace SourceGenerator.ConvertTo
 
         public OneStruct? NullableOneStructProp2 { get; set; }
 
+        public OneClass OneClassProp { get; set; }
+
+        public OtherClass OneClassProp2 { get; set; }
+
+        public List<OneClass> ClassList { get; set; }
+        public List<OtherClass> ClassList2 { get; set; }
+
         public string[] ArrayStringToArray { get; set; }
 
         public List<string> ArrayStringToList { get; set; }
@@ -77,6 +98,7 @@ namespace SourceGenerator.ConvertTo
     }
 
     [YS.Knife.ConvertTo(typeof(From),typeof(To))]
+    [YS.Knife.ConvertTo(typeof(To),typeof(From))]
     public partial class Convertors
     { 
     
@@ -110,6 +132,16 @@ namespace SourceGenerator.ConvertTo
                 OneStructProp = source.OneStructProp,
                 NullableOneStructProp = source.NullableOneStructProp,
                 NullableOneStructProp2 = source.NullableOneStructProp2,
+                OneClassProp = source.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = source.OneClassProp2.StrProp,
+                },
+                ClassList = source.ClassList == null ? null : source.ClassList.ToList(),
+                ClassList2 = source.ClassList2 == null ? null : source.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
                 ArrayStringToArray = source.ArrayStringToArray,
                 ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToList(),
                 ArrayStringToIList = source.ArrayStringToIList,
@@ -132,6 +164,16 @@ namespace SourceGenerator.ConvertTo
             target.OneStructProp = source.OneStructProp;
             target.NullableOneStructProp = source.NullableOneStructProp;
             target.NullableOneStructProp2 = source.NullableOneStructProp2;
+            target.OneClassProp = source.OneClassProp;
+            target.OneClassProp2 = new global::SourceGenerator.ConvertTo.OtherClass
+            {
+                StrProp = source.OneClassProp2.StrProp,
+            };
+            target.ClassList = source.ClassList == null ? null : source.ClassList.ToList();
+            target.ClassList2 = source.ClassList2 == null ? null : source.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OtherClass
+            {
+                StrProp = p.StrProp,
+            }).ToList();
             target.ArrayStringToArray = source.ArrayStringToArray;
             target.ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToList();
             target.ArrayStringToIList = source.ArrayStringToIList;
@@ -153,6 +195,16 @@ namespace SourceGenerator.ConvertTo
                 OneStructProp = p.OneStructProp,
                 NullableOneStructProp = p.NullableOneStructProp,
                 NullableOneStructProp2 = p.NullableOneStructProp2,
+                OneClassProp = p.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = p.OneClassProp2.StrProp,
+                },
+                ClassList = p.ClassList == null ? null : p.ClassList.ToList(),
+                ClassList2 = p.ClassList2 == null ? null : p.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
                 ArrayStringToArray = p.ArrayStringToArray,
                 ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToList(),
                 ArrayStringToIList = p.ArrayStringToIList,
@@ -175,12 +227,150 @@ namespace SourceGenerator.ConvertTo
                 OneStructProp = p.OneStructProp,
                 NullableOneStructProp = p.NullableOneStructProp,
                 NullableOneStructProp2 = p.NullableOneStructProp2,
+                OneClassProp = p.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = p.OneClassProp2.StrProp,
+                },
+                ClassList = p.ClassList == null ? null : p.ClassList.ToList(),
+                ClassList2 = p.ClassList2 == null ? null : p.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OtherClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
                 ArrayStringToArray = p.ArrayStringToArray,
                 ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToList(),
                 ArrayStringToIList = p.ArrayStringToIList,
                 ArrayStringToICollection = p.ArrayStringToICollection,
                 ArrayStringToIEnumerable = p.ArrayStringToIEnumerable,
                 ArrayStringToIQueryable = p.ArrayStringToIQueryable == null ? null : p.ArrayStringToIQueryable.AsQueryable(),
+            });
+        }
+        public static global::SourceGenerator.ConvertTo.From ToFrom(this global::SourceGenerator.ConvertTo.To source)
+        {
+            if (source == null) return default;
+            return new global::SourceGenerator.ConvertTo.From
+            {
+                StrProp = source.StrProp,
+                IntProp = source.IntProp,
+                NullableIntProp = source.NullableIntProp,
+                OneEnumProp = source.OneEnumProp,
+                NullableOneEnumProp = source.NullableOneEnumProp,
+                OneStructProp = source.OneStructProp,
+                NullableOneStructProp = source.NullableOneStructProp,
+                NullableOneStructProp2 = new global::SourceGenerator.ConvertTo.OneStruct
+                {
+                },
+                OneClassProp = source.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = source.OneClassProp2.StrProp,
+                },
+                ClassList = source.ClassList,
+                ClassList2 = source.ClassList2 == null ? null : source.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
+                ArrayStringToArray = source.ArrayStringToArray,
+                ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToArray(),
+                ArrayStringToIList = source.ArrayStringToIList == null ? null : source.ArrayStringToIList.ToArray(),
+                ArrayStringToICollection = source.ArrayStringToICollection == null ? null : source.ArrayStringToICollection.ToArray(),
+                ArrayStringToIEnumerable = source.ArrayStringToIEnumerable == null ? null : source.ArrayStringToIEnumerable.ToArray(),
+                ArrayStringToIQueryable = source.ArrayStringToIQueryable == null ? null : source.ArrayStringToIQueryable.ToArray(),
+            };
+        }
+        public static void ToFrom(this global::SourceGenerator.ConvertTo.To source, global::SourceGenerator.ConvertTo.From target)
+        {
+            if (source == null) return;
+            if (target == null) return;
+            target.StrProp = source.StrProp;
+            target.IntProp = source.IntProp;
+            target.NullableIntProp = source.NullableIntProp;
+            target.OneEnumProp = source.OneEnumProp;
+            target.NullableOneEnumProp = source.NullableOneEnumProp;
+            target.OneStructProp = source.OneStructProp;
+            target.NullableOneStructProp = source.NullableOneStructProp;
+            target.NullableOneStructProp2 = new global::SourceGenerator.ConvertTo.OneStruct
+            {
+            };
+            target.OneClassProp = source.OneClassProp;
+            target.OneClassProp2 = new global::SourceGenerator.ConvertTo.OneClass
+            {
+                StrProp = source.OneClassProp2.StrProp,
+            };
+            target.ClassList = source.ClassList;
+            target.ClassList2 = source.ClassList2 == null ? null : source.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OneClass
+            {
+                StrProp = p.StrProp,
+            }).ToList();
+            target.ArrayStringToArray = source.ArrayStringToArray;
+            target.ArrayStringToList = source.ArrayStringToList == null ? null : source.ArrayStringToList.ToArray();
+            target.ArrayStringToIList = source.ArrayStringToIList == null ? null : source.ArrayStringToIList.ToArray();
+            target.ArrayStringToICollection = source.ArrayStringToICollection == null ? null : source.ArrayStringToICollection.ToArray();
+            target.ArrayStringToIEnumerable = source.ArrayStringToIEnumerable == null ? null : source.ArrayStringToIEnumerable.ToArray();
+            target.ArrayStringToIQueryable = source.ArrayStringToIQueryable == null ? null : source.ArrayStringToIQueryable.ToArray();
+        }
+        public static IEnumerable<global::SourceGenerator.ConvertTo.From> ToFrom(this IEnumerable<global::SourceGenerator.ConvertTo.To> source)
+        {
+            return source?.Select(p => new global::SourceGenerator.ConvertTo.From
+            {
+                StrProp = p.StrProp,
+                IntProp = p.IntProp,
+                NullableIntProp = p.NullableIntProp,
+                OneEnumProp = p.OneEnumProp,
+                NullableOneEnumProp = p.NullableOneEnumProp,
+                OneStructProp = p.OneStructProp,
+                NullableOneStructProp = p.NullableOneStructProp,
+                NullableOneStructProp2 = new global::SourceGenerator.ConvertTo.OneStruct
+                {
+                },
+                OneClassProp = p.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = p.OneClassProp2.StrProp,
+                },
+                ClassList = p.ClassList,
+                ClassList2 = p.ClassList2 == null ? null : p.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
+                ArrayStringToArray = p.ArrayStringToArray,
+                ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToArray(),
+                ArrayStringToIList = p.ArrayStringToIList == null ? null : p.ArrayStringToIList.ToArray(),
+                ArrayStringToICollection = p.ArrayStringToICollection == null ? null : p.ArrayStringToICollection.ToArray(),
+                ArrayStringToIEnumerable = p.ArrayStringToIEnumerable == null ? null : p.ArrayStringToIEnumerable.ToArray(),
+                ArrayStringToIQueryable = p.ArrayStringToIQueryable == null ? null : p.ArrayStringToIQueryable.ToArray(),
+            });
+        }
+        public static IQueryable<global::SourceGenerator.ConvertTo.From> ToFrom(this IQueryable<global::SourceGenerator.ConvertTo.To> source)
+        {
+            return source?.Select(p => new global::SourceGenerator.ConvertTo.From
+            {
+                StrProp = p.StrProp,
+                IntProp = p.IntProp,
+                NullableIntProp = p.NullableIntProp,
+                OneEnumProp = p.OneEnumProp,
+                NullableOneEnumProp = p.NullableOneEnumProp,
+                OneStructProp = p.OneStructProp,
+                NullableOneStructProp = p.NullableOneStructProp,
+                NullableOneStructProp2 = new global::SourceGenerator.ConvertTo.OneStruct
+                {
+                },
+                OneClassProp = p.OneClassProp,
+                OneClassProp2 = new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = p.OneClassProp2.StrProp,
+                },
+                ClassList = p.ClassList,
+                ClassList2 = p.ClassList2 == null ? null : p.ClassList2.Select(p => new global::SourceGenerator.ConvertTo.OneClass
+                {
+                    StrProp = p.StrProp,
+                }).ToList(),
+                ArrayStringToArray = p.ArrayStringToArray,
+                ArrayStringToList = p.ArrayStringToList == null ? null : p.ArrayStringToList.ToArray(),
+                ArrayStringToIList = p.ArrayStringToIList == null ? null : p.ArrayStringToIList.ToArray(),
+                ArrayStringToICollection = p.ArrayStringToICollection == null ? null : p.ArrayStringToICollection.ToArray(),
+                ArrayStringToIEnumerable = p.ArrayStringToIEnumerable == null ? null : p.ArrayStringToIEnumerable.ToArray(),
+                ArrayStringToIQueryable = p.ArrayStringToIQueryable == null ? null : p.ArrayStringToIQueryable.ToArray(),
             });
         }
     }
