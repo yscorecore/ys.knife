@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -9,6 +9,9 @@
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
             <_Parameter1>$(AssemblyName).UnitTest</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+    <ItemGroup>
+      <None Remove="bin\Debug\netstandard2.0\\YS.Knife.Generator.dll" />
     </ItemGroup>
     <ItemGroup>
         <!--Package the generator in the analyzer directory of the nuget package-->

@@ -23,11 +23,7 @@ namespace YS.Knife.Data.Query
         public char NumberPositiveSign { get; } // 正号
         public char NumberGroupSeparator { get; }// 分组符号
 
-        [Obsolete("should use ctor with culture info")]
-        public ParseContext(string text) : this(text, CultureInfo.CurrentCulture)
-        {
-
-        }
+       
         public ParseContext(string text, CultureInfo cultureInfo)
         {
             this.Text = text;

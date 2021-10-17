@@ -8,7 +8,7 @@ namespace YS.Knife.Data.Query
 {
     [Serializable]
     [TypeConverter(typeof(LimitIntoTypeConverter))]
-    public class LimitInfo : ILimitInfo
+    public sealed class LimitInfo : ILimitInfo
     {
         public LimitInfo()
         {

@@ -123,7 +123,7 @@ namespace YS.Knife.Entity.Model
     {
         T TenantId { get; set; }
     }
-    public class BaseEntity<TKey> : IId<TKey>, ICreateTrack, IUpdateTrack
+    public abstract class BaseEntity<TKey> : IId<TKey>, ICreateTrack, IUpdateTrack
     {
         public TKey Id { get; set; }
         public string CreateUser { get; set; }
@@ -131,7 +131,7 @@ namespace YS.Knife.Entity.Model
         public DateTimeOffset? UpdateTime { get; set; }
         public string UpdateUser { get; set; }
     }
-    public class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantData<TKey>
+    public abstract class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantData<TKey>
     {
         public TKey TenantId { get; set; }
     }
