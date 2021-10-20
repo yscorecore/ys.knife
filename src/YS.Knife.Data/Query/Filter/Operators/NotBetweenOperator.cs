@@ -16,5 +16,7 @@ namespace YS.Knife.Data.Query.Operators
         protected override IFilterOperator LeftOperator { get => LessThanOperator.Default; } 
         protected override IFilterOperator RightOperator { get => GreaterThanOperator.Default; } 
         protected override Func<Expression, Expression, BinaryExpression> CombinFunc { get => Expression.OrElse; }
+
+        protected override ConstantExpression EmptyValueFunc { get => Expression.Constant(false); }
     }
 }

@@ -11,11 +11,6 @@ namespace YS.Knife.Data.Query
     {
         public static ValueConverter Instance { get; } = new ValueConverter();
 
-        public IList ChangeListItemType(IList source, Type itemType)
-        {
-            return (source?? Array.Empty<object>()).Cast<object>().Select(p => ChangeType(p, itemType)).ToArray();
-        }
-
         public object ChangeType(object value, Type valueType)
         {
             if (value == null)

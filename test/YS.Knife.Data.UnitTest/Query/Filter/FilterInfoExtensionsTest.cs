@@ -54,16 +54,20 @@ namespace YS.Knife.Data.Query
         [InlineData("Name", Operator.EndsWith, "i", "002,004")]
         [InlineData("Name", Operator.NotEndsWith, "i", "001,003,005")]
 
-        //[InlineData("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        [InlineData("Age", Operator.In, new object[] {}, "")]
+        [InlineData("Age", Operator.In, new object[] { 19.0 }, "001,004")]
+        [InlineData("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
+        
         //[InlineData("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
         //[InlineData("Age", Operator.In, new object[] { }, "")]
         //[InlineData("Age", Operator.In, new object[] { 19, "21" }, "001,004,005")]
         //[InlineData("Age", Operator.NotIn, new object[] { 19, "21" }, "002,003")]
-
+        [InlineData("Age", Operator.Between, new object[] { null,null }, "001,002,003,004,005")]
         [InlineData("Age", Operator.Between, new object[] { 19, 20 }, "001,002,003,004")]
         [InlineData("Age", Operator.Between, new object[] { 20, null }, "002,003,005")]
         [InlineData("Age", Operator.Between, new object[] { null, 20 }, "001,002,003,004")]
 
+        [InlineData("Age", Operator.NotBetween, new object[] { null,null }, "")]
         [InlineData("Age", Operator.NotBetween, new object[] { 19, 20 }, "005")]
         [InlineData("Age", Operator.NotBetween, new object[] { 20, null }, "001,004")]
         [InlineData("Age", Operator.NotBetween, new object[] { null, 20 }, "005")]
