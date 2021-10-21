@@ -63,7 +63,7 @@ namespace YS.Knife.Data.Query
                 throw ExpressionErrors.ConvertValueError(value, valueType, ex);
             }
         }
-        
+
         private static object GetDateTimeByTargetType(Type targetType, DateTimeOffset dateTimeOffset)
         {
             if (targetType == typeof(DateTimeOffset))

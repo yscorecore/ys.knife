@@ -140,7 +140,7 @@ namespace YS.Knife.Data.Query
             return new FilterInfo { Items = items.TrimNotNull().ToList(), OpType = CombinSymbol.AndItems };
         }
 
-      
+
         public FilterInfo Not()
         {
             if (this.OpType == CombinSymbol.SingleItem)

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using YS.Knife.Data.Query;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query;
 
 namespace YS.Knife.Data.Query.Expressions
 {

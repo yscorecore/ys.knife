@@ -172,7 +172,7 @@ namespace YS.Knife
             }
             if (targetType is INamedTypeSymbol namedTargetType)
             {
-               
+
                 if (sourceType.TypeKind == TypeKind.Class || sourceType.TypeKind == TypeKind.Struct)
                 {
                     if (targetType.TypeKind == TypeKind.Struct) return true;

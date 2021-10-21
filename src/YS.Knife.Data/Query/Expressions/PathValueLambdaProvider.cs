@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using YS.Knife.Data.Query;
 using YS.Knife.Data.Mappers;
+using YS.Knife.Data.Query;
 using YS.Knife.Data.Query.Functions;
 
 namespace YS.Knife.Data.Query.Expressions

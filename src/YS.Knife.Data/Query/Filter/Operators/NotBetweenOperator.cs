@@ -13,8 +13,8 @@ namespace YS.Knife.Data.Query.Operators
     {
         public override Operator Operator { get => Operator.NotBetween; }
 
-        protected override IFilterOperator LeftOperator { get => LessThanOperator.Default; } 
-        protected override IFilterOperator RightOperator { get => GreaterThanOperator.Default; } 
+        protected override IFilterOperator LeftOperator { get => LessThanOperator.Default; }
+        protected override IFilterOperator RightOperator { get => GreaterThanOperator.Default; }
         protected override Func<Expression, Expression, BinaryExpression> CombinFunc { get => Expression.OrElse; }
 
         protected override ConstantExpression EmptyValueFunc { get => Expression.Constant(false); }
