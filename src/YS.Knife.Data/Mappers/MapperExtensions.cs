@@ -17,11 +17,11 @@ namespace YS.Knife
             .Where(m => Attribute.IsDefined(m, typeof(DescriptionAttribute)))
             .ToDictionary(p => p.GetCustomAttribute<DescriptionAttribute>().Description);
 
-        static readonly ConcurrentDictionary<string, MethodInfo> DelegateCache = new ConcurrentDictionary<string, MethodInfo>();
+        static readonly ConcurrentDictionary<int, MethodInfo> DelegateCache = new ConcurrentDictionary<int, MethodInfo>();
 
         static MethodInfo GetMethod(Type sourceType, Type targetType, string kind)
         {
-            string key = $"{kind}_{sourceType.AssemblyQualifiedName}_{targetType.AssemblyQualifiedName}";
+            int key = sourceType.GetHashCode() ^ targetType.GetHashCode() ^ kind.GetHashCode();
             return DelegateCache.GetOrAdd(key, (_) =>
                 AllMethods[kind].MakeGenericMethod(sourceType, targetType)
             );
