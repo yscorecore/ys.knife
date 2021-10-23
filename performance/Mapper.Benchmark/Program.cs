@@ -7,7 +7,9 @@ namespace Mapper.Benchmark
     {
         static void Main(string[] args)
         {
-            _ = BenchmarkRunner.Run<MapperTest>();
+            var user = new { Age=10};
+            user.MyMap<dynamic, UserDto>();
+           // _ = BenchmarkRunner.Run<MapperTest>();
         }
     }
 }
