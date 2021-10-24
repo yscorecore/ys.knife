@@ -12,7 +12,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapSingleItemFromSourceTypeToTargetType()
         {
             var input = new Model1() { StrVal = "str" };
-            var actual = input.MapTo<Model2>();
+            var actual = input.DynamicMap<Model2>();
             actual.Should().BeEquivalentTo(new Model2 { StrVal = "str" });
         }
 
@@ -20,7 +20,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapSingleItemFromAnonymousTypeToTargetType()
         {
             var input = new { StrVal = "str" };
-            var actual = input.MapTo<Model2>();
+            var actual = input.DynamicMap<Model2>();
             actual.Should().BeEquivalentTo(new Model2 { StrVal = "str" });
         }
 
@@ -28,7 +28,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapEnumerableFromSourceTypeToTargetType()
         {
             var input = new List<Model1> { new Model1 { StrVal = "str1" } };
-            var actual = input.MapTo<Model2>().ToList();
+            var actual = input.DynamicMap<Model2>().ToList();
             var expected = new List<Model2> { new Model2 { StrVal = "str1" } };
             actual.Should().BeEquivalentTo(expected);
         }
@@ -37,7 +37,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapEnumerableFromAnonymousTypeToTargetType()
         {
             var input = new[] { new { StrVal = "str1" }, new { StrVal = "str2" } };
-            var actual = input.MapTo<Model2>().ToList();
+            var actual = input.DynamicMap<Model2>().ToList();
             var expected = new List<Model2> { new Model2 { StrVal = "str1" }, new Model2 { StrVal = "str2" } };
             actual.Should().BeEquivalentTo(expected);
         }
@@ -46,7 +46,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapQueryableFromSourceTypeToTargetType()
         {
             var input = new List<Model1> { new Model1 { StrVal = "str1" } }.AsQueryable();
-            var actual = input.MapTo<Model2>().ToList();
+            var actual = input.DynamicMap<Model2>().ToList();
             var expected = new List<Model2> { new Model2 { StrVal = "str1" } };
             actual.Should().BeEquivalentTo(expected);
         }
@@ -55,7 +55,7 @@ namespace YS.Knife.Data.Mapper
         public void ShouldMapQueryableFromAnonymousTypeToTargetType()
         {
             var input = new[] { new { StrVal = "str1" }, new { StrVal = "str2" } }.AsQueryable();
-            var actual = input.MapTo<Model2>().ToList();
+            var actual = input.DynamicMap<Model2>().ToList();
             var expected = new List<Model2> { new Model2 { StrVal = "str1" }, new Model2 { StrVal = "str2" } };
             actual.Should().BeEquivalentTo(expected);
         }

@@ -28,11 +28,15 @@ namespace YS.Knife.Data.Mappers
         static readonly MethodInfo EnumerableToArrayMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToArray));
         static readonly MethodInfo EnumerableToListMethod = typeof(Enumerable).GetMethod(nameof(Enumerable.ToList));
 
-
+        static readonly LocalCache<int, MethodInfo> EnumerableSelectCache = new LocalCache<int, MethodInfo>();
+        static readonly LocalCache<int, MethodInfo> EnumerableToArrayCache = new LocalCache<int, MethodInfo>();
+        static readonly LocalCache<int, MethodInfo> EnumerableToListCache = new LocalCache<int, MethodInfo>();
 
         public static MethodInfo GetEnumerableSelect<TSource, TResult>()
         {
-            return EnumerableSelectMethod.MakeGenericMethod(typeof(TSource), typeof(TResult));
+            var key = typeof(TSource).GetHashCode() ^ typeof(TResult).GetHashCode() ^ typeof(TSource).AssemblyQualifiedName.GetHashCode();
+            return EnumerableSelectCache.Get(key, _ =>
+             EnumerableSelectMethod.MakeGenericMethod(typeof(TSource), typeof(TResult)));
         }
         public static MethodInfo GetAsQueryable<TElement>()
         {
@@ -49,12 +53,14 @@ namespace YS.Knife.Data.Mappers
 
         public static MethodInfo GetEnumerableToArray<TResult>()
         {
-            return EnumerableToArrayMethod.MakeGenericMethod(typeof(TResult));
+            return EnumerableToArrayCache.Get(typeof(TResult).GetHashCode(),
+                _ => EnumerableToArrayMethod.MakeGenericMethod(typeof(TResult)));
         }
 
         public static MethodInfo GetEnumerableToList<TResult>()
         {
-            return EnumerableToListMethod.MakeGenericMethod(typeof(TResult));
+            return EnumerableToListCache.Get(typeof(TResult).GetHashCode(),
+                _ => EnumerableToListMethod.MakeGenericMethod(typeof(TResult)));
         }
 
 

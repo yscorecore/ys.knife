@@ -49,7 +49,7 @@ namespace YS.Knife
             return source.Map(ObjectMapper<TSource, TTarget>.Default);
         }
 
-        public static TTarget MapTo<TTarget>(this object source)
+        public static TTarget DynamicMap<TTarget>(this object source)
             where TTarget : class, new()
         {
             return source == null ? null : Invoke<TTarget>(source.GetType(), typeof(TTarget), "map-single", source);
@@ -72,7 +72,7 @@ namespace YS.Knife
             return sources.Map(ObjectMapper<TSource, TTarget>.Default);
         }
 
-        public static IEnumerable<TTarget> MapTo<TTarget>(this IEnumerable sources)
+        public static IEnumerable<TTarget> DynamicMap<TTarget>(this IEnumerable sources)
             where TTarget : class, new()
         {
             if (sources == null) return null;
@@ -98,7 +98,7 @@ namespace YS.Knife
             return sources.Map(ObjectMapper<TSource, TTarget>.Default);
         }
 
-        public static IQueryable<TTarget> MapTo<TTarget>(this IQueryable sources)
+        public static IQueryable<TTarget> DynamicMap<TTarget>(this IQueryable sources)
             where TTarget : class, new()
         {
             if (sources == null) return null;
