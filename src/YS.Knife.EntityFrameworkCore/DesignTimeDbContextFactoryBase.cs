@@ -16,12 +16,7 @@ namespace Microsoft.EntityFrameworkCore
         public virtual T CreateDbContext(string[] args)
         {
             var serviceProvider = BuildProvider(args);
-            var context = serviceProvider.GetService<T>();
-            if (context == null)
-            {
-                Console.WriteLine($"can not find instance by context type '{typeof(T)}'");
-            }
-            return context;
+            return serviceProvider.GetRequiredService<T>();
         }
         private IServiceProvider BuildProvider(string[] args)
         {

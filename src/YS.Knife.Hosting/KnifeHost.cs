@@ -45,15 +45,11 @@ namespace YS.Knife.Hosting
 
         private readonly IHost host;
 
-        public object GetService(Type serviceType)
+        object IServiceProvider.GetService(Type serviceType)
         {
             return host.Services.GetService(serviceType);
         }
 
-        public T GetService<T>()
-        {
-            return ServiceProviderServiceExtensions.GetService<T>(this);
-        }
 
         internal virtual ServiceProviderOptions ServiceProviderOptions
         {

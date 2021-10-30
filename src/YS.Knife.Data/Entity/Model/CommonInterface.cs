@@ -125,11 +125,11 @@ namespace YS.Knife.Entity.Model
     }
     public abstract class BaseEntity<TKey> : IId<TKey>, ICreateTrack, IUpdateTrack
     {
-        public TKey Id { get; set; }
-        public string CreateUser { get; set; }
-        public DateTimeOffset CreateTime { get; set; }
-        public DateTimeOffset? UpdateTime { get; set; }
-        public string UpdateUser { get; set; }
+        public virtual TKey Id { get; set; }
+        public virtual string CreateUser { get; set; }
+        public virtual DateTimeOffset CreateTime { get; set; }
+        public virtual DateTimeOffset? UpdateTime { get; set; }
+        public virtual string UpdateUser { get; set; }
     }
     public abstract class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantData<TKey>
     {

@@ -29,6 +29,10 @@ namespace YS.Knife
         }
         private static Type DeduceInjectType(Type serviceType)
         {
+            if (serviceType.BaseType!=null && serviceType.BaseType != typeof(object))
+            {
+                return serviceType.BaseType;
+            }
             var allInterfaces = serviceType.GetInterfaces();
             if (allInterfaces.Length == 0)
             {
