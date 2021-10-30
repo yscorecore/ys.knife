@@ -1,14 +1,26 @@
 ﻿using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace YS.Knife.EntityFrameworkCore.Sqlite.UnitTest.Contexts
 {
-    [SqliteEFContext("blogging")]
+    [KnifeEFContext()]
     public class BloggingContext : DbContext
     {
+        private readonly IConfiguration configuration;
+
+        public BloggingContext(Microsoft.Extensions.Configuration.IConfiguration configuration)
+        {
+            this.configuration = configuration;
+        }
         public BloggingContext(DbContextOptions<BloggingContext> options) : base(options)
         {
 
+        }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseSqlite(configuration.GetConnectionString("blogging"));
         }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<Post> Posts { get; set; }

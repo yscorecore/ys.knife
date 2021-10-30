@@ -1,5 +1,6 @@
 ﻿using System;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Xunit;
 using YS.Knife.Entity;

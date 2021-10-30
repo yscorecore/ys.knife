@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using MongoDB.Driver;
 using Xunit;
 using YS.Knife.Hosting;
@@ -21,8 +22,8 @@ namespace YS.Knife.Mongo.UnitTest
         [InlineData(typeof(BookContext))]
         public void ShouldGetContextType(Type contextType)
         {
-            var context = GetService(contextType);
-            IEnumerable baseContexts = GetService<IEnumerable<MongoContext>>();
+            var context = ((IServiceProvider)this).GetService(contextType);
+            IEnumerable baseContexts = this.GetService<IEnumerable<MongoContext>>();
             context.Should().NotBeNull();
             baseContexts.Should().NotBeNull();
             baseContexts.Should().Contain(context);
@@ -30,19 +31,19 @@ namespace YS.Knife.Mongo.UnitTest
         [Fact]
         public void ShouldGetUserStoreWhenRegisteEntityStore()
         {
-            var userStore = GetService<IEntityStore<User>>();
+            var userStore = this.GetService<IEntityStore<User>>();
             userStore.Should().NotBeNull();
         }
         [Fact]
         public void ShouldGetBookStoreWhenRegisteEntityStore()
         {
-            var userStore = GetService<IEntityStore<User>>();
+            var userStore = this.GetService<IEntityStore<User>>();
             userStore.Should().NotBeNull();
         }
         [Fact]
         public void ShouldNotGetNewBookStoreWhenNotRegisteEntityStore()
         {
-            var bookStore = GetService<IEntityStore<NewBook>>();
+            var bookStore = this.GetService<IEntityStore<NewBook>>();
             bookStore.Should().BeNull();
         }
         #region UserContext

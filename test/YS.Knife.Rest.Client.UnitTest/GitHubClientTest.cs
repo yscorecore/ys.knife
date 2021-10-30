@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using YS.Knife.Hosting;
 using YS.Knife.Rest.Client.UnitTest.Clients;

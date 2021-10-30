@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using YS.Knife;
+using YS.Knife.EntityFrameworkCore;
 
-namespace YS.Knife.EntityFrameworkCore
+namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class KnifeEFAttribute : KnifeAttribute
+    public class KnifeEFContextAttribute : KnifeAttribute
     {
 
-        public KnifeEFAttribute() : base(typeof(DbContext))
+        public KnifeEFContextAttribute() : base(typeof(DbContext))
         {
         }
 
@@ -26,7 +28,7 @@ namespace YS.Knife.EntityFrameworkCore
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            var method = typeof(KnifeEFAttribute)
+            var method = typeof(KnifeEFContextAttribute)
                    .GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic)
                    ?.MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services });

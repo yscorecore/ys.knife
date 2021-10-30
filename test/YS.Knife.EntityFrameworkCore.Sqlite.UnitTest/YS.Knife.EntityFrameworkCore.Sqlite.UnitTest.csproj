@@ -20,13 +20,14 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <TreatAsUsed>true</TreatAsUsed>
     </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\YS.Knife.Data\YS.Knife.Data.csproj">
       <TreatAsUsed>true</TreatAsUsed>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\YS.Knife.EntityFrameworkCore.Sqlite\YS.Knife.EntityframeworkCore.Sqlite.csproj" />
+    <ProjectReference Include="..\..\src\YS.Knife.EntityFrameworkCore\YS.Knife.EntityFrameworkCore.csproj" />
     <ProjectReference Include="..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
   </ItemGroup>
 

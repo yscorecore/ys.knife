@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -46,17 +47,17 @@ namespace YS.Knife.EntityFrameworkCore.Interceptors
             }
 
             var saveChangeResult = base.SavingChanges(eventData, result);
-            PublishChangeList(invoiceModels);
+            PublishChangeList(invoiceModels.AsReadOnly());
             return saveChangeResult;
         }
-        private void PublishChangeList(List<InvoiceModel> invoiceModels)
+        private void PublishChangeList(ReadOnlyCollection<InvoiceModel> invoiceModels)
         {
 
         }
 
     }
 
-    class InvoiceModel
+    public class InvoiceModel
     {
         public string Action { get; set; }
 

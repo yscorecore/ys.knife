@@ -11,6 +11,7 @@ using YS.Knife.EntityFrameworkCore;
 
 namespace Microsoft.EntityFrameworkCore
 {
+    [System.Obsolete("removed",true)]
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public abstract class EFContextAttribute : KnifeAttribute
     {

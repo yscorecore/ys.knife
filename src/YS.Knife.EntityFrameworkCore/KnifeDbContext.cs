@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace YS.Knife.EntityFrameworkCore
+namespace Microsoft.EntityFrameworkCore
 {
     public abstract class KnifeDbContext : DbContext
     {
