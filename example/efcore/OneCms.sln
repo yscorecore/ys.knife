@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31410.414
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneCms.EFCore", "OneCms.EFCore\OneCms.EFCore.csproj", "{EB1ED99A-1F6B-465F-9F81-87A4FE099C0B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.EntityFrameworkCore", "..\..\src\YS.Knife.EntityFrameworkCore\YS.Knife.EntityFrameworkCore.csproj", "{CFB0D17D-3B63-4D81-9BF7-A388D76D17F3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Data", "..\..\src\YS.Knife.Data\YS.Knife.Data.csproj", "{2620833F-871C-48BE-B50F-5DA03EA86FDF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneCms.EFCore.Sqlite", "OneCms.EFCore.Sqlite\OneCms.EFCore.Sqlite.csproj", "{BA0AF47C-9B36-423B-AA22-9006D2209B29}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OneCms.ConsoleApp", "OneCms.ConsoleApp\OneCms.ConsoleApp.csproj", "{A27FA690-D2D2-46D1-B726-347468FCA57B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Core", "..\..\src\YS.Knife.Core\YS.Knife.Core.csproj", "{A4AA70B9-B98B-4E36-82CE-0855425084DE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting", "..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EB1ED99A-1F6B-465F-9F81-87A4FE099C0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB1ED99A-1F6B-465F-9F81-87A4FE099C0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB1ED99A-1F6B-465F-9F81-87A4FE099C0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB1ED99A-1F6B-465F-9F81-87A4FE099C0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CFB0D17D-3B63-4D81-9BF7-A388D76D17F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFB0D17D-3B63-4D81-9BF7-A388D76D17F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFB0D17D-3B63-4D81-9BF7-A388D76D17F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFB0D17D-3B63-4D81-9BF7-A388D76D17F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2620833F-871C-48BE-B50F-5DA03EA86FDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2620833F-871C-48BE-B50F-5DA03EA86FDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2620833F-871C-48BE-B50F-5DA03EA86FDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2620833F-871C-48BE-B50F-5DA03EA86FDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA0AF47C-9B36-423B-AA22-9006D2209B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA0AF47C-9B36-423B-AA22-9006D2209B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA0AF47C-9B36-423B-AA22-9006D2209B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA0AF47C-9B36-423B-AA22-9006D2209B29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A27FA690-D2D2-46D1-B726-347468FCA57B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A27FA690-D2D2-46D1-B726-347468FCA57B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A27FA690-D2D2-46D1-B726-347468FCA57B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A27FA690-D2D2-46D1-B726-347468FCA57B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4AA70B9-B98B-4E36-82CE-0855425084DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4AA70B9-B98B-4E36-82CE-0855425084DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4AA70B9-B98B-4E36-82CE-0855425084DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4AA70B9-B98B-4E36-82CE-0855425084DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4374E8DE-4436-4C0F-91D3-7C50ADC369B3}
+	EndGlobalSection
+EndGlobal
