@@ -21,22 +21,22 @@ namespace YS.Knife.Entity.Model
         /// <summary>
         /// 表示创建用户
         /// </summary>
-        string CreateUser { get; set; }
+        string CreatedBy { get; set; }
         /// <summary>
         /// 表示创建时间
         /// </summary>
-        DateTimeOffset CreateTime { get; set; }
+        DateTimeOffset CreatedTime { get; set; }
     }
     public interface IUpdateTrack
     {
         /// <summary>
         /// 表示更新时间
         /// </summary>
-        DateTimeOffset? UpdateTime { get; set; }
+        DateTimeOffset? UpdatedTime { get; set; }
         /// <summary>
         /// 表示更新用户
         /// </summary>
-        string UpdateUser { get; set; }
+        string UpdatedBy { get; set; }
     }
     /// <summary>
     /// 表示审核跟踪
@@ -56,35 +56,35 @@ namespace YS.Knife.Entity.Model
     /// <summary>
     /// 表示是否删除
     /// </summary>
-    public interface IFalseDelete
+    public interface ISoftDelete
     {
         bool IsDeleted { get; set; }
     }
-    public interface IDeleteTrack : IFalseDelete
+    public interface IDeleteTrack : ISoftDelete
     {
         /// <summary>
         /// 表示删除的用户
         /// </summary>
-        string DeleteUser { get; set; }
+        string DeletedBy { get; set; }
         /// <summary>
         /// 表示删除时间
         /// </summary>
-        DateTimeOffset? DeleteTime { get; set; }
+        DateTimeOffset? DeletedTime { get; set; }
 
     }
     /// <summary>
     /// 表示恢复删除的记录
     /// </summary>
-    public interface IResumeTrack : IDeleteTrack, IFalseDelete
+    public interface IResumeTrack : IDeleteTrack, ISoftDelete
     {
         /// <summary>
         /// 表示恢复删除的用户
         /// </summary>
-        string ResumeUser { get; set; }
+        string ResumedBy { get; set; }
         /// <summary>
         /// 表示恢复删除的时间
         /// </summary>
-        DateTimeOffset? ResumeTime { get; set; }
+        DateTimeOffset? ResumedTime { get; set; }
     }
     /// <summary>
     /// 表示RowVersion
@@ -115,23 +115,19 @@ namespace YS.Knife.Entity.Model
         string Name { get; set; }
     }
 
-    /// <summary>
-    /// 表示域数据
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public interface ITenantData<T>
+    public interface ITenantEntity<T>
     {
         T TenantId { get; set; }
     }
     public abstract class BaseEntity<TKey> : IId<TKey>, ICreateTrack, IUpdateTrack
     {
         public virtual TKey Id { get; set; }
-        public virtual string CreateUser { get; set; }
-        public virtual DateTimeOffset CreateTime { get; set; }
-        public virtual DateTimeOffset? UpdateTime { get; set; }
-        public virtual string UpdateUser { get; set; }
+        public virtual string CreatedBy { get; set; }
+        public virtual DateTimeOffset CreatedTime { get; set; }
+        public virtual DateTimeOffset? UpdatedTime { get; set; }
+        public virtual string UpdatedBy { get; set; }
     }
-    public abstract class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantData<TKey>
+    public abstract class BaseTenantEntity<TKey> : BaseEntity<TKey>, ITenantEntity<TKey>
     {
         public TKey TenantId { get; set; }
     }

@@ -9,7 +9,7 @@ namespace OneCms.EFCore
 {
     public abstract class CmsBaseEntity : YS.Knife.Entity.Model.BaseEntity<Guid>
     {
-        
-        public override Guid Id { get; set; }
+       
+       
     }
 }

@@ -13,6 +13,7 @@ namespace OneCms.EFCore.Sqlite.Configration
         public void Configure(EntityTypeBuilder<Post> builder)
         {
             builder.Property(p => p.Content).HasMaxLength(3000).IsRequired(true);
+          
         }
     }
 }
