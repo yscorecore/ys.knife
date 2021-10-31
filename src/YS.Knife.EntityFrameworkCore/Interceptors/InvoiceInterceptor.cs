@@ -9,6 +9,13 @@ namespace YS.Knife.EntityFrameworkCore.Interceptors
 {
     public class InvoiceInterceptor : SaveChangesInterceptor
     {
+        private IInvoiceReceiver invoiceReceiver;
+
+        public InvoiceInterceptor(IInvoiceReceiver invoiceReceiver)
+        {
+            this.invoiceReceiver = invoiceReceiver;
+        }
+
         public override InterceptionResult<int> SavingChanges(DbContextEventData eventData, InterceptionResult<int> result)
         {
             var invoiceModels = new List<InvoiceModel>();
@@ -52,7 +59,7 @@ namespace YS.Knife.EntityFrameworkCore.Interceptors
         }
         private void PublishChangeList(ReadOnlyCollection<InvoiceModel> invoiceModels)
         {
-
+            invoiceReceiver?.ReceiveInvoices(invoiceModels);
         }
 
     }

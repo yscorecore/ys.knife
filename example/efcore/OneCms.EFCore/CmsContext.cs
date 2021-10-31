@@ -26,23 +26,23 @@ namespace OneCms.EFCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<Topic>().Property<string>("_tenantId").HasColumnName("TenantId");
+            modelBuilder.Entity<Topic>().Property<string>("_tenantId").HasColumnName("TenantId");
 
             // Configure entity filters
             #region FilterConfiguration
-            //modelBuilder.Entity<Topic>().HasQueryFilter(b => EF.Property<string>(b, "_tenantId") == "00001");
+            modelBuilder.Entity<Topic>().HasQueryFilter(b => EF.Property<string>(b, "_tenantId") == "00001");
             #endregion
         }
         public override int SaveChanges()
         {
-            //ChangeTracker.DetectChanges();
+            ChangeTracker.DetectChanges();
 
-            //foreach (var item in ChangeTracker.Entries().Where(
-            //    e =>
-            //        e.State == EntityState.Added && e.Metadata.GetProperties().Any(p => p.Name == "_tenantId")))
-            //{
-            //    item.CurrentValues["_tenantId"] = "00001";
-            //}
+            foreach (var item in ChangeTracker.Entries().Where(
+                e =>
+                    e.State == EntityState.Added && e.Metadata.GetProperties().Any(p => p.Name == "_tenantId")))
+            {
+                item.CurrentValues["_tenantId"] = "00001";
+            }
             return base.SaveChanges();
         }
     }

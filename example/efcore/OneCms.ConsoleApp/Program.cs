@@ -20,10 +20,10 @@ namespace OneCms.ConsoleApp
                     Title = "this is title"
                 });
                 context.SaveChanges();
-                var query = context.Topics.Where(p => p.Title != null);
-                var topic1 = query.ToList();
-                //topic1.Title = topic1.Title.ToUpper();
-                //context.SaveChanges();
+                var topic = context.Topics.Where(p => p.Title != null).FirstOrDefault();
+                // var topic1 = query.ToList();
+                topic.Title = topic.Title.ToUpper();
+                context.SaveChanges();
 
             }
             Console.ReadKey();
