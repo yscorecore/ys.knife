@@ -10,7 +10,7 @@ using YS.Knife.EntityFrameworkCore;
 namespace OneCms.EFCore
 {
 
-    [KnifeEF]
+    [KnifeEFContext]
     public class CmsContext : KnifeDbContext
     {
         public CmsContext(DbContextOptions<CmsContext> dbContextOptions, DbContextModelConfigration<CmsContext> dbModelConfigration) :
