@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace OneCms.EFCore
 {
     public class Topic : CmsBaseEntity
     {
-        private string _tenantId;
+
         [Required(AllowEmptyStrings = false)]
         [StringLength(256)]
         public virtual string Title { get; set; }

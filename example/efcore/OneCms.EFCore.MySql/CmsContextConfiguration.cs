@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using YS.Knife;
-using YS.Knife.EntityFrameworkCore;
 
-namespace OneCms.EFCore.Sqlite
+namespace OneCms.EFCore.MySql
 {
     [Service]
     public class CmsContextConfiguration : DbContextConfigration<CmsContext>
@@ -17,7 +20,8 @@ namespace OneCms.EFCore.Sqlite
         }
         protected override void OnConfigOptions(IServiceProvider sp, DbContextOptionsBuilder builder)
         {
-            builder.UseSqlite(configuration.GetConnectionString("cms") ?? "Data Source=cms.db");
+            var serverVersion = new MySqlServerVersion(new Version(8, 0, 26));
+            builder.UseMySql(configuration.GetConnectionString("cms") ?? "server=localhost;user=root;password=password;database=cms", serverVersion);
         }
     }
 }

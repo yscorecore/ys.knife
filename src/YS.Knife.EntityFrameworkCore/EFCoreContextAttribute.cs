@@ -13,10 +13,10 @@ using YS.Knife.EntityFrameworkCore;
 namespace Microsoft.EntityFrameworkCore
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-    public class KnifeEFContextAttribute : KnifeAttribute
+    public class EFCoreContextAttribute : KnifeAttribute
     {
 
-        public KnifeEFContextAttribute() : base(typeof(DbContext))
+        public EFCoreContextAttribute() : base(typeof(DbContext))
         {
         }
 
@@ -28,7 +28,7 @@ namespace Microsoft.EntityFrameworkCore
             _ = declareType ?? throw new ArgumentNullException(nameof(declareType));
             _ = context ?? throw new ArgumentNullException(nameof(context));
 
-            var method = typeof(KnifeEFContextAttribute)
+            var method = typeof(EFCoreContextAttribute)
                    .GetMethod(nameof(AddDbContext2), BindingFlags.Instance | BindingFlags.NonPublic)
                    ?.MakeGenericMethod(declareType);
             method.Invoke(this, new object[] { services });

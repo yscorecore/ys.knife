@@ -5,13 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using YS.Knife;
-using YS.Knife.EntityFrameworkCore;
 
-namespace OneCms.EFCore.Sqlite
+namespace OneCms.EFCore.SqlServer
 {
     [Service]
     public class CmsContextModelConfiguration : DbContextModelConfigration<CmsContext>
     {
-       
+
     }
 }

@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj" />
-    <ProjectReference Include="..\OneCms.EFCore.Sqlite\OneCms.EFCore.Sqlite.csproj" />
+    <ProjectReference Include="..\OneCms.EFCore.Postgres\OneCms.EFCore.Postgres.csproj" />
     <ProjectReference Include="..\OneCms.EFCore\OneCms.EFCore.csproj" />
   </ItemGroup>
 

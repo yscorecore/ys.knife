@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -43,8 +44,8 @@ namespace Microsoft.EntityFrameworkCore
             var relationalOptions = builder.Options.Extensions.OfType<RelationalOptionsExtension>().LastOrDefault();
             if (string.IsNullOrEmpty(relationalOptions?.MigrationsAssembly))
             {
-                var field = typeof(RelationalOptionsExtension).GetField("_migrationsAssembly");
-                var currentAssemblyName = this.GetType().Assembly;
+                var field = typeof(RelationalOptionsExtension).GetField("_migrationsAssembly", BindingFlags.NonPublic| BindingFlags.Instance);
+                var currentAssemblyName = this.GetType().Assembly.FullName;
                 field?.SetValue(relationalOptions, currentAssemblyName);
             }
         }

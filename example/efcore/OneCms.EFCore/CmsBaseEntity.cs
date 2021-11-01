@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using YS.Knife.Data;
 namespace OneCms.EFCore
 {
-    public abstract class CmsBaseEntity : YS.Knife.Entity.Model.IId<int>
+    public abstract class CmsBaseEntity : YS.Knife.Entity.Model.BaseEntity<Guid>
     {
-        public int Id { get; set; }
+       
     }
 }

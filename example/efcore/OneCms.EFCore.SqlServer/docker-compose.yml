@@ -1,0 +1,10 @@
+﻿version: '3.3'
+
+services:
+  db:
+    image: mcr.microsoft.com/mssql/server:latest
+    ports:
+    - "${SQLSERVER_PORT:-1433}:1433"
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: ${SA_PASSWORD:-Password@123}

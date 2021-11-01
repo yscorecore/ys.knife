@@ -17,6 +17,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Core", "..\..\src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YS.Knife.Hosting", "..\..\src\YS.Knife.Hosting\YS.Knife.Hosting.csproj", "{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneCms.EFCore.Postgres", "OneCms.EFCore.Postgres\OneCms.EFCore.Postgres.csproj", "{644C6A33-B28A-4718-8391-83E3D7C13144}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneCms.EFCore.SqlServer", "OneCms.EFCore.SqlServer\OneCms.EFCore.SqlServer.csproj", "{F7A18E06-4498-4C0C-B53E-FFB6B796FD48}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OneCms.EFCore.MySql", "OneCms.EFCore.MySql\OneCms.EFCore.MySql.csproj", "{F68ACAB4-D321-4C0C-A616-FB5BB464D608}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +57,18 @@ Global
 		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AF0C088E-3154-45B7-A19C-4D3C1DDAAD8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{644C6A33-B28A-4718-8391-83E3D7C13144}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{644C6A33-B28A-4718-8391-83E3D7C13144}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{644C6A33-B28A-4718-8391-83E3D7C13144}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{644C6A33-B28A-4718-8391-83E3D7C13144}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7A18E06-4498-4C0C-B53E-FFB6B796FD48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7A18E06-4498-4C0C-B53E-FFB6B796FD48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7A18E06-4498-4C0C-B53E-FFB6B796FD48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7A18E06-4498-4C0C-B53E-FFB6B796FD48}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F68ACAB4-D321-4C0C-A616-FB5BB464D608}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F68ACAB4-D321-4C0C-A616-FB5BB464D608}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F68ACAB4-D321-4C0C-A616-FB5BB464D608}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F68ACAB4-D321-4C0C-A616-FB5BB464D608}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -13,16 +13,17 @@ namespace OneCms.ConsoleApp
             {
                 var context = host.GetService<CmsContext>();
                 context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
+                context.Database.Migrate();
                 context.Topics.Add(new Topic
                 {
                     Content = "some contnet",
                     Title = "this is title"
                 });
                 context.SaveChanges();
-                var topic = context.Topics.Where(p => p.Title != null).FirstOrDefault();
-                // var topic1 = query.ToList();
+                var topic = context.Topics.Where(p => p.Title.StartsWith("this")).FirstOrDefault();
                 topic.Title = topic.Title.ToUpper();
+                context.SaveChanges();
+                context.Topics.Remove(topic);
                 context.SaveChanges();
 
             }

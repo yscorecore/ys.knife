@@ -10,7 +10,7 @@ using YS.Knife.EntityFrameworkCore;
 namespace OneCms.EFCore
 {
 
-    [KnifeEFContext]
+    [EFCoreContext]
     public class CmsContext : KnifeDbContext
     {
         public CmsContext(DbContextOptions<CmsContext> dbContextOptions, DbContextModelConfigration<CmsContext> dbModelConfigration) :
@@ -26,24 +26,18 @@ namespace OneCms.EFCore
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Topic>().Property<string>("_tenantId").HasColumnName("TenantId");
-
-            // Configure entity filters
-            #region FilterConfiguration
-            modelBuilder.Entity<Topic>().HasQueryFilter(b => EF.Property<string>(b, "_tenantId") == "00001");
-            #endregion
-        }
-        public override int SaveChanges()
-        {
-            ChangeTracker.DetectChanges();
-
-            foreach (var item in ChangeTracker.Entries().Where(
-                e =>
-                    e.State == EntityState.Added && e.Metadata.GetProperties().Any(p => p.Name == "_tenantId")))
+            base.OnModelCreating(modelBuilder);
+            foreach (var type in AllEntityTypes())
             {
-                item.CurrentValues["_tenantId"] = "00001";
+                modelBuilder.Entity(type).Property<string>(nameof(CmsBaseEntity.CreatedBy)).HasMaxLength(128);
+                modelBuilder.Entity(type).Property<string>(nameof(CmsBaseEntity.UpdatedBy)).HasMaxLength(128);
             }
-            return base.SaveChanges();
+        }
+
+        private IEnumerable<Type> AllEntityTypes()
+        {
+            return this.GetType().Assembly.GetTypes().Where(p => p.IsClass && !p.IsAbstract && typeof(CmsBaseEntity).IsAssignableFrom(p));
+
         }
     }
 
