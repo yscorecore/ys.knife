@@ -31,18 +31,37 @@ namespace Microsoft.EntityFrameworkCore
     }
     public abstract class DbContextConfigration
     {
-        public abstract void ConfigOptions(IServiceProvider sp, DbContextOptionsBuilder builder);
-        
+        public void ConfigOptions(IServiceProvider sp, DbContextOptionsBuilder builder)
+        {
+            this.OnConfigOptions(sp, builder);
+            TrySetMigrationAssemblyIfEmpty(builder);
+        }
+
+        protected abstract void OnConfigOptions(IServiceProvider sp, DbContextOptionsBuilder builder);
+        private void TrySetMigrationAssemblyIfEmpty(DbContextOptionsBuilder builder)
+        {
+            var relationalOptions = builder.Options.Extensions.OfType<RelationalOptionsExtension>().LastOrDefault();
+            if (string.IsNullOrEmpty(relationalOptions?.MigrationsAssembly))
+            {
+                var field = typeof(RelationalOptionsExtension).GetField("_migrationsAssembly");
+                var currentAssemblyName = this.GetType().Assembly;
+                field?.SetValue(relationalOptions, currentAssemblyName);
+            }
+        }
     }
 
     public abstract class DbContextConfigration<T> : DbContextConfigration
           where T : DbContext
     {
-       
+
     }
     public abstract class DbContextModelConfigration
     {
-        public virtual void ConfigModels(ModelBuilder modelBuilder)
+        public void ConfigModels(ModelBuilder modelBuilder)
+        {
+            this.OnConfigModels(modelBuilder);
+        }
+        protected virtual void OnConfigModels(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfigurationsFromAssembly(this.GetType().Assembly);
         }
@@ -51,7 +70,7 @@ namespace Microsoft.EntityFrameworkCore
     public abstract class DbContextModelConfigration<T> : DbContextModelConfigration
         where T : DbContext
     {
-      
+
     }
 
 
