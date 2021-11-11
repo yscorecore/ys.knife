@@ -68,16 +68,20 @@
       <None Remove="ConvertToCases\ListToIList.xml" />
       <None Remove="ConvertToCases\ListToIQueryable.xml" />
       <None Remove="ConvertToCases\ListToList.xml" />
+      <None Remove="ConvertToCases\OverwriteParentClassProperty.xml" />
+      <None Remove="ConvertToCases\SourceParentClassProperty.xml" />
       <None Remove="ConvertToCases\StructToClass.xml" />
       <None Remove="ConvertToCases\StructToStruct.xml" />
       <None Remove="ConvertToCases\SubClassToClass.xml" />
       <None Remove="ConvertToCases\SubClassToStruct.xml" />
       <None Remove="ConvertToCases\SubStructToClass.xml" />
       <None Remove="ConvertToCases\SubStructToStruct.xml" />
+      <None Remove="ConvertToCases\TargetParentClassProperty.xml" />
       <None Remove="SingletonPatternCases\CustomerInstanceName.xml" />
       <None Remove="SingletonPatternCases\Error.AlreadyExistCtor.xml" />
       <None Remove="SingletonPatternCases\GeneicType.xml" />
       <None Remove="SingletonPatternCases\NestedType.xml" />
+      <None Remove="TargetParentClassProperty.xml" />
     </ItemGroup>
 
     <ItemGroup>
@@ -234,6 +238,15 @@
       <Content Include="ConvertToCases\ArrayToICollection.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
+      <Content Include="ConvertToCases\OverwriteParentClassProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\TargetParentClassProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="ConvertToCases\SourceParentClassProperty.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
       <Content Include="ConvertToCases\ListToICollection.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
@@ -310,6 +323,9 @@
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
       <Content Include="SingletonPatternCases\HappyCase.xml">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Content>
+      <Content Include="TargetParentClassProperty.xml">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </Content>
     </ItemGroup>

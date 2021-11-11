@@ -350,16 +350,18 @@ namespace YS.Knife
         {
             var mappingInfo = convertContext.MappingInfo;
             var codeBuilder = convertContext.CodeBuilder;
-            var targetProps = mappingInfo.TargetType.GetMembers()
+            var targetProps = mappingInfo.TargetType.GetAllMembers()
                  .OfType<IPropertySymbol>()
                  .Where(p => !p.IsReadOnly && p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer)
                  .Select(p => new { p.Name, Type = p.Type })
-                 .ToDictionary(p => p.Name, p => p.Type);
-            var sourceProps = mappingInfo.SourceType.GetMembers()
+                 .ToLookup(p=>p.Name)
+                 .ToDictionary(p => p.Key, p => p.First().Type);
+            var sourceProps = mappingInfo.SourceType.GetAllMembers()
                 .OfType<IPropertySymbol>()
                 .Where(p => p.CanBeReferencedByName && !p.IsStatic && !p.IsIndexer && !p.IsWriteOnly)
                 .Select(p => new { p.Name, Type = p.Type })
-                .ToDictionary(p => p.Name, p => p.Type);
+                .ToLookup(p=>p.Name)
+                .ToDictionary(p => p.Key, p => p.First().Type);
             foreach (var prop in targetProps)
             {
 

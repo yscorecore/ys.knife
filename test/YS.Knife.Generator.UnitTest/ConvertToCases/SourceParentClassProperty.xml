@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<case>
+    <input>
+        <code>
+            <![CDATA[
+namespace ConsoleApp2
+{
+    public class UserInfo
+    {
+        public new string Name { get; set; }
+    }
+    public class BaseClass
+    {
+        public string Name { get; set; }
+    }
+    public partial class TUser:BaseClass
+    {
+       
+    }
+    
+    
+}
+            
+            ]]>
+        </code>
+        <code>
+            <![CDATA[
+using YS.Knife;
+using YS.Knife.Generator.UnitTest;
+namespace ConsoleApp2
+{
+    [ConvertToAttribute(typeof(TUser), typeof(UserInfo))]
+    partial class Convertors
+    {
+
+    }
+}
+        ]]>
+        </code>
+    </input>
+    <output>
+        <code file="Convertors.g.cs">
+            <![CDATA[
+using System.Collections.Generic;
+using System.Linq;
+namespace ConsoleApp2
+{
+    static partial class Convertors
+    {
+        public static global::ConsoleApp2.UserInfo ToUserInfo(this global::ConsoleApp2.TUser source)
+        {
+            if (source == null) return default;
+            return new global::ConsoleApp2.UserInfo
+            {
+                Name = source.Name,
+            };
+        }
+        public static void ToUserInfo(this global::ConsoleApp2.TUser source, global::ConsoleApp2.UserInfo target)
+        {
+            if (source == null) return;
+            if (target == null) return;
+            target.Name = source.Name;
+        }
+        public static IEnumerable<global::ConsoleApp2.UserInfo> ToUserInfo(this IEnumerable<global::ConsoleApp2.TUser> source)
+        {
+            return source?.Select(p => new global::ConsoleApp2.UserInfo
+            {
+                Name = p.Name,
+            });
+        }
+        public static IQueryable<global::ConsoleApp2.UserInfo> ToUserInfo(this IQueryable<global::ConsoleApp2.TUser> source)
+        {
+            return source?.Select(p => new global::ConsoleApp2.UserInfo
+            {
+                Name = p.Name,
+            });
+        }
+    }
+}
+            ]]>
+        </code>
+    </output>
+</case>

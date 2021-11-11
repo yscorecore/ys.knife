@@ -172,7 +172,19 @@ namespace YS.Knife
         {
             return classSymbol.InstanceConstructors.Any(p => p.Parameters.Count() == 0);
         }
+        public static IEnumerable<ISymbol> GetAllMembers(this ITypeSymbol type)
+        {
+            var current = type;
+            while (current != null)
+            {
+                foreach (var member in current.GetMembers())
+                {
+                    yield return member;
+                }
+                current = current.BaseType;
+            }
 
+        }
         public static bool IsPrimitive(this ITypeSymbol type)
         {
             _ = type ?? throw new ArgumentNullException(nameof(type));
