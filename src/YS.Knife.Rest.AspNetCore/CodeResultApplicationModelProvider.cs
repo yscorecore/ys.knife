@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Mvc.ApplicationModels;
-using YS.Knife.Rest.Api;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace YS.Knife.Rest.AspNetCore
 {
@@ -18,65 +20,78 @@ namespace YS.Knife.Rest.AspNetCore
 
         public void OnProvidersExecuting(ApplicationModelProviderContext context)
         {
+
             foreach (ControllerModel controller in context.Result.Controllers)
             {
-                if (!controller.Attributes.OfType<WrapCodeResultAttribute>().Any())
-                {
-                    continue;
-                }
+                var hasAppLevelFilter = HasWrapCodeResultFilter(controller.Application.Filters);
+
+                var hasControllerLevel = HasWrapCodeResultFilter(controller.Filters);
                 foreach (ActionModel action in controller.Actions)
                 {
-                    if (!action.Attributes.OfType<WrapCodeResultAttribute>().Any())
-                    {
-                        continue;
-                    }
 
-                    var (actionResult, returnType) = GetReturnType(action);
+                    var hasActionLevel = HasWrapCodeResultFilter(action.Filters);
 
-                    if (!actionResult)
+                    if (hasAppLevelFilter || hasControllerLevel || hasActionLevel)
                     {
+
+                        var returnType = GetRuntimeReturnType(action);
                         if (returnType == null)
                         {
-                            AddProducesResponseTypeAttribute(action, typeof(CodeResult), 200);
+                            TranslateProducesResponseType(action);
+                        }
+                        else if (returnType == typeof(void))
+                        {
+                            AddProducesResponseTypeAttribute(action, typeof(CodeResult), StatusCodes.Status200OK);
                         }
                         else
                         {
-                            AddProducesResponseTypeAttribute(action, typeof(CodeResult<>).MakeGenericType(returnType), 200);
+                            AddProducesResponseTypeAttribute(action, typeof(CodeResult<>).MakeGenericType(returnType), StatusCodes.Status200OK);
                         }
-                    }
 
+                    }
                 }
             }
+            bool HasWrapCodeResultFilter(IList<IFilterMetadata> filters)
+            {
+                return filters.Any(p => p is WrapCodeResultAttribute ||
+                    (p is TypeFilterAttribute tf && tf.ImplementationType == typeof(WrapCodeResultAttribute)) ||
+                    (p is ServiceFilterAttribute sf && sf.ServiceType == typeof(WrapCodeResultAttribute)));
+            }
+
+            Type GetRuntimeReturnType(ActionModel action)
+            {
+                Type returnDataType = action.ActionMethod.ReturnType;
+                if (returnDataType == typeof(void) || returnDataType == typeof(Task) || returnDataType == typeof(ValueTask))
+                {
+                    return typeof(void);
+                }
+                if (returnDataType.IsGenericType && (returnDataType.GetGenericTypeDefinition() == typeof(Task<>) || returnDataType.GetGenericTypeDefinition() == typeof(ValueTask<>)))
+                {
+                    returnDataType = returnDataType.GetGenericArguments()[0];
+                }
+                if (typeof(IActionResult).IsAssignableFrom(returnDataType))
+                {
+                    return null;
+                }
+                return returnDataType;
+            }
+            void TranslateProducesResponseType(ActionModel action)
+            {
+                var attrs = action.Attributes.OfType<IApiResponseMetadataProvider>()
+                    .Where(p => p.Type != null && p.Type != typeof(void) && !p.Type.IsSubclassOf(typeof(CodeResult))).ToList();
+                foreach (var att in attrs)
+                {
+                    action.Filters.Add(new ProducesResponseTypeAttribute(typeof(CodeResult<>).MakeGenericType(att.Type), att.StatusCode));
+                }
+            }
+
         }
-        private (bool, Type) GetReturnType(ActionModel action)
-        {
-            Type returnDataType = action.ActionMethod.ReturnType;
-            if (returnDataType == null || returnDataType == typeof(void) || returnDataType == typeof(Task) || returnDataType == typeof(ValueTask))
-            {
-                return (false, null);
-            }
-            if (returnDataType.IsGenericType && (returnDataType.GetGenericTypeDefinition() == typeof(Task<>) || returnDataType.GetGenericTypeDefinition() == typeof(ValueTask<>)))
-            {
-                returnDataType = returnDataType.GetGenericArguments()[0];
-            }
-            if (typeof(IActionResult).IsAssignableFrom(returnDataType))
-            {
-                return (true, returnDataType);
-            }
-            return (false, returnDataType);
-        }
+
 
         public void AddProducesResponseTypeAttribute(ActionModel action, Type returnType, int statusCodeResult)
         {
             action.Filters.Add(new ProducesResponseTypeAttribute(returnType, statusCodeResult));
         }
-
-        public void AddUniversalStatusCodes(ActionModel action, Type returnType)
-        {
-            AddProducesResponseTypeAttribute(action, returnType, 200);
-            AddProducesResponseTypeAttribute(action, null, 500);
-        }
-
 
     }
 }
