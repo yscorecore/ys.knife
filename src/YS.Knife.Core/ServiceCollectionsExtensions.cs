@@ -12,7 +12,7 @@ namespace YS.Knife
             where T : class
         {
             services.AddOptions<T>().Bind(configuration).ValidateDataAnnotations();
-            services.AddTransient<T>(sp => sp.GetRequiredService<IOptionsSnapshot<T>>().Value);
+            services.AddSingleton<T>(sp => sp.GetRequiredService<IOptions<T>>().Value);
             return services;
         }
 
